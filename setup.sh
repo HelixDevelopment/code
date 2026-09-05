@@ -215,7 +215,7 @@ The platform is installed as systemd USER units and will start on boot.
   Logs               : journalctl --user -u helixagent -f
 
 Services and ports:
-  helixcode-server    :8081    HelixCode API
+  helixcode-server    :8080    HelixCode API
   helixllm-gateway    :8443    HelixLLM multi-provider router (TLS)
   helixagent          :7061    HelixAgent runtime
   llmsverifier        :8100    LLMsVerifier model/provider scoring API
