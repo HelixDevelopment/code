@@ -113,6 +113,22 @@ if [ "${DO_BUILD}" -eq 1 ]; then
   else
     warn "submodules/helix_llm not initialised — skipping"
   fi
+
+  # Colibri (optional GLM-class local engine, W2a-1): pure-C build, no Go
+  # toolchain needed beyond gcc with OpenMP. The launcher contract is
+  # HELIX_COLIBRI_BIN -> the repo's `coli` launcher (see task W2a-2); the
+  # engine binary this step produces lives at c/colibri per R1 research.
+  section "Building Colibri engine (optional)"
+  if [ ! -d dependencies/colibri/c ]; then
+    warn "dependencies/colibri not initialised — skipping (run scripts/init-submodules.sh)"
+  elif [ -x dependencies/colibri/c/colibri ]; then
+    ok "dependencies/colibri/c/colibri already built"
+  elif ! command -v gcc >/dev/null 2>&1; then
+    warn "SKIP-OK: #W2a-1 gcc not available — colibri engine not built (optional component)"
+  else
+    make -C dependencies/colibri glm
+    ok "dependencies/colibri/c/colibri"
+  fi
 else
   section "Skipping builds (--skip-build)"
 fi
