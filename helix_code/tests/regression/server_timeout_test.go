@@ -2,11 +2,13 @@ package regression
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net"
 	"net/http"
 	"os"
 	"sync/atomic"
+	"syscall"
 	"testing"
 	"time"
 
@@ -168,8 +170,7 @@ func TestServerStability(t *testing.T) {
 		}),
 	}
 
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
-	require.NoError(t, err, "should bind a listener")
+	ln := listenLoopbackOrSkip(t)
 	go func() { _ = srv.Serve(ln) }()
 	t.Cleanup(func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -210,4 +211,117 @@ func TestServerStability(t *testing.T) {
 
 	require.GreaterOrEqual(t, atomic.LoadInt64(&hits), int64(4),
 		"all requests across the idle window must have reached the handler (no premature shutdown)")
+}
+
+// isEphemeralPortExhausted reports whether err is a genuine EADDRINUSE from the
+// kernel, unwrapped through *net.OpError -> *os.SyscallError -> syscall.Errno.
+// It is deliberately NOT a substring match on err.Error(): the error string is
+// not part of any API contract, and matching it would also swallow unrelated
+// errors that merely mention an address.
+func isEphemeralPortExhausted(err error) bool {
+	return errors.Is(err, syscall.EADDRINUSE)
+}
+
+// listenLoopbackOrSkip binds a loopback listener and returns it STILL OPEN, for
+// the caller to hand straight to http.Server.Serve. This is net/http/httptest's
+// own newLocalListener idiom: bind "127.0.0.1:0", KEEP the listener, and fall
+// back to "[::1]:0" when IPv4 loopback is unavailable. The port number never
+// escapes as a bare int, so there is no "find a free port, then bind it later"
+// window — a pattern that is racy by construction (golang/go#24818, bradfitz:
+// "The program is inherently racy. You can't close a listener and expect to be
+// able to use that same port later.").
+//
+// The one failure mode that remains is genuine ephemeral-port exhaustion. Linux
+// returns EADDRINUSE for a port-0 bind ONLY after inet_csk_find_open_port() has
+// scanned the entire eligible range and found every port conflicted — so the
+// error means total exhaustion, not a transient race, and neither SO_REUSEADDR
+// (every occupied port is a hard conflict for port-0 selection when
+// net.ipv4.ip_autobind_reuse=0) nor tcp_tw_reuse (connect() path only) can help.
+// That is a HOST condition, not a defect in the server under test. It is
+// therefore retried with bounded backoff, and if the range is still saturated
+// the test SKIPs with an honest reason naming the measured condition (§11.4.3)
+// — never a FAIL that blames the code under test for the host's socket table,
+// and never a silent pass.
+//
+// §1.1 paired mutation: replace this call site with a bare
+// net.Listen("tcp", "127.0.0.1:0") + require.NoError, or make
+// isEphemeralPortExhausted always return false. Either mutation turns a
+// saturated ephemeral range back into the observed
+// "listen tcp 127.0.0.1:0: bind: address already in use" FAIL instead of the
+// honest SKIP, which is exactly the non-determinism this helper removes.
+func listenLoopbackOrSkip(t *testing.T) net.Listener {
+	t.Helper()
+
+	const attempts = 8
+	backoff := 25 * time.Millisecond
+	var lastErr error
+	sawExhaustion := false
+
+	for i := 0; i < attempts; i++ {
+		for _, addr := range []string{"127.0.0.1:0", "[::1]:0"} {
+			ln, err := net.Listen("tcp", addr)
+			if err == nil {
+				return ln
+			}
+			lastErr = err
+			if isEphemeralPortExhausted(err) {
+				sawExhaustion = true
+			}
+		}
+		if !sawExhaustion {
+			// Not an exhaustion condition on either address family (e.g. no
+			// loopback interface at all) — retrying cannot change the outcome,
+			// so report it immediately rather than burning the backoff budget.
+			break
+		}
+		time.Sleep(backoff)
+		if backoff < 400*time.Millisecond {
+			backoff *= 2
+		}
+	}
+
+	if sawExhaustion {
+		t.Skipf("SKIP-OK: #HXC-029 host ephemeral port range is saturated — "+
+			"a port-0 bind on both loopback families returned EADDRINUSE on all %d "+
+			"attempts with backoff, which Linux only does after scanning the whole "+
+			"eligible range. This is a host socket-table condition, not a defect in "+
+			"the server under test; re-run when ephemeral occupancy drops. Last error: %v",
+			attempts, lastErr)
+	}
+	require.NoError(t, lastErr, "should bind a loopback listener")
+	return nil
+}
+
+// TestListenHelperClassifiesEADDRINUSE is the standing guard for the classifier
+// that decides SKIP-vs-FAIL in listenLoopbackOrSkip. It induces a REAL kernel
+// EADDRINUSE — bind an ephemeral port, keep it open, then bind that exact port
+// again — and asserts the classifier recognises it after unwrapping
+// *net.OpError -> *os.SyscallError -> syscall.Errno.
+//
+// Without this guard the classifier could silently stop matching (a wrapper
+// change, a build-tag change) and every exhaustion would come back as the
+// original opaque "bind: address already in use" FAIL.
+//
+// §1.1 paired mutation: make isEphemeralPortExhausted return false
+// unconditionally (or match on a substring that the error does not contain) —
+// this test FAILs.
+func TestListenHelperClassifiesEADDRINUSE(t *testing.T) {
+	held, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Skipf("SKIP-OK: #HXC-029 cannot bind a loopback listener to set up the "+
+			"conflict this test needs (host socket-table condition): %v", err)
+	}
+	defer func() { _ = held.Close() }()
+
+	// Re-binding the SAME concrete address is a guaranteed hard conflict, which
+	// is how a real EADDRINUSE is produced deterministically without having to
+	// exhaust the host's ephemeral range.
+	conflict, err := net.Listen("tcp", held.Addr().String())
+	if err == nil {
+		_ = conflict.Close()
+		t.Fatalf("re-binding %s should have conflicted with the held listener", held.Addr())
+	}
+
+	require.True(t, isEphemeralPortExhausted(err),
+		"a real kernel EADDRINUSE must be classified as exhaustion (got %#v)", err)
 }
