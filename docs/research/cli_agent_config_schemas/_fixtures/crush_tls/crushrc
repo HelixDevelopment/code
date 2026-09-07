@@ -1,0 +1,2 @@
+provider add helixgw --name "HelixLLM Gateway (TLS)" --type openai-compat \
+  --base-url "https://localhost:8443/v1" --api-key "local" --discover-models true

@@ -1,0 +1,4 @@
+provider add helixllm --name "HelixLLM (local)" --type openai-compat \
+  --base-url "http://localhost:18434/v1" \
+  --api-key "local" \
+  --discover-models true

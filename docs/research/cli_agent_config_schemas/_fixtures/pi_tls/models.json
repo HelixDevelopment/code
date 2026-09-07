@@ -1,0 +1,10 @@
+{
+  "providers": {
+    "helixgw": {
+      "baseUrl": "https://localhost:8443/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "models": [ { "id": "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190" } ]
+    }
+  }
+}

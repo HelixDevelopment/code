@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>FAQ</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">FAQ</h1>
+</header>
+<h1 id="faq-cli-coding-agents-helix">FAQ — CLI Coding Agents +
+Helix</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Revision</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>Last modified</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>DRAFT — answers grounded in dated probe evidence; see the source
+citation on each answer</td>
+</tr>
+<tr>
+<td>Status summary</td>
+<td>Answers the recurring questions about wiring <code>opencode</code>,
+<code>pi</code>, <code>crush</code>, and Claude Code to Helix’s local
+LLM surfaces.</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Companion to <a href="README.md"><code>README.md</code></a> and <a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> in this same
+directory</td>
+</tr>
+<tr>
+<td>Authority</td>
+<td>Every answer below is either sourced from a live probe run
+2026-09-05 or a cited vendor doc — see
+<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code> for the
+raw transcripts.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="table-of-contents">Table of contents</h2>
+<ol type="1">
+<li><a href="#1-why-does-my-agent-list-the-model-but-every-request-fails">Why
+does my agent list the model but every request fails?</a></li>
+<li><a href="#2-why-does-tool-calling-work-in-one-place-and-not-another">Why
+does tool-calling work in one place and not another?</a></li>
+<li><a href="#3-why-isnt-claude-code-in-the-list-of-supported-agents">Why isn’t
+Claude Code in the list of supported agents?</a></li>
+<li><a href="#4-do-i-need-an-api-key">Do I need an API key?</a></li>
+<li><a href="#5-will-wiring-helix-overwrite-my-existing-agent-config">Will
+wiring Helix overwrite my existing agent config?</a></li>
+<li><a href="#6-why-does-crush-create-a-crush-folder-in-my-project">Why
+does crush create a <code>.crush</code> folder in my project?</a></li>
+<li><a href="#7-why-did-opencodepis-request-against-the-gateway-just-hang">Why
+did opencode/pi’s request against the Gateway just hang?</a></li>
+<li><a href="#8-which-surface-should-i-actually-use">Which surface
+should I actually use?</a></li>
+</ol>
+<hr />
+<h2 id="why-does-my-agent-list-the-model-but-every-request-fails">1. Why
+does my agent list the model but every request fails?</h2>
+<p>Because listing a model only proves the provider config is
+syntactically correct and the surface answered a <code>/v1/models</code>
+(or equivalent) call — it says nothing about whether a real request will
+fit inside that model’s context window.</p>
+<p>This happened for real on 2026-09-05: the Coder surface
+(<code>:18434</code>) was running with a 4096-token context window, and
+a genuine <code>pi</code> request — nothing exotic, just the agent’s own
+baseline system prompt — was rejected with:</p>
+<pre><code>400: request (141440 tokens) exceeds the available context size (4096 tokens)</code></pre>
+<p>141,440 tokens of system prompt against a 4096-token window. The
+provider was registered correctly; the server was reachable and answered
+correctly; the request still could not succeed, because the window was
+far too small for any real agentic turn.</p>
+<p>The Coder surface’s context window has since been raised (to 32768
+tokens as of 2026-09-05), which should leave much more room, but the
+underlying lesson stands: <strong>if a model shows up in your agent’s
+model list yet every real turn fails, check the context window of the
+surface you pointed it at, not the provider config.</strong>
+Registration proves plumbing, not usability. See <a href="README.md#9-the-context-size-cautionary-tale"><code>README.md</code>
+§9</a>.</p>
+<h2 id="why-does-tool-calling-work-in-one-place-and-not-another">2. Why
+does tool-calling work in one place and not another?</h2>
+<p>Because it depends on <strong>which Helix surface</strong> you point
+at, not which model id you ask for. Coder and Gateway serve, as far as
+the model id is concerned, the same underlying model — but:</p>
+<ul>
+<li>Point an agent at <strong>Coder</strong> (<code>:18434</code>) and a
+tool-calling request gets a fenced JSON blob pasted into the assistant’s
+plain text reply. There is no structured <code>tool_calls</code> field
+in the response, so the agent’s tool-call parser never fires.</li>
+<li>Point the same agent at <strong>Gateway</strong>
+(<code>:8443</code>) instead, and the response comes back with a real
+<code>tool_calls</code> array and
+<code>finish_reason:&quot;tool_calls&quot;</code> — because the Gateway performs
+response translation that the raw llama.cpp server behind Coder does not
+do on its own.</li>
+</ul>
+<p>If tool-calling matters for your workflow, use the Gateway surface.
+See <a href="README.md#3-choosing-a-surface-the-one-thing-that-will-surprise-you"><code>README.md</code>
+§3</a> for the fuller explanation, and <a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> for where this
+sits in the overall picture.</p>
+<h2 id="why-isnt-claude-code-in-the-list-of-supported-agents">3. Why
+isn’t Claude Code in the list of supported agents?</h2>
+<p>Because Claude Code has no mechanism to accept a custom
+OpenAI-compatible provider at all — this is a constraint on Anthropic’s
+side, confirmed against Claude Code’s own official documentation
+(fetched 2026-09-05):</p>
+<ul>
+<li>The LLM Gateway Protocol documentation
+(<code>https://code.claude.com/docs/en/llm-gateway-protocol</code>)
+lists exactly three client-selectable API formats: Anthropic Messages,
+Amazon Bedrock InvokeModel, and Google Agent Platform
+<code>rawPredict</code>. There is no OpenAI Chat Completions row.</li>
+<li>The LLM Gateway documentation
+(<code>https://code.claude.com/docs/en/llm-gateway</code>) states,
+verbatim: <em>“Anthropic doesn’t endorse, maintain, or audit third-party
+gateway products, and doesn’t support routing Claude Code to non-Claude
+models through any gateway.”</em></li>
+<li>Claude Code’s optional model-discovery feature also filters by name:
+it “keeps an entry when its <code>id</code> contains <code>claude</code>
+or <code>anthropic</code> anywhere in the string, matched
+case-insensitively, and ignores the rest” — so even a discovery call
+against a Helix surface would silently drop every Helix model id.</li>
+</ul>
+<p>The only conceivable path in is <strong>HelixCode’s Anthropic-shaped
+<code>/v1/messages</code> endpoint on <code>:8080</code></strong>, via
+<code>ANTHROPIC_BASE_URL</code> plus an API key. <strong>Whether that
+actually works was, at the time this FAQ was written, still under
+verification by a separate work stream — do not assume it does.</strong>
+Check that stream’s findings before relying on it.</p>
+<h2 id="do-i-need-an-api-key">4. Do I need an API key?</h2>
+<p>For three of the four Helix surfaces, no:</p>
+<ul>
+<li><strong>Coder</strong> (<code>:18434</code>) — none required.</li>
+<li><strong>Gateway</strong> (<code>:8443</code>) — none required
+(though you do need TLS trust set up for its self-signed certificate —
+see <a href="README.md#5-tls-for-the-self-signed-gateway"><code>README.md</code>
+§5</a>).</li>
+<li><strong>HelixAgent</strong> (<code>:7061</code>) — none
+required.</li>
+</ul>
+<p>For the fourth, yes:</p>
+<ul>
+<li><strong>HelixCode</strong> (<code>:8080</code>) — returns HTTP 401
+without an API key; one is required.</li>
+</ul>
+<p>One quirk to know: <code>pi</code> requires you to supply a
+<strong>non-empty <code>apiKey</code> value in its provider config even
+for a keyless server</strong> — the field cannot be omitted, though its
+actual value is never checked by Coder, Gateway, or HelixAgent. Any
+placeholder string (the evidence in this guide uses
+<code>&quot;local&quot;</code>) satisfies pi’s own config validation.
+<code>opencode</code> and <code>crush</code> do not have this quirk —
+you can omit the key field entirely for the three keyless surfaces.</p>
+<h2 id="will-wiring-helix-overwrite-my-existing-agent-config">5. Will
+wiring Helix overwrite my existing agent config?</h2>
+<p>It should not, if the wiring is done the way this guide describes: a
+Helix entry is added as its own named provider block inside the agent’s
+existing config file, alongside whatever else is already there. Adding
+it should never touch unrelated provider entries, and re-running the
+same wiring step again should merge into the existing Helix entry rather
+than create a duplicate.</p>
+<p><strong>Confirm this yourself rather than taking it on faith</strong>
+— before wiring, note what is currently in your config file (or back it
+up); after wiring, diff the file and check that everything you had
+before is still present unchanged, and that only the intended Helix
+entry was added or updated. See <a href="README.md#8-re-running-the-installer-idempotency"><code>README.md</code>
+§8</a> for the fuller discussion, including how to test idempotency by
+running the wiring step twice.</p>
+<h2 id="why-does-crush-create-a-.crush-folder-in-my-project">6. Why does
+crush create a <code>.crush</code> folder in my project?</h2>
+<p>Because <code>crush</code>’s data directory defaults to
+<code>.crush</code>, resolved <strong>relative to whatever directory you
+ran it from</strong> — not a fixed location under your home directory.
+If you run <code>crush</code> from inside a project (this repository
+included) without overriding that default, it creates
+<code>.crush/</code> right there.</p>
+<p>This was observed directly: running <code>crush</code> inside this
+repo’s working tree produced a <code>helix_code/.crush/</code>
+directory, which had to be manually removed afterward.</p>
+<p>To avoid it, pass explicit flags rather than relying on the
+default:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> <span class="at">--cwd</span> <span class="op">&lt;</span>some-directory<span class="op">&gt;</span> --data-dir <span class="op">&lt;</span>some-directory<span class="op">&gt;</span>/.crush ...</span></code></pre></div>
+<p>or set the equivalent environment variables
+(<code>CRUSH_GLOBAL_CONFIG</code>, <code>CRUSH_GLOBAL_DATA</code>) if
+you want to isolate <code>crush</code>’s state away from any project
+directory entirely.</p>
+<h2 id="why-did-opencodepis-request-against-the-gateway-just-hang">7.
+Why did opencode/pi’s request against the Gateway just hang?</h2>
+<p>During the research pass behind this guide, both cases ended in a
+timeout with no output, rather than a clear success or failure — this is
+recorded honestly as <strong>inconclusive</strong>, not as a documented
+bug:</p>
+<ul>
+<li><code>opencode run --pure --model helixllm-test/...</code> against
+the Gateway produced no output before a 280-second timeout
+(<code>SIGTERM</code>, exit code 143).</li>
+<li><code>pi -p</code> against the HTTPS gateway timed out at 90
+seconds, both with and without <code>NODE_EXTRA_CA_CERTS</code>
+set.</li>
+</ul>
+<p>Neither run yields a usable verdict on whether generation or TLS
+trust actually works end-to-end for those two agents against the
+Gateway. If you hit the same thing, that is a known open question from
+this research pass, not something this guide can currently explain —
+re-test it yourself and, if you get a clear result either way, that
+supersedes what is written here (see the note in
+<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code>).</p>
+<h2 id="which-surface-should-i-actually-use">8. Which surface should I
+actually use?</h2>
+<p>As a starting point, based on what has been confirmed so far:</p>
+<ul>
+<li>Need <strong>tool-calling</strong> to work? Use the
+<strong>Gateway</strong> (<code>:8443</code>) — confirmed real
+<code>tool_calls</code> behavior, but requires TLS trust setup for its
+self-signed certificate.</li>
+<li>Just need <strong>plain chat completion</strong>, no tools, and want
+the simplest path (no TLS to configure)? Use the <strong>Coder</strong>
+surface (<code>:18434</code>).</li>
+<li>Working with <strong>HelixAgent</strong>-specific model ids
+(<code>helixagent-llm</code>, <code>helixagent-debate</code>,
+<code>helixagent-ensemble</code>, etc.)? Use <code>:7061</code> — but
+note its tool-calling behavior has not been probed, so verify it
+yourself before depending on it.</li>
+<li>Using <strong>Claude Code</strong>? None of the above are reachable
+from it at all — see <a href="#3-why-isnt-claude-code-in-the-list-of-supported-agents">Q3</a>.
+The HelixCode surface (<code>:8080</code>) is the only candidate, and it
+is unverified as of this writing.</li>
+</ul>
+<p>See <a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> for
+the full picture of which agent can reach which surface.</p>
+</body>
+</html>

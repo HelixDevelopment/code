@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "helixllm-test": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "HelixLLM (local, test)",
+      "options": { "baseURL": "http://localhost:18434/v1" },
+      "models": {
+        "qwen2.5-coder-3b-instruct-q4_k_m": {
+          "name": "HelixLLM Local Coder",
+          "limit": { "context": 32768, "output": 4096 }
+        }
+      }
+    }
+  }
+}
