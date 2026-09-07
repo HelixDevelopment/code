@@ -1,23 +1,35 @@
 # RESUME — session resumption record (§11.4.131)
 
-**Rev 26 · 2026-09-07T08:58:39Z.** Supersedes rev 25 (2026-09-06T20:25:28Z) —
-**rev 26 is a literal-scrub pass only**: it removed working-tree-volatile
-measured literals (untracked-directory counts, total changed-entry counts,
-and one untracked file's byte size) in favour of the commands that derive
-them live, because the working tree is being written by concurrent streams
-and any number committed to this doc would be false on arrival (§11.4.6). No
-engineering work is claimed by rev 26; every substantive claim below is
-otherwise unchanged from rev 25 and all stable anchors (commit hashes,
-branch names, file paths, historical sections) are untouched. Rev 25
-superseded rev 24 (2026-09-05T18:37:41Z) for live state and both resume
+**Rev 27 · 2026-09-07T10:02:04Z.** Supersedes rev 26 (2026-09-07T08:58:39Z).
+**Rev 27 records one state change and nothing else: THE BATCH IS NOW
+COMMITTED. It is NOT pushed.** Rev 26 said "THE BATCH IS NOT FINISHED.
+NOTHING IS COMMITTED. NOTHING IS PUSHED." — landing the batch falsified that
+sentence, and rev 26 itself named this sync as the required next action. That
+correction is rev 27's whole purpose; no engineering work is claimed by it.
+
+The batch landed as 15 commits on meta `main` (`926eaf3e`..`dfb06d38`), plus
+`f3f0540b` for the one determinism guard that arrived after its group had
+already been committed. Every substantive claim below — the gate/redaction/
+determinism work, the open gap-ledger items, the operator decisions, the host
+caveat — is unchanged from rev 26 and restated as-is; only committed-vs-pushed
+state and the live anchors move.
+
+**Push ordering is a hard constraint, not a preference.** `submodules/helix_agent`
+(9 ahead) and `submodules/helix_llm` (3 ahead) MUST be pushed to all their
+upstreams BEFORE meta `main`. Meta commit `e47c8a30` bumps both gitlinks; if
+meta is pushed first, those gitlinks point at commits no remote has, and every
+fresh clone fails `git submodule update` with `not our ref`. Push submodules,
+verify with `git ls-remote`, then push meta. All pushes are fast-forward only —
+force-push is forbidden without exception (§11.4.113).
+
+Rev 25 superseded rev 24 (2026-09-05T18:37:41Z) for live state and both resume
 prompts. Rev 24 superseded rev 23 for push status. Sections 1-7 below the
 "END REV 25 BLOCK" marker are rev 23's forensic record of the 2026-09-03
 session, preserved as history; **this pass did not re-verify them**. Scope of
-this pass was `docs/CONTINUATION.md`, this file, `.remember/` and their
-`.html`/`.pdf` export siblings — `helix_code/internal/**`, `scripts/`,
-`submodules/` and `helix_code/docs/qa/2026-09-05-gap-ledger.md` were **read
-but not written**, because three independent reviewers and four parallel
-streams own those paths right now.
+this pass was `docs/CONTINUATION.md`, this file and their `.html`/`.pdf`
+export siblings. `docs/guides/cli_agent_integration/**`, `scripts/systemd/`
+and the `submodules/` worktrees are being written by another live stream right
+now and were **read but not written** by this pass.
 
 ## Contents
 
@@ -25,7 +37,7 @@ streams own those paths right now.
 - [Live anchors — MEASURED this pass](#live-anchors--measured-this-pass)
 - [0 · Resume prompt — SHORT form](#0--resume-prompt--short-form)
 - [0b · Resume prompt — FULL form](#0b--resume-prompt--full-form)
-- [What the batch landed (uncommitted)](#what-the-batch-landed-uncommitted)
+- [What the batch landed (now committed)](#what-the-batch-landed-now-committed)
 - [What is still open](#what-is-still-open)
 - [Operator decisions in force](#operator-decisions-in-force)
 - [Host caveat and environment quirks](#host-caveat-and-environment-quirks)
@@ -42,104 +54,131 @@ streams own those paths right now.
 
 ## Read this first — the one-paragraph state
 
-A very large cloud-gate + CLI-agent-fanout batch is **in flight and not
-finished**. Eight independent review rounds have run; **rounds 1-7 all returned
-NO-GO and round 8 is unresolved right now**. **Nothing is committed. Nothing is
-pushed.** Three reviewers and four other streams are working in this checkout
-concurrently. Twelve gap-ledger entries remain open, several deliberately. Do
-not treat any of the batch's work as done, and do not commit or push on its
-behalf without first closing round 8 to a clean GO per §11.4.134.
+The large cloud-gate + CLI-agent-fanout batch is **committed and NOT pushed**.
+It landed as 15 commits on meta `main` (`926eaf3e`..`dfb06d38`) plus
+`f3f0540b`. **The next action is the push, and its ORDER is a hard
+constraint: both submodules first, meta last** — `e47c8a30` bumps the
+gitlinks, so pushing meta first leaves them pointing at commits no remote has.
+Pushes are fast-forward only; force-push is forbidden without exception
+(§11.4.113). At least one other stream is still writing this checkout
+(`docs/guides/cli_agent_integration/**`, `scripts/systemd/`, the `submodules/`
+worktrees) — do not sweep its files into a push-prep commit. Twelve gap-ledger
+entries remain open, several deliberately; nothing below marks them done.
 
 ## Live anchors — MEASURED this pass
 
-Re-derived by execution at 2026-09-06T20:25:28Z (§11.4.6 — nothing carried
-forward from rev 24). **Re-derive them yourself before relying on them.**
+Re-derived by execution at 2026-09-07T10:02:04Z (§11.4.6 — nothing carried
+forward from rev 26). **Re-derive them yourself before relying on them.**
 
 | repo | branch | HEAD | ahead | behind | worktree |
 |---|---|---|---|---|---|
-| meta (checkout root `/home/milosvasic/Projects/helix_code`) | `main` | `2372d7bf` | **7** | **0** | changed entries, count not quoted here — the working tree is being written by concurrent streams (§11.4.6); re-derive with `git status --porcelain`, piped to `wc -l` |
+| meta (checkout root `/home/milosvasic/Projects/helix_code`) | `main` | `f3f0540b` | **23** | **0** | changed entries, count not quoted here — another stream is still writing this tree (§11.4.6); re-derive with `git status --porcelain`, piped to `wc -l` |
 | `submodules/helix_llm` | `main` | `b25641f` | **3** | not checked | not checked |
-| `submodules/helix_agent` | `main` | `b9d570fe` | **8** | not checked | 14 changed |
+| `submodules/helix_agent` | `main` | `ca24b2fd` | **9** | not checked | dirty — another stream owns it |
 
-- **18 commits unpushed across three repos.**
-- Meta HEAD commit subject: *"chore(setup): W2e-2 fix :8081->:8080 banner drift;
-  retire legacy scripts/setup.sh as delegating shim"*.
+- **35 commits unpushed across three repos** at the moment of measurement;
+  **36** once the rev 27 commit below is counted.
+- These anchors were measured **immediately before the rev 27 commit itself**.
+  Rev 27 adds one commit to meta `main`, so on a fresh read expect meta HEAD to
+  be the rev 27 commit and the meta ahead-count to be **24**, not 23. The
+  submodule anchors are unaffected. Re-derive rather than trust either number.
+- Meta HEAD commit subject: *"test(regression): classify EADDRINUSE so a
+  saturated host SKIPs, not FAILs"*.
+- **Push order: `helix_agent` and `helix_llm` FIRST, meta LAST.** Meta
+  `e47c8a30` bumps both gitlinks to `ca24b2fd` / `b25641f`; pushing meta first
+  publishes gitlinks no remote can resolve. Verify each submodule with
+  `git ls-remote <remote> main` before pushing meta.
 - Four configured remotes — `origin`, `github`, `gitlab`, `upstream` — all
-  report the same 7-ahead because they resolve to **two** physical hosts:
+  report the same 23-ahead because they resolve to **two** physical hosts:
   `git@github.com:HelixDevelopment/code.git` and
   `git@gitlab.com:helixdevelopment1/HelixCode.git`.
 - `git rev-list --count HEAD..@{u}` = **0** — nothing to pull on meta `main`.
-- Untracked `docs/qa/phase1_fullhttp_e2e_*` evidence directories — no count is
-  quoted here: four concurrent streams are actively writing this tree, so any
-  number committed to this doc would be false on arrival (§11.4.6). Re-derive
-  live: `git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`
-  for untracked, `git ls-files docs/qa/ | grep -o 'phase1_fullhttp_e2e_[^/]*' |
-  sort -u | wc -l` for tracked, `ls -d docs/qa/phase1_fullhttp_e2e_*/ | wc -l`
-  for total on disk. The operator brief and rev 24 both said 33 — already
-  superseded by measurement once; treat every prior count, including any
-  number that was ever written in this section, as stale on sight.
-- **In flight right now:** three independent code reviewers; four parallel work
-  streams. They own `helix_code/internal/**`, `scripts/`, `submodules/` and
-  `helix_code/docs/qa/2026-09-05-gap-ledger.md`. **Do not write those paths**
-  until you have confirmed the streams have finished.
+- The `docs/qa/phase1_fullhttp_e2e_*` evidence directories are now **tracked** —
+  they were committed in `27a5622c` per the operator decision. No count is
+  quoted here; re-derive live: `git ls-files docs/qa/ | grep -o
+  'phase1_fullhttp_e2e_[^/]*' | sort -u | wc -l` for tracked,
+  `git status --porcelain | grep -c '^?? docs/qa/'` for any that arrived since.
+  The operator brief and rev 24 both said 33 — already superseded by
+  measurement once; treat every prior count, including any number that was ever
+  written in this section, as stale on sight.
+- **In flight right now:** the batch's own streams and reviewers have finished —
+  that is why the batch is committed. **At least one OTHER stream is still
+  live** and owns `docs/guides/cli_agent_integration/**`,
+  `scripts/systemd/helixllm-coder-native.service`, the `submodules/helix_agent`
+  and `submodules/helix_llm` worktrees, and three newer `docs/qa/` directories
+  (`2026-09-07-helix-models-toolkit`, `agent_config_fanout_fixes_*`,
+  `cli_agent_model_usability_*`). All were dirty at 2026-09-07T10:02:04Z.
+  **Do not write, stage or push-prep those paths** until you have confirmed
+  that stream has finished (§11.4.84 / §11.4.119).
 
 ## 0 · Resume prompt — SHORT form
 
-Read `RESUME.md` (this file, the rev 25 block at the top) and
-`docs/CONTINUATION.md` (rev 25, section `## 2026-09-06 — cloud-gate +
-CLI-agent-fanout batch`), run `git fetch --all --prune --tags`, then close
-review round 8 of the cloud-gate + CLI-agent-fanout batch to a zero-finding GO
-per §11.4.134 — the batch is UNFINISHED, nothing is committed, nothing is
-pushed, meta `main` is 7 ahead at `2372d7bf` with `helix_llm` 3 ahead at
-`b25641f` and `helix_agent` 8 ahead at `b9d570fe` (18 unpushed), twelve
-gap-ledger entries `HXC-002-F3-01`..`-12` are still open, three reviewers and
-four streams may still own `helix_code/internal/**`, `scripts/` and
-`submodules/`, the untracked `docs/qa/phase1_fullhttp_e2e_*` directories
-(count not quoted here — it moves while parallel streams write, re-derive with
-`git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`) are
-to be committed per operator decision, submodule pushes wait for `helix_agent`
-to clear review, and this host is at ~3.5x CPU oversubscription from a foreign
-workload so every timing-sensitive result is suspect.
+Read `RESUME.md` (this file, the rev 27 block at the top) and
+`docs/CONTINUATION.md` (rev 27, section `## 2026-09-06 — cloud-gate +
+CLI-agent-fanout batch`), run `git fetch --all --prune --tags`, then push the
+committed batch — the batch IS COMMITTED and NOT PUSHED, meta `main` is 23
+ahead at `f3f0540b` with `helix_agent` 9 ahead at `ca24b2fd` and `helix_llm` 3
+ahead at `b25641f` (35 unpushed), and **the push order is a hard constraint:
+both submodules FIRST (verify each with `git ls-remote`), meta LAST**, because
+meta `e47c8a30` bumps those gitlinks and publishing them before the submodule
+commits exist breaks every fresh clone; all pushes are fast-forward only and
+force-push is forbidden without exception (§11.4.113). Twelve gap-ledger
+entries `HXC-002-F3-01`..`-12` are still open. At least one other stream is
+still writing this checkout — `docs/guides/cli_agent_integration/**`,
+`scripts/systemd/` and the `submodules/` worktrees are dirty and are NOT
+yours; do not stage them. This host is at ~3.5x CPU oversubscription from a
+foreign workload so every timing-sensitive result is suspect.
 
 ## 0b · Resume prompt — FULL form
 
 ```
-Read RESUME.md (the rev 25 block at the top of this file), then
-docs/CONTINUATION.md rev 25 (metadata table + the section
+Read RESUME.md (the rev 27 block at the top of this file), then
+docs/CONTINUATION.md rev 27 (metadata table + the section
 "## 2026-09-06 — cloud-gate + CLI-agent-fanout batch"). Then run these and
 READ THE OUTPUT before acting — §11.4.6, do not trust any number below
-without re-deriving it, all of them are from 2026-09-06T20:25:28Z:
+without re-deriving it, all of them are from 2026-09-07T10:02:04Z:
 
   git fetch --all --prune --tags
   git rev-list --count HEAD..@{u}                          # expect 0 (nothing to pull)
-  git rev-list --count @{u}..HEAD                          # expect 7, HEAD 2372d7bf
+  git rev-list --count @{u}..HEAD                          # expect 23, HEAD f3f0540b
+  git -C submodules/helix_agent rev-list --count @{u}..HEAD  # expect 9, HEAD ca24b2fd
   git -C submodules/helix_llm   rev-list --count @{u}..HEAD  # expect 3, HEAD b25641f
-  git -C submodules/helix_agent rev-list --count @{u}..HEAD  # expect 8, HEAD b9d570fe
-  git status --porcelain | wc -l                           # re-derive live: the
-                                                             # working tree is
-                                                             # being written by
-                                                             # concurrent
-                                                             # streams, so no
-                                                             # count survives
-                                                             # to be quoted
-                                                             # here (§11.4.6)
-  git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'  # same — re-derive, do not trust a prior number
+  git status --porcelain | wc -l                           # re-derive live: another
+                                                             # stream is still
+                                                             # writing this tree,
+                                                             # so no count
+                                                             # survives to be
+                                                             # quoted here
+                                                             # (§11.4.6)
 
-STATE: a cloud-gate + CLI-agent-fanout batch is IN FLIGHT and NOT FINISHED.
-Eight independent review rounds have run. Rounds 1-7 all returned NO-GO;
-ROUND 8 IS IN FLIGHT AND UNRESOLVED. NOTHING IS COMMITTED. NOTHING IS
-PUSHED. Per §11.4.134 the review re-runs after every remediation round and
-must reach a CLEAN GO — zero new findings, zero warnings — before the batch
-may proceed to build/test/commit.
+STATE: the cloud-gate + CLI-agent-fanout batch IS COMMITTED and IS NOT
+PUSHED. It landed as 15 commits on meta main (926eaf3e..dfb06d38) plus
+f3f0540b (a determinism guard that arrived after its group had already been
+committed). The batch reached a clean GO before commit per §11.4.134.
 
-CONCURRENCY: three independent code reviewers and four parallel work
-streams may still be operating in this same checkout. They own
-helix_code/internal/**, scripts/, submodules/, and
-helix_code/docs/qa/2026-09-05-gap-ledger.md. Confirm they have finished
-before writing any of those paths (§11.4.84 working-tree quiescence,
-§11.4.119 single-resource-owner, §11.4.176 exactly-once claim).
+THE NEXT ACTION IS THE PUSH, AND ITS ORDER IS A HARD CONSTRAINT:
 
-WHAT THE BATCH LANDED, uncommitted, in the working tree:
+  1. push submodules/helix_agent  (9 ahead, ca24b2fd) to ALL its upstreams
+  2. push submodules/helix_llm    (3 ahead, b25641f) to ALL its upstreams
+  3. verify BOTH with: git ls-remote <remote> main
+  4. only THEN push meta main (23 ahead, f3f0540b) to all upstreams
+
+Meta commit e47c8a30 bumps both gitlinks. Pushing meta before the submodule
+commits exist on the remotes publishes gitlinks nothing can resolve, and
+every fresh clone then fails `git submodule update` with "not our ref".
+All pushes are FAST-FORWARD ONLY. Force-push is forbidden without
+exception, with no operator-approval path (§11.4.113); if a remote rejects,
+fetch and MERGE onto the latest remote tip, then push again.
+
+CONCURRENCY: at least one other stream is STILL writing this checkout. It
+owns docs/guides/cli_agent_integration/**, scripts/systemd/ and the
+submodules/ worktrees — all dirty right now, none of them yours. Do not
+stage or push-prep those paths (§11.4.84 working-tree quiescence,
+§11.4.119 single-resource-owner, §11.4.176 exactly-once claim). Note the
+submodule WORKTREES being dirty does not block the push: the gitlink
+commits to be pushed are already made.
+
+WHAT THE BATCH LANDED (now committed):
   - The llm.cloud.enabled gate is closed at EVERY constructor path.
     KoboldAI was exempt-by-identity while shipping a bearer credential;
     NewProvider was an ungated back door. A filepath.WalkDir AST scan now
@@ -224,7 +263,7 @@ ENVIRONMENT QUIRKS (this session; re-verify):
     the change actually landed before trusting it.
 ```
 
-## What the batch landed (uncommitted)
+## What the batch landed (now committed)
 
 Recorded in full, with per-claim MEASURED / INHERITED tagging, in
 `docs/CONTINUATION.md` rev 25 under

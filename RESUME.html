@@ -116,28 +116,42 @@ text-decoration: line-through;
 </header>
 <h1 id="resume-session-resumption-record-11.4.131">RESUME — session
 resumption record (§11.4.131)</h1>
-<p><strong>Rev 26 · 2026-09-07T08:58:39Z.</strong> Supersedes rev 25
-(2026-09-06T20:25:28Z) — <strong>rev 26 is a literal-scrub pass
-only</strong>: it removed working-tree-volatile measured literals
-(untracked-directory counts, total changed-entry counts, and one
-untracked file’s byte size) in favour of the commands that derive them
-live, because the working tree is being written by concurrent streams
-and any number committed to this doc would be false on arrival
-(§11.4.6). No engineering work is claimed by rev 26; every substantive
-claim below is otherwise unchanged from rev 25 and all stable anchors
-(commit hashes, branch names, file paths, historical sections) are
-untouched. Rev 25 superseded rev 24 (2026-09-05T18:37:41Z) for live
-state and both resume prompts. Rev 24 superseded rev 23 for push status.
-Sections 1-7 below the “END REV 25 BLOCK” marker are rev 23’s forensic
-record of the 2026-09-03 session, preserved as history; <strong>this
-pass did not re-verify them</strong>. Scope of this pass was
-<code>docs/CONTINUATION.md</code>, this file, <code>.remember/</code>
-and their <code>.html</code>/<code>.pdf</code> export siblings —
-<code>helix_code/internal/**</code>, <code>scripts/</code>,
-<code>submodules/</code> and
-<code>helix_code/docs/qa/2026-09-05-gap-ledger.md</code> were
-<strong>read but not written</strong>, because three independent
-reviewers and four parallel streams own those paths right now.</p>
+<p><strong>Rev 27 · 2026-09-07T10:02:04Z.</strong> Supersedes rev 26
+(2026-09-07T08:58:39Z). <strong>Rev 27 records one state change and
+nothing else: THE BATCH IS NOW COMMITTED. It is NOT pushed.</strong> Rev
+26 said “THE BATCH IS NOT FINISHED. NOTHING IS COMMITTED. NOTHING IS
+PUSHED.” — landing the batch falsified that sentence, and rev 26 itself
+named this sync as the required next action. That correction is rev 27’s
+whole purpose; no engineering work is claimed by it.</p>
+<p>The batch landed as 15 commits on meta <code>main</code>
+(<code>926eaf3e</code>..<code>dfb06d38</code>), plus
+<code>f3f0540b</code> for the one determinism guard that arrived after
+its group had already been committed. Every substantive claim below —
+the gate/redaction/ determinism work, the open gap-ledger items, the
+operator decisions, the host caveat — is unchanged from rev 26 and
+restated as-is; only committed-vs-pushed state and the live anchors
+move.</p>
+<p><strong>Push ordering is a hard constraint, not a
+preference.</strong> <code>submodules/helix_agent</code> (9 ahead) and
+<code>submodules/helix_llm</code> (3 ahead) MUST be pushed to all their
+upstreams BEFORE meta <code>main</code>. Meta commit
+<code>e47c8a30</code> bumps both gitlinks; if meta is pushed first,
+those gitlinks point at commits no remote has, and every fresh clone
+fails <code>git submodule update</code> with <code>not our ref</code>.
+Push submodules, verify with <code>git ls-remote</code>, then push meta.
+All pushes are fast-forward only — force-push is forbidden without
+exception (§11.4.113).</p>
+<p>Rev 25 superseded rev 24 (2026-09-05T18:37:41Z) for live state and
+both resume prompts. Rev 24 superseded rev 23 for push status. Sections
+1-7 below the “END REV 25 BLOCK” marker are rev 23’s forensic record of
+the 2026-09-03 session, preserved as history; <strong>this pass did not
+re-verify them</strong>. Scope of this pass was
+<code>docs/CONTINUATION.md</code>, this file and their
+<code>.html</code>/<code>.pdf</code> export siblings.
+<code>docs/guides/cli_agent_integration/**</code>,
+<code>scripts/systemd/</code> and the <code>submodules/</code> worktrees
+are being written by another live stream right now and were <strong>read
+but not written</strong> by this pass.</p>
 <h2 id="contents">Contents</h2>
 <ul>
 <li><a href="#read-this-first--the-one-paragraph-state">Read this first
@@ -148,8 +162,8 @@ this pass</a></li>
 form</a></li>
 <li><a href="#0b--resume-prompt--full-form">0b · Resume prompt — FULL
 form</a></li>
-<li><a href="#what-the-batch-landed-uncommitted">What the batch landed
-(uncommitted)</a></li>
+<li><a href="#what-the-batch-landed-now-committed">What the batch landed
+(now committed)</a></li>
 <li><a href="#what-is-still-open">What is still open</a></li>
 <li><a href="#operator-decisions-in-force">Operator decisions in
 force</a></li>
@@ -184,19 +198,24 @@ Resume prompt (superseded — see §0/§0b at the top of this file)</a>
 </ul>
 <h2 id="read-this-first-the-one-paragraph-state">Read this first — the
 one-paragraph state</h2>
-<p>A very large cloud-gate + CLI-agent-fanout batch is <strong>in flight
-and not finished</strong>. Eight independent review rounds have run;
-<strong>rounds 1-7 all returned NO-GO and round 8 is unresolved right
-now</strong>. <strong>Nothing is committed. Nothing is pushed.</strong>
-Three reviewers and four other streams are working in this checkout
-concurrently. Twelve gap-ledger entries remain open, several
-deliberately. Do not treat any of the batch’s work as done, and do not
-commit or push on its behalf without first closing round 8 to a clean GO
-per §11.4.134.</p>
+<p>The large cloud-gate + CLI-agent-fanout batch is <strong>committed
+and NOT pushed</strong>. It landed as 15 commits on meta
+<code>main</code> (<code>926eaf3e</code>..<code>dfb06d38</code>) plus
+<code>f3f0540b</code>. <strong>The next action is the push, and its
+ORDER is a hard constraint: both submodules first, meta last</strong> —
+<code>e47c8a30</code> bumps the gitlinks, so pushing meta first leaves
+them pointing at commits no remote has. Pushes are fast-forward only;
+force-push is forbidden without exception (§11.4.113). At least one
+other stream is still writing this checkout
+(<code>docs/guides/cli_agent_integration/**</code>,
+<code>scripts/systemd/</code>, the <code>submodules/</code> worktrees) —
+do not sweep its files into a push-prep commit. Twelve gap-ledger
+entries remain open, several deliberately; nothing below marks them
+done.</p>
 <h2 id="live-anchors-measured-this-pass">Live anchors — MEASURED this
 pass</h2>
-<p>Re-derived by execution at 2026-09-06T20:25:28Z (§11.4.6 — nothing
-carried forward from rev 24). <strong>Re-derive them yourself before
+<p>Re-derived by execution at 2026-09-07T10:02:04Z (§11.4.6 — nothing
+carried forward from rev 26). <strong>Re-derive them yourself before
 relying on them.</strong></p>
 <table style="width:100%;">
 <colgroup>
@@ -222,11 +241,11 @@ relying on them.</strong></p>
 <td>meta (checkout root
 <code>/home/milosvasic/Projects/helix_code</code>)</td>
 <td><code>main</code></td>
-<td><code>2372d7bf</code></td>
-<td><strong>7</strong></td>
+<td><code>f3f0540b</code></td>
+<td><strong>23</strong></td>
 <td><strong>0</strong></td>
-<td>changed entries, count not quoted here — the working tree is being
-written by concurrent streams (§11.4.6); re-derive with
+<td>changed entries, count not quoted here — another stream is still
+writing this tree (§11.4.6); re-derive with
 <code>git status --porcelain</code>, piped to <code>wc -l</code></td>
 </tr>
 <tr>
@@ -240,102 +259,133 @@ written by concurrent streams (§11.4.6); re-derive with
 <tr>
 <td><code>submodules/helix_agent</code></td>
 <td><code>main</code></td>
-<td><code>b9d570fe</code></td>
-<td><strong>8</strong></td>
+<td><code>ca24b2fd</code></td>
+<td><strong>9</strong></td>
 <td>not checked</td>
-<td>14 changed</td>
+<td>dirty — another stream owns it</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li><strong>18 commits unpushed across three repos.</strong></li>
-<li>Meta HEAD commit subject: <em>“chore(setup): W2e-2 fix
-:8081-&gt;:8080 banner drift; retire legacy scripts/setup.sh as
-delegating shim”</em>.</li>
+<li><strong>35 commits unpushed across three repos</strong> at the
+moment of measurement; <strong>36</strong> once the rev 27 commit below
+is counted.</li>
+<li>These anchors were measured <strong>immediately before the rev 27
+commit itself</strong>. Rev 27 adds one commit to meta
+<code>main</code>, so on a fresh read expect meta HEAD to be the rev 27
+commit and the meta ahead-count to be <strong>24</strong>, not 23. The
+submodule anchors are unaffected. Re-derive rather than trust either
+number.</li>
+<li>Meta HEAD commit subject: <em>“test(regression): classify EADDRINUSE
+so a saturated host SKIPs, not FAILs”</em>.</li>
+<li><strong>Push order: <code>helix_agent</code> and
+<code>helix_llm</code> FIRST, meta LAST.</strong> Meta
+<code>e47c8a30</code> bumps both gitlinks to <code>ca24b2fd</code> /
+<code>b25641f</code>; pushing meta first publishes gitlinks no remote
+can resolve. Verify each submodule with
+<code>git ls-remote &lt;remote&gt; main</code> before pushing meta.</li>
 <li>Four configured remotes — <code>origin</code>, <code>github</code>,
-<code>gitlab</code>, <code>upstream</code> — all report the same 7-ahead
-because they resolve to <strong>two</strong> physical hosts:
+<code>gitlab</code>, <code>upstream</code> — all report the same
+23-ahead because they resolve to <strong>two</strong> physical hosts:
 <code>git@github.com:HelixDevelopment/code.git</code> and
 <code>git@gitlab.com:helixdevelopment1/HelixCode.git</code>.</li>
 <li><code>git rev-list --count HEAD..@{u}</code> = <strong>0</strong> —
 nothing to pull on meta <code>main</code>.</li>
-<li>Untracked <code>docs/qa/phase1_fullhttp_e2e_*</code> evidence
-directories — no count is quoted here: four concurrent streams are
-actively writing this tree, so any number committed to this doc would be
-false on arrival (§11.4.6). Re-derive live:
-<code>git status --porcelain | grep -c &#39;^?? docs/qa/phase1_fullhttp_e2e_&#39;</code>
-for untracked,
+<li>The <code>docs/qa/phase1_fullhttp_e2e_*</code> evidence directories
+are now <strong>tracked</strong> — they were committed in
+<code>27a5622c</code> per the operator decision. No count is quoted
+here; re-derive live:
 <code>git ls-files docs/qa/ | grep -o &#39;phase1_fullhttp_e2e_[^/]*&#39; | sort -u | wc -l</code>
-for tracked, <code>ls -d docs/qa/phase1_fullhttp_e2e_*/ | wc -l</code>
-for total on disk. The operator brief and rev 24 both said 33 — already
+for tracked,
+<code>git status --porcelain | grep -c &#39;^?? docs/qa/&#39;</code> for any
+that arrived since. The operator brief and rev 24 both said 33 — already
 superseded by measurement once; treat every prior count, including any
 number that was ever written in this section, as stale on sight.</li>
-<li><strong>In flight right now:</strong> three independent code
-reviewers; four parallel work streams. They own
-<code>helix_code/internal/**</code>, <code>scripts/</code>,
-<code>submodules/</code> and
-<code>helix_code/docs/qa/2026-09-05-gap-ledger.md</code>. <strong>Do not
-write those paths</strong> until you have confirmed the streams have
-finished.</li>
+<li><strong>In flight right now:</strong> the batch’s own streams and
+reviewers have finished — that is why the batch is committed. <strong>At
+least one OTHER stream is still live</strong> and owns
+<code>docs/guides/cli_agent_integration/**</code>,
+<code>scripts/systemd/helixllm-coder-native.service</code>, the
+<code>submodules/helix_agent</code> and
+<code>submodules/helix_llm</code> worktrees, and three newer
+<code>docs/qa/</code> directories
+(<code>2026-09-07-helix-models-toolkit</code>,
+<code>agent_config_fanout_fixes_*</code>,
+<code>cli_agent_model_usability_*</code>). All were dirty at
+2026-09-07T10:02:04Z. <strong>Do not write, stage or push-prep those
+paths</strong> until you have confirmed that stream has finished
+(§11.4.84 / §11.4.119).</li>
 </ul>
 <h2 id="resume-prompt-short-form">0 · Resume prompt — SHORT form</h2>
-<p>Read <code>RESUME.md</code> (this file, the rev 25 block at the top)
-and <code>docs/CONTINUATION.md</code> (rev 25, section
+<p>Read <code>RESUME.md</code> (this file, the rev 27 block at the top)
+and <code>docs/CONTINUATION.md</code> (rev 27, section
 <code>## 2026-09-06 — cloud-gate + CLI-agent-fanout batch</code>), run
-<code>git fetch --all --prune --tags</code>, then close review round 8
-of the cloud-gate + CLI-agent-fanout batch to a zero-finding GO per
-§11.4.134 — the batch is UNFINISHED, nothing is committed, nothing is
-pushed, meta <code>main</code> is 7 ahead at <code>2372d7bf</code> with
-<code>helix_llm</code> 3 ahead at <code>b25641f</code> and
-<code>helix_agent</code> 8 ahead at <code>b9d570fe</code> (18 unpushed),
-twelve gap-ledger entries <code>HXC-002-F3-01</code>..<code>-12</code>
-are still open, three reviewers and four streams may still own
-<code>helix_code/internal/**</code>, <code>scripts/</code> and
-<code>submodules/</code>, the untracked
-<code>docs/qa/phase1_fullhttp_e2e_*</code> directories (count not quoted
-here — it moves while parallel streams write, re-derive with
-<code>git status --porcelain | grep -c &#39;^?? docs/qa/phase1_fullhttp_e2e_&#39;</code>)
-are to be committed per operator decision, submodule pushes wait for
-<code>helix_agent</code> to clear review, and this host is at ~3.5x CPU
-oversubscription from a foreign workload so every timing-sensitive
+<code>git fetch --all --prune --tags</code>, then push the committed
+batch — the batch IS COMMITTED and NOT PUSHED, meta <code>main</code> is
+23 ahead at <code>f3f0540b</code> with <code>helix_agent</code> 9 ahead
+at <code>ca24b2fd</code> and <code>helix_llm</code> 3 ahead at
+<code>b25641f</code> (35 unpushed), and <strong>the push order is a hard
+constraint: both submodules FIRST (verify each with
+<code>git ls-remote</code>), meta LAST</strong>, because meta
+<code>e47c8a30</code> bumps those gitlinks and publishing them before
+the submodule commits exist breaks every fresh clone; all pushes are
+fast-forward only and force-push is forbidden without exception
+(§11.4.113). Twelve gap-ledger entries
+<code>HXC-002-F3-01</code>..<code>-12</code> are still open. At least
+one other stream is still writing this checkout —
+<code>docs/guides/cli_agent_integration/**</code>,
+<code>scripts/systemd/</code> and the <code>submodules/</code> worktrees
+are dirty and are NOT yours; do not stage them. This host is at ~3.5x
+CPU oversubscription from a foreign workload so every timing-sensitive
 result is suspect.</p>
 <h2 id="b-resume-prompt-full-form">0b · Resume prompt — FULL form</h2>
-<pre><code>Read RESUME.md (the rev 25 block at the top of this file), then
-docs/CONTINUATION.md rev 25 (metadata table + the section
+<pre><code>Read RESUME.md (the rev 27 block at the top of this file), then
+docs/CONTINUATION.md rev 27 (metadata table + the section
 &quot;## 2026-09-06 — cloud-gate + CLI-agent-fanout batch&quot;). Then run these and
 READ THE OUTPUT before acting — §11.4.6, do not trust any number below
-without re-deriving it, all of them are from 2026-09-06T20:25:28Z:
+without re-deriving it, all of them are from 2026-09-07T10:02:04Z:
 
   git fetch --all --prune --tags
   git rev-list --count HEAD..@{u}                          # expect 0 (nothing to pull)
-  git rev-list --count @{u}..HEAD                          # expect 7, HEAD 2372d7bf
+  git rev-list --count @{u}..HEAD                          # expect 23, HEAD f3f0540b
+  git -C submodules/helix_agent rev-list --count @{u}..HEAD  # expect 9, HEAD ca24b2fd
   git -C submodules/helix_llm   rev-list --count @{u}..HEAD  # expect 3, HEAD b25641f
-  git -C submodules/helix_agent rev-list --count @{u}..HEAD  # expect 8, HEAD b9d570fe
-  git status --porcelain | wc -l                           # re-derive live: the
-                                                             # working tree is
-                                                             # being written by
-                                                             # concurrent
-                                                             # streams, so no
-                                                             # count survives
-                                                             # to be quoted
-                                                             # here (§11.4.6)
-  git status --porcelain | grep -c &#39;^?? docs/qa/phase1_fullhttp_e2e_&#39;  # same — re-derive, do not trust a prior number
+  git status --porcelain | wc -l                           # re-derive live: another
+                                                             # stream is still
+                                                             # writing this tree,
+                                                             # so no count
+                                                             # survives to be
+                                                             # quoted here
+                                                             # (§11.4.6)
 
-STATE: a cloud-gate + CLI-agent-fanout batch is IN FLIGHT and NOT FINISHED.
-Eight independent review rounds have run. Rounds 1-7 all returned NO-GO;
-ROUND 8 IS IN FLIGHT AND UNRESOLVED. NOTHING IS COMMITTED. NOTHING IS
-PUSHED. Per §11.4.134 the review re-runs after every remediation round and
-must reach a CLEAN GO — zero new findings, zero warnings — before the batch
-may proceed to build/test/commit.
+STATE: the cloud-gate + CLI-agent-fanout batch IS COMMITTED and IS NOT
+PUSHED. It landed as 15 commits on meta main (926eaf3e..dfb06d38) plus
+f3f0540b (a determinism guard that arrived after its group had already been
+committed). The batch reached a clean GO before commit per §11.4.134.
 
-CONCURRENCY: three independent code reviewers and four parallel work
-streams may still be operating in this same checkout. They own
-helix_code/internal/**, scripts/, submodules/, and
-helix_code/docs/qa/2026-09-05-gap-ledger.md. Confirm they have finished
-before writing any of those paths (§11.4.84 working-tree quiescence,
-§11.4.119 single-resource-owner, §11.4.176 exactly-once claim).
+THE NEXT ACTION IS THE PUSH, AND ITS ORDER IS A HARD CONSTRAINT:
 
-WHAT THE BATCH LANDED, uncommitted, in the working tree:
+  1. push submodules/helix_agent  (9 ahead, ca24b2fd) to ALL its upstreams
+  2. push submodules/helix_llm    (3 ahead, b25641f) to ALL its upstreams
+  3. verify BOTH with: git ls-remote &lt;remote&gt; main
+  4. only THEN push meta main (23 ahead, f3f0540b) to all upstreams
+
+Meta commit e47c8a30 bumps both gitlinks. Pushing meta before the submodule
+commits exist on the remotes publishes gitlinks nothing can resolve, and
+every fresh clone then fails `git submodule update` with &quot;not our ref&quot;.
+All pushes are FAST-FORWARD ONLY. Force-push is forbidden without
+exception, with no operator-approval path (§11.4.113); if a remote rejects,
+fetch and MERGE onto the latest remote tip, then push again.
+
+CONCURRENCY: at least one other stream is STILL writing this checkout. It
+owns docs/guides/cli_agent_integration/**, scripts/systemd/ and the
+submodules/ worktrees — all dirty right now, none of them yours. Do not
+stage or push-prep those paths (§11.4.84 working-tree quiescence,
+§11.4.119 single-resource-owner, §11.4.176 exactly-once claim). Note the
+submodule WORKTREES being dirty does not block the push: the gitlink
+commits to be pushed are already made.
+
+WHAT THE BATCH LANDED (now committed):
   - The llm.cloud.enabled gate is closed at EVERY constructor path.
     KoboldAI was exempt-by-identity while shipping a bearer credential;
     NewProvider was an ungated back door. A filepath.WalkDir AST scan now
@@ -418,8 +468,8 @@ ENVIRONMENT QUIRKS (this session; re-verify):
   - The Edit tool is unreliable here. Use Write plus assertion-guarded
     python3 replace scripts, and READ THE TARGET BACK afterwards to confirm
     the change actually landed before trusting it.</code></pre>
-<h2 id="what-the-batch-landed-uncommitted">What the batch landed
-(uncommitted)</h2>
+<h2 id="what-the-batch-landed-now-committed">What the batch landed (now
+committed)</h2>
 <p>Recorded in full, with per-claim MEASURED / INHERITED tagging, in
 <code>docs/CONTINUATION.md</code> rev 25 under
 <code>## 2026-09-06 — cloud-gate + CLI-agent-fanout batch</code>.

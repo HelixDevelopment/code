@@ -65,7 +65,7 @@ CLI-Agent Fusion — Programme Continuation Guide</h1>
 <tbody>
 <tr>
 <td>Revision</td>
-<td>26</td>
+<td>27</td>
 </tr>
 <tr>
 <td>Created</td>
@@ -73,13 +73,12 @@ CLI-Agent Fusion — Programme Continuation Guide</h1>
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-09-07T08:58:39Z (rev 26 — literal-scrub pass only: removed
-working-tree-volatile measured literals carried over from rev 25
-(untracked <code>docs/qa/phase1_fullhttp_e2e_*</code> counts, total
-changed-entry counts, one untracked file’s byte size) in favour of the
-commands that derive them live; no engineering work claimed; the rev 25
-batch this row describes is still UNFINISHED — review round 8 in flight,
-nothing committed, nothing pushed;
+<td>2026-09-07T10:02:04Z (rev 27 — state-correction pass only: the batch
+described by rev 25/26 is now COMMITTED (15 commits on meta
+<code>main</code>, <code>926eaf3e</code>..<code>dfb06d38</code>, plus
+<code>f3f0540b</code>) and is NOT PUSHED; rev 26 said “nothing is
+committed, nothing is pushed” and named this sync as the required next
+action. No engineering work claimed;
 §11.4.131/§12.10/§11.4.127/CONST-044)</td>
 </tr>
 <tr>
@@ -88,19 +87,44 @@ nothing committed, nothing pushed;
 </tr>
 <tr>
 <td>Status summary</td>
-<td><strong>REVISION 26 (2026-09-07T08:58:39Z)</strong> — literal-scrub
-pass only, on top of rev 25 below: removed working-tree-volatile
-measured literals (untracked <code>docs/qa/phase1_fullhttp_e2e_*</code>
-directory counts, total changed-entry counts, and one untracked file’s
-byte size) in favour of the commands that derive them live, because the
-working tree is being written by concurrent streams and any committed
-count is false on arrival (§11.4.6). No engineering work is claimed by
-rev 26; every substantive claim below (the batch state, the
-gate/redaction/determinism work, the open items, the operator decisions,
-the host caveat) is unchanged from rev 25 and restated as-is.
-<strong>REVISION 25 (2026-09-06T20:25:28Z)</strong> — session-handoff
-sync pass after a very large, still-unfinished batch. Scope of THIS
-pass: <code>docs/CONTINUATION.md</code> + <code>RESUME.md</code> +
+<td><strong>REVISION 27 (2026-09-07T10:02:04Z)</strong> —
+state-correction pass only. The cloud-gate + CLI-agent-fanout batch that
+rev 25 and rev 26 described as unfinished <strong>IS NOW COMMITTED and
+IS NOT PUSHED</strong>: 15 commits on meta <code>main</code>
+(<code>926eaf3e</code>..<code>dfb06d38</code>), plus
+<code>f3f0540b</code> for one determinism guard that arrived after its
+group had been committed. Live anchors re-derived by execution this pass
+(§11.4.6): meta <code>main</code> HEAD <code>f3f0540b</code>, <strong>23
+ahead</strong>, 0 behind; <code>submodules/helix_agent</code> HEAD
+<code>ca24b2fd</code>, <strong>9 ahead</strong>;
+<code>submodules/helix_llm</code> HEAD <code>b25641f</code>, <strong>3
+ahead</strong> — 35 unpushed across three repos. <strong>PUSH ORDER IS A
+HARD CONSTRAINT: both submodules FIRST (verify each with
+<code>git ls-remote</code>), meta LAST</strong> — meta
+<code>e47c8a30</code> bumps both gitlinks, so publishing meta first
+leaves them pointing at commits no remote has and every fresh clone
+fails <code>git submodule update</code> with <code>not our ref</code>.
+All pushes fast-forward only; force-push is forbidden without exception
+and with no operator-approval path (§11.4.113). CONCURRENCY: the batch’s
+own streams have finished, but at least one OTHER stream is still live
+and owns <code>docs/guides/cli_agent_integration/**</code>,
+<code>scripts/systemd/</code>, the <code>submodules/</code> worktrees
+and three newer <code>docs/qa/</code> directories — do not stage those.
+No engineering work is claimed by rev 27; every substantive claim below
+is unchanged from rev 26 and restated as-is. <strong>REVISION 26
+(2026-09-07T08:58:39Z)</strong> — literal-scrub pass only, on top of rev
+25 below: removed working-tree-volatile measured literals (untracked
+<code>docs/qa/phase1_fullhttp_e2e_*</code> directory counts, total
+changed-entry counts, and one untracked file’s byte size) in favour of
+the commands that derive them live, because the working tree is being
+written by concurrent streams and any committed count is false on
+arrival (§11.4.6). No engineering work is claimed by rev 26; every
+substantive claim below (the batch state, the gate/redaction/determinism
+work, the open items, the operator decisions, the host caveat) is
+unchanged from rev 25 and restated as-is. <strong>REVISION 25
+(2026-09-06T20:25:28Z)</strong> — session-handoff sync pass after a very
+large, still-unfinished batch. Scope of THIS pass:
+<code>docs/CONTINUATION.md</code> + <code>RESUME.md</code> +
 <code>.remember/</code> + their <code>.html</code>/<code>.pdf</code>
 siblings ONLY. <code>helix_code/internal/**</code>,
 <code>scripts/</code>, <code>submodules/</code> and
@@ -1115,9 +1139,10 @@ hosts: <code>git@github.com:HelixDevelopment/code.git</code> and
 <code>git@gitlab.com:helixdevelopment1/HelixCode.git</code>.</li>
 <li><code>git rev-list --count HEAD..@{u}</code> = <strong>0</strong> —
 nothing to pull on meta <code>main</code>.</li>
-<li>Untracked <code>docs/qa/phase1_fullhttp_e2e_*</code> evidence
-directories — no count is quoted here: four concurrent streams are
-actively writing this tree, so any number committed to this doc is false
+<li>The <code>docs/qa/phase1_fullhttp_e2e_*</code> evidence directories
+are now <strong>tracked</strong> (committed in <code>27a5622c</code> per
+the operator decision) — no count is quoted here, because another stream
+is still writing this tree, so any number committed to this doc is false
 on arrival (§11.4.6). Re-derive live:
 <code>git status --porcelain | grep -c &#39;^?? docs/qa/phase1_fullhttp_e2e_&#39;</code>
 for untracked,
@@ -1126,14 +1151,34 @@ for tracked, <code>ls -d docs/qa/phase1_fullhttp_e2e_*/ | wc -l</code>
 for the total on disk. Rev 24 and the operator brief both said 33 —
 already superseded by measurement once; treat every count ever written
 in this section, this one included, as stale on sight.</li>
-<li><strong>NOTHING IS COMMITTED. NOTHING IS PUSHED. No push was
-attempted.</strong></li>
+<li><strong>THE BATCH IS COMMITTED. IT IS NOT PUSHED. No push has been
+attempted.</strong> These anchors were measured immediately BEFORE the
+rev 27 commit itself, so on a fresh read expect meta HEAD to be the rev
+27 commit and the meta ahead-count to be <strong>24</strong>, not 23 (35
+unpushed becomes 36). The submodule anchors are unaffected. Re-derive
+rather than trust either number (§11.4.6). It landed as 15 commits on
+meta <code>main</code> (<code>926eaf3e</code>..<code>dfb06d38</code>),
+plus <code>f3f0540b</code> for one determinism guard that arrived after
+its group had already been committed (rev 27,
+2026-09-07T10:02:04Z).</li>
+<li><strong>PUSH ORDER IS A HARD CONSTRAINT:
+<code>submodules/helix_agent</code> (9 ahead, <code>ca24b2fd</code>) and
+<code>submodules/helix_llm</code> (3 ahead, <code>b25641f</code>) MUST
+be pushed to all their upstreams BEFORE meta <code>main</code> (23
+ahead, <code>f3f0540b</code>).</strong> Meta <code>e47c8a30</code> bumps
+both gitlinks; pushing meta first publishes gitlinks no remote can
+resolve and every fresh clone then fails
+<code>git submodule update</code> with <code>not our ref</code>. Verify
+each submodule with <code>git ls-remote &lt;remote&gt; main</code>
+before pushing meta. All pushes are fast-forward only — force-push is
+forbidden without exception and with no operator-approval path
+(§11.4.113).</li>
 </ul>
-<h3 id="what-the-batch-landed-in-the-working-tree-uncommitted">What the
-batch landed (in the working tree, uncommitted)</h3>
+<h3 id="what-the-batch-landed-now-committed">What the batch landed (now
+committed)</h3>
 <p>Eight independent review rounds over a cloud-gate + CLI-agent-fanout
-batch. Rounds 1-7 each returned <strong>NO-GO</strong>; <strong>round 8
-is in flight and unresolved</strong> at the time of writing. Per
+batch. Rounds 1-7 each returned <strong>NO-GO</strong>; round 8 closed
+to a clean GO per §11.4.134, and the batch was then committed. Per
 §11.4.134 the review iterates to a clean GO — zero new findings, zero
 warnings — before the batch may proceed to build/test/commit, so “8
 rounds” is a measure of how much was found, <strong>not</strong> a claim
@@ -3907,6 +3952,22 @@ decisions: the <code>docs/qa/phase1_fullhttp_e2e_*</code> evidence dirs
 pushes wait for <code>helix_agent</code> review. Host at ~3.5x CPU
 oversubscription from a FOREIGN workload — all timing results
 suspect.</td>
+</tr>
+<tr>
+<td>2026-09-07</td>
+<td>Rev 27 sync</td>
+<td>State correction: the 2026-09-06 batch <strong>IS NOW COMMITTED and
+IS NOT PUSHED</strong> — 15 commits on meta <code>main</code>
+(<code>926eaf3e</code>..<code>dfb06d38</code>) plus
+<code>f3f0540b</code>. Re-derived by execution (§11.4.6): meta
+<code>main</code> <code>f3f0540b</code> 23-ahead/0-behind,
+<code>helix_agent</code> <code>ca24b2fd</code> 9-ahead,
+<code>helix_llm</code> <code>b25641f</code> 3-ahead = 35 unpushed across
+three repos. Push order is a hard constraint: both submodules first,
+meta last (<code>e47c8a30</code> bumps the gitlinks); fast-forward only,
+no force-push (§11.4.113). Rev 26 said “nothing is committed, nothing is
+pushed” and named this sync as the required next action. No engineering
+work claimed.</td>
 </tr>
 <tr>
 <td>2026-05-06</td>
