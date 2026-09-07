@@ -566,11 +566,17 @@ var shellPlaceholder = regexp.MustCompile(`\$\{([A-Za-z_][A-Za-z0-9_]*)(?:(:-|:)
 //     would defeat it. They stay out.
 //
 //  3. UNREACHABLE — llm.providers.*.endpoint and llm.providers.*.api_key.
-//     config/config.yaml writes "${HELIX_LLM_ENDPOINT:http://localhost:8081}"
-//     there, but LLMConfig declares no `providers` field, so viper discards the
-//     whole block before expansion could ever see it (strict.go lists
-//     llm.providers as inert for exactly this reason). Expanding a field that
-//     does not exist is not possible; declaring the block is a separate change.
+//     LLMConfig declares no `providers` field, so viper discards that whole
+//     subtree before expansion could ever see it (strict.go lists llm.providers
+//     as inert for exactly this reason). Expanding a field that does not exist
+//     is not possible; declaring the block is a separate change.
+//
+//     This item previously cited config/config.yaml writing
+//     "${HELIX_LLM_ENDPOINT:...}" as the worked example. That block was removed
+//     (gap-ledger HXC-002-F3-02, guarded by dead_providers_gate_test.go), so
+//     config.yaml no longer contains it and the citation would now be false.
+//     The REASONING above is unaffected — it turns on LLMConfig's shape, not on
+//     any particular yaml file happening to carry such a key.
 //
 //  4. NEWLY EXPANDED — the notifications block. Its channel settings are the
 //     one group that both uses the form and now reaches a Config field:

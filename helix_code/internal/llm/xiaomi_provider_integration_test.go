@@ -22,6 +22,13 @@ import (
 //   go test -v -tags=integration ./internal/llm/... -run TestXiaomiIntegration -timeout 120s
 
 func TestXiaomiIntegration_ChatCompletion(t *testing.T) {
+	// Xiaomi is a hosted cloud provider now subject to the W2c-1 cloud gate
+	// (NewXiaomiProvider delegates to NewOpenAICompatibleProvider, whose
+	// endpoint-locality check rejects hosted construction when the gate is
+	// closed). This test opens the gate because it exercises Xiaomi provider
+	// behavior end-to-end against the live API, not gate policy — see
+	// openCloudGateForTest in provider_factory_test.go.
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -69,6 +76,7 @@ func TestXiaomiIntegration_ChatCompletion(t *testing.T) {
 }
 
 func TestXiaomiIntegration_ModelListing(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -100,6 +108,7 @@ func TestXiaomiIntegration_ModelListing(t *testing.T) {
 }
 
 func TestXiaomiIntegration_Streaming(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -160,6 +169,7 @@ func TestXiaomiIntegration_Streaming(t *testing.T) {
 }
 
 func TestXiaomiIntegration_ToolCalling(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{

@@ -151,27 +151,6 @@ llm:
         streaming_support: true
         api_key: "${XIAOMI_MIMO_API_KEY}"
 
-    # HelixAgent providers
-    helix-llm:
-      type: helix-llm
-      endpoint: "${HELIX_LLM_ENDPOINT:http://localhost:8081}"
-      enabled: true
-      parameters:
-        timeout: 60.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via HELIX_LLM_API_KEY
-      
-    helix-debate:
-      type: helix-debate
-      endpoint: "${HELIX_DEBATE_ENDPOINT:http://localhost:8082}"
-      enabled: true
-      parameters:
-        timeout: 120.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via HELIX_DEBATE_API_KEY
-  
   # Provider selection preferences
   selection:
     strategy: "performance"  # performance, cost, availability, round-robin

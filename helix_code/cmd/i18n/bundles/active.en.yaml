@@ -1074,6 +1074,9 @@ cmd_generate_no_models:
 cmd_generate_provider_unavailable:
   other: "Provider not available: {{.Error}}"
 
+cmd_generate_provider_misconfigured:
+  other: "LLM provider configuration is invalid. Check the provider selection — HELIX_LLM_PROVIDER in your shell environment, llm.default_provider and llm.cloud.enabled in your config.yaml — and the endpoint each local route points at: HELIX_LLM_LOCAL_OPENAI_ENDPOINT, HELIX_LLM_GATEWAY_ENDPOINT, HELIX_LLAMA_CPP_HOST. The Details line below names the one at fault. Details: {{.Error}}"
+
 cmd_generate_failed:
   other: "Generation failed: {{.Error}}"
 

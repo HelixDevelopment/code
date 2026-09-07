@@ -8,9 +8,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"dev.helix.code/internal/config"
 	"dev.helix.code/internal/llm"
 	"dev.helix.code/internal/rag"
 	"github.com/gin-gonic/gin"
@@ -24,6 +26,50 @@ import (
 // fallback turned a provider typo into a misleading Ollama 404 (server
 // defect #4). The named provider is wrapped so the error body can echo it.
 var errUnknownProvider = errors.New("unknown provider")
+
+// llmProviderEnv is the environment variable that names the provider when the
+// request body does not. Declared as a named constant (rather than repeated as
+// a literal in envLLMProvider) so an error message can cite the exact key an
+// operator has to correct — see unknownProviderError.
+const llmProviderEnv = "HELIX_LLM_PROVIDER"
+
+// configDefaultProviderKey is the config-file key that supplies the
+// lowest-precedence provider name (internal/config: llm.default_provider,
+// read here through configDefaultProviderFunc). Cited verbatim in the
+// misconfiguration error so an operator can find the line to fix.
+const configDefaultProviderKey = "llm.default_provider"
+
+// cloudEnabledConfigKey is the config-file key that governs the W2c-1 cloud
+// gate (internal/llm: llm.cloud.enabled, default FALSE -- see
+// llm.ErrCloudDisabled). Cited verbatim in the gate-refusal error so whoever
+// reads the response -- a caller told 403, or an operator told 500 -- is
+// pointed at the exact key that decides it, rather than at a bare status.
+const cloudEnabledConfigKey = "llm.cloud.enabled"
+
+// errServerProviderMisconfigured is returned by resolveLLMProvider when an
+// unresolvable provider name reached it from a SERVER-SIDE source — the config
+// file's llm.default_provider, or the server process's HELIX_LLM_PROVIDER —
+// rather than from the caller's own request.
+//
+// The distinction is the entire point. errUnknownProvider means the CALLER
+// typed a bad name, and 400 is an honest answer they can act on. But when the
+// caller named no provider at all, a 400 blames them for a fault they cannot
+// see, cannot fix, and did not cause — and every request to that deployment
+// fails identically until an operator edits the server's own configuration.
+// That is a server fault, so it answers 5xx and the message names the
+// offending key. (Historically HELIX_LLM_PROVIDER=<typo> already behaved this
+// way; threading llm.default_provider into resolution — HXC-002-F3-01 — widened
+// the same mis-attribution to the config file, which is what makes it worth
+// fixing at the source rather than per-source.)
+//
+// 500 rather than 503, deliberately: 503 advertises a TEMPORARY condition and
+// is the status that carries Retry-After, so a well-behaved client would
+// retry-loop forever against a deterministic configuration typo that no amount
+// of waiting clears. 500 is the honest "the server is broken, retrying will not
+// help" signal. The sibling 503 in providerResolveStatus stays 503 because
+// construction / credential / endpoint failures genuinely can clear on their
+// own (a backend coming back up, a key rotated into the environment).
+var errServerProviderMisconfigured = errors.New("server LLM provider misconfigured")
 
 // llm_generate.go — real LLM generation surface over HTTP.
 //
@@ -99,6 +145,47 @@ func (r *llmGenerateRequest) buildLLMRequest(stream bool) (*llm.LLMRequest, stri
 // never reassigns it, so the default real path is always what ships.
 var llmProviderResolver = resolveLLMProvider
 
+// configDefaultProviderFunc supplies the config file's llm.default_provider
+// as the LOWEST-precedence provider-selection source (flag > env > config,
+// the precedence llm.Select already honours at provider_factory.go). This is
+// the HXC-002-F3-01 fix: historically resolveLLMProvider hardcoded
+// SelectorInput.Config = "", so a provider-less request ignored the
+// config-declared default entirely and silently fell through to Ollama on
+// :11434 instead of the "local" coder route on :18434. Package-level var so
+// unit tests can pin the value without a config file; production reads the
+// cached process config (config.Get()).
+var configDefaultProviderFunc = func() string {
+	cfg, err := config.Get()
+	if err != nil || cfg == nil {
+		return ""
+	}
+	return strings.TrimSpace(cfg.LLM.DefaultProvider)
+}
+
+// ResolveLLMProvider is the exported form of resolveLLMProvider for
+// out-of-package callers that must share the server's EXACT provider
+// resolution semantics — currently cmd's `helix generate` (HXC-002-F3-04),
+// so the CLI and the HTTP API cannot drift apart on which local route a
+// default request takes.
+func ResolveLLMProvider(providerName, model string) (llm.Provider, error) {
+	return resolveLLMProvider(providerName, model)
+}
+
+// IsProviderMisconfiguration reports whether err is a ResolveLLMProvider
+// failure caused by the RESOLVING PROCESS'S OWN configuration — an
+// unresolvable llm.default_provider / HELIX_LLM_PROVIDER, or a hosted default
+// named while the cloud gate is shut — as opposed to anything the caller
+// supplied.
+//
+// Exported for out-of-package callers that must render the SAME condition in a
+// different context. `helix generate` (cmd/other_commands.go) shares this
+// resolution path but has no server and no HTTP status: it needs to tell the
+// user their own config/environment is wrong, which is the same predicate the
+// HTTP handlers turn into a 5xx.
+func IsProviderMisconfiguration(err error) bool {
+	return errors.Is(err, errServerProviderMisconfigured)
+}
+
 // ragAdapterResolver constructs the RAG (Retrieval-Augmented Generation)
 // adapter for a request. It defaults to rag.NewFromEnv(os.Getenv) — a
 // fresh Adapter per request, default-OFF unless HELIXCODE_RAG_ENABLED is
@@ -167,9 +254,14 @@ func applyRAGContext(ctx context.Context, adapter *rag.Adapter, llmReq *llm.LLMR
 // It reuses the exact construction path cmd/cli/main.go uses:
 //   - When `providerName` (or HELIX_LLM_PROVIDER) names a known provider,
 //     llm.Select resolves the ProviderType and llm.NewCloudProvider builds it.
-//   - Otherwise a local Ollama provider on the standard port is returned,
-//     mirroring NewCLI()'s default so an out-of-the-box server with Ollama
-//     running can generate with zero configuration.
+//   - When neither flag nor env names a provider, the config file's
+//     llm.default_provider is consulted (HXC-002-F3-01) — a "local"/
+//     "helixllm" default resolves to the llama.cpp coder route below, and
+//     any other configured name flows through llm.Select's Config slot.
+//   - Only when ALL of flag/env/config are empty does the request fall back
+//     to a local Ollama provider on the standard port, mirroring NewCLI()'s
+//     default so an out-of-the-box server with Ollama running can generate
+//     with zero configuration.
 //
 // The provider is the caller's responsibility to Close().
 func resolveLLMProvider(providerName, model string) (llm.Provider, error) {
@@ -184,11 +276,33 @@ func resolveLLMProvider(providerName, model string) (llm.Provider, error) {
 		sel.Env = strings.TrimSpace(envLLMProvider())
 	}
 
-	// The name the caller actually supplied (request body field or env), used
-	// for honest error reporting on the unknown-provider path.
+	// The name that will actually be resolved, PLUS where it came from. The
+	// source is load-bearing rather than bookkeeping: it decides whether an
+	// unresolvable name is the caller's fault (400) or the deployment's own
+	// (5xx). See unknownProviderError.
 	requested := strings.TrimSpace(sel.Flag)
+	source := providerSourceRequest
 	if requested == "" {
 		requested = strings.TrimSpace(sel.Env)
+		source = providerSourceEnv
+	}
+
+	// HXC-002-F3-01: the config file's llm.default_provider is the
+	// lowest-precedence source. Thread it into SelectorInput.Config so
+	// llm.Select's flag > env > config precedence actually sees it, and let
+	// the local-route checks below match it — config `default_provider:
+	// "local"` MUST resolve to the helixllm coder route, not silently fall
+	// through to the Ollama default.
+	if requested == "" {
+		sel.Config = strings.TrimSpace(configDefaultProviderFunc())
+		requested = sel.Config
+		source = providerSourceConfig
+	}
+	if requested == "" {
+		// Nothing named anywhere: the zero-config Ollama fallback at the end of
+		// this function. Recorded explicitly so the source can never read as
+		// "the request asked for the empty string".
+		source = providerSourceNone
 	}
 
 	// Local HelixLLM coder route (the in-repo llama.cpp OpenAI-compatible
@@ -199,6 +313,25 @@ func resolveLLMProvider(providerName, model string) (llm.Provider, error) {
 	// backends plus Ollama/llamacpp — recognise "helixllm"/"local"; without
 	// this early check the request would be rejected as errUnknownProvider
 	// even though the coder is genuinely reachable.
+	// Local HelixLLM GATEWAY route (HXC-002-F3-03). Deliberately checked
+	// BEFORE the "helixllm"/"local" coder check immediately below.
+	//
+	// ORDERING, measured rather than assumed: the coder check uses
+	// strings.EqualFold, which is WHOLE-STRING equality — EqualFold(
+	// "helixllm-gateway", "helixllm") is false — so as the code stands today
+	// the gateway name is NOT shadowed regardless of order. The order is
+	// still fixed here because that guarantee is one refactor deep: rewriting
+	// the check as a prefix / HasPrefix / strings.Contains match (a natural
+	// "accept helixllm variants" change) would immediately swallow
+	// "helixllm-gateway" and route it to the coder — the caller would get the
+	// backend that CANNOT emit structured tool calls while believing it had
+	// asked for the one that can, with no error anywhere. Matching the more
+	// specific name first makes that class of regression impossible.
+	switch strings.ToLower(requested) {
+	case "gateway", "helixllm-gateway":
+		return resolveHelixLLMGatewayProvider(model)
+	}
+
 	if strings.EqualFold(requested, "helixllm") || strings.EqualFold(requested, "local") {
 		return resolveHelixLLMLocalProvider(model)
 	}
@@ -226,6 +359,15 @@ func resolveLLMProvider(providerName, model string) (llm.Provider, error) {
 		}
 		provider, cErr := llm.NewCloudProvider(ptype, entry)
 		if cErr != nil {
+			// The W2c-1 cloud gate (llm.cloud.enabled, default false) refuses
+			// hosted construction outright. That refusal is DETERMINISTIC —
+			// no retry clears it — so it must not travel the generic
+			// construction path below, whose 503 invites exactly that retry.
+			// Classified here because this is the one place the provenance
+			// (`source`) is still in scope; see cloudDisabledError.
+			if errors.Is(cErr, llm.ErrCloudDisabled) {
+				return nil, cloudDisabledError(string(ptype), source, cErr)
+			}
 			return nil, fmt.Errorf("failed to construct provider %q: %w", ptype, cErr)
 		}
 		if provider != nil {
@@ -240,12 +382,13 @@ func resolveLLMProvider(providerName, model string) (llm.Provider, error) {
 		// below (out-of-the-box behaviour for a zero-config server with Ollama).
 
 	default:
-		// A provider WAS explicitly named but llm.Select could not resolve it
+		// A provider WAS named somewhere but llm.Select could not resolve it
 		// (unknown/unsupported provider string). Do NOT silently fall back to
-		// Ollama — that masks the user's typo as an unrelated Ollama 404
-		// (server defect #4). Surface a clear unknown-provider error so the
-		// handler can answer 400.
-		return nil, fmt.Errorf("%w: %q", errUnknownProvider, requested)
+		// Ollama — that masks the typo as an unrelated Ollama 404 (server
+		// defect #4). Which error is honest depends on WHO named it: the
+		// caller gets a 400 they can fix, a server-side source gets a 5xx that
+		// names the key an operator must fix.
+		return nil, unknownProviderError(requested, source)
 	}
 
 	// Default: local Ollama on the standard port (mirrors NewCLI()).
@@ -494,20 +637,249 @@ func sseEscape(s string) string {
 }
 
 // providerResolveStatus maps a resolveLLMProvider error to the right HTTP
-// status. An explicitly-named-but-unknown provider is a client error (400 —
-// the caller typed an invalid provider name); any other resolution failure
-// (construction/credentials/endpoint) is a 503 the operator can act on.
+// status. The mapping turns on WHO is at fault, not merely on what failed:
+//
+//   - A provider name the CALLER supplied (the request body's `provider`
+//     field) that llm.Select cannot resolve is a client error: 400. The
+//     caller typed an invalid provider name and fixes it by typing a valid
+//     one.
+//   - The SAME unresolvable name arriving from a SERVER-SIDE source (the
+//     config file's llm.default_provider, or the server process's
+//     HELIX_LLM_PROVIDER) is not the caller's fault — they named no provider
+//     at all — so it is 500, with a message naming the offending key. See
+//     errServerProviderMisconfigured for why 500 and not 503.
+//   - A refusal by the W2c-1 cloud gate (llm.ErrCloudDisabled — the caller
+//     named a hosted provider while llm.cloud.enabled is false) is 403
+//     Forbidden. The request is well-formed and the name is valid, so 400
+//     ("you sent something malformed") would misdescribe it; the server
+//     understood it and refuses on policy, which is precisely 403. The
+//     server-sourced half of that same refusal is carried by the
+//     misconfiguration sentinel above and answers 500 — see cloudDisabledError.
+//   - Any other resolution failure (construction / credentials / endpoint) is
+//     a 503 the operator can act on and which may genuinely clear by itself.
+//
+// Why the gate is NOT left on the 503 fall-through (the defect this branch
+// fixes): 503 advertises a TEMPORARY condition and is the status that carries
+// Retry-After, so a well-behaved client retry-loops forever against a closed
+// gate — a deterministic configuration state no amount of waiting clears. That
+// is the same reasoning errServerProviderMisconfigured records for choosing
+// 500 over 503, applied to the other deterministic refusal on this path.
+//
+// llm.ErrCloudDisabled has a SECOND producer, and it does NOT reach the 403
+// above. NewOpenAICompatibleProvider refuses on ENDPOINT LOCALITY, so the local
+// routes (helixllm / gateway / llamacpp) also raise it when their endpoint env
+// var has been pointed at a REMOTE host while the gate is shut. An earlier
+// revision left those on the 403, reasoning that "a 5xx would need provenance
+// those constructors do not carry". That reasoning was measured and found
+// FALSE: the resolvers read those endpoints from the SERVER PROCESS's own
+// environment (envHelixLLMLocalEndpoint and its siblings in this file are
+// os.Getenv calls), so the provenance is not merely available — it is
+// server-side by construction. The caller named a LOCAL route and supplied no
+// endpoint; the remoteness is entirely the deployment's own. Those refusals
+// therefore wrap errServerProviderMisconfigured IN ADDITION to the cause and
+// land on the 500 below, exactly as a hosted default with the gate shut does.
+// See localRouteRemoteEndpointError.
+//
+// Order matters twice over: the misconfiguration sentinel is checked FIRST, so
+// a future change that wraps both sentinels cannot silently re-demote a server
+// fault back to a 400 or a 403 — a server-sourced gate refusal deliberately
+// wraps BOTH errServerProviderMisconfigured and llm.ErrCloudDisabled, and the
+// 500 must win. The gate check then precedes errUnknownProvider because a name
+// the gate rejected is a KNOWN name, never an unresolvable one.
 func providerResolveStatus(err error) int {
+	if errors.Is(err, errServerProviderMisconfigured) {
+		return http.StatusInternalServerError
+	}
+	if errors.Is(err, llm.ErrCloudDisabled) {
+		return http.StatusForbidden
+	}
 	if errors.Is(err, errUnknownProvider) {
 		return http.StatusBadRequest
 	}
 	return http.StatusServiceUnavailable
 }
 
+// providerSource records WHERE the provider name resolveLLMProvider is about to
+// resolve came from. Only providerSourceRequest is the caller's own input; the
+// other two name the deployment's own configuration, and an unresolvable name
+// from those is a server fault rather than a client error.
+type providerSource int
+
+const (
+	// providerSourceNone: no provider named anywhere — the zero-config Ollama
+	// fallback path, which never reaches unknownProviderError.
+	providerSourceNone providerSource = iota
+	// providerSourceRequest: the request body's `provider` field (or the
+	// providerName argument of the exported ResolveLLMProvider, which the CLI
+	// fills from its --provider flag).
+	providerSourceRequest
+	// providerSourceEnv: the SERVER PROCESS's HELIX_LLM_PROVIDER — server-side
+	// state the HTTP caller cannot see or influence.
+	providerSourceEnv
+	// providerSourceConfig: the config file's llm.default_provider.
+	providerSourceConfig
+)
+
+// unknownProviderError builds the error for a provider name llm.Select could
+// not resolve, choosing the sentinel by SOURCE so the status the handler
+// returns is honest about who has to fix it.
+//
+// The message wording is deliberately CONTEXT-NEUTRAL ("config key",
+// "environment variable" — not "the server's"). This resolution path is shared
+// verbatim with the CLI: cmd's `helix generate` calls the exported
+// ResolveLLMProvider, where there is no server and HELIX_LLM_PROVIDER is the
+// USER'S OWN shell environment, so "the server's environment variable ... a
+// server-side configuration fault" was simply untrue at that call site. Nothing
+// load-bearing is lost server-side: the message still names the offending key,
+// echoes the unresolvable value, states it is a configuration fault rather than
+// a client error, and says what to correct. The CLI additionally re-frames it
+// as the user's own configuration — see cmd/other_commands.go.
+//
+// Names that land here from a server-side source are not only typos: the F12
+// direct-cloud path deliberately rejects "vllm", "localai" and "lmstudio"
+// (internal/llm/provider_factory.go parseCloudProviderType), so a config that
+// declares one of those as llm.default_provider is a perfectly plausible
+// deployment that used to answer every provider-less request with "400 invalid
+// request".
+func unknownProviderError(requested string, source providerSource) error {
+	switch source {
+	case providerSourceConfig:
+		return fmt.Errorf(
+			"%w: config key %s names provider %q, which cannot be resolved. The "+
+				"request did not name a provider, so this is a configuration "+
+				"fault rather than a client error — correct %s in the active "+
+				"configuration (or set %s)",
+			errServerProviderMisconfigured, configDefaultProviderKey, requested,
+			configDefaultProviderKey, llmProviderEnv)
+	case providerSourceEnv:
+		return fmt.Errorf(
+			"%w: environment variable %s names provider %q, which cannot be "+
+				"resolved. The request did not name a provider, so this is a "+
+				"configuration fault rather than a client error — correct %s in "+
+				"the environment of the process resolving it",
+			errServerProviderMisconfigured, llmProviderEnv, requested, llmProviderEnv)
+	default:
+		// The caller named it: their typo, their 400 — and never a silent
+		// Ollama fallback (server defect #4).
+		return fmt.Errorf("%w: %q", errUnknownProvider, requested)
+	}
+}
+
+// cloudDisabledError builds the error for a hosted provider refused by the
+// W2c-1 cloud gate, choosing the sentinel by SOURCE exactly as
+// unknownProviderError does — the same providerSource enum, not a second one.
+//
+// The split is the same question in both cases: WHO named the provider the
+// deployment will not serve?
+//
+//   - The CALLER named it (request body `provider` / the CLI's --provider).
+//     Their input is well-formed and the provider name is valid; the
+//     deployment simply refuses to serve hosted providers. That is a policy
+//     refusal of an understood request — 403 — reached by leaving the error
+//     carrying ONLY llm.ErrCloudDisabled (via %w on the cause).
+//   - A SERVER-SIDE source named it (llm.default_provider, or the process's
+//     HELIX_LLM_PROVIDER). The caller named no provider at all, so they can
+//     neither see nor fix this, and EVERY provider-less request to that
+//     deployment fails identically until an operator reconciles two of its own
+//     settings: a hosted default with the cloud gate shut. That is a
+//     self-contradictory configuration, so it wraps
+//     errServerProviderMisconfigured (→ 500) IN ADDITION to the cause, and
+//     providerResolveStatus's check order makes the 500 win.
+//
+// providerSourceNone cannot reach here (nothing named ⇒ the Ollama fallback,
+// which is a local type and gate-exempt); it is folded into the server-side
+// branch defensively rather than defaulting to the caller-facing 403, because
+// an absent name is by definition not the caller's input.
+func cloudDisabledError(requested string, source providerSource, cause error) error {
+	if source == providerSourceRequest {
+		return fmt.Errorf(
+			"%w: the request named the hosted provider %q, but this deployment "+
+				"serves local providers only (%s is false). Retrying will not "+
+				"change this — name a local route (local/helixllm, llamacpp, "+
+				"ollama) or ask an operator to set %s: true",
+			cause, requested, cloudEnabledConfigKey, cloudEnabledConfigKey)
+	}
+	sourceKey := configDefaultProviderKey
+	if source == providerSourceEnv {
+		sourceKey = llmProviderEnv
+	}
+	return fmt.Errorf(
+		"%w: %w: the request named no provider, so the hosted provider %q came "+
+			"from %s while %s is false — two settings of this deployment that "+
+			"contradict each other. Correct %s to a local route "+
+			"(local/helixllm, llamacpp, ollama) or set %s: true",
+		errServerProviderMisconfigured, cause, requested, sourceKey,
+		cloudEnabledConfigKey, sourceKey, cloudEnabledConfigKey)
+}
+
+// localRouteRemoteEndpointError builds the error for a LOCAL route whose
+// ENDPOINT variable has been pointed at a remote host while the W2c-1 cloud
+// gate is shut. It is the third member of the family cloudDisabledError and
+// unknownProviderError belong to, and it answers the same question they do:
+// WHO has to fix this?
+//
+// The caller named a LOCAL route — "local"/"helixllm", "gateway", "llamacpp" —
+// and supplied no endpoint at all; neither wire shape on this surface has an
+// endpoint field. The remoteness is introduced ENTIRELY by a server-side
+// variable (HELIX_LLM_LOCAL_OPENAI_ENDPOINT / HELIX_LLM_GATEWAY_ENDPOINT /
+// HELIX_LLAMA_CPP_HOST). So this is the same shape as a hosted default with the
+// gate shut: two of the deployment's own settings contradicting each other,
+// with the caller unable to see or influence either.
+//
+// Leaving it on the bare llm.ErrCloudDisabled answered 403 Forbidden, which an
+// OpenAI SDK surfaces to the user as PermissionDeniedError — "you are not
+// permitted" — for a fault only an operator can fix, and which no amount of
+// re-authenticating or retrying will clear. Wrapping errServerProviderMisconfigured
+// IN ADDITION to the cause moves it to 500 through providerResolveStatus's
+// existing check order (the misconfiguration sentinel is tested FIRST), with no
+// change to that function.
+//
+// The doc-comment on providerResolveStatus previously justified the 403 here on
+// the grounds that "a 5xx would need provenance those constructors do not
+// carry". That was measured to be false: these resolvers read the endpoint from
+// the SERVER PROCESS's own environment (envHelixLLMLocalEndpoint and siblings
+// are os.Getenv calls in this file), so the provenance is not merely available
+// — it is server-side by construction, and every value the message quotes comes
+// from this process rather than from the request.
+//
+// sourceKey names the variable that ACTUALLY supplied the value, which is not
+// always the route's primary key: llamacpp falls through to the project-wide
+// HELIX_LLM_LOCAL_OPENAI_ENDPOINT when its own key is unset, and naming the
+// wrong one would send an operator to edit a variable that is not set. An empty
+// sourceKey means the value came from the compiled-in default — reported
+// honestly rather than blamed on a variable nobody set (§11.4.6). That case is
+// unreachable today because every default is a loopback address; it is handled
+// rather than assumed away.
+// CONST-042 / Article XII §12.1: the endpoint is quoted through
+// llm.RedactEndpointForMessage, NEVER verbatim. This error is wrapped as a 500
+// and its text reaches the HTTP response body, so an operator who points a
+// local route at "https://user:pw@host/v1" would otherwise hand that password
+// to whoever can reach the endpoint. Redaction preserves scheme, host and port
+// so the message keeps naming WHICH endpoint is misconfigured; an unparseable
+// value is replaced wholesale rather than echoed. The wrapped `cause` — the
+// constructor's own gate refusal — is redacted at its own site for the same
+// reason, so neither half of this message can carry the credential.
+func localRouteRemoteEndpointError(route, sourceKey, overrideKey, endpoint string, cause error) error {
+	origin := fmt.Sprintf("environment variable %s", sourceKey)
+	if strings.TrimSpace(sourceKey) == "" {
+		origin = "this build's compiled-in default"
+	}
+	return fmt.Errorf(
+		"%w: %w: the request named the LOCAL route %q and supplied no endpoint, "+
+			"but %s points that route at %q, which is not a local endpoint, while "+
+			"%s is false. Those are two settings of this deployment contradicting "+
+			"each other, not a client error — point %s at a local endpoint, or set "+
+			"%s: true",
+		errServerProviderMisconfigured, cause, route, origin,
+		llm.RedactEndpointForMessage(endpoint),
+		cloudEnabledConfigKey, overrideKey, cloudEnabledConfigKey)
+}
+
 // envLLMProvider reads HELIX_LLM_PROVIDER. Factored out so the resolution path
-// has a single, testable env touch point.
+// has a single, testable env touch point, and reads the same llmProviderEnv
+// constant the error messages cite so the two cannot drift apart.
 func envLLMProvider() string {
-	return os.Getenv("HELIX_LLM_PROVIDER")
+	return os.Getenv(llmProviderEnv)
 }
 
 // helixLLMLocalOpenAIEndpointEnv is the SAME env var the sibling
@@ -532,10 +904,19 @@ const helixLLMLocalDefaultEndpoint = "http://localhost:18434"
 // envHelixLLMLocalEndpoint reads HELIX_LLM_LOCAL_OPENAI_ENDPOINT, falling
 // back to helixLLMLocalDefaultEndpoint when unset or blank.
 func envHelixLLMLocalEndpoint() string {
+	endpoint, _ := envHelixLLMLocalEndpointWithSource()
+	return endpoint
+}
+
+// envHelixLLMLocalEndpointWithSource is envHelixLLMLocalEndpoint plus the NAME
+// of the variable the value came from (empty when it fell back to the
+// compiled-in default). The two share one body so the endpoint reported in an
+// error can never drift from the endpoint actually dialled.
+func envHelixLLMLocalEndpointWithSource() (string, string) {
 	if v := strings.TrimSpace(os.Getenv(helixLLMLocalOpenAIEndpointEnv)); v != "" {
-		return v
+		return v, helixLLMLocalOpenAIEndpointEnv
 	}
-	return helixLLMLocalDefaultEndpoint
+	return helixLLMLocalDefaultEndpoint, ""
 }
 
 // resolveHelixLLMLocalProvider constructs the local HelixLLM coder route: a
@@ -551,14 +932,22 @@ func envHelixLLMLocalEndpoint() string {
 // loopback/LAN service with no auth, so nothing is read or leaked
 // (CONST-042/§12.1).
 func resolveHelixLLMLocalProvider(model string) (llm.Provider, error) {
+	endpoint, sourceKey := envHelixLLMLocalEndpointWithSource()
 	cfg := llm.OpenAICompatibleConfig{
-		BaseURL:          envHelixLLMLocalEndpoint(),
+		BaseURL:          endpoint,
 		DefaultModel:     strings.TrimSpace(model),
 		Timeout:          120 * time.Second,
 		StreamingSupport: true,
 	}
 	provider, err := llm.NewOpenAICompatibleProvider("helixllm", cfg)
 	if err != nil {
+		// A cloud-gate refusal on a LOCAL route is a server-side
+		// contradiction, never the caller's fault — see
+		// localRouteRemoteEndpointError.
+		if errors.Is(err, llm.ErrCloudDisabled) {
+			return nil, localRouteRemoteEndpointError(
+				"local/helixllm", sourceKey, helixLLMLocalOpenAIEndpointEnv, endpoint, err)
+		}
 		return nil, fmt.Errorf("failed to construct helixllm local provider: %w", err)
 	}
 	if provider == nil {
@@ -567,9 +956,299 @@ func resolveHelixLLMLocalProvider(model string) (llm.Provider, error) {
 	return provider, nil
 }
 
+// helixLLMGatewayEndpointEnv points at the HelixLLM GATEWAY's
+// OpenAI-compatible base URL. It is a NEW key rather than a reuse of
+// helixLLMLocalOpenAIEndpointEnv because the two name genuinely different
+// services that a deployment may run SIMULTANEOUSLY (they do here: the coder
+// on :18434 and the gateway on :8443), so collapsing them onto one variable
+// would make the two routes mutually exclusive. The name follows the
+// established HELIX_LLM_* shape of its siblings (§11.4.74 — extend the
+// existing convention, do not invent a new one).
+//
+// Base URL only. A trailing "/v1" is TOLERATED and stripped — see
+// envHelixLLMGatewayEndpoint.
+const helixLLMGatewayEndpointEnv = "HELIX_LLM_GATEWAY_ENDPOINT"
+
+// helixLLMGatewayDefaultEndpoint is the gateway's actual OpenAI-compatible
+// base URL, verified live during this change (GET .../v1/models over TLS with
+// the in-repo CA answered 200). §11.4.28: the ONLY hardcoded host in this
+// route, and every deployment overrides it via helixLLMGatewayEndpointEnv.
+//
+// NOTE the INCLUDED "/v1", which is the opposite of the sibling coder and
+// llama.cpp routes, and is deliberate. Those two hand the OpenAI-compatible
+// provider a bare host and rely on its DEFAULT endpoint paths, which already
+// carry the "/v1" prefix ("/v1/models", "/v1/chat/completions"). This route
+// instead uses the endpoint form the gateway itself advertises — the "/v1"
+// lives in the base URL, and resolveHelixLLMGatewayProvider sets the
+// provider's ChatEndpoint / ModelEndpoint to the REMAINDER ("/chat/completions",
+// "/models") so the concatenated URL is identical either way.
+//
+// The two spellings are NOT interchangeable if only one half is changed:
+// base-with-"/v1" combined with the DEFAULT endpoints yields
+// ".../v1/v1/models". Measured against the live gateway: "/v1/models" -> 200,
+// "/v1/v1/models" -> 404. envHelixLLMGatewayEndpoint normalises any operator
+// input to the with-"/v1" form so the pairing below always holds.
+const helixLLMGatewayDefaultEndpoint = "https://127.0.0.1:8443/v1"
+
+// helixLLMGatewayCACertEnv overrides the CA certificate used to verify the
+// gateway's TLS certificate. The gateway is served with a SELF-SIGNED
+// certificate, so the host's system trust store cannot verify it and an
+// https:// dial fails with an unknown-authority error unless this CA is
+// trusted. The value is a PUBLIC trust anchor, not a credential — nothing
+// secret is read, logged, or persisted (CONST-042 / §12.1).
+const helixLLMGatewayCACertEnv = "HELIX_LLM_GATEWAY_CA_CERT"
+
+// helixLLMGatewayCACertRelPath is where the gateway's CA lives INSIDE THIS
+// REPOSITORY, expressed relative to the REPO ROOT (one level above this Go
+// module). It is resolved at runtime by walking up from the process's working
+// directory and from the binary's own location — never a hardcoded absolute
+// path, which would bake one operator's checkout into tracked code
+// (§11.4.28 / §11.4.177).
+const helixLLMGatewayCACertRelPath = "submodules/helix_llm/certs/cert.pem"
+
+// envHelixLLMGatewayEndpoint resolves the gateway base URL from
+// HELIX_LLM_GATEWAY_ENDPOINT (falling back to
+// helixLLMGatewayDefaultEndpoint) and NORMALISES it to the canonical
+// with-"/v1" form: exactly one trailing "/v1", no trailing slash.
+//
+// Both spellings an operator might plausibly supply are accepted:
+//
+//	"https://host:8443"      -> "https://host:8443/v1"   ("/v1" appended)
+//	"https://host:8443/v1"   -> "https://host:8443/v1"   (already canonical)
+//	"https://host:8443/v1/"  -> "https://host:8443/v1"   (slash trimmed)
+//
+// This is not cosmetic. The gateway documents and prints its endpoint WITH
+// "/v1", while the sibling coder/llama.cpp env vars are documented WITHOUT
+// it, so both habits are live in this repository. Whichever an operator
+// pastes, the concatenation with the endpoint paths set in
+// resolveHelixLLMGatewayProvider lands on the URL the gateway actually
+// serves — instead of a "/v1/v1/..." 404 that reads exactly like "the
+// gateway is down".
+func envHelixLLMGatewayEndpoint() string {
+	endpoint, _ := envHelixLLMGatewayEndpointWithSource()
+	return endpoint
+}
+
+// envHelixLLMGatewayEndpointWithSource is envHelixLLMGatewayEndpoint plus the
+// NAME of the variable the value came from (empty when it fell back to the
+// compiled-in default). One body, so the endpoint an error quotes is
+// byte-for-byte the normalised endpoint the provider will dial.
+func envHelixLLMGatewayEndpointWithSource() (string, string) {
+	sourceKey := helixLLMGatewayEndpointEnv
+	raw := strings.TrimSpace(os.Getenv(helixLLMGatewayEndpointEnv))
+	if raw == "" {
+		raw = helixLLMGatewayDefaultEndpoint
+		sourceKey = ""
+	}
+	trimmed := strings.TrimRight(raw, "/")
+	if strings.HasSuffix(trimmed, "/v1") {
+		return trimmed, sourceKey
+	}
+	return trimmed + "/v1", sourceKey
+}
+
+// envHelixLLMGatewayCACert resolves the CA certificate path:
+// HELIX_LLM_GATEWAY_CA_CERT when set, otherwise the in-repo certificate
+// located by walking up from the runtime working directory / binary
+// location. Returns "" when neither is available — the caller MUST treat
+// that as a hard error rather than dialling without a trust anchor.
+func envHelixLLMGatewayCACert() string {
+	if v := strings.TrimSpace(os.Getenv(helixLLMGatewayCACertEnv)); v != "" {
+		return v
+	}
+	return findRepoRelativeFile(helixLLMGatewayCACertRelPath)
+}
+
+// findRepoRelativeFile locates a file given by its path RELATIVE TO THE REPO
+// ROOT, without knowing where the repo root is.
+//
+// It walks upward from two independent starting points and returns the first
+// existing match:
+//
+//  1. the process working directory — covers `make dev`, test runs, and any
+//     invocation from inside the checkout;
+//  2. the directory of the running executable (symlinks resolved) — covers a
+//     binary started from elsewhere, e.g. a service unit whose
+//     WorkingDirectory is unrelated, as long as the binary still lives under
+//     the checkout (bin/helixcode does).
+//
+// Returning "" ("not found") is a first-class, honest outcome: a binary
+// copied outside the repository genuinely has no in-repo certificate to find,
+// and the caller reports that plainly instead of guessing a path. Directories
+// already visited are skipped, so the second walk costs nothing when it
+// shares a suffix with the first.
+//
+// SEARCH ORDER, STATED EXPLICITLY (it is a filesystem search, so it should not
+// have to be reverse-engineered from the loop): working directory first, then
+// executable directory; within each, the starting directory itself, then each
+// parent in turn up to the filesystem root; the FIRST existing regular file at
+// <dir>/<rel> wins. Directories already examined by an earlier walk are
+// skipped, so the two walks together visit each directory at most once.
+//
+// WHY THIS IS SAFE despite being an upward search — three properties, all
+// required, none incidental:
+//
+//  1. IT IS THE FALLBACK, NEVER THE OVERRIDE. Every caller consults its
+//     environment variable first (envHelixLLMGatewayCACert returns immediately
+//     on a non-empty HELIX_LLM_GATEWAY_CA_CERT) and only reaches here when the
+//     operator has expressed no preference. A planted file can therefore never
+//     displace an explicitly configured path.
+//
+//  2. `rel` IS A COMPILED-IN CONSTANT, NEVER CALLER- OR REQUEST-DERIVED. The
+//     only argument passed today is helixLLMGatewayCACertRelPath, a const in
+//     this file. Nothing in an HTTP request influences which name is sought,
+//     so this is not a traversal surface. Keep it that way: passing a value
+//     derived from untrusted input would turn a fixed lookup into an arbitrary
+//     upward file probe.
+//
+//  3. THE WORST CASE IS BOUNDED AND USELESS TO AN ATTACKER. The value found is
+//     used as a TLS trust anchor for exactly one destination — the loopback
+//     gateway at 127.0.0.1:8443. Someone able to plant a CA in an ancestor
+//     directory of the checkout would have to ALSO control that loopback
+//     listener to gain anything, and anyone who controls a loopback listener
+//     in this process's own namespace has already won by easier means. A
+//     wrong-but-unattacked file simply fails the handshake, loudly.
+//
+// §11.4.28 / §11.4.177: no operator-specific absolute path appears in tracked
+// code, and the result is always overridable by env.
+func findRepoRelativeFile(rel string) string {
+	starts := make([]string, 0, 2)
+	if wd, err := os.Getwd(); err == nil && strings.TrimSpace(wd) != "" {
+		starts = append(starts, wd)
+	}
+	if exe, err := os.Executable(); err == nil && strings.TrimSpace(exe) != "" {
+		if resolved, lerr := filepath.EvalSymlinks(exe); lerr == nil && resolved != "" {
+			exe = resolved
+		}
+		starts = append(starts, filepath.Dir(exe))
+	}
+
+	relPath := filepath.FromSlash(rel)
+	seen := make(map[string]bool)
+	for _, start := range starts {
+		dir := start
+		for {
+			if seen[dir] {
+				// Everything above this directory was already checked by an
+				// earlier walk.
+				break
+			}
+			seen[dir] = true
+			candidate := filepath.Join(dir, relPath)
+			if info, statErr := os.Stat(candidate); statErr == nil && !info.IsDir() {
+				return candidate
+			}
+			parent := filepath.Dir(dir)
+			if parent == dir {
+				break
+			}
+			dir = parent
+		}
+	}
+	return ""
+}
+
+// resolveHelixLLMGatewayProvider constructs the local HelixLLM GATEWAY route:
+// a REAL *llm.OpenAICompatibleProvider (the same generic OpenAI-compatible
+// HTTP client the coder and llama.cpp routes use — reused, not rewritten, per
+// CONST-036 / §11.4.74) pointed at the gateway's TLS endpoint, with the
+// gateway's self-signed CA added to the client's trust pool.
+//
+// WHY THIS ROUTE EXISTS AT ALL — the capability difference is the whole
+// point (HXC-002-F3-03). Probed live against both backends with identical
+// tool-carrying requests:
+//
+//	gateway  https://127.0.0.1:8443/v1 -> finish_reason "tool_calls", with a
+//	                                      populated structured tool_calls[]
+//	                                      array the caller can execute.
+//	coder    http://localhost:18434     -> finish_reason "stop", with a fenced
+//	                                      json blob buried in the message
+//	                                      content that nothing downstream
+//	                                      parses.
+//
+// SAME underlying model — the gateway performs the translation. Any caller
+// that needs executable tool calls (every agentic client speaking the OpenAI
+// wire shape) is broken on the coder route and works on this one.
+//
+// TLS IS MANDATORY HERE, AND SO IS THE CA. The gateway serves a self-signed
+// certificate, so without the CA the dial fails with an unknown-authority
+// error. A missing CA is therefore reported as a construction error naming
+// the file it could not find and the env var that overrides it — it is NEVER
+// downgraded to an unverified connection, and it is NEVER quietly turned into
+// a fall-through to the coder route. That fall-through is precisely the
+// failure this function must not have: the caller would receive a plausible
+// 200 carrying a fenced json blob and no tool calls, with no way to tell that
+// the gateway never answered (CONST-035 / §11.4.6).
+//
+// HONEST FAILURE, END TO END. Every failure mode below surfaces as a real
+// error that names its cause:
+//
+//	CA not found            -> error naming helixLLMGatewayCACertRelPath and
+//	                           HELIX_LLM_GATEWAY_CA_CERT (this function).
+//	CA unreadable / not PEM -> error from newOpenAICompatibleHTTPClient naming
+//	                           the path (internal/llm).
+//	gateway down / TLS fail -> the provider's own dial error, surfaced by the
+//	                           handler as 502 with
+//	                           "provider":"helixllm-gateway", naming the
+//	                           backend the caller actually chose.
+//
+// No API key: the gateway is an unauthenticated loopback service (verified —
+// GET /v1/models answers 200 with no Authorization header), so nothing is
+// read or leaked (CONST-042 / §12.1).
+//
+// The coder route (resolveHelixLLMLocalProvider) is untouched and remains
+// reachable under "helixllm"/"local" exactly as before — this is strictly an
+// ADDED capability, never a replacement (§11.4.122).
+func resolveHelixLLMGatewayProvider(model string) (llm.Provider, error) {
+	caPath := envHelixLLMGatewayCACert()
+	if caPath == "" {
+		return nil, fmt.Errorf(
+			"helixllm gateway route selected but its CA certificate could not be "+
+				"located: no %s set, and %q was not found by walking up from the "+
+				"working directory or the binary's location. The gateway serves a "+
+				"self-signed certificate, so it cannot be verified without this CA "+
+				"— set %s to the certificate's absolute path. (TLS verification is "+
+				"NOT skipped, and this request is NOT silently rerouted to the "+
+				"local coder.)",
+			helixLLMGatewayCACertEnv, helixLLMGatewayCACertRelPath,
+			helixLLMGatewayCACertEnv)
+	}
+
+	endpoint, sourceKey := envHelixLLMGatewayEndpointWithSource()
+	cfg := llm.OpenAICompatibleConfig{
+		BaseURL:      endpoint,
+		DefaultModel: strings.TrimSpace(model),
+		Timeout:      120 * time.Second,
+		// The base URL already ends in "/v1" (the form the gateway
+		// advertises), so the endpoint paths must be the REMAINDER — the
+		// provider's defaults are "/v1/models" and "/v1/chat/completions",
+		// which would double the prefix into ".../v1/v1/models" (measured:
+		// 404). Setting both explicitly keeps the pair consistent at the one
+		// place the base URL is chosen.
+		ModelEndpoint:    "/models",
+		ChatEndpoint:     "/chat/completions",
+		StreamingSupport: true,
+		CACertFile:       caPath,
+	}
+	provider, err := llm.NewOpenAICompatibleProvider("helixllm-gateway", cfg)
+	if err != nil {
+		if errors.Is(err, llm.ErrCloudDisabled) {
+			return nil, localRouteRemoteEndpointError(
+				"gateway", sourceKey, helixLLMGatewayEndpointEnv, endpoint, err)
+		}
+		return nil, fmt.Errorf("failed to construct helixllm gateway provider: %w", err)
+	}
+	if provider == nil {
+		return nil, fmt.Errorf("helixllm gateway provider constructed nil without an error")
+	}
+	return provider, nil
+}
+
 // llamaCppHostEnv is the env var this repository ALREADY documents for the
-// local llama.cpp server: `.env.example:55` ships
-// `HELIX_LLAMA_CPP_HOST=http://localhost:8080` and the LLMsVerifier
+// local llama.cpp server: root `.env.example:89` ships
+// `HELIX_LLAMA_CPP_HOST=http://localhost:18434` (fixed from the historical
+// `:8080` self-POST hazard by commit a74ae7cb — see envLlamaCppHost's
+// doc-comment below for why `:8080` is wrong) and the LLMsVerifier
 // integration plan tabulates it as llamacpp's host binding. Until this change
 // it was a DEAD key — a repo-wide grep found ZERO Go readers, so an operator
 // who set it got silence rather than a redirected endpoint. Reusing the
@@ -616,12 +1295,14 @@ func envOllamaHost() string {
 //     `llamacpp` row (`http://localhost:18434/v1`, served by
 //     helixllm-coder.service).
 //
-// Note on the default (§11.4.6 — this is a deliberate divergence from
-// `.env.example`'s literal, recorded rather than silent): `.env.example` and
-// configs/verifier.yaml both show `http://localhost:8080`, which is
-// llama-server's UPSTREAM default — but 8080 is also the port HelixCode's OWN
-// API server listens on, so that value makes the server POST completions to
-// itself. Measured pre-fix against a live server: the request came back
+// Note on the default (§11.4.6 — recorded rather than silent): root
+// `.env.example` now documents `HELIX_LLAMA_CPP_HOST=http://localhost:18434`
+// (fixed by commit a74ae7cb from the historical `:8080`), matching this
+// function's own default — but `configs/verifier.yaml` still shows
+// `http://localhost:8080`, which is llama-server's UPSTREAM default. 8080 is
+// also the port HelixCode's OWN API server listens on, so that value makes
+// the server POST completions to itself. Measured pre-fix against a live
+// server: the request came back
 // `502 {"error":"generation failed: llama.cpp returned status 404",
 // "provider":"llama-cpp"}` — a 404 from HelixCode's own router, which has no
 // /v1/completions route. 18434 both avoids that collision and agrees with the
@@ -629,10 +1310,21 @@ func envOllamaHost() string {
 // about where "the local server" is. An operator wanting the upstream 8080
 // still gets it by setting HELIX_LLAMA_CPP_HOST explicitly.
 func envLlamaCppHost() string {
+	host, _ := envLlamaCppHostWithSource()
+	return host
+}
+
+// envLlamaCppHostWithSource is envLlamaCppHost plus the NAME of the variable
+// the value came from. The distinction is load-bearing rather than cosmetic:
+// this route falls through to the project-wide
+// HELIX_LLM_LOCAL_OPENAI_ENDPOINT when its own key is unset, so an error that
+// always blamed HELIX_LLAMA_CPP_HOST would send an operator to edit a variable
+// they never set. Empty means the compiled-in default supplied the value.
+func envLlamaCppHostWithSource() (string, string) {
 	if v := strings.TrimSpace(os.Getenv(llamaCppHostEnv)); v != "" {
-		return v
+		return v, llamaCppHostEnv
 	}
-	return envHelixLLMLocalEndpoint()
+	return envHelixLLMLocalEndpointWithSource()
 }
 
 // resolveLlamaCppLocalProvider constructs the local llama.cpp route as a REAL
@@ -674,14 +1366,23 @@ func envLlamaCppHost() string {
 // No API key: a local llama-server is an unauthenticated loopback/LAN
 // service, so nothing is read, logged or leaked (CONST-042 / §12.1).
 func resolveLlamaCppLocalProvider(model string) (llm.Provider, error) {
+	endpoint, sourceKey := envLlamaCppHostWithSource()
 	cfg := llm.OpenAICompatibleConfig{
-		BaseURL:          envLlamaCppHost(),
+		BaseURL:          endpoint,
 		DefaultModel:     strings.TrimSpace(model),
 		Timeout:          120 * time.Second,
 		StreamingSupport: true,
 	}
 	provider, err := llm.NewOpenAICompatibleProvider("llamacpp", cfg)
 	if err != nil {
+		if errors.Is(err, llm.ErrCloudDisabled) {
+			// overrideKey is the variable an operator should set to correct
+			// THIS route specifically, which is llamacpp's own key even when
+			// the offending value arrived via the shared fallback named by
+			// sourceKey.
+			return nil, localRouteRemoteEndpointError(
+				"llamacpp", sourceKey, llamaCppHostEnv, endpoint, err)
+		}
 		return nil, fmt.Errorf("failed to construct llamacpp local provider: %w", err)
 	}
 	if provider == nil {

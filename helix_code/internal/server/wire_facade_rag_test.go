@@ -33,7 +33,7 @@ func lastPrompt(fake *wireFacadeFakeProvider) string {
 // that with RAG disabled (default), the OpenAI compat endpoint passes
 // the user's prompt through unchanged.
 func TestChatCompletions_RAG_DisabledByDefault_PromptByteIdentical(t *testing.T) {
-	os.Unsetenv("HELIXCODE_RAG_ENABLED")
+	unsetEnvForTest(t, "HELIXCODE_RAG_ENABLED")
 
 	fake := &wireFacadeFakeProvider{content: "ok", finish: "stop"}
 	withFakeResolver(t, fake)
@@ -63,8 +63,10 @@ func TestChatCompletions_RAG_DisabledByDefault_PromptByteIdentical(t *testing.T)
 // enabled, the OpenAI compat endpoint augments the prompt with retrieved
 // context before sending it to the provider.
 func TestChatCompletions_RAG_Enabled_AugmentsPrompt(t *testing.T) {
-	os.Setenv("HELIXCODE_RAG_ENABLED", "true")
-	t.Cleanup(func() { os.Unsetenv("HELIXCODE_RAG_ENABLED") })
+	// t.Setenv restores the PRIOR state (value or absence); the previous
+	// os.Setenv + t.Cleanup(os.Unsetenv) pair restored to ABSENCE
+	// unconditionally, clobbering any pre-existing value.
+	t.Setenv("HELIXCODE_RAG_ENABLED", "true")
 
 	fake := &wireFacadeFakeProvider{content: "ok", finish: "stop"}
 	withFakeResolver(t, fake)
@@ -93,7 +95,7 @@ func TestChatCompletions_RAG_Enabled_AugmentsPrompt(t *testing.T) {
 // TestAnthropicMessages_RAG_DisabledByDefault_PromptByteIdentical proves
 // the Anthropic compat endpoint also respects the default-OFF RAG posture.
 func TestAnthropicMessages_RAG_DisabledByDefault_PromptByteIdentical(t *testing.T) {
-	os.Unsetenv("HELIXCODE_RAG_ENABLED")
+	unsetEnvForTest(t, "HELIXCODE_RAG_ENABLED")
 
 	fake := &wireFacadeFakeProvider{content: "ok", finish: "stop"}
 	withFakeResolver(t, fake)
@@ -120,8 +122,10 @@ func TestAnthropicMessages_RAG_DisabledByDefault_PromptByteIdentical(t *testing.
 // TestAnthropicMessages_RAG_Enabled_AugmentsPrompt proves the Anthropic
 // compat endpoint applies RAG when enabled.
 func TestAnthropicMessages_RAG_Enabled_AugmentsPrompt(t *testing.T) {
-	os.Setenv("HELIXCODE_RAG_ENABLED", "true")
-	t.Cleanup(func() { os.Unsetenv("HELIXCODE_RAG_ENABLED") })
+	// t.Setenv restores the PRIOR state (value or absence); the previous
+	// os.Setenv + t.Cleanup(os.Unsetenv) pair restored to ABSENCE
+	// unconditionally, clobbering any pre-existing value.
+	t.Setenv("HELIXCODE_RAG_ENABLED", "true")
 
 	fake := &wireFacadeFakeProvider{content: "ok", finish: "stop"}
 	withFakeResolver(t, fake)
@@ -145,4 +149,24 @@ func TestAnthropicMessages_RAG_Enabled_AugmentsPrompt(t *testing.T) {
 	require.NotEmpty(t, ret.queries, "RAG retriever must be called when enabled")
 	require.Contains(t, lastPrompt(fake), "HXC-148 ANTHROPIC RETRIEVED CONTEXT",
 		"RAG-retrieved context must appear in the prompt sent to the Anthropic provider")
+}
+
+// unsetEnvForTest removes key from the process environment for the duration of
+// t and restores exactly what was there before — the prior VALUE if it was set,
+// or absence if it was not. There is no t.Unsetenv, so this is the
+// save/restore counterpart of t.Setenv; a bare os.Unsetenv leaks to every
+// later test in the binary and makes verdicts depend on -shuffle ordering.
+func unsetEnvForTest(t *testing.T, key string) {
+	t.Helper()
+	prev, had := os.LookupEnv(key)
+	if err := os.Unsetenv(key); err != nil {
+		t.Fatalf("os.Unsetenv(%q) failed: %v", key, err)
+	}
+	t.Cleanup(func() {
+		if had {
+			_ = os.Setenv(key, prev)
+		} else {
+			_ = os.Unsetenv(key)
+		}
+	})
 }

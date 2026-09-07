@@ -19,6 +19,13 @@ import (
 //   go test -v -tags=integration ./internal/llm/... -run TestXiaomiChaos -timeout 300s
 
 func TestXiaomiChaos_InvalidAPIKey(t *testing.T) {
+	// Xiaomi is a hosted cloud provider now subject to the W2c-1 cloud gate
+	// (NewXiaomiProvider delegates to NewOpenAICompatibleProvider, whose
+	// endpoint-locality check rejects hosted construction when the gate is
+	// closed). This test opens the gate because it exercises Xiaomi provider
+	// behavior under chaos conditions, not gate policy — see
+	// openCloudGateForTest in provider_factory_test.go.
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-invalid-key-12345",
@@ -50,6 +57,7 @@ func TestXiaomiChaos_InvalidAPIKey(t *testing.T) {
 }
 
 func TestXiaomiChaos_InvalidModel(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -83,6 +91,7 @@ func TestXiaomiChaos_InvalidModel(t *testing.T) {
 }
 
 func TestXiaomiChaos_ContextCancellation(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -118,6 +127,7 @@ func TestXiaomiChaos_ContextCancellation(t *testing.T) {
 }
 
 func TestXiaomiChaos_EmptyMessages(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -150,6 +160,7 @@ func TestXiaomiChaos_EmptyMessages(t *testing.T) {
 }
 
 func TestXiaomiChaos_ZeroMaxTokens(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{
@@ -184,6 +195,7 @@ func TestXiaomiChaos_ZeroMaxTokens(t *testing.T) {
 }
 
 func TestXiaomiChaos_NilContext(t *testing.T) {
+	openCloudGateForTest(t)
 	apiKey := getEnvOrSkip(t, "XIAOMI_MIMO_API_KEY", "SKIP-OK: XIAOMI_MIMO_API_KEY not set")
 
 	config := ProviderConfigEntry{

@@ -1174,11 +1174,12 @@ func (s *Server) listLLMProviders(c *gin.Context) {
 		if err == nil && len(models) > 0 {
 			providers := buildProvidersFromVerifiedModels(models)
 			c.JSON(http.StatusOK, gin.H{
-				"status":       "success",
-				"providers":    providers,
-				"count":        len(providers),
-				"source":       "verifier",
-				"last_updated": time.Now().UTC(),
+				"status":        "success",
+				"providers":     providers,
+				"count":         len(providers),
+				"source":        "verifier",
+				"cloud_enabled": llm.CloudEnabled(),
+				"last_updated":  time.Now().UTC(),
 			})
 			return
 		}
@@ -1188,16 +1189,52 @@ func (s *Server) listLLMProviders(c *gin.Context) {
 	models := verifier.FallbackModels
 	providers := buildProvidersFromVerifiedModels(models)
 	c.JSON(http.StatusOK, gin.H{
-		"status":       "success",
-		"providers":    providers,
-		"count":        len(providers),
-		"source":       "fallback",
-		"last_updated": time.Now().UTC(),
+		"status":        "success",
+		"providers":     providers,
+		"count":         len(providers),
+		"source":        "fallback",
+		"cloud_enabled": llm.CloudEnabled(),
+		"last_updated":  time.Now().UTC(),
 	})
 }
 
-// buildProvidersFromVerifiedModels groups models by provider.
+// isLocalProviderID reports whether provider (the raw provider-identity
+// string carried on a verifier.VerifiedModel — e.g. "ollama", "deepseek",
+// "openai") names one of the local-construction provider types.
+//
+// Anti-bluff (§11.4): this MUST classify identically to internal/llm's
+// unexported isLocalProviderType (NewCloudProvider's cloud-gate exemption
+// list — currently only ProviderTypeOllama / ProviderTypeLlamaCpp), so the
+// status this handler reports can never disagree with what construction
+// will actually do. There is no exported helper in internal/llm to call
+// directly today (isLocalProviderType is unexported); if/when one lands
+// (see the concurrent internal/llm endpoint-locality-predicate work), this
+// function should be replaced with a call to it instead of kept as a
+// second copy of the list. Locality is deliberately NOT derived from
+// VerifiedModel.OpenSource — that field describes the model's weights
+// licensing, not where the model is hosted (a hosted API can legally
+// serve open-weight models, e.g. Provider: "deepseek", OpenSource: true
+// per internal/verifier/fallback_models.go — that is still a cloud call).
+func isLocalProviderID(provider string) bool {
+	switch llm.ProviderType(provider) {
+	case llm.ProviderTypeOllama, llm.ProviderTypeLlamaCpp:
+		return true
+	default:
+		return false
+	}
+}
+
+// buildProvidersFromVerifiedModels groups models by provider. Cloud providers
+// are reported "disabled" while the W2c-1 cloud gate is closed
+// (llm.cloud.enabled, default false) — listing a hosted provider as
+// "available" when construction would refuse it is a §11.4 status bluff.
+//
+// Locality ("local" vs "cloud") is classified purely by provider identity
+// via isLocalProviderID, never by the model's OpenSource flag — see that
+// function's doc comment. OpenSource is still surfaced, as its own
+// "open_source" field, for callers that care about weights licensing.
 func buildProvidersFromVerifiedModels(models []*verifier.VerifiedModel) []gin.H {
+	cloudEnabled := llm.CloudEnabled()
 	providerMap := make(map[string][]string)
 	providerInfo := make(map[string]gin.H)
 
@@ -1205,14 +1242,19 @@ func buildProvidersFromVerifiedModels(models []*verifier.VerifiedModel) []gin.H 
 		providerMap[m.Provider] = append(providerMap[m.Provider], m.ID)
 		if _, ok := providerInfo[m.Provider]; !ok {
 			providerType := "cloud"
-			if m.OpenSource || m.Provider == "ollama" || m.Provider == "llamacpp" {
+			if isLocalProviderID(m.Provider) {
 				providerType = "local"
 			}
+			status := "available"
+			if providerType == "cloud" && !cloudEnabled {
+				status = "disabled"
+			}
 			providerInfo[m.Provider] = gin.H{
-				"id":     m.Provider,
-				"name":   capitalize(m.Provider),
-				"type":   providerType,
-				"status": "available",
+				"id":          m.Provider,
+				"name":        capitalize(m.Provider),
+				"type":        providerType,
+				"status":      status,
+				"open_source": m.OpenSource,
 			}
 		}
 	}
@@ -1224,6 +1266,7 @@ func buildProvidersFromVerifiedModels(models []*verifier.VerifiedModel) []gin.H 
 			"name":        info["name"],
 			"type":        info["type"],
 			"status":      info["status"],
+			"open_source": info["open_source"],
 			"models":      providerMap[id],
 			"model_count": len(providerMap[id]),
 		})

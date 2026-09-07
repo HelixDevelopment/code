@@ -129,7 +129,7 @@ func newRealServerHarness(t *testing.T) *realServerHarness {
 		Logging: config.LoggingConfig{Level: "error"},
 	}
 
-	srv := New(cfg, db, rds)
+	srv := newTestServer(t, cfg, db, rds)
 
 	// Register a deliberately-panicking route ON THE REAL ROUTER so the panic
 	// crosses the genuine middleware stack (incl. gin.Recovery()). This proves the

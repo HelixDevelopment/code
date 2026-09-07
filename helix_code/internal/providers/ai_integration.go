@@ -281,8 +281,57 @@ func (ai *AIIntegration) Initialize(ctx context.Context) error {
 	return nil
 }
 
+// isCloudGatedAIProviderType reports whether a dispatch arm of
+// createAIProvider below delegates to a CONCRETE HOSTED constructor in
+// internal/llm — i.e. whether constructing it would dial a vendor endpoint
+// with an API key, and must therefore respect the W2c-1 cloud gate.
+//
+// The set is exactly the three arms whose provider bodies call an
+// llm.New<X>Provider (NewOpenAIProvider -> llm.NewOpenAIProvider,
+// NewAnthropicProvider -> llm.NewAnthropicProvider, NewGeminiProvider ->
+// llm.NewGeminiProvider). It was established by reading every arm's body, not
+// by classifying type names as "sounding hosted": the other ten arms —
+// cohere, huggingface, mistral, gemma, llamaindex, memgpt, crewai,
+// characterai, replika, anima — all return newNotImplementedProvider, so they
+// construct nothing, dial nothing, and must keep working while the gate is
+// closed. Gating them would break local routes for no safety gain, which is
+// the failure the gate exists to avoid.
+//
+// KEEPING THIS HONEST: if an arm below is ever changed to delegate to a real
+// hosted constructor, it must be added here in the same change. The
+// TestCreateAIProvider_* guards assert both directions — hosted refused, and
+// non-hosted still constructed — so a mis-set predicate fails a test rather
+// than silently opening or closing a route.
+func isCloudGatedAIProviderType(t providers.ProviderType) bool {
+	switch t {
+	case providers.ProviderTypeOpenAI,
+		providers.ProviderTypeAnthropic,
+		providers.ProviderTypeGemini:
+		return true
+	default:
+		return false
+	}
+}
+
 // createAIProvider creates an AI provider instance
 func (ai *AIIntegration) createAIProvider(config *AIProviderConfig) (AIProvider, error) {
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only-by-default
+	// serving). This dispatch reaches the concrete hosted constructors
+	// DIRECTLY, so it bypasses both places the gate is otherwise enforced —
+	// llm.NewCloudProvider and llm.NewProvider — and must apply it itself.
+	// Checked BEFORE the switch so no hosted arm can construct by a back door,
+	// and it refuses EVEN WITH credentials present: an API key in config is
+	// exactly the situation the gate exists to override. Same error identity
+	// as the llm-side gates so every caller can branch on one
+	// errors.Is(err, llm.ErrCloudDisabled).
+	if config != nil && !llm.CloudEnabled() && isCloudGatedAIProviderType(config.Type) {
+		return nil, fmt.Errorf("%w: llm.cloud.enabled is false (default); hosted "+
+			"AI provider %q will not be constructed. Set llm.cloud.enabled: true "+
+			"to permit cloud providers, or use the local routes "+
+			"(local/helixllm coder, llamacpp, ollama)",
+			llm.ErrCloudDisabled, config.Type)
+	}
+
 	switch config.Type {
 	case providers.ProviderTypeOpenAI:
 		return NewOpenAIProvider(config), nil
@@ -1757,6 +1806,41 @@ func findSubstringIndex(s, substr string) int {
 }
 
 // Provider factory functions - create adapters wrapping internal/llm providers.
+//
+// THE THREE HOSTED ONES GO THROUGH llm.NewProvider, NOT llm.New<X>Provider.
+// NewOpenAIProvider / NewAnthropicProvider / NewGeminiProvider below each call
+// llm.NewProvider(llmConfig) — the canonical, GATED factory
+// (internal/llm/factory.go) — rather than the concrete constructor for their
+// type. llm.NewProvider dispatches ProviderTypeOpenAI/Anthropic/Gemini to
+// exactly those same concrete constructors with exactly the same
+// ProviderConfigEntry, so behaviour is unchanged in every respect except one:
+// it applies the W2c-1 cloud gate first, and returns an ErrCloudDisabled-
+// wrapping error while llm.cloud.enabled is false. It also routes through
+// providerOrNil, so a failed construction can never hand back a non-nil
+// llm.Provider wrapping a nil pointer.
+//
+// WHY, given createAIProvider already gates. These three are EXPORTED. The
+// gate in createAIProvider protects the dispatch path; it does not protect a
+// caller outside this package that calls providers.NewOpenAIProvider directly.
+// Before this change such a caller reached llm.NewOpenAIProvider with a
+// credential in hand and no gate anywhere on the path. The two checks are not
+// redundant — they cover different entry points — and double-gating is free:
+// same sentinel, and the outer check short-circuits before this function runs.
+//
+// §11.4.124 INVESTIGATION (why these are callerless, established from git
+// history, not assumed). These were never wired to an external caller and then
+// orphaned; they were never external API at all. At their introduction
+// (015e2696 "Cognee integration") all thirteen were one-line stubs —
+// `func NewOpenAIProvider(config *AIProviderConfig) AIProvider { return
+// &MockAIProvider{} }` — created solely as the arms of createAIProvider's
+// dispatch switch in this same file. a4bb2d37 replaced the mock with
+// newNotImplementedProvider (anti-bluff sweep); 8dd4204c gave these three real
+// bodies delegating to internal/llm. Their export is incidental to this file's
+// house style (nearly every helper here is exported), not a published
+// contract. So: NOT dead code — they are live, called by createAIProvider on
+// every hosted arm — and NOT a regression from a deleted call site. Nothing is
+// removed here; the reachable-but-ungated seam is closed instead. Deleting
+// them would be a separate decision requiring operator sign-off (§11.4.122).
 func NewOpenAIProvider(config *AIProviderConfig) AIProvider {
 	if config == nil || config.Config == nil {
 		return newNotImplementedProvider("OpenAI (missing config)")
@@ -1780,7 +1864,7 @@ func NewOpenAIProvider(config *AIProviderConfig) AIProvider {
 		llmConfig.Models = []string{model}
 	}
 
-	provider, err := llm.NewOpenAIProvider(llmConfig)
+	provider, err := llm.NewProvider(llmConfig)
 	if err != nil {
 		return newNotImplementedProvider(fmt.Sprintf("OpenAI (init failed: %v)", err))
 	}
@@ -1810,7 +1894,7 @@ func NewAnthropicProvider(config *AIProviderConfig) AIProvider {
 		llmConfig.Models = []string{model}
 	}
 
-	provider, err := llm.NewAnthropicProvider(llmConfig)
+	provider, err := llm.NewProvider(llmConfig)
 	if err != nil {
 		return newNotImplementedProvider(fmt.Sprintf("Anthropic (init failed: %v)", err))
 	}
@@ -1855,7 +1939,7 @@ func NewGeminiProvider(config *AIProviderConfig) AIProvider {
 		llmConfig.Models = []string{model}
 	}
 
-	provider, err := llm.NewGeminiProvider(llmConfig)
+	provider, err := llm.NewProvider(llmConfig)
 	if err != nil {
 		return newNotImplementedProvider(fmt.Sprintf("Gemini (init failed: %v)", err))
 	}

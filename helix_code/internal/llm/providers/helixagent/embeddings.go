@@ -63,13 +63,13 @@ func (p *Provider) Embed(ctx context.Context, input []string) ([][]float32, erro
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.baseURL+"/v1/embeddings", bytes.NewReader(body))
 	if err != nil {
-		return nil, fmt.Errorf("helixagent: build embeddings request: %w", err)
+		return nil, fmt.Errorf("helixagent: build embeddings request: %w", llm.RedactEndpointsInError(err))
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("helixagent: POST /v1/embeddings: %w", err)
+		return nil, fmt.Errorf("helixagent: POST /v1/embeddings: %w", llm.RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -161,17 +162,100 @@ func wireFacadeE2ENonce(t *testing.T) string {
 	return "HELIXCODE-FULLHTTP-E2E-" + hex.EncodeToString(buf)
 }
 
-// wireFacadeE2EEvidenceDir creates (once per test run) the docs/qa evidence
-// directory this task's report cites (§11.4.83 — full end-to-end
-// communication transcript committed in-repo). Path is relative to this
-// package directory (helix_code/internal/server) up to the meta-repo root:
-// internal/server -> helix_code (inner app root) -> meta-repo root -> docs/qa.
+// wireFacadeE2EEvidenceEnv opts a run in to promoting its captured transcript
+// into the committed docs/qa tree.
+const wireFacadeE2EEvidenceEnv = "HELIX_QA_EVIDENCE"
+
+// wireFacadeE2EEvidenceDir returns the directory this run writes its
+// end-to-end transcript into (§11.4.83).
+//
+// DETERMINISM (§11.4.50): this used to MkdirAll a fresh timestamped
+// docs/qa/phase1_fullhttp_e2e_<TS>/ on EVERY invocation, unconditionally, so
+// the repository state after a run depended on how many times the test had
+// ever been run. Measured on this tree that had accumulated 161 directories
+// and 74 MB since July, nearly all of them identical passing transcripts. A
+// test whose side effects are a function of its invocation count is not
+// deterministic, and it makes `git status` a poor signal for everyone else.
+//
+// The transcript is now always captured, but into a RUN-SCOPED staging dir,
+// and promoted into the committed tree only when the evidence is actually
+// worth something:
+//
+//   - the test FAILED — this is exactly when the transcript is diagnostic, so
+//     promotion is automatic and needs no flag; or
+//   - the operator asked for it with HELIX_QA_EVIDENCE=1 — the release/QA
+//     capture path (§11.4.83 obligation is that the shipped feature HAS a
+//     committed transcript, not that every invocation mints another copy).
+//
+// A passing default run therefore leaves the working tree byte-identical,
+// while a failing run still lands its full bidirectional transcript on disk.
 func wireFacadeE2EEvidenceDir(t *testing.T) string {
 	t.Helper()
+	staging := t.TempDir()
+	promoteRequested := os.Getenv(wireFacadeE2EEvidenceEnv) == "1"
+
+	// Registered AFTER t.TempDir()'s own cleanup, so it runs BEFORE it (LIFO)
+	// and the staged files still exist when we copy them.
+	t.Cleanup(func() {
+		reason := ""
+		switch {
+		case t.Failed():
+			reason = "test FAILED — transcript retained for diagnosis"
+		case promoteRequested:
+			reason = wireFacadeE2EEvidenceEnv + "=1 — operator-requested capture"
+		default:
+			t.Logf("evidence captured under %s (run-scoped; not promoted into docs/qa — set %s=1 to keep it)",
+				staging, wireFacadeE2EEvidenceEnv)
+			return
+		}
+		dest, err := promoteE2EEvidence(staging)
+		if err != nil {
+			t.Logf("evidence promotion failed (%v) — transcript remains only in %s", err, staging)
+			return
+		}
+		t.Logf("evidence promoted to %s (%s)", dest, reason)
+	})
+	return staging
+}
+
+// promoteE2EEvidence copies the staged transcript files into the committed
+// docs/qa tree. Path is relative to this package directory
+// (helix_code/internal/server) up to the meta-repo root:
+// internal/server -> helix_code (inner app root) -> meta-repo root -> docs/qa.
+func promoteE2EEvidence(staging string) (string, error) {
+	base := filepath.Join("..", "..", "..", "docs", "qa")
 	ts := time.Now().UTC().Format("20060102T150405Z")
-	dir := filepath.Join("..", "..", "..", "docs", "qa", "phase1_fullhttp_e2e_"+ts)
-	require.NoError(t, os.MkdirAll(dir, 0o755))
-	return dir
+	dest := filepath.Join(base, "phase1_fullhttp_e2e_"+ts)
+	// Two promotions inside the same second must not merge into one directory.
+	for n := 2; ; n++ {
+		if _, err := os.Stat(dest); os.IsNotExist(err) {
+			break
+		}
+		dest = filepath.Join(base, fmt.Sprintf("phase1_fullhttp_e2e_%s_%d", ts, n))
+		if n > 100 {
+			return "", errors.New("could not find a free evidence directory name")
+		}
+	}
+	if err := os.MkdirAll(dest, 0o755); err != nil {
+		return "", err
+	}
+	entries, err := os.ReadDir(staging)
+	if err != nil {
+		return "", err
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		data, readErr := os.ReadFile(filepath.Join(staging, e.Name()))
+		if readErr != nil {
+			return "", readErr
+		}
+		if writeErr := os.WriteFile(filepath.Join(dest, e.Name()), data, 0o644); writeErr != nil {
+			return "", writeErr
+		}
+	}
+	return dest, nil
 }
 
 // curlCapture drives a REAL POST request via the actual `curl` binary
@@ -255,9 +339,13 @@ func wireFacadeE2EFixture(t *testing.T) *httptest.Server {
 }
 
 func TestWireFacade_FullHTTP_E2E_LiveRoundTrip(t *testing.T) {
-	if !helixLLMLocalReachable(t) {
-		t.Skip("SKIP: local HelixLLM coder not reachable at " + envHelixLLMLocalEndpoint() +
-			" (set HELIX_LLM_LOCAL_OPENAI_ENDPOINT or start the coder to exercise this proof)")
+	// Single explicit reachability precondition, evaluated ONCE before any
+	// request is issued, so this test either runs in full or skips in full —
+	// never partially (§11.4.3 / §11.4.50). See helixLLMLocalReachable in
+	// llm_generate_helixllm_live_test.go
+	// for why this does not reuse the shared 2s-timeout helper.
+	if ok, why := helixLLMLocalReachable(t); !ok {
+		t.Skipf("SKIP-OK (§11.4.3): %s", why)
 	}
 
 	// Route resolveLLMProvider's provider selection to the coder: server.go's
@@ -402,7 +490,45 @@ func TestWireFacade_FullHTTP_E2E_LiveRoundTrip(t *testing.T) {
 	// SAME nonce-bearing prompt so the divergence is observed on genuinely
 	// live, non-cached tool-call output — not two independently-fabricated
 	// fixtures.
+	//
+	// OPT-IN SINCE 2026-09-07 — and here is exactly why (§11.4.6, do not
+	// silently re-enable this by default):
+	//
+	//   - Against the CODER this subtest configures, it FAILED 5/5 in a
+	//     back-to-back baseline, always for the same reason: the coder never
+	//     emits native tool_calls, it returns the call as a fenced ```json blob
+	//     with finish_reason "stop". Measured: `expected: "tool_calls" /
+	//     actual: "stop"` (OpenAI facade) and `expected: "tool_use" / actual:
+	//     "max_tokens"` (Anthropic facade). The assertion is unsatisfiable
+	//     there — that is a stable property of the coder, not a flake.
+	//
+	//   - Repointing it at the GATEWAY (the direction ledger item
+	//     HXC-002-F3-09 originally recorded) trades an unsatisfiable assertion
+	//     for a NON-DETERMINISTIC one. MEASURED 2026-09-07: twelve
+	//     byte-identical POSTs at temperature 0 gave 8/12 with tool_calls
+	//     PRESENT and 4/12 with finish_reason=length and tool_calls ABSENT.
+	//     Running the sibling live guard five times reproduced the split
+	//     directly: PASS, FAIL, PASS, PASS, PASS.
+	//
+	// The wire-shape divergence itself is NOT unguarded as a result. It is
+	// asserted on EVERY default run, deterministically, through this same full
+	// HTTP path (real curl -> real router -> real middleware -> real handlers
+	// -> real provider) with REAL captured gateway bytes replayed in place of
+	// the model, by TestWireFacade_FullHTTP_E2E_ReplayToolCallShapes in
+	// wire_facade_toolcall_replay_test.go.
 	t.Run("tool_calls_shape_divergence_live", func(t *testing.T) {
+		if !liveToolCallProbeEnabled() {
+			// SKIP-OK (§11.4.3): opt-in because no live backend can satisfy
+			// this assertion deterministically (see the block above). Nothing
+			// is suppressed — the identical wire-shape assertions run on every
+			// default invocation against real recorded bytes in
+			// TestWireFacade_FullHTTP_E2E_ReplayToolCallShapes.
+			t.Skip("SKIP-OK (§11.4.3): live tool-call shape probe is opt-in — set " +
+				liveToolCallProbeEnv + "=1 (and point " + helixLLMLocalOpenAIEndpointEnv +
+				" at a backend that emits native tool_calls, e.g. the gateway) to run it. " +
+				"The deterministic replay of these same two wire-shape assertions runs on " +
+				"every invocation: TestWireFacade_FullHTTP_E2E_ReplayToolCallShapes.")
+		}
 		nonce := wireFacadeE2ENonce(t)
 		toolsJSON := `[{"type":"function","function":{"name":"get_weather","description":"Get the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}}]`
 		prompt := fmt.Sprintf("What is the weather in the city named exactly %q? You MUST call the get_weather tool with that exact city string.", nonce)

@@ -38,7 +38,7 @@ func createMockDependencies(t *testing.T) (*config.Config, *database.Database, *
 func TestNewServer(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	assert.NotNil(t, server)
 	assert.Equal(t, cfg, server.config)
@@ -51,7 +51,7 @@ func TestNewServer_DebugMode(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
 	cfg.Logging.Level = "debug"
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	assert.NotNil(t, server)
 	// Gin should be in debug mode
@@ -65,7 +65,7 @@ func TestNewServer_ReleaseMode(t *testing.T) {
 	// Reset gin mode
 	gin.SetMode(gin.ReleaseMode)
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	assert.NotNil(t, server)
 	assert.Equal(t, gin.ReleaseMode, gin.Mode())
@@ -157,7 +157,7 @@ func TestHealthCheckEndpoint(t *testing.T) {
 func TestServerInitialization(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Test that all components are initialized
 	assert.NotNil(t, server.config)
@@ -180,7 +180,7 @@ func TestServerWithNilDependencies(t *testing.T) {
 		},
 	}
 
-	server := New(cfg, nil, nil)
+	server := newTestServer(t, cfg, nil, nil)
 
 	assert.NotNil(t, server)
 	assert.NotNil(t, server.router)
@@ -207,7 +207,7 @@ func TestServerPortConfiguration(t *testing.T) {
 				},
 			}
 
-			server := New(cfg, nil, nil)
+			server := newTestServer(t, cfg, nil, nil)
 			assert.Equal(t, tc.expected, cfg.Server.Port)
 			assert.NotNil(t, server)
 		})
@@ -217,7 +217,7 @@ func TestServerPortConfiguration(t *testing.T) {
 func TestMiddlewareOrder(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// The server should have middleware applied in the correct order
 	// This is tested indirectly through the route setup
@@ -227,6 +227,12 @@ func TestMiddlewareOrder(t *testing.T) {
 // Benchmark tests
 func BenchmarkNewServer(b *testing.B) {
 	cfg, db, rds := createMockDependencies(&testing.T{})
+
+	// D-1: New() writes the process-global llm cloud gate. Snapshot it ONCE
+	// here rather than per iteration — newTestServer inside a b.N loop would
+	// register b.N cleanups. The construction below stays a bare New() so the
+	// benchmark measures the real constructor and nothing else.
+	isolateCloudGate(b)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

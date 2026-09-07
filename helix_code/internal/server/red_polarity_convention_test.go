@@ -110,6 +110,11 @@ var redPolaritySwitches = []redPolaritySwitch{
 		Files:     []string{"handlers_project_idor_test.go"},
 		ViaHelper: true,
 	},
+	{
+		Env:       "RED_CLOUD_GATE_STATUS",
+		Files:     []string{"llm_generate_cloud_gate_status_test.go"},
+		ViaHelper: true,
+	},
 }
 
 // redPolarityPendingMigration records switches that are registered and

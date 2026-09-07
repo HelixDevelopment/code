@@ -408,6 +408,13 @@ func (auroraApp *AuroraApp) Initialize() error {
 	// Initialize session manager
 	auroraApp.sessionManager = session.NewManager()
 
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only adaptive
+	// serving): wire the hosted-provider gate from configuration BEFORE any
+	// handler can construct a provider. Mirrors internal/server/server.go.
+	// Default false -- llm.cloud.enabled must be explicitly set true to
+	// permit cloud construction.
+	llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)
+
 	// Initialize LLM manager
 	auroraApp.llmManager = llm.NewModelManager()
 

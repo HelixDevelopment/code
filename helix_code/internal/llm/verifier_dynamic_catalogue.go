@@ -1,6 +1,8 @@
 package llm
 
 import (
+	"errors"
+	"log"
 	"strings"
 	"time"
 
@@ -80,6 +82,13 @@ func DeriveKeyEnvAliases(name string) []string {
 func BuildDynamicOpenAICompatibleProviders(recs []verifier.VerifierProvider) []Provider {
 	built := make([]Provider, 0, len(recs))
 	seen := map[string]bool{}
+	// Tally of providers the W2c-1 cloud gate refused, reported as ONE summary
+	// line after the loop. Silently dropping these (§11.4.6) left an operator
+	// with a configured key watching a provider simply not appear, with nothing
+	// anywhere saying why. One line per BUILD, not per provider, so a large
+	// verifier catalogue cannot turn a deliberate policy into log spam. Mirrors
+	// the pattern in applications/terminal_ui/env_providers.go.
+	cloudGateRefused := 0
 	for _, rec := range recs {
 		name := strings.TrimSpace(rec.Name)
 		if name == "" {
@@ -109,11 +118,23 @@ func BuildDynamicOpenAICompatibleProviders(recs []verifier.VerifierProvider) []P
 			ChatEndpoint:     dynamicChatEndpoint(rec.APIURL, rec.Endpoint),
 		})
 		if err != nil {
+			if errors.Is(err, ErrCloudDisabled) {
+				// Deliberate operator policy (llm.cloud.enabled=false, the
+				// default), not a construction defect: this provider's endpoint
+				// is hosted and the gate is closed. Counted, not logged
+				// individually, and never with the key value (CONST-042).
+				cloudGateRefused++
+			}
 			continue
 		}
 		built = append(built, provider)
 		seen[strings.ToLower(name)] = true
 	}
+
+	if cloudGateRefused > 0 {
+		log.Printf("ℹ️  LLM: %d verifier-catalogue provider(s) with credentials present were NOT registered because llm.cloud.enabled is false (the default). Set llm.cloud.enabled: true to permit hosted providers — local routes (helixllm coder, llama.cpp, Ollama) are unaffected.", cloudGateRefused)
+	}
+
 	return built
 }
 

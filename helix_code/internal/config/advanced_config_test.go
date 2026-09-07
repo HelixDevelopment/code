@@ -20,11 +20,67 @@ func TestConfigurationValidator(t *testing.T) {
 	validator := NewConfigurationValidator(true)
 	require.NotNil(t, validator)
 
-	// Test valid configuration
+	// Test valid configuration.
+	//
+	// §11.4.120 reconciliation (operator decision 2026-09-05): the raw
+	// builtin default from getDefaultConfig() now has an EMPTY
+	// llm.default_provider (see config.go setDefaultsOn's comment on
+	// v.SetDefault("llm.default_provider", "")) instead of the old
+	// "local". That is intentional: an empty BUILTIN default lets a
+	// genuinely zero-config process fall through to the Ollama
+	// zero-config fallback (:11434) instead of being silently pinned to
+	// the local coder even with no config file at all (§11.4.122). The
+	// shipped config/config.yaml still sets default_provider: "local"
+	// explicitly, so normal deployments still route to the local coder
+	// (HXC-002-F3-01) -- only the BUILTIN (no-config-file) default
+	// changed.
+	//
+	// This validator's schema check (config.go Validate(), the
+	// llm.default_provider enum around line 1565) was NOT changed and
+	// still requires a non-empty value from a fixed provider list -- it
+	// has no "empty means unset, resolved elsewhere" case. So the raw
+	// builtin default is now genuinely reported INVALID by this
+	// validator. That is a real gap between the two (BLOCKING finding,
+	// out of this test file's edit scope: internal/config/config.go's
+	// Validate() is untouched here) -- this test must not paper over it
+	// by asserting Valid==true on the raw builtin default.
+	//
+	// To still exercise "the validator accepts a well-formed, complete
+	// config", we validate a config with an EXPLICIT, shipped-config-
+	// matching provider layered on top of the builtin defaults for
+	// everything else.
 	config := getDefaultConfig()
+	config.LLM.DefaultProvider = "local"
 	result := validator.Validate(config)
 	assert.True(t, result.Valid)
 	assert.Empty(t, result.Errors)
+
+	// §11.4.120 reconciliation + §11.4.122 guard. A genuinely zero-config
+	// Config -- the raw builtin defaults, with no provider chosen -- MUST
+	// validate CLEANLY. Empty llm.default_provider is not a malformed value: it
+	// is the documented "operator did not choose a provider" state, resolved at
+	// request time by resolveLLMProvider's flag > env > config precedence, which
+	// falls back to the local Ollama route. An earlier revision of this guard
+	// pinned the opposite (the validator's schema check had no empty case and
+	// rejected it); that defect is fixed in config.go and the guard is re-aimed
+	// at the invariant that actually matters.
+	//
+	// Mutation-sensitivity (§1.1): restoring the old "local" builtin default --
+	// which silently re-breaks the zero-config Ollama fallback -- fails the
+	// DefaultProvider assertion below. Re-introducing the validator's
+	// reject-empty behaviour fails the Valid/Errors assertions.
+	rawDefault := getDefaultConfig()
+	assert.Equal(t, "", rawDefault.LLM.DefaultProvider,
+		"the BUILTIN llm.default_provider default must stay empty (operator decision 2026-09-05): "+
+			"a non-empty builtin applies even with no config file and makes the zero-config "+
+			"Ollama route unreachable (§11.4.122)")
+	rawResult := validator.Validate(rawDefault)
+	assert.True(t, rawResult.Valid,
+		"a zero-config Config must validate cleanly -- empty llm.default_provider means 'unset', not 'invalid'")
+	for _, err := range rawResult.Errors {
+		assert.NotEqual(t, "llm.default_provider", err.Property,
+			"empty llm.default_provider must not raise a schema error: %+v", err)
+	}
 
 	// Test invalid configuration
 	invalidConfig := getDefaultConfig()
@@ -66,8 +122,20 @@ func TestConfigurationValidatorCustomRules(t *testing.T) {
 		return nil
 	})
 
-	// Test valid value
+	// Test valid value.
+	//
+	// §11.4.120 reconciliation (operator decision 2026-09-05): as in
+	// TestConfigurationValidator above, getDefaultConfig()'s raw builtin
+	// llm.default_provider is now intentionally EMPTY (not "local"), so
+	// it is rejected by Validate()'s unconditional provider-enum check
+	// regardless of any custom rule outcome. Set an explicit,
+	// shipped-config-matching provider so this test still exercises
+	// "does the custom rule + schema validation pass together on an
+	// otherwise well-formed config" rather than tripping over the
+	// unrelated empty-builtin-provider gap (tracked as a BLOCKING
+	// finding; see TestConfigurationValidator's dedicated guard).
 	config := getDefaultConfig()
+	config.LLM.DefaultProvider = "local"
 	config.Application.Name = "allowed"
 	result := validator.Validate(config)
 	assert.True(t, result.Valid)

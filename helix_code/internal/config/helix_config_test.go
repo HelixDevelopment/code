@@ -117,8 +117,22 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Equal(t, 300, config.Tasks.CheckpointInterval)
 	assert.Equal(t, 600, config.Tasks.CleanupInterval)
 
-	// LLM section
-	assert.Equal(t, "local", config.LLM.DefaultProvider)
+	// LLM section.
+	//
+	// §11.4.120 reconciliation (operator decision 2026-09-05): the
+	// BUILTIN default for llm.default_provider is now intentionally
+	// EMPTY, not "local" (see config.go setDefaultsOn's comment on
+	// v.SetDefault("llm.default_provider", "")). A non-empty builtin
+	// default applied even with NO config file at all, silently making
+	// the zero-config Ollama fallback (:11434) unreachable in every
+	// process where config loads -- retiring a shipped capability
+	// (§11.4.122). The shipped config/config.yaml still sets
+	// default_provider: "local" explicitly, so a normal deployment is
+	// unaffected and still routes to the local coder (:18434,
+	// HXC-002-F3-01). Do NOT "helpfully" restore "local" here --
+	// that would silently re-break the zero-config Ollama route this
+	// assertion exists to guard.
+	assert.Equal(t, "", config.LLM.DefaultProvider)
 	assert.Equal(t, "llama-3.2-3b", config.LLM.DefaultModel)
 	assert.Equal(t, 4096, config.LLM.MaxTokens)
 	assert.Equal(t, 0.7, config.LLM.Temperature)

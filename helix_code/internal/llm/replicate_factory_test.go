@@ -89,6 +89,15 @@ func newTestReplicatePredictionServer(t *testing.T, wantAuth string, output stri
 // against a real httptest server — proving the factory path is genuinely
 // wired end to end, not merely that the package compiles.
 func TestFactory_ReplicateProvider_ReachableThroughFactory_Generate(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	server := newTestReplicatePredictionServer(t, "Bearer factory-test-key", "hello from replicate")
 	defer server.Close()
 
@@ -135,6 +144,15 @@ func TestFactory_ReplicateProvider_ReachableThroughFactory_Generate(t *testing.T
 // only the REPLICATE_API_KEY env var, and the real HTTP request the
 // factory-constructed provider makes must carry that env-sourced key.
 func TestFactory_ReplicateProvider_EnvKeyResolution(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	t.Setenv("REPLICATE_API_KEY", "env-sourced-key")
 	t.Setenv("REPLICATE_API_TOKEN", "")
 	t.Setenv("ApiKey_Replicate", "")
@@ -169,6 +187,13 @@ func TestFactory_ReplicateProvider_EnvKeyResolution(t *testing.T) {
 // the factory MUST refuse to construct a provider that could never
 // authenticate — never a silently-broken provider.
 func TestFactory_NewProvider_ReplicateMissingKey_Errors(t *testing.T) {
+	// §11.4.120 gate reconciliation: with the W2c-1 cloud gate CLOSED this test
+	// would still PASS — but for the wrong reason. It asserts only "an error
+	// occurred", and the gate's ErrCloudDisabled satisfies that while the error
+	// this test actually exists to observe (a Replicate key absent from every env alias) would never be
+	// reached. Opening the gate keeps the assertion about its real subject.
+	openCloudGateForTest(t)
+
 	t.Setenv("REPLICATE_API_KEY", "")
 	t.Setenv("REPLICATE_API_TOKEN", "")
 	t.Setenv("ApiKey_Replicate", "")
@@ -185,6 +210,15 @@ func TestFactory_NewProvider_ReplicateMissingKey_Errors(t *testing.T) {
 // round-54 contract (mapReplicateStatusToLLMErr mirrors
 // providers/replicate.mapReplicateStatusToErr).
 func TestFactory_ReplicateProvider_FailedPrediction_PopulatesErr(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/models/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -225,6 +259,15 @@ func TestFactory_ReplicateProvider_FailedPrediction_PopulatesErr(t *testing.T) {
 // authenticated GET against the provider's account endpoint through the
 // factory-constructed provider.
 func TestFactory_ReplicateProvider_GetHealth(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/account", func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer k" {
@@ -260,6 +303,7 @@ func TestFactory_ReplicateProvider_GetHealth(t *testing.T) {
 // working Replicate provider, and that "replicate" resolves through
 // ParseCloudProviderType / Select exactly like every other supported alias.
 func TestProviderFactory_NewCloudProvider_CreatesReplicateProvider(t *testing.T) {
+	openCloudGateForTest(t)
 	pt, err := ParseCloudProviderType("replicate")
 	if err != nil {
 		t.Fatalf("ParseCloudProviderType(\"replicate\") failed: %v", err)
@@ -311,6 +355,13 @@ func TestCatalogue_CerebrasHuggingFaceTogether_ServedByHostedCatalogue(t *testin
 }
 
 func TestFactory_CerebrasHuggingFaceTogether_NotDoubleWiredInGenericFactory(t *testing.T) {
+	// §11.4.120 gate reconciliation: with the W2c-1 cloud gate CLOSED this test
+	// would still PASS — but for the wrong reason. It asserts only "an error
+	// occurred", and the gate's ErrCloudDisabled satisfies that while the error
+	// this test actually exists to observe (no factory.go switch arm for these catalogue-served types) would never be
+	// reached. Opening the gate keeps the assertion about its real subject.
+	openCloudGateForTest(t)
+
 	// §11.4.6 honest-boundary lock: these three are ALREADY reachable via
 	// the hosted catalogue (asserted above). Adding them to factory.go's
 	// switch on top of that would create TWO construction paths for the

@@ -108,7 +108,7 @@ func newTestServerForWireFacade(t *testing.T) *Server {
 		Auth:    config.AuthConfig{WireFacadeAPIKeys: wireFacadeRoutesTestAPIKey},
 	}
 	db := (*database.Database)(nil)
-	srv := New(cfg, db, nil)
+	srv := newTestServer(t, cfg, db, nil)
 	require.NotNil(t, srv)
 	return srv
 }

@@ -182,6 +182,20 @@ func loadProviderConfigFromDisk(envLookup func(string) string) (string, llm.Prov
 // the FakeLLMProvider (which lives in the subagent package as a test-only
 // type with the "fake-test-only" sentinel ProviderType).
 func buildSubagentLLMProvider(ctx context.Context) (llm.Provider, error) {
+	// Wire the process-wide cloud gate here too: this function runs inside a
+	// re-exec'd subagent HELPER process (see main()'s
+	// subagent.IsSubagentInvocation() dispatch above) — a genuinely separate
+	// OS process from the parent CLI, so the parent's SetCloudEnabled call
+	// never reaches it (cloudGate is process-global, not inherited across
+	// exec boundaries). Without this, cloudGate would stay at its
+	// fail-closed zero value (CLOSED) for every subagent child forever,
+	// silently refusing hosted providers regardless of the operator's
+	// llm.cloud.enabled setting. A config load error leaves the gate at
+	// its fail-closed zero value (CLOSED) here too.
+	if subCfg, err := config.Get(); err == nil {
+		llm.SetCloudEnabled(subCfg.LLM.Cloud.Enabled)
+	}
+
 	configProviderName, configEntry, configErr := loadProviderConfigFromDisk(os.Getenv)
 	if configErr != nil && !errors.Is(configErr, os.ErrNotExist) {
 		// Config read failed for a real reason; surface it but keep going so
@@ -3161,6 +3175,17 @@ func main() {
 	// logged (CONST-042). This runs after the helper-mode early-exit dispatches
 	// (which never reach normal CLI logic) and before every config-reading path.
 	loadAPIKeysAtStartup()
+
+	// Wire the process-wide cloud gate (internal/llm.SetCloudEnabled) from
+	// config.LLM.Cloud.Enabled now that loadAPIKeysAtStartup has populated the
+	// process environment — config.Get() is memoized (sync.Once) so every
+	// later config.Get() call in this process observes the same value the
+	// key funnel just set. A config load error leaves the gate at its
+	// fail-closed zero value (CLOSED): hosted providers stay refused rather
+	// than silently permitted.
+	if cliCfg, err := config.Get(); err == nil {
+		llm.SetCloudEnabled(cliCfg.LLM.Cloud.Enabled)
+	}
 
 	// Minimal dispatcher: intercept the "permissions" subcommand group before
 	// flag.Parse() so that Cobra handles its own flag parsing.

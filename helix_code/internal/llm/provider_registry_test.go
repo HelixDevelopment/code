@@ -10,6 +10,15 @@ import (
 )
 
 func TestNewProviderFactory(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	tests := []struct {
 		name     string
 		config   ProviderConfigEntry

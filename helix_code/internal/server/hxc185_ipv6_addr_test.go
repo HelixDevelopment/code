@@ -54,7 +54,7 @@ func TestServerAddr_IPv6_Listens(t *testing.T) {
 			cfg.Server.Address = tc.address
 			cfg.Server.Port = 0 // ephemeral
 
-			srv := New(cfg, nil, nil)
+			srv := newTestServer(t, cfg, nil, nil)
 			addr := srv.server.Addr
 
 			if hxc185RedMode() {

@@ -106,20 +106,57 @@ var generateCmd = &cobra.Command{
 		}
 		prompt := args[0]
 
-		// Speed programme P2-T07: config.Get() caches the process config.
+		// HXC-002-F3-04: route `generate` through the SERVER's provider
+		// resolution semantics (server.ResolveLLMProvider) so the CLI and the
+		// HTTP API can never drift on which local route a default request
+		// takes — a config `default_provider: "local"` resolves to the
+		// helixllm coder route here exactly as it does for
+		// POST /api/v1/llm/generate. Pre-fix this path built a ModelManager
+		// with ZERO registered providers, so SelectOptimalModel always
+		// failed with "no models available".
 		cfg, err := config.Get()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_err_config", map[string]any{"Error": err.Error()}))
 			return
 		}
+		// Same cloud gate the server applies in server.New — a CLI generate
+		// must refuse cloud providers exactly when the server would.
+		llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)
 
-		mgr := llm.NewModelManager()
-		defaultProvider := cfg.LLM.DefaultProvider
-		if defaultProvider == "" {
-			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_no_default_provider", nil))
-			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_set_default_provider", nil))
+		// Pass the EMPTY flag slot, NOT cfg.LLM.DefaultProvider. The first
+		// argument is the FLAG source in the resolver's flag > env > config
+		// precedence chain (the Selector in internal/llm/provider_factory.go).
+		// Passing the config value here promoted config ABOVE HELIX_LLM_PROVIDER
+		// and inverted the very precedence this path exists to share with the
+		// server: with HELIX_LLM_PROVIDER=anthropic exported, the server honours
+		// it while `generate` silently used the config default -- exactly the
+		// CLI/API drift the comment above says is eliminated. resolveLLMProvider
+		// consults cfg.LLM.DefaultProvider itself in the CONFIG slot
+		// (HXC-002-F3-01), so the configured default still applies -- at the
+		// correct precedence, and only when neither flag nor env named a
+		// provider. The former empty-default early-exit is gone for the same
+		// reason: an empty config default is not an error when HELIX_LLM_PROVIDER
+		// names one, and when nothing names one the resolver falls back exactly
+		// as the server does.
+		mgr, prov, err := newGenerateManager("")
+		if err != nil {
+			// The shared resolution path classifies an unresolvable — or
+			// cloud-gated — provider name that came from HELIX_LLM_PROVIDER /
+			// llm.default_provider as a misconfiguration of the RESOLVING
+			// PROCESS. Over HTTP that is a 5xx and the operator is someone
+			// else; here the resolving process IS this CLI, so the same
+			// condition has to be reported as the USER'S OWN environment and
+			// config file rather than as a server-side fault they cannot see.
+			// CONST-046: rendered through the tr() seam like every other
+			// user-facing string in this command, never a hardcoded literal.
+			if server.IsProviderMisconfiguration(err) {
+				fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_provider_misconfigured", map[string]any{"Error": err.Error()}))
+				return
+			}
+			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_provider_unavailable", map[string]any{"Error": err.Error()}))
 			return
 		}
+		defer func() { _ = prov.Close() }()
 
 		modelInfo, err := mgr.SelectOptimalModel(llm.ModelSelectionCriteria{
 			TaskType:          "text-generation",
@@ -130,8 +167,7 @@ var generateCmd = &cobra.Command{
 			return
 		}
 
-		entryKey := llm.ProviderType(defaultProvider)
-		prov, err := mgr.GetProviderForModel(modelInfo.Name, entryKey)
+		serving, err := mgr.GetProviderForModel(modelInfo.Name, prov.GetType())
 		if err != nil {
 			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_provider_unavailable", map[string]any{"Error": err.Error()}))
 			return
@@ -148,7 +184,7 @@ var generateCmd = &cobra.Command{
 			MaxTokens:   4096,
 			Temperature: 0.7,
 		}
-		response, err := prov.Generate(ctx, request)
+		response, err := serving.Generate(ctx, request)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, tr(ctx0, "cmd_generate_failed", map[string]any{"Error": err.Error()}))
 			return
@@ -250,4 +286,33 @@ var notifyCmd = &cobra.Command{
 		}
 		fmt.Println(tr(ctx, "cmd_notify_dispatched", nil))
 	},
+}
+
+// newGenerateManager resolves defaultProvider through the SERVER's provider
+// resolution (server.ResolveLLMProvider — local default routes to the
+// helixllm coder sidecar, cloud names are subject to the cloud gate) and
+// registers the constructed provider into a fresh ModelManager so model
+// selection runs over a REAL provider catalog. The returned provider is
+// owned by the caller (Close it); on a registration failure it is closed
+// here so the caller never leaks it.
+func newGenerateManager(defaultProvider string) (*llm.ModelManager, llm.Provider, error) {
+	prov, err := server.ResolveLLMProvider(defaultProvider, "")
+	if err != nil {
+		return nil, nil, err
+	}
+	mgr := llm.NewModelManager()
+	if err := mgr.RegisterProvider(prov); err != nil {
+		_ = prov.Close()
+		return nil, nil, err
+	}
+	return mgr, prov, nil
+}
+
+// HXC-002-F3-04: generateCmd was defined but NEVER registered on rootCmd, so
+// `helix generate` answered `unknown command "generate" for "helix"`. The
+// other commands in this file (server/version/test/worker/notify) have their
+// own registration sites or are tracked separately; only generate is wired
+// here.
+func init() {
+	rootCmd.AddCommand(generateCmd)
 }

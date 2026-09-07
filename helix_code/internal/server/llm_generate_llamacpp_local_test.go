@@ -49,10 +49,12 @@ import (
 //     server listens on. There was NO way to point it anywhere else over
 //     the HTTP API (§11.4.111 resolve-by-configuration, CONST-046).
 //
-//  3. `HELIX_LLAMA_CPP_HOST` was a DEAD config key: `.env.example:55` documents
-//     it and the LLMsVerifier integration plan tabulates it, but a
-//     repo-wide grep found ZERO Go readers — an operator setting it got
-//     silence, not a redirected endpoint.
+//  3. `HELIX_LLAMA_CPP_HOST` was a DEAD config key: root `.env.example:89`
+//     documents it (now `http://localhost:18434`, fixed from the historical
+//     `:8080` self-POST hazard by commit a74ae7cb) and the LLMsVerifier
+//     integration plan tabulates it, but a repo-wide grep found ZERO Go
+//     readers — an operator setting it got silence, not a redirected
+//     endpoint.
 //
 // THE FIX these tests pin: `llamacpp` / `llama-cpp` / `llama.cpp` resolve, like
 // the sibling `helixllm` / `local` selectors already do, to a REAL
@@ -302,8 +304,10 @@ func TestResolveLLMProvider_LlamaCppLocal_FallsBackToSharedLocalEndpoint(t *test
 }
 
 // TestResolveLLMProvider_LlamaCppLocal_DefaultEndpointDoesNotCollideWithOurOwnServer
-// pins the zero-config default AND the reason it is not `.env.example`'s
-// generic `http://localhost:8080`.
+// pins the zero-config default AND the reason it is not the generic
+// `http://localhost:8080` llama-server upstream default (still shown in
+// `configs/verifier.yaml`; root `.env.example` itself now documents the
+// fixed `:18434` value, per commit a74ae7cb).
 //
 // 8080 is llama-server's UPSTREAM default, but it is also the port HelixCode's
 // OWN API server listens on — the pre-fix hardcoded fallback in
