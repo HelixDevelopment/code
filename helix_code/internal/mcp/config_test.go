@@ -112,7 +112,12 @@ servers:
 `)
 	dir := t.TempDir()
 	require.NoError(t, os.WriteFile(filepath.Join(dir, "mcp.yml"), yaml, 0644))
-	os.Unsetenv("P1F06_T10_NOT_SET")
+	// Save/restore: a bare os.Unsetenv leaks to every later test in the
+	// binary and makes verdicts depend on -shuffle ordering.
+	if prev, had := os.LookupEnv("P1F06_T10_NOT_SET"); had {
+		t.Cleanup(func() { _ = os.Setenv("P1F06_T10_NOT_SET", prev) })
+	}
+	_ = os.Unsetenv("P1F06_T10_NOT_SET")
 	cfg, err := LoadConfig(filepath.Join(dir, "mcp.yml"))
 	require.NoError(t, err)
 	require.Len(t, cfg.Servers, 1)

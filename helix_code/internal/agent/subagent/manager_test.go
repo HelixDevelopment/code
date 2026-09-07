@@ -504,9 +504,22 @@ func TestSubagentManager_WaitAll_BlocksUntilAllComplete(t *testing.T) {
 	}
 }
 
+// TestSubagentManager_WaitAll_RespectsCtxCancel proves WaitAll returns through
+// its ctx.Done() branch when the caller's context is already cancelled.
+//
+// DETERMINISM (§11.4.50): the subagent is held inside the provider by a
+// barrier, so the aggregator is PROVABLY empty and ctx.Done() is the only
+// ready case in WaitAll's select — where a 2s provider delay merely made that
+// likely, and an `elapsed > 500ms` bound then sampled the host scheduler to
+// check it. The reason is now read off the return value: context.Canceled with
+// an EMPTY result set can only come from the cancellation branch, because the
+// aggregator branch always appends a result before looping. (Measured on this
+// host at load 223/16 CPUs the old call took 1.6µs–17.6µs against its 500ms
+// bound — a five-order-of-magnitude margin that existed purely to absorb
+// scheduling noise.)
 func TestSubagentManager_WaitAll_RespectsCtxCancel(t *testing.T) {
-	provider := NewFakeLLMProvider(nil)
-	provider.WithDelay(2 * time.Second)
+	provider := newGateProvider()
+	t.Cleanup(provider.Release)
 
 	m := newManagerForTest(t, SubagentManagerOptions{
 		LLMProvider: provider,
@@ -521,20 +534,25 @@ func TestSubagentManager_WaitAll_RespectsCtxCancel(t *testing.T) {
 		t.Fatalf("Dispatch: %v", err)
 	}
 
+	// Barrier: while the subagent is parked in Generate it has published
+	// nothing, so no result can be waiting in the aggregator.
+	provider.AwaitEntered(t)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // already canceled
 
-	start := time.Now()
-	_, err = m.WaitAll(ctx, []string{id})
+	results, err := m.WaitAll(ctx, []string{id})
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("expected context.Canceled, got %v", err)
 	}
-	if elapsed := time.Since(start); elapsed > 500*time.Millisecond {
-		t.Fatalf("WaitAll took %v with canceled ctx — should return promptly", elapsed)
+	if len(results) != 0 {
+		t.Fatalf("WaitAll returned %d result(s) alongside context.Canceled — it did not return through the cancellation branch", len(results))
 	}
 
-	// Drain the in-flight result so shutdown doesn't deadlock.
-	_ = drainAll(t, m, 1, 3*time.Second)
+	// Release the in-flight subagent and drain its result so shutdown doesn't
+	// deadlock. The budget is a stuck-detector, not a latency assertion.
+	provider.Release()
+	_ = drainAll(t, m, 1, gateBudget)
 }
 
 // =====================================================================

@@ -348,12 +348,16 @@ func TestTransactionManager_Timeout(t *testing.T) {
 	tx, err := tm.Begin(context.Background(), EditOptions{})
 	require.NoError(t, err)
 
-	// Wait for timeout
-	time.Sleep(200 * time.Millisecond)
+	// Wait for the timeout-monitor goroutine to abort the transaction.
+	// GetState() reads the field under the transaction lock — the timeout
+	// monitor writes tx.State under tx.mu, so a direct read would race.
+	// The assertion is the predicate, never elapsed time. Generous
+	// ceiling + tiny interval: a fast machine exits on the first check.
+	require.Eventually(t, func() bool {
+		return tx.GetState() == StateAborted
+	}, 30*time.Second, 5*time.Millisecond, "transaction never aborted on timeout")
 
-	// State should be aborted. Use GetState() to read the field under the
-	// transaction lock — the timeout monitor writes tx.State under tx.mu,
-	// so a direct read here would race.
+	// State should be aborted.
 	assert.Equal(t, StateAborted, tx.GetState())
 }
 

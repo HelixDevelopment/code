@@ -22,6 +22,8 @@ import (
 	"context"
 	"errors"
 	"os"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 	"unicode/utf8"
@@ -134,9 +136,7 @@ func TestGuard_ExecuteStep_AbortsOnCancelledParentCtx(t *testing.T) {
 	cancel()
 	step := &TaskStep{Type: StepShell, Command: "fail", Status: StepPending, MaxRetries: maxRetries, Timeout: time.Second}
 
-	start := time.Now()
 	err := executor.ExecuteStep(ctx, step)
-	elapsed := time.Since(start)
 
 	if err == nil {
 		t.Fatal("ExecuteStep on a cancelled parent ctx must return an error")
@@ -150,51 +150,137 @@ func TestGuard_ExecuteStep_AbortsOnCancelledParentCtx(t *testing.T) {
 	if calls != 0 {
 		t.Fatalf("ExecuteStep invoked the runner %d times on a cancelled ctx (defect DEF-PLANNER-CTXCANCEL reintroduced); want 0", calls)
 	}
-	// No exponential backoff sleeps may have run. The production base is 1s;
-	// a correct abort returns well under that.
-	if elapsed > 500*time.Millisecond {
-		t.Fatalf("ExecuteStep took %v on a cancelled ctx — exponential backoff was not skipped (defect reintroduced)", elapsed)
+	// No exponential-backoff sleep may have been STARTED. Read that off the
+	// executor's own state rather than off the clock: step.RetryCount is
+	// written at the top of the `attempt > 0` branch, immediately before the
+	// backoff timer is armed, so RetryCount == 0 is a positive witness that no
+	// retry iteration — and therefore no backoff sleep — was ever entered.
+	//
+	// DETERMINISM (§11.4.50): this replaces an `elapsed > 500ms` wall-clock
+	// bound. That bound asserted the same property through a quantity the code
+	// under test does not control: on an oversubscribed host the scheduler,
+	// not ExecuteStep, decided whether it held. Measured on this host at load
+	// 223/16 CPUs the real abort took 8.8µs–49µs against a 500ms bound — a
+	// ~10000x margin whose only job was to absorb scheduling noise.
+	if step.RetryCount != 0 {
+		t.Fatalf("step.RetryCount = %d — a retry iteration (and with it a backoff sleep) was entered on a pre-cancelled ctx; want 0", step.RetryCount)
 	}
 	if step.Status != StepFailed {
 		t.Fatalf("step.Status = %v, want StepFailed after cancellation", step.Status)
 	}
 }
 
-// TestGuard_ExecuteStep_AbortsOnCancelDuringBackoff proves the backoff sleep
-// itself is context-aware: a parent ctx cancelled WHILE the executor is
-// sleeping between retries must abort the sleep, not block for the full
-// interval.
+// backoffEntryProbe wraps a context and signals the FIRST consultation of
+// Done() that happens after the probe is armed. The executor consults Done()
+// exactly once when it enters the inter-retry backoff `select` (and once per
+// context.WithTimeout it derives per attempt), so arming the probe as the
+// first attempt returns makes "the executor is now waiting between retries" an
+// observable EVENT. That is what lets the test below cancel at a precise point
+// in the executor's control flow with no sleep and no scheduling assumption.
+//
+// Arming and probing both happen on the executor's own goroutine (the runner
+// callback and Done() are called by it), so `armed` needs no synchronisation
+// beyond atomicity for the reader.
+type backoffEntryProbe struct {
+	context.Context
+	armed  *atomic.Bool
+	signal chan<- struct{}
+}
+
+func (c backoffEntryProbe) Done() <-chan struct{} {
+	if c.armed.Load() {
+		select {
+		case c.signal <- struct{}{}:
+		default: // already signalled; later consultations are not interesting
+		}
+	}
+	// MUST return the underlying channel unchanged: the caller's select
+	// captures this exact channel, and cancel() is what closes it.
+	return c.Context.Done()
+}
+
+// TestGuard_ExecuteStep_AbortsOnCancelDuringBackoff proves the inter-retry
+// wait is context-aware: a parent ctx cancelled WHILE the executor is waiting
+// between retries must abandon the retry cycle rather than run the next
+// attempt once the interval elapses.
+//
+// DETERMINISM (§11.4.50) — this guard was rebuilt to remove its wall-clock
+// dependence. What it used to do: sleep 100ms, cancel, and assert the call
+// returned within 2s. Both halves were scheduler-decided — the 100ms sleep
+// only *hoped* to land inside the backoff window, and the 2s bound sampled how
+// promptly a loaded host rescheduled the goroutine (measured on this host at
+// load 223/16 CPUs: 100.3ms–120.7ms against the 2s bound, of which 100ms was
+// the test's own sleep).
+//
+// What it does now — the discriminator is the RUNNER CALL COUNT, not the clock.
+// Each iteration of the retry loop runs: top-of-loop ctx check → backoff wait →
+// runner. For a cancellation delivered while the executor is in the backoff
+// wait:
+//
+//	context-aware wait      → the ctx.Done() branch returns immediately  → 1 call
+//	plain time.Sleep(back)  → the wait finishes, attempt 1's runner RUNS,
+//	                          and only the NEXT top-of-loop check aborts  → 2 calls
+//
+// The cancel is ordered into that window by backoffEntryProbe rather than by a
+// sleep, so the observation is exact: exactly one runner call is positive
+// evidence the retry cycle was abandoned mid-wait.
 func TestGuard_ExecuteStep_AbortsOnCancelDuringBackoff(t *testing.T) {
 	if redMode() {
 		t.Skip("RED_MODE: covered by the cancelled-before-exec reproduction above") // SKIP-OK: same defect class
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	var armed atomic.Bool
+	enteredBackoff := make(chan struct{}, 1)
+
 	attempts := 0
 	runner := func(_ context.Context, _ string) (string, error) {
 		attempts++
+		// Arm as the first attempt returns, so the next Done() consultation —
+		// the backoff wait the executor is about to enter — is the one
+		// reported. Same goroutine as the Done() call below it.
+		armed.Store(true)
 		return "", errors.New("transient")
 	}
 	executor := NewSequentialExecutor(runner)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	// Cancel shortly after the first attempt fails and the executor enters
-	// the (production 1s) backoff sleep.
+	// The canceller fires the moment the executor enters the backoff wait.
+	// stop + WaitGroup guarantee it is reaped even if that never happens (a
+	// regression that skips the wait entirely), so no goroutine outlives the
+	// test.
+	stop := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
-		time.Sleep(100 * time.Millisecond)
-		cancel()
+		defer wg.Done()
+		select {
+		case <-enteredBackoff:
+			cancel()
+		case <-stop:
+		}
 	}()
+	t.Cleanup(func() { close(stop); wg.Wait() })
 
 	step := &TaskStep{Type: StepShell, Command: "fail", Status: StepPending, MaxRetries: 5, Timeout: time.Second}
-	start := time.Now()
-	err := executor.ExecuteStep(ctx, step)
-	elapsed := time.Since(start)
+	err := executor.ExecuteStep(backoffEntryProbe{Context: ctx, armed: &armed, signal: enteredBackoff}, step)
 
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("ExecuteStep error = %v, want context.Canceled", err)
 	}
-	// Must abort during the first 1s backoff — well under the full
-	// 1+2+4+8+16=31s a non-context-aware loop would burn.
-	if elapsed > 2*time.Second {
-		t.Fatalf("ExecuteStep took %v — backoff sleep was not context-aware (defect reintroduced)", elapsed)
+	// THE discriminator. Two calls means the executor completed its wait and
+	// ran the next attempt before noticing the cancellation — i.e. the wait
+	// was not context-aware (defect reintroduced).
+	if attempts != 1 {
+		t.Fatalf("runner was invoked %d times — the executor finished its inter-retry wait and ran another attempt instead of aborting when the ctx was cancelled during the wait (defect reintroduced); want 1", attempts)
+	}
+	if step.Status != StepFailed {
+		t.Fatalf("step.Status = %v, want StepFailed after cancellation", step.Status)
+	}
+	// The abort must be ATTRIBUTED to the cancellation, not to retry
+	// exhaustion that happened to coincide with it.
+	if step.Error != context.Canceled.Error() {
+		t.Fatalf("step.Error = %q, want %q — the abort was not attributed to the cancellation", step.Error, context.Canceled.Error())
 	}
 }

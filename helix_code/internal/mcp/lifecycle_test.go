@@ -16,31 +16,12 @@ func TestClient_HandshakeSuccess(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	go func() {
-		// observe the initialize request, send synthetic reply
-		time.Sleep(50 * time.Millisecond)
-		sent := ft.sentMessages()
-		var initID interface{}
-		for _, m := range sent {
-			if m.Method == "initialize" {
-				initID = m.ID
-				break
-			}
-		}
-		require.NotNil(t, initID)
-		ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: initID, Result: map[string]any{"capabilities": map[string]any{"tools": map[string]any{}}}})
-		// then tools/list
-		time.Sleep(50 * time.Millisecond)
-		var toolsID interface{}
-		for _, m := range ft.sentMessages() {
-			if m.Method == "tools/list" {
-				toolsID = m.ID
-				break
-			}
-		}
-		require.NotNil(t, toolsID)
-		ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: toolsID, Result: map[string]any{"tools": []map[string]any{{"name": "echo"}}}})
-	}()
+	// Answer each handshake message as it is actually sent, instead of
+	// sleeping 50ms and hoping it has been sent by then. This also removes the
+	// require.NotNil calls that ran on a non-test goroutine (calling t.FailNow
+	// off the test goroutine is undefined); a message that never arrives now
+	// surfaces as a Connect error on the assertion below.
+	ft.respondWith(handshakeResponder([]map[string]any{{"name": "echo"}}))
 
 	require.NoError(t, c.Connect(ctx))
 	assert.Equal(t, StateReady, c.State())
@@ -55,30 +36,21 @@ func TestClient_CallToolReturnsResult(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "initialize" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{}})
+	// Handshake and tools/call are both answered inline as each request is
+	// sent, so the test is correct at any speed.
+	ft.respondWith(respondAlso(
+		handshakeResponder([]map[string]any{}),
+		func(m *MCPMessage) *MCPMessage {
+			if m.Method == "tools/call" {
+				return &MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{
+					"content": []map[string]any{{"type": "text", "text": "hello"}},
+				}}
 			}
-		}
-		time.Sleep(50 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "tools/list" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{"tools": []map[string]any{}}})
-			}
-		}
-	}()
+			return nil
+		},
+	))
 	require.NoError(t, c.Connect(ctx))
 
-	go func() {
-		time.Sleep(50 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "tools/call" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{"content": []map[string]any{{"type": "text", "text": "hello"}}}})
-			}
-		}
-	}()
 	res, err := c.CallTool(ctx, "echo", map[string]any{"x": 1})
 	require.NoError(t, err)
 	assert.NotNil(t, res)
@@ -100,20 +72,7 @@ func contextWithSeededHandshake(t *testing.T, ft *fakeTransport) context.Context
 	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	t.Cleanup(cancel)
-	go func() {
-		time.Sleep(20 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "initialize" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{}})
-			}
-		}
-		time.Sleep(20 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "tools/list" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{"tools": []map[string]any{}}})
-			}
-		}
-	}()
+	ft.respondWith(handshakeResponder([]map[string]any{}))
 	return ctx
 }
 
@@ -142,25 +101,18 @@ func TestClient_HandshakeFailureStopsRecvLoop(t *testing.T) {
 	err := c.Connect(ctx)
 	require.Error(t, err)
 	assert.Equal(t, StateDisconnected, c.State())
-	// Give recvLoop time to exit after its context is cancelled.
+	// NEEDS-REDESIGN (deliberately left as a sleep): this waits for recvLoop
+	// to observe its cancelled context and return. Client exposes no
+	// observable "recvLoop exited" signal, and adding one is a change to
+	// PRODUCTION code (a done-channel on Client), not a test fix — so it is
+	// surfaced here rather than smuggled in. The assertions below do not
+	// depend on this sleep for correctness; a zombie recvLoop would steal a
+	// handshake reply and fail the Connect below, which is the actual guard.
 	time.Sleep(50 * time.Millisecond)
 	// A retry must work cleanly (no zombie recvLoop racing on the same transport).
 	ctx2, cancel2 := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel2()
-	go func() {
-		time.Sleep(20 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "initialize" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{}})
-			}
-		}
-		time.Sleep(20 * time.Millisecond)
-		for _, m := range ft.sentMessages() {
-			if m.Method == "tools/list" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{"tools": []map[string]any{}}})
-			}
-		}
-	}()
+	ft.respondWith(handshakeResponder([]map[string]any{}))
 	require.NoError(t, c.Connect(ctx2))
 	assert.Equal(t, StateReady, c.State())
 	require.NoError(t, c.Close())

@@ -303,7 +303,12 @@ func TestLoad_RefusesShippedPlaceholderJWTSecret(t *testing.T) {
 		t.Fatalf("write temp config: %v", err)
 	}
 	t.Setenv("HELIX_CONFIG", path)
-	os.Unsetenv("HELIX_AUTH_JWT_SECRET")
+	// Save/restore: a bare os.Unsetenv leaks to every later test in the
+	// binary and makes verdicts depend on -shuffle ordering.
+	if prev, had := os.LookupEnv("HELIX_AUTH_JWT_SECRET"); had {
+		t.Cleanup(func() { _ = os.Setenv("HELIX_AUTH_JWT_SECRET", prev) })
+	}
+	_ = os.Unsetenv("HELIX_AUTH_JWT_SECRET")
 
 	cfg, err := Load()
 	if err == nil {

@@ -31,6 +31,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -169,131 +170,229 @@ func TestVoiceRecorder_StopReapsProcess_Guard(t *testing.T) {
 	}
 	pid := cmd.Process.Pid
 
-	start := time.Now()
 	if err := rec.Stop(); err != nil {
 		t.Fatalf("Stop() failed: %v", err)
-	}
-	// Stop() must return promptly (well under the 2s escalation budget)
-	// because the writer exits on SIGINT.
-	if elapsed := time.Since(start); elapsed > 2500*time.Millisecond {
-		t.Fatalf("Stop() took %v — Wait()/Kill escalation did not reap the process promptly", elapsed)
 	}
 	// After Wait(), ProcessState is populated — proof the child was reaped
 	// (not left a zombie). A nil ProcessState means Wait() never ran.
 	if cmd.ProcessState == nil {
 		t.Fatalf("ProcessState nil after Stop() — process pid=%d was NOT reaped (zombie/leak)", pid)
 	}
+	// DETERMINISM (§11.4.50): the reap REASON, read off the exit status
+	// instead of the clock. Stop() sends SIGINT and only escalates to SIGKILL
+	// if the child is still there after 2s, so "was the child SIGKILLed?" is a
+	// direct, scheduler-free witness of whether that escalation path ran —
+	// exactly what the previous `elapsed > 2500ms` bound stood in for.
+	// Measured on this host at load 223/16 CPUs, Stop() took 240µs–3.2ms
+	// against that 2500ms bound: the bound was ~780x the observed cost and its
+	// truth was decided by host scheduling, not by Stop().
+	type signalStatus interface {
+		Signaled() bool
+		Signal() syscall.Signal
+	}
+	if ws, ok := cmd.ProcessState.Sys().(signalStatus); ok {
+		if ws.Signaled() && ws.Signal() == syscall.SIGKILL {
+			t.Fatalf("child pid=%d was SIGKILLed — Stop() fell through to its 2s Kill escalation instead of reaping the SIGINT-terminated child", pid)
+		}
+	} else {
+		// SKIP-OK (§11.4.3): this platform's wait status does not expose
+		// signal disposition. The reap itself is still asserted above; only
+		// the which-path refinement is unavailable here.
+		t.Logf("SKIP-OK: %T exposes no signal disposition on this platform; escalation-path check not performed", cmd.ProcessState.Sys())
+	}
+}
+
+// awaitFile blocks until path exists, or fails the test when the budget
+// expires. The budget is NOT a pass/fail threshold — it is only an upper
+// bound on "the other side of the barrier never arrived", and its expiry
+// is always a loud, explanatory FAIL. The correct-behaviour path crosses
+// each barrier in microseconds; the budget exists so a genuinely stuck
+// subprocess reports a cause instead of hanging the suite.
+func awaitFile(t *testing.T, path string, budget time.Duration, whatFailed string) {
+	t.Helper()
+	deadline := time.Now().Add(budget)
+	for {
+		if _, err := os.Stat(path); err == nil {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("%s (waited %s for barrier file %s)", whatFailed, budget, path)
+		}
+		time.Sleep(200 * time.Microsecond)
+	}
 }
 
 // TestVoiceRecorder_StatusNonBlockingDuringStop_Guard proves MUST-FIX 1
 // (§11.4.72 audio path): Stop() must NOT hold r.mu across its blocking
-// SIGINT→2s→Kill reap, or a concurrent Status()/IsRecording()/FilePath()/
-// Duration() would stall for up to ~2s.
+// SIGINT→reap, or a concurrent Status()/IsRecording()/FilePath()/Duration()
+// would stall for up to ~2s.
 //
-// We drive a REAL capture subprocess that deliberately IGNORES SIGINT and
-// only dies on SIGKILL — this forces Stop() down its full 2-second
-// escalation path, which is exactly the window an observer would be
-// blocked for if Stop() held the lock. While Stop() runs, we hammer
-// Status()/IsRecording()/FilePath()/Duration() from a goroutine and assert
-// every single call returns in well under 250ms. If the lock were held
-// across the reap, these calls would block ~2s and the guard FAILs.
+// DETERMINISM (§11.4.50) — this guard was rebuilt to remove every timing,
+// scheduling and ambient-load dependence. What it used to do, and why that
+// was non-deterministic (measured, not assumed):
+//
+//	The old shape slept a fixed 50ms after Start() and then ASSUMED the perl
+//	capture stand-in had already installed $SIG{INT}='IGNORE', so that Stop()
+//	would be forced down its full 2s escalation; it then asserted a wall-clock
+//	observer latency < 250ms against that ~2s window. Both halves raced the
+//	host. Measured on this tree: perl reaches handler-installed in 16-20ms on a
+//	quiet host but 21-311ms under load — 9 of 10 loaded runs blew the 50ms
+//	budget. When that happens SIGINT arrives BEFORE the handler exists, perl
+//	dies on the default disposition, cmd.Wait() returns in ~4ms, and the
+//	test failed its own sanity check with
+//	  "Stop() returned in 3.802285ms — expected ~2s escalation".
+//	The 250ms latency bound was the second race: it compared two wall-clock
+//	numbers whose ratio shrinks as the host gets busier.
+//
+// The rebuilt guard replaces BOTH races with synchronisation points and a
+// threshold-free observation of the property itself:
+//
+//	BARRIER 1 (ready)     — the stand-in writes "ready" only AFTER installing
+//	                        its signal handlers, so its appearance PROVES the
+//	                        subprocess is armed. Replaces the 50ms sleep.
+//	BARRIER 2 (signalled) — the handlers are non-fatal but OBSERVABLE: they
+//	                        record receipt instead of exiting. "signalled"
+//	                        appearing PROVES SIGINT was delivered, i.e. Stop()
+//	                        is between Signal() and return — inside the reap.
+//	ORACLE 1 (TryLock)    — at that provably-in-window moment, ask the mutex
+//	                        directly whether it is held. Instantaneous, no
+//	                        threshold, no latency comparison, load-invariant.
+//	ORACLE 2 (hold+drain) — still HOLDING r.mu, release the subprocess so the
+//	                        reap can finish, and require Stop() to return. If
+//	                        Stop() needed r.mu it can NEVER return while we
+//	                        hold it; if it does not, it returns in µs. The
+//	                        discrimination is ∞-vs-µs, so no bound the host
+//	                        can perturb.
+//
+// Deliberately dropped: the old "Stop() took ~2s" duration assertion. The
+// reap window is now ended by the test (ORACLE 2), so Stop()'s duration is
+// no longer evidence of anything and asserting on it would re-introduce a
+// wall-clock dependence. The window is instead proven by BARRIER 2 plus an
+// explicit not-yet-returned check, and a missed window is a loud FAIL, never
+// a silent pass.
 //
 // Paired §1.1 mutation: re-acquiring r.mu around the reap block in Stop()
-// (the pre-fix lock-held-across-wait shape) makes these observer calls
-// block ~2s → this guard FAILs. Restoring the snapshot-and-release shape →
-// guard PASSes.
+// (the pre-fix lock-held-across-wait shape) makes ORACLE 1's TryLock fail →
+// this guard FAILs. Restoring the snapshot-and-release shape → guard PASSes.
 func TestVoiceRecorder_StatusNonBlockingDuringStop_Guard(t *testing.T) {
 	if redMode() {
 		t.Skip("SKIP-OK: lock-contention behaviour only meaningful against the fixed Stop() (pre-fix launched no process to reap)")
 	}
 	perlPath, err := exec.LookPath("perl")
 	if err != nil {
-		// §11.4.3: a reliably-SIGINT-ignoring capture stand-in is needed to
-		// force Stop() down its full 2s reap window. Plain /bin/sh `trap ''
-		// INT` is not honoured uniformly across platforms (observed on
-		// macOS /bin/sh), so we require perl's deterministic SIG IGNORE.
-		t.Skipf("SKIP-OK: perl unavailable — cannot build a deterministic SIGINT-ignoring capture stand-in on this host — §11.4.3: %v", err)
+		// §11.4.3: this guard needs a capture stand-in whose signal
+		// handlers are non-fatal AND observable. Plain /bin/sh `trap ''
+		// INT` is neither uniformly honoured across platforms nor able to
+		// report receipt, so we require perl.
+		t.Skipf("SKIP-OK: perl unavailable — cannot build a deterministic signal-observing capture stand-in on this host — §11.4.3: %v", err)
 	}
 
-	// Capture stand-in that IGNORES INT/TERM and only dies on KILL, writing
-	// a valid >44-byte file first. perl's $SIG{INT}='IGNORE' is honoured
-	// deterministically across platforms (unlike /bin/sh `trap ''`), so
-	// Stop() is FORCED through its full SIGINT→2s-timeout→Kill escalation —
-	// maximising the reap window we are proving the lock is NOT held across.
-	// $ARGV[0] = the destination path appended by NewVoiceRecorderWithCmd.
-	dir := t.TempDir()
-	script := filepath.Join(dir, "sigint_ignoring_capture.pl")
+	// Control directory carrying the three barrier files. Kept separate from
+	// the script dir so the script can derive every path from one argument.
+	ctrl := t.TempDir()
+	readyPath := filepath.Join(ctrl, "ready")
+	signalledPath := filepath.Join(ctrl, "signalled")
+	releasePath := filepath.Join(ctrl, "release")
+
+	// Capture stand-in. Its INT/TERM handlers RECORD receipt and return —
+	// they neither exit (so Stop() stays in its reap) nor are invisible (so
+	// the test gets a hard synchronisation point). It exits only when the
+	// test creates the release file, so the reap window is closed by the
+	// test, not by a clock.
+	scriptDir := t.TempDir()
+	script := filepath.Join(scriptDir, "barrier_capture.pl")
 	body := "#!/usr/bin/env perl\n" +
-		"$SIG{INT}='IGNORE'; $SIG{TERM}='IGNORE';\n" +
-		"open(my $fh, '>', $ARGV[0]) or die \"open: $!\";\n" +
+		"my ($dir, $out) = @ARGV;\n" +
+		"my $note = sub { open(my $m, '>', \"$dir/signalled\") and close($m); };\n" +
+		"$SIG{INT} = $note; $SIG{TERM} = $note;\n" +
+		"open(my $fh, '>', $out) or die \"open out: $!\";\n" +
 		"print $fh ('\\0' x 64);\n" +
 		"close($fh);\n" +
-		"sleep 60;\n"
+		"open(my $r, '>', \"$dir/ready\") or die \"open ready: $!\";\n" +
+		"close($r);\n" +
+		"until (-e \"$dir/release\") { select(undef, undef, undef, 0.005); }\n" +
+		"exit 0;\n"
 	if err := os.WriteFile(script, []byte(body), 0o755); err != nil {
-		t.Fatalf("write sigint-ignoring capture stand-in: %v", err)
+		t.Fatalf("write barrier capture stand-in: %v", err)
 	}
-	// NewVoiceRecorderWithCmd whitespace-splits the capture command and
-	// LookPath-validates field[0]. Pass "perl <script>" so field[0]=perl
-	// (on PATH) and the script path is its arg; the outPath is appended last
-	// → argv = [perl, script, outPath] → $ARGV[0] = outPath.
-	captureCmd := perlPath + " " + script
+	// NewVoiceRecorderWithCmd whitespace-splits the capture command,
+	// LookPath-validates field[0], and appends the destination path last →
+	// argv = [perl, script, ctrl, outPath] → $ARGV[0]=ctrl, $ARGV[1]=outPath.
+	captureCmd := perlPath + " " + script + " " + ctrl
 
 	outPath := filepath.Join(t.TempDir(), "nonblock.wav")
 	rec := NewVoiceRecorderWithCmd(captureCmd)
 	if err := rec.Start(outPath); err != nil {
 		t.Fatalf("Start() failed: %v", err)
 	}
+	// Unconditional release so no failure path can leave the stand-in alive
+	// (§11.4.14). Runs before t.TempDir cleanup.
+	defer func() { _ = os.WriteFile(releasePath, []byte("release"), 0o644) }()
 
-	// Observer: continuously poke the lock-guarded read methods while Stop()
-	// is in its reap window; record the worst-case latency of any single
-	// call.
-	stopObserver := make(chan struct{})
-	worst := make(chan time.Duration, 1)
+	// BARRIER 1: the stand-in is armed. This is a synchronisation point, not
+	// a sleep — it is exactly the fact the old 50ms sleep merely hoped for.
+	awaitFile(t, readyPath, 60*time.Second,
+		"capture stand-in never reported ready — it did not install its signal handlers, so this guard cannot probe the reap window")
+
+	stopErr := make(chan error, 1)
+	stopReturned := make(chan struct{})
 	go func() {
-		var maxLatency time.Duration
-		for {
-			select {
-			case <-stopObserver:
-				worst <- maxLatency
-				return
-			default:
-			}
-			t0 := time.Now()
-			_ = rec.Status()
-			_ = rec.IsRecording()
-			_ = rec.FilePath()
-			_ = rec.Duration()
-			if d := time.Since(t0); d > maxLatency {
-				maxLatency = d
-			}
-		}
+		stopErr <- rec.Stop()
+		close(stopReturned)
 	}()
 
-	// Let the observer establish a baseline + ensure Start fully settled.
-	time.Sleep(50 * time.Millisecond)
+	// BARRIER 2: SIGINT was delivered and the handler ran. Stop() is now
+	// provably between Signal() and its return — inside the reap.
+	awaitFile(t, signalledPath, 60*time.Second,
+		"capture stand-in never observed SIGINT — Stop() did not reach its reap (if it is blocked acquiring r.mu before signalling, that IS the defect this guard exists for)")
 
-	stopStart := time.Now()
-	if err := rec.Stop(); err != nil {
-		t.Fatalf("Stop() failed: %v", err)
+	// ORACLE 1 — threshold-free property observation. Is r.mu held right now,
+	// at a moment provably inside the reap? No other goroutine in this test
+	// holds it, so with the correct snapshot-and-release Stop() this ALWAYS
+	// succeeds, on any host, at any load.
+	acquired := rec.mu.TryLock()
+
+	// Prove the sample was taken INSIDE the window and not after Stop()
+	// already finished (which would make ORACLE 1 vacuously true). Stop()'s
+	// internal 2s kill-timeout is the only thing that can close the window
+	// early; missing it is reported loudly rather than passed silently.
+	windowMissed := false
+	select {
+	case <-stopReturned:
+		windowMissed = true
+	default:
 	}
-	stopElapsed := time.Since(stopStart)
 
-	close(stopObserver)
-	maxObserverLatency := <-worst
-
-	// Sanity: Stop() really did exercise the slow escalation path (the
-	// subprocess ignored SIGINT), so the lock-hold window we are testing
-	// against was genuinely ~2s wide. If Stop() returned almost instantly
-	// the test would not be probing the dangerous window.
-	if stopElapsed < 1500*time.Millisecond {
-		t.Fatalf("Stop() returned in %v — expected ~2s escalation (subprocess should have ignored SIGINT); test is not exercising the lock-hold window", stopElapsed)
+	if !acquired {
+		t.Fatalf("r.mu was HELD at a moment provably inside Stop()'s reap window (SIGINT delivered, Stop() not yet returned) — Stop() is holding the lock across the blocking reap, so concurrent Status()/IsRecording()/FilePath()/Duration() would stall (MUST-FIX 1 regressed)")
+	}
+	if windowMissed {
+		rec.mu.Unlock()
+		t.Fatalf("Stop() returned before the lock could be sampled — its internal kill-timeout closed the reap window first, so this run proved nothing; re-run (this is an inconclusive run reported honestly, never a pass)")
 	}
 
-	// The actual assertion: no observer call stalled. If Stop() held r.mu
-	// across the ~2s reap, at least one Status()/etc. call would have been
-	// blocked for ~2s.
-	if maxObserverLatency > 250*time.Millisecond {
-		t.Fatalf("concurrent Status()/IsRecording()/FilePath()/Duration() stalled %v during Stop() — Stop() is holding r.mu across the blocking reap (MUST-FIX 1 regressed)", maxObserverLatency)
+	// ORACLE 2 — ∞-vs-µs discrimination. We hold r.mu. Let the stand-in exit
+	// so cmd.Wait() returns and Stop() can complete. A Stop() that needs r.mu
+	// after/across the reap can NEVER return while we hold it; the correct one
+	// returns immediately because it snapshotted cmd and released the lock.
+	if err := os.WriteFile(releasePath, []byte("release"), 0o644); err != nil {
+		rec.mu.Unlock()
+		t.Fatalf("write release barrier: %v", err)
 	}
-	t.Logf("Stop() took %v (full escalation), worst concurrent observer latency %v (<250ms) — lock released across reap", stopElapsed, maxObserverLatency)
+	select {
+	case err := <-stopErr:
+		rec.mu.Unlock()
+		if err != nil {
+			t.Fatalf("Stop() failed: %v", err)
+		}
+	case <-time.After(30 * time.Second):
+		rec.mu.Unlock()
+		t.Fatalf("Stop() did not return within 30s while the test held r.mu, although its capture process had been released — Stop() requires r.mu across/after its reap (MUST-FIX 1 regressed)")
+	}
+
+	// Post-conditions: the terminal state was published and the lock is free.
+	if got := rec.Status(); got != RecorderStopped {
+		t.Fatalf("expected RecorderStopped after Stop(), got %v", got)
+	}
+	t.Logf("r.mu was free at a barrier-proven point inside Stop()'s reap, and Stop() completed while the test held r.mu — lock provably not held across the reap (no timing threshold involved)")
 }

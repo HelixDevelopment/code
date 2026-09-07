@@ -115,16 +115,17 @@ func TestEnvironmentVariables(t *testing.T) {
 		t.Error("HOME environment variable not set")
 	}
 
-	// Test setting environment variable
-	os.Setenv("TEST_VAR", "test_value")
+	// Test setting environment variable. t.Setenv restores the PRIOR state
+	// (value or absence) at test end; the bare os.Setenv this replaced, paired
+	// with a trailing os.Unsetenv, restored to ABSENCE unconditionally and so
+	// clobbered any pre-existing TEST_VAR for the rest of the binary.
+	t.Setenv("TEST_VAR", "test_value")
 
 	value := os.Getenv("TEST_VAR")
 	if value != "test_value" {
 		t.Errorf("Expected test_value, got %s", value)
 	}
 
-	// Clean up
-	os.Unsetenv("TEST_VAR")
 }
 
 func TestSystemInfo(t *testing.T) {

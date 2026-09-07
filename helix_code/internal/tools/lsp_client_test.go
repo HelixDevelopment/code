@@ -206,7 +206,13 @@ func TestLSPClient_InitializeIsIdempotent(t *testing.T) {
 		t.Fatalf("Initialize 2: %v", err)
 	}
 
-	// Wait briefly to ensure any duplicate handshake would have arrived.
+	// NEEDS-REDESIGN (deliberately still a sleep): this asserts a NEGATIVE —
+	// that NO duplicate handshake was sent. A predicate wait cannot prove a
+	// non-event; the correct fix is a flush BARRIER (send a later request,
+	// wait for the server to record it, then count — ordering on one
+	// connection then guarantees any duplicate would already have arrived).
+	// That needs a barrier request this client API does not currently expose,
+	// so it is surfaced here rather than smuggled in as a production hook.
 	time.Sleep(50 * time.Millisecond)
 
 	srv.mu.Lock()
@@ -338,7 +344,7 @@ func TestLSPClient_PublishDiagnosticsConvertsToWrappedDiagnostic(t *testing.T) {
 	}
 
 	// Wait for diagnostics to arrive.
-	deadline := time.Now().Add(time.Second)
+	deadline := time.Now().Add(30 * time.Second)
 	var diags []tools.Diagnostic
 	for time.Now().Before(deadline) {
 		diags = c.GetDiagnostics(filePath)
@@ -441,7 +447,7 @@ func TestLSPClient_DiagnosticIDsAreReplacedOnRepublish(t *testing.T) {
 		t.Fatalf("push 1: %v", err)
 	}
 
-	deadline := time.Now().Add(time.Second)
+	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) && len(c.GetDiagnostics(filePath)) == 0 {
 		time.Sleep(5 * time.Millisecond)
 	}
@@ -453,7 +459,7 @@ func TestLSPClient_DiagnosticIDsAreReplacedOnRepublish(t *testing.T) {
 	if err := srv.pushDiagnostics(ctx, second); err != nil {
 		t.Fatalf("push 2: %v", err)
 	}
-	deadline = time.Now().Add(time.Second)
+	deadline = time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
 		got := c.GetDiagnostics(filePath)
 		if len(got) == 2 {

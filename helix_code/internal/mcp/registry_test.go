@@ -34,15 +34,16 @@ func TestManager_CallToolRoutes(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	go func() {
-		time.Sleep(20 * time.Millisecond)
-		for _, msg := range ft.sentMessages() {
-			if msg.Method == "tools/call" {
-				ft.pushReply(&MCPMessage{JSONRPC: "2.0", ID: msg.ID, Result: map[string]any{"content": []map[string]any{{"type": "text", "text": "ok"}}}})
-				return
-			}
+	// Answer tools/call the instant it is sent rather than sleeping 20ms and
+	// hoping it has been sent by then.
+	ft.respondWith(func(m *MCPMessage) *MCPMessage {
+		if m.Method == "tools/call" {
+			return &MCPMessage{JSONRPC: "2.0", ID: m.ID, Result: map[string]any{
+				"content": []map[string]any{{"type": "text", "text": "ok"}},
+			}}
 		}
-	}()
+		return nil
+	})
 	go c.recvLoop(ctx)
 
 	res, err := m.CallTool(ctx, "srv-a", "echo", map[string]any{"x": 1})

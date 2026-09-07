@@ -94,7 +94,12 @@ func TestSubstitute_EnvVar(t *testing.T) {
 }
 
 func TestSubstitute_EnvVar_Unset(t *testing.T) {
-	os.Unsetenv("F09_THIS_IS_NOT_SET")
+	// Save/restore: a bare os.Unsetenv leaks to every later test in the
+	// binary and makes verdicts depend on -shuffle ordering.
+	if prev, had := os.LookupEnv("F09_THIS_IS_NOT_SET"); had {
+		t.Cleanup(func() { _ = os.Setenv("F09_THIS_IS_NOT_SET", prev) })
+	}
+	_ = os.Unsetenv("F09_THIS_IS_NOT_SET")
 	cmd := &MarkdownCommand{name: "x", body: "[{{ENV.F09_THIS_IS_NOT_SET}}]"}
 	out, err := cmd.render(&CommandContext{})
 	require.NoError(t, err)

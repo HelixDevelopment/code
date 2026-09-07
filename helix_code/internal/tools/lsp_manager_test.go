@@ -304,7 +304,7 @@ func TestLSPManager_StopKillsServer(t *testing.T) {
 
 	// After Stop: server entry may or may not remain in the snapshot,
 	// but if it remains its status must be Stopped.
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
 		infos := m.Servers()
 		if len(infos) == 0 {
@@ -339,7 +339,7 @@ func TestLSPManager_IdleTimeoutShutsDown(t *testing.T) {
 	// Wait well past the idle timeout. We give a comfortable margin
 	// (~10x) because the watcher goroutine + LSP shutdown handshake
 	// + process exit can take a few hundred ms in CI.
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
 		infos := m.Servers()
 		if len(infos) == 0 {
@@ -382,9 +382,17 @@ func TestLSPManager_CrashRecoveryRespawnsOnNextUse(t *testing.T) {
 		t.Fatalf("SIGKILL: %v", err)
 	}
 
-	// Give the manager's wait-goroutine a moment to mark the server
-	// as crashed.
-	time.Sleep(300 * time.Millisecond)
+	// Wait for the manager's wait-goroutine to actually OBSERVE the crash
+	// rather than sleeping 300ms and hoping it was scheduled. The status is an
+	// observable, so assert the predicate; the ceiling only bounds a wedge.
+	crashDeadline := time.Now().Add(30 * time.Second)
+	for time.Now().Before(crashDeadline) {
+		s := findServer(m.Servers(), "fake")
+		if s == nil || s.Status == tools.ServerStatusCrashed || s.Status == tools.ServerStatusStopped {
+			break
+		}
+		time.Sleep(5 * time.Millisecond)
+	}
 
 	// Now drive another open: should respawn lazily.
 	if err := m.NotifyOpen(ctx, filePath); err != nil {
@@ -427,7 +435,7 @@ func TestLSPManager_ShutdownStopsAllServers(t *testing.T) {
 	}
 
 	// After Shutdown: all server entries gone or Stopped.
-	deadline := time.Now().Add(3 * time.Second)
+	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
 		infos := m.Servers()
 		stoppedAll := true

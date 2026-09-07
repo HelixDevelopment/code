@@ -56,8 +56,23 @@ func TestCommandTimeout(t *testing.T) {
 
 	result, err := executor.Execute(context.Background(), cmd)
 	assert.NoError(t, err)
-	assert.True(t, result.TimedOut || result.Killed)
-	assert.True(t, result.Duration < 2*time.Second)
+
+	// DETERMINISM (§11.4.50): assert the REASON the command ended, not how
+	// long it took. `sleep 10` allowed to finish reports TimedOut=false,
+	// Killed=false, OutputIncomplete=false and ExitCode 0; all three flags
+	// below are set only on the timeout path — the timeout manager fires at
+	// cmd.Timeout and cancels the exec context, and that cancellation branch
+	// SIGKILLs the child and marks its output truncated. Together they are
+	// positive evidence the timeout, and nothing else, ended the command.
+	//
+	// This replaces `result.Duration < 2*time.Second`, which sampled wall
+	// clock: on an oversubscribed host the scheduler, not the executor,
+	// decided whether it held. Measured here at load 223/16 CPUs the 500ms
+	// timeout produced Durations of 501.0ms–513.1ms — the bound's remaining
+	// ~1.5s existed only to absorb scheduling noise.
+	assert.True(t, result.TimedOut, "the timeout manager did not fire for a %v timeout on `sleep 10`", cmd.Timeout)
+	assert.True(t, result.Killed, "the command was not killed by the timeout's cancellation")
+	assert.True(t, result.OutputIncomplete, "a command killed mid-flight must be reported as truncated")
 }
 
 // TestCommandWithEnvironment tests command with environment variables
@@ -262,7 +277,7 @@ func TestOutputTruncation(t *testing.T) {
 // TestSignalHandling tests signal handling
 func TestSignalHandling(t *testing.T) {
 	if runtime.GOOS == "windows" {
-		t.Skip("Skipping signal test on Windows")  // SKIP-OK: #legacy-untriaged
+		t.Skip("Skipping signal test on Windows") // SKIP-OK: #legacy-untriaged
 	}
 
 	executor := NewShellExecutor(DefaultConfig())
@@ -496,53 +511,125 @@ func TestConfigValidation(t *testing.T) {
 	})
 }
 
-// TestExecutionStatus tests execution status tracking
+// TestExecutionStatus tests execution status tracking.
+//
+// Determinism note (§11.4.50): this test used to sleep a fixed 100ms and then
+// require GetStatus to succeed. That is a race, not a wait. ExecuteAsync only
+// spawns a goroutine; the status entry is Stored by Execute AFTER it acquires
+// the semaphore, prepares the command, applies the sandbox and completes a real
+// fork/exec. On a loaded host that whole chain routinely exceeds 100ms, the
+// entry is not there yet, and the require aborts — the observed
+// "--- FAIL: TestExecutionStatus (0.10s)", failing at exactly the sleep
+// duration, which is the signature of this race and NOT of anything the test
+// intends to assert.
+//
+// The fix waits for the CONDITION (status observable and Running) instead of
+// for a duration, and terminates the command deterministically via Cancel
+// rather than racing the observation window against the command's own lifetime.
+//
+// §1.1 paired mutation: replace the require.Eventually below with the original
+// `time.Sleep(100 * time.Millisecond)`, then run under host load (or insert a
+// sleep before the executions.Store in DefaultExecutor.Execute) — the test
+// FAILs again at ~0.10s, proving the guard is what removes the flake.
 func TestExecutionStatus(t *testing.T) {
 	executor := NewShellExecutor(DefaultConfig())
 
+	// Long enough that the observation window is not a race against the
+	// command's own lifetime, and well under the 30s DefaultConfig timeout.
+	// The command is not waited out — it is cancelled below.
 	cmd := &Command{
 		ID:      "test-status",
-		Command: "sleep 2",
+		Command: "sleep 20",
 	}
 
 	exec, err := executor.ExecuteAsync(context.Background(), cmd)
 	require.NoError(t, err)
+	t.Cleanup(exec.Cancel)
 
-	// Wait a bit for command to start
-	time.Sleep(100 * time.Millisecond)
+	// Wait for the execution to be REGISTERED AND RUNNING, rather than sleeping
+	// a fixed interval and hoping the goroutine + fork/exec beat the clock.
+	var status *ExecutionStatus
+	require.Eventually(t, func() bool {
+		s, err := executor.GetStatus(cmd.ID)
+		if err != nil {
+			return false
+		}
+		status = s
+		return s.State == StateRunning
+	}, 10*time.Second, 5*time.Millisecond,
+		"execution should become observable and Running")
 
-	// Get status
-	status, err := executor.GetStatus(cmd.ID)
-	require.NoError(t, err)
 	assert.Equal(t, cmd.ID, status.ID)
 	assert.Equal(t, StateRunning, status.State)
 	assert.True(t, status.Duration > 0)
 
-	// Wait for completion
-	<-exec.Done
+	// Terminate deterministically instead of waiting out `sleep`: Cancel fires
+	// the execution context, Execute SIGKILLs the child, reaps it, and its
+	// deferred executions.Delete runs BEFORE the result is sent on Done — so by
+	// the time this receive returns, the deregistration has definitely happened.
+	exec.Cancel()
+	select {
+	case <-exec.Done:
+	case <-time.After(30 * time.Second):
+		t.Fatal("cancelled execution did not finish")
+	}
 
 	// Status should no longer be available
 	_, err = executor.GetStatus(cmd.ID)
 	assert.Error(t, err)
 }
 
-// TestListExecutions tests listing running executions
+// TestListExecutions tests listing running executions.
+//
+// Determinism note (§11.4.50): this carried the identical latent defect as
+// TestExecutionStatus above — start N async commands, sleep a fixed 100ms,
+// then assert they are all listed. ExecuteAsync only spawns a goroutine; each
+// entry is Stored by Execute AFTER it acquires the semaphore, prepares the
+// command, applies the sandbox, and completes a real fork/exec. On a loaded
+// host that chain can exceed 100ms for all three goroutines, so the fixed
+// sleep is a race against their registration, not a wait for it.
+//
+// This test also carries a SECOND, independent defect the sibling did not
+// have: it assumes all three commands register concurrently. That is only
+// true if DefaultConfig().MaxConcurrent >= numCommands, because Execute
+// blocks acquiring e.semaphore (buffered to MaxConcurrent) before it Stores
+// the status entry — a lower limit would make command N+1 block behind the
+// semaphore and never appear in ListExecutions, independent of any timing
+// fix. Verified: DefaultConfig().MaxConcurrent is 10 (shell.go), so with
+// numCommands = 3 all three can register concurrently and this path is not
+// reachable here. The assertion below still keys off the real config value
+// instead of the bare literal 3, so this test cannot silently start lying if
+// MaxConcurrent is ever lowered under numCommands.
+//
+// §1.1 paired mutation: replace the require.Eventually below with the
+// original `time.Sleep(100 * time.Millisecond)`, then run under host load
+// (or insert a sleep before the executions.Store in DefaultExecutor.Execute)
+// — the test FAILs again at ~0.10s, proving the guard is what removes the
+// flake. Actually run: see report.
 func TestListExecutions(t *testing.T) {
-	executor := NewShellExecutor(DefaultConfig())
+	config := DefaultConfig()
+	executor := NewShellExecutor(config)
 
 	// Start multiple commands
 	numCommands := 3
+	require.LessOrEqual(t, numCommands, config.MaxConcurrent,
+		"test assumes all commands register concurrently; MaxConcurrent must cover numCommands")
+
 	for i := 0; i < numCommands; i++ {
 		cmd := &Command{
 			ID:      fmt.Sprintf("list-test-%d", i),
 			Command: "sleep 2",
 		}
-		_, err := executor.ExecuteAsync(context.Background(), cmd)
+		exec, err := executor.ExecuteAsync(context.Background(), cmd)
 		require.NoError(t, err)
+		t.Cleanup(exec.Cancel)
 	}
 
-	// Wait a bit for commands to start
-	time.Sleep(100 * time.Millisecond)
+	// Wait for the CONDITION (all commands registered), not a duration.
+	require.Eventually(t, func() bool {
+		return len(executor.ListExecutions()) >= numCommands
+	}, 10*time.Second, 5*time.Millisecond,
+		"all started executions should become observable via ListExecutions")
 
 	// List executions
 	executions := executor.ListExecutions()

@@ -1,7 +1,9 @@
 package discovery
 
 import (
+	"errors"
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -468,12 +470,15 @@ func TestCleanupExpired(t *testing.T) {
 	registry.Start()
 	defer registry.Stop()
 
-	// Wait for service to expire and cleanup to run
-	time.Sleep(200 * time.Millisecond)
-
-	// Expiring service should be gone
-	_, err = registry.Get("expiring-service")
-	assert.ErrorIs(t, err, ErrServiceNotFound)
+	// Cleanup runs on a BACKGROUND goroutine (cleanupLoop). Sleeping 200ms and
+	// hoping it was scheduled is what made this test fail under load; wait for
+	// the OUTCOME instead. The assertion is the predicate, never the elapsed
+	// time, so this is correct whether the loop runs instantly or is starved.
+	require.Eventually(t, func() bool {
+		_, gErr := registry.Get("expiring-service")
+		return errors.Is(gErr, ErrServiceNotFound)
+	}, 30*time.Second, 5*time.Millisecond,
+		"expiring-service was never removed by cleanupLoop")
 
 	// Persistent service should still exist
 	_, err = registry.Get("persistent-service")
@@ -486,10 +491,8 @@ func TestStartStop(t *testing.T) {
 	// Start should not block
 	registry.Start()
 
-	// Wait a bit to ensure background tasks are running
-	time.Sleep(50 * time.Millisecond)
-
-	// Stop should wait for background tasks to complete
+	// No sleep needed: Start() does cleanupWg.Add(1) synchronously before each
+	// `go`, and Stop() ends in cleanupWg.Wait() — the WaitGroup IS the signal.
 	registry.Stop()
 }
 
@@ -498,20 +501,31 @@ func TestConcurrentAccess(t *testing.T) {
 
 	const numGoroutines = 50
 
-	// Concurrent registrations
+	// Concurrent registrations. Join them with a WaitGroup rather than sleeping
+	// 100ms and hoping 50 goroutines were all scheduled; Register errors are
+	// collected so a real failure reports itself instead of surfacing as a
+	// confusing count mismatch.
+	var wg sync.WaitGroup
+	regErrs := make(chan error, numGoroutines)
 	for i := 0; i < numGoroutines; i++ {
+		wg.Add(1)
 		go func(id int) {
+			defer wg.Done()
 			info := ServiceInfo{
 				Name: fmt.Sprintf("service-%d", id),
 				Host: "localhost",
 				Port: 8080 + id,
 			}
-			registry.Register(info)
+			if err := registry.Register(info); err != nil {
+				regErrs <- err
+			}
 		}(i)
 	}
-
-	// Wait a bit for registrations
-	time.Sleep(100 * time.Millisecond)
+	wg.Wait()
+	close(regErrs)
+	for err := range regErrs {
+		require.NoError(t, err)
+	}
 
 	// Verify all services registered
 	services := registry.List()
