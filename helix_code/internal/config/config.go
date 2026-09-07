@@ -196,10 +196,11 @@ type TasksConfig struct {
 
 // LLMConfig represents LLM configuration
 type LLMConfig struct {
-	DefaultProvider string  `mapstructure:"default_provider"`
-	DefaultModel    string  `mapstructure:"default_model"`
-	MaxTokens       int     `mapstructure:"max_tokens"`
-	Temperature     float64 `mapstructure:"temperature"`
+	DefaultProvider string      `mapstructure:"default_provider"`
+	DefaultModel    string      `mapstructure:"default_model"`
+	MaxTokens       int         `mapstructure:"max_tokens"`
+	Temperature     float64     `mapstructure:"temperature"`
+	Cloud           CloudConfig `mapstructure:"cloud"`
 
 	// Timeout is the per-request LLM call budget in SECONDS (int, not
 	// time.Duration — the shipped configs write a bare `timeout: 30`, which
@@ -223,6 +224,17 @@ type LLMConfig struct {
 	// that wires them into the LLM client, not before.
 	Timeout    int `mapstructure:"timeout"`
 	MaxRetries int `mapstructure:"max_retries"`
+}
+
+// CloudConfig gates hosted (cloud) LLM provider usage. Operator mandate
+// 2026-09-05 (spec 002 local-only adaptive serving): llm.cloud.enabled
+// DEFAULTS TO FALSE — cloud provider construction must refuse with a clear
+// error even when API keys are present. Local routes (the helixllm coder
+// sidecar, llama.cpp, Ollama) are exempt from the gate; the gate is wired
+// into internal/llm via llm.SetCloudEnabled at process startup
+// (internal/server.New, cmd's generate path).
+type CloudConfig struct {
+	Enabled bool `mapstructure:"enabled"`
 }
 
 // QAConfig holds HelixQA-specific configuration injected into HelixCode.
@@ -455,11 +467,18 @@ func Load() (*Config, error) {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("failed to read config file: %v", err)
 		}
-		// Config file not found, but we can continue with defaults
-		fmt.Println(tr(context.Background(), "internal_config_warn_no_config_file_using_defaults", nil))
+		// Config file not found, but we can continue with defaults.
+		// Diagnostics go to STDERR, never stdout: stdout is a machine
+		// protocol for several callers (the subagent helper writes its
+		// SubagentResult JSON there and the parent unmarshals the WHOLE
+		// buffer; `helixcode acp` wires stdout as the line-delimited ACP
+		// JSON-RPC transport). A single informational line on stdout
+		// corrupts those streams. Operators still see this on stderr.
+		fmt.Fprintln(os.Stderr, tr(context.Background(), "internal_config_warn_no_config_file_using_defaults", nil))
 	} else {
 		atomic.AddInt64(&readInConfigCount, 1)
-		fmt.Println(tr(context.Background(), "internal_config_info_using_config_file", map[string]any{"Path": v.ConfigFileUsed()}))
+		// STDERR, not stdout — see the stderr rationale above.
+		fmt.Fprintln(os.Stderr, tr(context.Background(), "internal_config_info_using_config_file", map[string]any{"Path": v.ConfigFileUsed()}))
 
 		// Strict key check. Viper would silently discard any key the Config
 		// struct does not declare, so a typo (`llm.temperture`) or a key left
@@ -472,7 +491,8 @@ func Load() (*Config, error) {
 			return nil, err
 		}
 		for _, msg := range inert {
-			fmt.Println(msg)
+			// STDERR, not stdout — see the stderr rationale above.
+			fmt.Fprintln(os.Stderr, msg)
 		}
 	}
 
@@ -673,10 +693,27 @@ func setDefaultsOn(v *viper.Viper) {
 	v.SetDefault("tasks.cleanup_interval", 600)
 
 	// LLM defaults
-	v.SetDefault("llm.default_provider", "local")
+	// Deliberately EMPTY, not "local" (operator decision 2026-09-05).
+	// This is the BUILT-IN default, applied when nothing else sets the key --
+	// i.e. the genuine zero-config case. The shipped config/config.yaml sets
+	// `default_provider: "local"` explicitly, so a normal deployment still
+	// routes a provider-less request to the local helixllm coder (:18434) via
+	// the CONFIG precedence slot (HXC-002-F3-01).
+	//
+	// Why not default it to "local" here: resolveLLMProvider consults this
+	// value in its lowest-precedence CONFIG slot, so a built-in "local" would
+	// apply even with NO config file at all -- making the zero-config Ollama
+	// fallback (:11434) unreachable in every process where config loads, and
+	// silently retiring a shipped capability (§11.4.122). Both routes are
+	// local, so the local-only-serving mandate does not choose between them;
+	// the operator does, by writing the key.
+	v.SetDefault("llm.default_provider", "")
 	v.SetDefault("llm.default_model", "llama-3.2-3b")
 	v.SetDefault("llm.max_tokens", 4096)
 	v.SetDefault("llm.temperature", 0.7)
+	// Cloud gate (W2c-1, operator mandate 2026-09-05 local-only serving):
+	// hosted providers refuse construction unless explicitly enabled.
+	v.SetDefault("llm.cloud.enabled", false)
 	// Seconds. Matches the value shipped in config/config.yaml.
 	v.SetDefault("llm.timeout", 30)
 	v.SetDefault("llm.max_retries", 3)
@@ -1532,9 +1569,26 @@ func (v *ConfigurationValidator) Validate(config *Config) ValidationResult {
 		})
 	}
 
-	// Validate LLM provider
+	// Validate LLM provider.
+	//
+	// An EMPTY value is VALID and means "operator did not choose a provider".
+	// It is the built-in default (setDefaultsOn, operator decision 2026-09-05)
+	// and is resolved at request time by resolveLLMProvider's flag > env >
+	// config precedence, which falls back to the local Ollama route. Rejecting
+	// empty here would report a genuinely zero-config Config as invalid and make
+	// the zero-config path unconfigurable -- the exact capability that decision
+	// set out to preserve (§11.4.122).
+	//
+	// KNOWN DEFECT (pre-existing, tracked separately): validProviders below is
+	// STALE. It lists 7 names while internal/llm defines 44 ProviderType
+	// constants; "ollama", "llamacpp", "deepseek", "mistral" and "groq" are all
+	// constructible by the resolver yet rejected here. Do NOT blanket-expand it
+	// from the constant list -- several of those types are vector stores and
+	// frameworks (chroma, clickhouse, llamaindex, crewai), not LLM providers.
+	// The correct membership is the set internal/llm's factory can actually
+	// construct as a default provider.
 	validProviders := []string{"local", "openai", "anthropic", "gemini", "xai", "openrouter", "copilot"}
-	isValidProvider := false
+	isValidProvider := config.LLM.DefaultProvider == ""
 	for _, provider := range validProviders {
 		if config.LLM.DefaultProvider == provider {
 			isValidProvider = true
