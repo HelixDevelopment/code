@@ -57,9 +57,26 @@ llms:
   # provider name as its local fallback and always ranks it last regardless of
   # score (fallback.ScorerBridge.BuildEntries). Naming it anything else would
   # make the gateway sort a local model in among the cloud providers.
+  # The model id MUST match what the endpoint actually serves. Verified
+  # 2026-09-05: GET http://localhost:18434/v1/models -> ["qwen2.5-coder-3b-instruct-q4_k_m"],
+  # served by helixllm-coder-native.service. The previous value here
+  # (/models/Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf) belongs to
+  # helixllm-coder.service, which is DISABLED and inactive.
+  #
+  # That mismatch was NOT harmless: llama-server ignores the requested model id
+  # and serves whatever single model is loaded, returning HTTP 200. Verification
+  # therefore SUCCEEDED and attributed 3B results to a row labelled 30B --
+  # a silent misattribution inside the CONST-036 single source of truth, which a
+  # wrong ENDPOINT would have exposed loudly but a wrong LABEL does not.
+  #
+  # §11.4.111 (resolve by stable name, never a brittle binding): a hardcoded
+  # file path breaks again the moment the coder unit is swapped. The durable fix
+  # is to resolve this id from the endpoint's own /v1/models at seed time; until
+  # that lands, this literal MUST be kept in step with the running unit and is
+  # guarded by a test asserting it appears in the live /v1/models response.
   - name: llamacpp
     endpoint: http://localhost:18434/v1
-    model: /models/Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf
+    model: qwen2.5-coder-3b-instruct-q4_k_m
     api_key: ''
 
 concurrency: 2

@@ -51,14 +51,42 @@ Type=exec
 # offloaded the CPU does little more than sampling and detokenisation, so 8 is
 # generous headroom rather than a throughput limit.
 #
-# --ctx-size stays at 4096 to keep this change single-variable (backend only).
-# The 3B Q4_K_M occupies ~2 GB of the 3060's ~10.7 GB free VRAM, so there is
-# ample room to raise context or move to a larger model later.
+# --ctx-size is 32768 (raised from 4096 by operator decision 2026-09-05),
+# matching this model's full n_ctx_train.
+#
+# 4096 was not merely conservative -- it made the endpoint UNUSABLE for CLI
+# agents. Every mainstream agent (opencode, pi, crush, claude) sends a system
+# prompt of tool definitions and instructions far larger than 4096 tokens, so
+# provider registration would SUCCEED while every real request failed at the
+# first turn. Measured 2026-09-05, a real `pi` request was rejected by this
+# server with:
+#   request (141440 tokens) exceeds the available context size (4096 tokens)
+# Only a deliberately minimal prompt (`crush run -q`) fit, which is exactly why
+# a smoke test could pass against an endpoint that was in practice unusable --
+# registration proves plumbing, not usability (§11.4).
+#
+# HONEST BOUNDARY (§11.4.6) -- what this change does and does NOT establish:
+# 32768 is this model's n_ctx_train, i.e. the MAXIMUM this server can offer,
+# not a value chosen because it was measured sufficient. The 141440-token `pi`
+# request quoted above still EXCEEDS 32768 and would still be rejected. So the
+# measurement proves 4096 was insufficient; it does NOT prove 32768 makes `pi`
+# usable. Agents whose system prompt exceeds 32768 tokens need prompt trimming
+# or a longer-context model -- raising this further is not available.
+# No post-change probe has been captured; until one is, treat "usable for
+# agent X" as UNCONFIRMED rather than implied by this comment.
+#
+# VRAM cost, measured rather than assumed (§11.4.133 target-hardware safety):
+# the 3B Q4_K_M weights occupy ~2 GB of the RTX 3060's 12288 MiB (9634 MiB free
+# when this change was made). The f16 KV cache for this architecture costs
+# ~36 KB/token (36 layers x 2 KV heads x 128 head_dim x 2 tensors x 2 bytes),
+# so 32768 tokens adds ~1.2 GB -- several GB of headroom remain. Raising this
+# further, or moving to a larger model, must re-do that arithmetic against the
+# free VRAM at the time.
 ExecStart=@LLAMA_SERVER_BIN@ \
   --model %h/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf \
   --alias qwen2.5-coder-3b-instruct-q4_k_m \
   --host 127.0.0.1 --port 18434 \
-  --ctx-size 4096 --n-gpu-layers @LLAMA_NGL@ \
+  --ctx-size 32768 --n-gpu-layers @LLAMA_NGL@ \
   --threads 8 --threads-batch 8 --batch-size 256 \
   --jinja --metrics
 Restart=on-failure

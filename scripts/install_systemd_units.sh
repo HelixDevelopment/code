@@ -43,7 +43,7 @@ UNITS=(
 # ENABLED (start at boot): a deliberate SUBSET of the above.
 #
 # Installing a unit makes it available; ENABLING it makes it start at boot. The
-# two are separated because three installed units are not part of the deployed
+# two are separated because two installed units are not part of the deployed
 # topology and enabling them would start real workloads unasked:
 #
 #   helixcode-infra.service  — boots ~10 containers including a Postgres+Redis
@@ -55,7 +55,20 @@ UNITS=(
 #                              the two Conflicts= each other, so exactly one may
 #                              be enabled. The native unit is the one enabled
 #                              here because 30B does not fit this host's 12 GB.
-#   llmsverifier.service     — not currently running; :8100 is unbound.
+#
+# llmsverifier.service WAS in this list and is not any more (operator decision
+# 2026-09-05). It is now ENABLED below. Its former note here read ":8100 is
+# unbound" -- that was a symptom, not a design choice: its binary had simply
+# never been built, so the unit failed ExecStart with status=203/EXEC and
+# systemd retried every 10s, 2964 times. It was reached at all only because
+# helixllm-gateway.service declares Wants=llmsverifier.service, and a runtime
+# Wants= pulls a unit in regardless of enablement. With the binary built
+# (setup.sh:98, which targets exactly the unit's ExecStart path) the service
+# starts cleanly and binds :8100. It is enabled because CONST-036 names
+# LLMsVerifier the single source of truth for model metadata: without it the
+# platform silently serves a hardcoded fallback catalogue, and depending on the
+# gateway's Wants= would let that source vanish whenever the gateway is stopped
+# or reordered.
 #
 # None is removed, disabled or deleted — each stays one `systemctl --user enable
 # <unit>` away (§11.4.122: no silent removal of an existing component). Override
@@ -70,6 +83,7 @@ else
     helixllm-gateway.service
     helixagent.service
     helixcode-server.service
+    llmsverifier.service
   )
 fi
 
