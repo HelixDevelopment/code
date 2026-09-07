@@ -1,0 +1,18 @@
+-- ephemeral on :40181
+
+D1 short system, NO tools  | stream=False | HTTP 200 | text='FACADE_OK'
+D1 short system, NO tools  | stream=True  | HTTP 200 | content_block_delta frames=8 | text='FACADE_OK'
+
+D2 short system, WITH tools | stream=False | HTTP 200 | text='FACADE_OK'
+D2 short system, WITH tools | stream=True  | HTTP 200 | content_block_delta frames=8 | text='FACADE_OK'
+
+D3 9036-char system, NO tools  | stream=False | HTTP 200 | text='FACADE_OK'
+D3 9036-char system, NO tools  | stream=True  | HTTP 200 | content_block_delta frames=8 | text='FACADE_OK'
+
+D4 9036-char system, WITH tools | stream=False | HTTP 200 | text='FACADE_OK'
+D4 9036-char system, WITH tools | stream=True  | HTTP 200 | content_block_delta frames=28 | text='{"name": "FACADE_OK", "arguments": {}}'
+
+D5 9036-char system, WITH tools, max_tokens=32000 | stream=False | HTTP 200 | text='FACADE_OK'
+D5 9036-char system, WITH tools, max_tokens=32000 | stream=True  | HTTP 200 | content_block_delta frames=8 | text='FACADE_OK'
+
+-- stream-vs-nonstream complete

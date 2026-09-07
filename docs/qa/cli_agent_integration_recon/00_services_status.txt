@@ -1,0 +1,25 @@
+=== systemctl --user status (read-only) ===
+--- helixagent.service ---
+active
+enabled
+--- helixcode-server.service ---
+active
+enabled
+--- helixllm-coder-native.service ---
+active
+enabled
+--- helixllm-gateway.service ---
+active
+enabled
+--- helixcode-infra.service ---
+inactive
+disabled
+--- helixllm-coder.service ---
+inactive
+disabled
+--- llmsverifier.service ---
+activating
+disabled
+=== ollama process check (read-only) ===
+73648 /bin/bash -c source /home/milosvasic/.claude-claude5/shell-snapshots/snapshot-bash-1788631568695-9cpfzt.sh 2>/dev/null || true && shopt -u extglob 2>/dev/null || true && { \builtin unalias -- 'unsetenv'; \builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'cd /home/milosvasic/Projects/helix_code/docs/qa/cli_agent_integration_recon echo "=== systemctl --user status (read-only) ===" > 00_services_status.txt for svc in helixagent.service helixcode-server.service helixllm-coder-native.service helixllm-gateway.service helixcode-infra.service helixllm-coder.service llmsverifier.service; do   echo "--- $svc ---" >> 00_services_status.txt   systemctl --user is-active "$svc" >> 00_services_status.txt 2>&1   systemctl --user is-enabled "$svc" >> 00_services_status.txt 2>&1 done echo "=== ollama process check (read-only) ===" >> 00_services_status.txt pgrep -af "ollama serve" >> 00_services_status.txt 2>&1 || echo "no ollama serve process found by pgrep" >> 00_services_status.txt cat 00_services_status.txt' < /dev/null && pwd -P >| /tmp/claude-624a-cwd
+772647 /usr/local/bin/ollama serve

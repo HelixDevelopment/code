@@ -1,0 +1,12 @@
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200

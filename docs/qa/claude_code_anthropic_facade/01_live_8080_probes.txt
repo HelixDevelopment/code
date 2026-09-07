@@ -1,0 +1,17 @@
+### PROBE A: POST /v1/messages on live :8080 with an arbitrary x-api-key (server has NO key configured)
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+Access-Control-Allow-Methods: POST, OPTIONS, GET, PUT, DELETE
+Content-Type: application/json; charset=utf-8
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-Xss-Protection: 1; mode=block
+Date: Sat, 05 Sep 2026 21:03:50 GMT
+Content-Length: 161
+
+{"error":{"message":"missing or invalid API key: provide 'Authorization: Bearer \u003ckey\u003e' or 'x-api-key: \u003ckey\u003e'","type":"authentication_error"}}
+### PROBE B: GET /v1/models
+404
+### PROBE C: POST /v1/messages/count_tokens
+404

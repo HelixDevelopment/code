@@ -1,0 +1,32 @@
+=== helix_code config.yaml llm section (read-only) ===
+43:llm:
+44-  default_provider: "local"
+45-  max_tokens: 4096
+46-  temperature: 0.7
+47-  timeout: 30
+48-  max_retries: 3
+49-  
+50-  providers:
+51-    # Local providers with proper structure
+52-    local:
+53-      type: local
+54-      endpoint: "http://localhost:11434"
+55-      enabled: true
+56-      parameters:
+57-        timeout: 30.0
+58-        max_retries: 3
+59-        streaming_support: true
+60-        
+61-    ollama:
+62-      type: ollama
+63-      endpoint: "http://localhost:11434"
+64-      enabled: false
+65-      parameters:
+66-        timeout: 30.0
+67-        max_retries: 3
+68-        streaming_support: true
+69-        
+70-    llamacpp:
+71-      type: llamacpp
+72-      endpoint: "http://localhost:8080"
+73-      enabled: false

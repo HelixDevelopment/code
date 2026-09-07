@@ -1,0 +1,65 @@
+==========================================================================
+ROUND A — HELIX_LLM_PROVIDER unset (default resolution)
+==========================================================================
+(ephemeral on 127.0.0.1:42091)
+
+--- A1 model=claude-sonnet-4-20250514 (a Claude Code model id)
+{"error":{"message":"generation failed: API request failed: API returned status 404","type":"api_error"},"type":"error"}
+
+--- A2 model=qwen2.5:3b-instruct-q4_K_M (a model Ollama actually has)
+{"id":"msg_22f769b4-2f24-434c-b242-ad0700a4cc63","type":"message","role":"assistant","model":"qwen2.5:3b-instruct-q4_K_M","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+--- A3 model field OMITTED (resolveDefaultModel picks from the catalog)
+{"error":{"message":"generation failed: API request failed: API returned status 400","type":"api_error"},"type":"error"}
+
+--- A4 model="" (empty string)
+{"error":{"message":"generation failed: API request failed: API returned status 400","type":"api_error"},"type":"error"}
+
+==========================================================================
+ROUND B — HELIX_LLM_PROVIDER=local (llama.cpp coder sidecar :18434)
+==========================================================================
+(ephemeral on 127.0.0.1:56347)
+
+--- B1 model=claude-sonnet-4-20250514 (a Claude Code model id)
+{"id":"msg_9f559ddf-2af4-4e39-bdba-fe051467f20e","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+--- B2 model=claude-3-5-haiku-20241022 (Claude Code'\''s small/background model)
+{"id":"msg_9cdcc94a-02ca-4a37-9052-aa642e9f88d6","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+--- B3 model=totally-made-up-model-xyz (arbitrary id)
+{"id":"msg_d3ad5e17-9070-46b2-865b-ff0163628f07","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+--- B4 stream:true with a claude-* id (Claude Code always streams)
+event: message_start
+data: {"message":{"content":[],"id":"msg_046a6c9d-e940-483a-9713-bf7d2e87eb6a","model":"claude-sonnet-4-20250514","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_delta
+data: {"delta":{"text":"F","type":"text_delta"},"index":0,"type":"content_block_delta"}
+
+event: content_block_delta
+data: {"delta":{"text":"AC","type":"text_delta"},"index":0,"type":"content_block_delta"}
+
+event: content_block_delta
+data: {"delta":{"text":"ADE","type":"text_delta"},"index":0,"type":"content_block_delta"}
+
+event: content_block_delta
+data: {"delta":{"text":"_OK","type":"text_delta"},"index":0,"type":"content_block_delta"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+
+
+--- B5 system + tools[] (the shape Claude Code actually sends)
+{"id":"msg_88095479-5c74-4cd7-80bc-7662b91486ab","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"```json\n{\n  \"name\": \"Bash\",\n  \"arguments\": {\n    \"command\": \"ls\"\n  }\n}\n```"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":160,"output_tokens":29}}
+
+-- model-id experiment complete

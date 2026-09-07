@@ -1,0 +1,31 @@
+=== POST http://127.0.0.1:18434/v1/chat/completions (tool-calling probe) ===
+--- request body ---
+{
+  "model": "qwen2.5-coder-3b-instruct-q4_k_m",
+  "messages": [
+    {"role": "user", "content": "What is the current temperature in Paris? Use the get_weather tool."}
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get the current weather for a location",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {"type": "string", "description": "City name"}
+          },
+          "required": ["location"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "stream": false,
+  "max_tokens": 200
+}
+
+--- response ---
+{"choices":[{"finish_reason":"stop","index":0,"message":{"role":"assistant","content":"```json\n{\n  \"name\": \"get_weather\",\n  \"arguments\": {\n    \"location\": \"Paris\"\n  }\n}\n```"}}],"created":1788638176,"model":"qwen2.5-coder-3b-instruct-q4_k_m","system_fingerprint":"b10786-de8656bd9","object":"chat.completion","usage":{"completion_tokens":29,"prompt_tokens":185,"total_tokens":214,"prompt_tokens_details":{"cached_tokens":80}},"id":"chatcmpl-A3LhkNSpFahJqDqdEpOpdo88uQhvZIYr","timings":{"cache_n":80,"prompt_n":105,"prompt_ms":309.531,"prompt_per_token_ms":2.947914285714286,"prompt_per_second":339.2228888221212,"predicted_n":29,"predicted_ms":273.655,"predicted_per_token_ms":9.773392857142856,"predicted_per_second":102.31861285194863}}
+[HTTP_STATUS:200]

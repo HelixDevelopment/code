@@ -1,0 +1,35 @@
+=== llmsverifier binary check (read-only, exit code 203/EXEC diagnosis) ===
+ls: cannot access '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/': No such file or directory
+---
+/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: cannot open `/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier' (No such file or directory)
+---journal tail for llmsverifier---
+Sep 05 21:55:10 anton systemd[2363]: llmsverifier.service: Scheduled restart job, restart counter is at 2886.
+Sep 05 21:55:10 anton systemd[2363]: Started llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100.
+Sep 05 21:55:10 anton (llm-verifier)[68577]: llmsverifier.service: Unable to locate executable '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier': No such file or directory
+Sep 05 21:55:10 anton (llm-verifier)[68577]: llmsverifier.service: Failed at step EXEC spawning /home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: No such file or directory
+Sep 05 21:55:10 anton systemd[2363]: llmsverifier.service: Main process exited, code=exited, status=203/EXEC
+Sep 05 21:55:10 anton systemd[2363]: llmsverifier.service: Failed with result 'exit-code'.
+Sep 05 21:55:20 anton systemd[2363]: llmsverifier.service: Scheduled restart job, restart counter is at 2887.
+Sep 05 21:55:20 anton systemd[2363]: Started llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100.
+Sep 05 21:55:20 anton (llm-verifier)[73645]: llmsverifier.service: Unable to locate executable '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier': No such file or directory
+Sep 05 21:55:20 anton (llm-verifier)[73645]: llmsverifier.service: Failed at step EXEC spawning /home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: No such file or directory
+Sep 05 21:55:20 anton systemd[2363]: llmsverifier.service: Main process exited, code=exited, status=203/EXEC
+Sep 05 21:55:20 anton systemd[2363]: llmsverifier.service: Failed with result 'exit-code'.
+Sep 05 21:55:30 anton systemd[2363]: llmsverifier.service: Scheduled restart job, restart counter is at 2888.
+Sep 05 21:55:30 anton systemd[2363]: Started llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100.
+Sep 05 21:55:30 anton (llm-verifier)[78377]: llmsverifier.service: Unable to locate executable '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier': No such file or directory
+Sep 05 21:55:30 anton (llm-verifier)[78377]: llmsverifier.service: Failed at step EXEC spawning /home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: No such file or directory
+Sep 05 21:55:30 anton systemd[2363]: llmsverifier.service: Main process exited, code=exited, status=203/EXEC
+Sep 05 21:55:30 anton systemd[2363]: llmsverifier.service: Failed with result 'exit-code'.
+Sep 05 21:55:40 anton systemd[2363]: llmsverifier.service: Scheduled restart job, restart counter is at 2889.
+Sep 05 21:55:40 anton systemd[2363]: Started llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100.
+Sep 05 21:55:40 anton (llm-verifier)[82750]: llmsverifier.service: Unable to locate executable '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier': No such file or directory
+Sep 05 21:55:40 anton (llm-verifier)[82750]: llmsverifier.service: Failed at step EXEC spawning /home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: No such file or directory
+Sep 05 21:55:40 anton systemd[2363]: llmsverifier.service: Main process exited, code=exited, status=203/EXEC
+Sep 05 21:55:40 anton systemd[2363]: llmsverifier.service: Failed with result 'exit-code'.
+Sep 05 21:55:50 anton systemd[2363]: llmsverifier.service: Scheduled restart job, restart counter is at 2890.
+Sep 05 21:55:50 anton systemd[2363]: Started llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100.
+Sep 05 21:55:50 anton (llm-verifier)[88910]: llmsverifier.service: Unable to locate executable '/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier': No such file or directory
+Sep 05 21:55:50 anton (llm-verifier)[88910]: llmsverifier.service: Failed at step EXEC spawning /home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier: No such file or directory
+Sep 05 21:55:50 anton systemd[2363]: llmsverifier.service: Main process exited, code=exited, status=203/EXEC
+Sep 05 21:55:50 anton systemd[2363]: llmsverifier.service: Failed with result 'exit-code'.

@@ -1,0 +1,541 @@
+=== helixllm-gateway.service unit file ===
+# /home/milosvasic/.config/systemd/user/helixllm-gateway.service
+[Unit]
+Description=HelixLLM Gateway (multi-provider LLM router)
+Documentation=file:///home/milosvasic/Projects/helix_code/docs/SYSTEMD.md
+# Ordered after llmsverifier: the gateway polls {verifier}/api/scores and
+# degrades to a static score table when it is unreachable. Wants= (not
+# Requires=) because that degraded mode is a real, working fallback -- the
+# gateway must still start and route if the verifier is down.
+After=network-online.target helixcode-infra.service llmsverifier.service
+Wants=network-online.target llmsverifier.service
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
+PartOf=helix.target
+
+[Service]
+Type=simple
+Environment=PATH=/usr/local/bin:/usr/bin:/bin:%h/.local/bin
+# HelixLLM is env-configured via internal/shared/config (envconfig struct tags);
+# it takes no --config flag. A previous revision set HELIXLLM_CONFIG pointing at
+# a gateway.yaml that the binary never reads and that did not exist on disk.
+Environment=HELIX_HOST=0.0.0.0
+Environment=HELIX_PORT=8443
+# Reuse the infra stack rather than the default localhost:6379/6333, which
+# belong to unrelated containers on this host.
+#
+# NAMES MATTER: the binary reads these via envconfig struct tags in
+# submodules/helix_llm/internal/shared/config/config.go. A previous revision set
+# HELIX_CACHE_REDIS_HOST/PORT, which config.go NEVER reads (it declares
+# HELIX_REDIS_HOST / HELIX_REDIS_PORT at lines 121-122). The intent above was
+# therefore silently inert: RedisPort fell back to its default 6379, nothing
+# listens there, and the gateway logged on every start:
+#   "dial tcp 127.0.0.1:6379: connect: connection refused"
+#   "KV cache: Redis unreachable, falling back to in-memory"
+# Verified 2026-07-28 by diffing every Environment= name in this unit against
+# every env tag in config.go: these two were the only mismatches.
+Environment=HELIX_REDIS_HOST=localhost
+Environment=HELIX_REDIS_PORT=6380
+Environment=HELIX_VECTOR_DB_HOST=localhost
+Environment=HELIX_VECTOR_DB_PORT=6333
+# config.go:70 defaults ModelsDir to "/models" — a CONTAINER path. Running
+# natively as a user service that produced
+#   "downloader: create models dir /models: mkdir /models: permission denied"
+# for every auto-download. %h/models is the host's existing model store.
+Environment=HELIX_MODELS_DIR=%h/models
+# CONSEQUENCE OF THE LINE ABOVE, measured 2026-09-03: with HELIX_MODELS_DIR
+# unset the default is the CONTAINER path /models, which is unwritable here, so
+# every auto-download failed instantly and the gateway bound within seconds.
+# Pointing it at a writable directory is correct — and it means the first cold
+# boot now performs a real multi-GB download before binding. That is why the
+# start budgets below are large. Set HELIX_MODELS_AUTO_DOWNLOAD=false in .env to
+# opt out of local models entirely (cloud providers are unaffected).
+# LLMsVerifier is the single source of truth for provider/model scoring
+# (CONST-036); llmsverifier.service binds this address.
+Environment=HELIX_LLM_VERIFIER_URL=http://localhost:8100
+# Gin runs in DEBUG mode unless told otherwise: gin's package init() reads
+# GIN_MODE and mode.go declares `ginMode int32 = debugCode` (verified against
+# the pinned gin v1.12.0 in submodules/helix_llm/go.mod). HelixLLM never calls
+# gin.SetMode() on this path — internal/server/server.go:51 constructs the
+# engine with a bare gin.New() — so with GIN_MODE unset a PRODUCTION gateway
+# started in debug mode: it dumped all 27 routes at startup together with the
+# internal Go symbol backing each one (e.g.
+# "POST /v1/chat/completions --> ...HelixLLM/internal/gateway.HandleChatCompletions"),
+# logged at development verbosity, and per gin's own docs surfaces extra
+# internal detail in error responses.
+#
+# Set HERE (unit) rather than in the submodule because (a) it takes effect on
+# the DEPLOYED artifact with no rebuild — gin reads the env at process start,
+# and (b) §11.4.28 keeps HelixLLM project-agnostic: the consuming deployment
+# declares its own mode by config injection instead of a mode hardcoded into
+# the reusable library.
+#
+# Deliberately placed BEFORE EnvironmentFile= so an operator can still override
+# it to "debug" in .env for a debugging session (later assignments win).
+# HELIX_MODE selects the run mode. config.go:16 declares `default:"full"`, so
+# "full" is already the compiled-in default — it is set EXPLICITLY here because
+# this deployment depends on full mode (it is the mode the process proven to
+# serve :8443 on this host was started with), and an explicit unit-level
+# declaration keeps that dependency from silently changing if the library's
+# default ever moves. Placed BEFORE EnvironmentFile= so an operator .env can
+# still override it.
+Environment=HELIX_MODE=full
+Environment=GIN_MODE=release
+
+# HXC-233 (routing half). The local provider is the gateway's ONLY completion
+# path when no cloud keys are configured — the "local safety net" in main.go.
+# Its target defaults to 127.0.0.1:50052 (internal/shared/config/config.go:49),
+# a port NOTHING on this host serves. Measured 2026-08-08:
+#
+#   :50052  nothing listening   -> every completion returned HTTP 500
+#                                  "all providers exhausted ... connection refused"
+#   :18434  LISTENING           -> answers "2 + 2 = 4" from Qwen3-Coder-30B
+#
+# So the capability was present the whole time and the ROUTING pointed past it.
+# 50052 is a code default that matches no service in this deployment, not a
+# considered choice for it; helixllm-coder.service serves the local model on
+# 18434 and is part of the same helixllm unit family.
+#
+# Placed BEFORE EnvironmentFile= (like GIN_MODE above) so an operator .env can
+# still override — e.g. to point at a different local backend.
+Environment=HELIX_LLM_LOCAL_RPC_HOST=127.0.0.1
+Environment=HELIX_LLM_LOCAL_RPC_PORT=18434
+EnvironmentFile=-/home/milosvasic/Projects/helix_code/.env
+WorkingDirectory=/home/milosvasic/Projects/helix_code/submodules/helix_llm
+ExecStart=/home/milosvasic/Projects/helix_code/submodules/helix_llm/bin/helixllm
+ExecReload=/bin/kill -HUP $MAINPID
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple reports "active" at fork. Gate on a real response so "active"
+# means "serving" (§11.4.108).
+#
+# /v1/models is the probe target, not /internal/health: measured 2026-09-03 the
+# live gateway answers /v1/models with HTTP 200 while /internal/health returns
+# 503 because it aggregates the Redis and LLMsVerifier backends, neither of
+# which is enabled in this deployment. Both prove the port is bound (the probe
+# accepts any HTTP status), but gating on the endpoint that is genuinely healthy
+# keeps a routine boot from logging an alarming 503.
+#
+# BUDGET (measured 2026-09-03, first cold boot under systemd): 120s FAILED by
+# ~2 seconds. In mode=full the gateway selects models for the detected hardware
+# and DOWNLOADS any it lacks from HuggingFace BEFORE it binds; the journal shows
+# it logged `server listening addr=0.0.0.0:8443` at 17:41:12 while systemd had
+# already declared the 120s timeout at 17:41:12. The service was correct; the
+# gate was too impatient.
+#
+# 1100s (inside TimeoutStartSec=1200) follows the precedent already set by
+# helixllm-coder.service, whose TimeoutStartSec=650 exists for exactly this
+# reason ("Model load from cold cache is slow"). Only the FIRST cold boot pays
+# this: once the GGUF files are cached under HELIX_MODELS_DIR, startup is fast.
+ExecStartPost=/home/milosvasic/Projects/helix_code/scripts/systemd/wait-http-ready.sh https://localhost:8443/v1/models 1100 5
+Restart=on-failure
+RestartSec=10
+# 1200s: must exceed the ExecStartPost budget above, which must in turn exceed a
+# cold-cache model download. See the note on ExecStartPost.
+TimeoutStartSec=1200
+LimitNOFILE=65536
+
+[Install]
+# default.target is what makes this start at BOOT; helix.target keeps it in the
+# umbrella group for `systemctl --user start|stop helix.target`.
+WantedBy=default.target helix.target
+
+=== helixagent.service unit file ===
+# /home/milosvasic/.config/systemd/user/helixagent.service
+[Unit]
+Description=HelixAgent (multi-provider AI agent runtime) on :7061
+Documentation=file:///home/milosvasic/Projects/helix_code/submodules/helix_agent/README.md
+# HelixAgent runs a MANDATORY strict dependency verification at boot
+# (-strict-dependencies, default true) covering PostgreSQL, Redis, Cognee and
+# ChromaDB. If those are not reachable it exits non-zero by design.
+#
+# INFRA OWNERSHIP — see the long note in the [Service] section below. In the
+# active topology HelixAgent owns its own `helixagent-*` container stack, so
+# helixcode-infra.service is NOT a dependency. After= is retained (ordering
+# only, and inert when that unit is not in the transaction) so that if an
+# operator ever does start the shared infra stack, this unit still orders after
+# it rather than racing it. Requires= was deliberately dropped: a hard
+# requirement on a unit this deployment does not enable would make HelixAgent
+# unstartable.
+After=network-online.target helixcode-infra.service
+Wants=network-online.target
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
+PartOf=helix.target
+
+[Service]
+Type=simple
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+WorkingDirectory=/home/milosvasic/Projects/helix_code/submodules/helix_agent
+
+# --- INFRA OWNERSHIP (measured 2026-09-03) -----------------------------------
+# Two topologies exist in this repo. THIS UNIT IMPLEMENTS (B).
+#
+# (A) SHARED-INFRA — helixcode-infra.service owns one `helixcode-infra-*` stack
+#     and every consumer is pointed at it. HelixAgent would then need
+#     `-auto-start-docker=false` plus this endpoint wiring, which earlier
+#     revisions of this unit carried and which is PRESERVED HERE so the topology
+#     remains recoverable rather than silently deleted:
+#
+#         Environment=DB_HOST=localhost
+#         Environment=DB_PORT=5433
+#         Environment=DB_USER=helixagent
+#         Environment=DB_NAME=helixagent_db
+#         Environment=DB_SSLMODE=disable
+#         Environment=REDIS_HOST=localhost
+#         Environment=REDIS_PORT=6380
+#         Environment=HELIXAGENT_PORT_COGNEE=8000
+#         Environment=HELIXAGENT_PORT_CHROMADB=8082
+#         Environment=HELIXAGENT_PORT_QDRANT=6333
+#         ExecStart=... -config configs/development.yaml -auto-start-docker=false
+#
+# (B) PER-SERVICE INFRA (ACTIVE) — each service owns a disjointly-named stack.
+#     Chosen because (A) is not deployed: `podman ps -a` on 2026-09-03 showed
+#     ZERO `helixcode-infra-*` containers, so every endpoint in the (A) block
+#     above points at a port nothing serves — :5433 and :6380 are both closed.
+#     Booting this unit under (A) would fail dependency verification outright.
+#
+#     Under (B) HelixAgent's own `helixagent-*` containers ARE running and
+#     healthy, on `network_mode: host` (docker-compose.yml:27,234,433,489), so
+#     they bind the host directly and the binary's COMPILED-IN defaults resolve
+#     correctly. Verified open on 2026-09-03: :5432 (helixagent-postgres),
+#     :8000 (cognee), :8001 (chromadb). That is why no DB_*/HELIXAGENT_PORT_*
+#     override is set here: overriding them would BREAK a working resolution.
+#
+#     `-auto-start-docker` is likewise left at its default (true), matching the
+#     invocation proven to serve :7061 and :8111 on this host. The 2026-07-27
+#     "hung inside compose, never bound :7061" failure was a topology-(A)
+#     collision — two orchestrators over one container set — and cannot recur
+#     under (B), where HelixAgent is the SOLE owner of `helixagent-*`
+#     (§11.4.119). The compose call is idempotent against an already-running
+#     stack. The ExecStartPost readiness gate below is the guard that makes a
+#     regression here fail loudly instead of reporting a false "active".
+#
+# There is no container-name or port overlap between the three stacks on this
+# host — `helixagent-*`, `helixcode-autoboot-*` and (when started)
+# `helixcode-infra-*` are disjoint — so no two orchestrators contend.
+
+# --- Secrets -----------------------------------------------------------------
+# JWT_SECRET lives in the submodule's .env (mode 0600, gitignored per
+# CONST-042/§12.1) and is NEVER inlined into this unit, which is world-readable
+# and version-controlled. Verified bare `KEY=value` format, so systemd parses it
+# natively. Leading '-' => optional.
+EnvironmentFile=-/home/milosvasic/Projects/helix_code/submodules/helix_agent/.env
+EnvironmentFile=-/home/milosvasic/Projects/helix_code/.env
+
+# --- Provider API keys: sourced by a shell, NOT EnvironmentFile --------------
+# HelixAgent scans ~137 candidate provider env-var names at startup; with none
+# present it discovers 0 providers and every completion returns
+# 503 no_provider_available. The operator's keys live in $HOME/api_keys.sh
+# (override with CMA_KEYS_FILE).
+#
+# That file CANNOT be used as an EnvironmentFile=. Measured 2026-09-03:
+#   * 88 of its lines are `export KEY=value`, 0 are bare `KEY=value`. systemd's
+#     EnvironmentFile parser does not execute shell, so it reads the name as
+#     "export KEY" — not a valid variable name — and DROPS the line.
+#   * 41 lines interpolate another variable (`KEY=$ApiKey_Foo`). systemd does no
+#     shell expansion in EnvironmentFile, so those would arrive as literal
+#     "$ApiKey_Foo" strings even if the names parsed.
+# Pointing EnvironmentFile= at it would therefore fail SILENTLY — the unit would
+# start clean and still discover 0 providers.
+#
+# So the file is SOURCED by a shell that then execs the binary. `set -a` exports
+# every assignment; `exec` replaces the shell so systemd still supervises the
+# real process (no stray wrapper PID, MAINPID stays correct). `bash -c` (not
+# `-lc`) avoids pulling in interactive profile side effects. The `[ -f ]` guard
+# keeps a missing keys file from failing the unit — it degrades to zero
+# providers, which the log states plainly.
+#
+# The keys file is NOT modified, NOT copied, and no value is ever logged.
+# exec-with-api-keys.sh sources the keys file, then execs the binary in place
+# (so systemd supervises helixagent directly, MAINPID intact). A tracked
+# script rather than an inline `bash -c` because the inline form needs
+# systemd's `$$` escaping for every literal dollar, which `systemctl show`
+# renders identically whether the escape is right or wrong, and which cannot
+# be tested outside systemd. This script is testable by hand.
+ExecStart=/home/milosvasic/Projects/helix_code/scripts/systemd/exec-with-api-keys.sh /home/milosvasic/Projects/helix_code/submodules/helix_agent/bin/helixagent
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple makes systemd call this unit "active" the moment the process
+# forks. HelixAgent exposes a real liveness endpoint on :8111 that returns
+# {"status":"ready",...}; gate on it so "active" means "serving" (§11.4.108).
+# Budget sits inside TimeoutStartSec below.
+#
+# GATE ON :7061, NOT :8111 — measured 2026-09-03, and this correction matters.
+# The :8111 liveness endpoint starts answering HTTP 200 while it is still
+# reporting status=STARTING, long before the API is usable. Captured sequence
+# from one real start:
+#   17:53:02  "Liveness probe listening (status=starting)" addr=":8111"
+#   17:53:04  gate on :8111 passed -> systemd declared "Started"   <-- FALSE GREEN
+#   17:53:47  "Liveness probe transitioning to status=ready" (startup_elapsed_ms=45010)
+#   17:53:55  "Starting HTTP/1.1 server on 0.0.0.0:7061"          <-- actually usable
+# Polled from the outside, :7061 returned curl code 000 for 35s after systemd
+# said "Started", then 200 at t+40s. Gating on :8111 therefore reproduced the
+# very active-but-not-serving lie this ExecStartPost exists to prevent
+# (§11.4.108: a readiness signal must track the USER-VISIBLE surface).
+#
+# :7061/v1/models is the port consumers actually call, so a 200 there is proof
+# the service is serving. Budget 300s against ~53s observed.
+ExecStartPost=/home/milosvasic/Projects/helix_code/scripts/systemd/wait-http-ready.sh http://localhost:7061/v1/models 300 3
+
+Restart=on-failure
+# 15s, and RestartSec is what keeps a hard-failing service from hammering the
+# host: dependency verification touches Postgres, Redis, Cognee and ChromaDB on
+# every attempt.
+RestartSec=15
+LimitNOFILE=65536
+# Boot runs a provider-verification pipeline that can take several minutes.
+TimeoutStartSec=600
+
+[Install]
+# default.target is what makes this start at BOOT. WantedBy=helix.target alone
+# would only start it when an operator ran `systemctl --user start helix.target`.
+# Both are declared: boot-start AND membership in the umbrella group.
+WantedBy=default.target helix.target
+
+=== helixcode-server.service unit file ===
+# /home/milosvasic/.config/systemd/user/helixcode-server.service
+[Unit]
+Description=HelixCode AI Development Server (main binary) on :8080
+Documentation=file:///home/milosvasic/Projects/helix_code/helix_code/cmd/server/README.md
+# Ordered last among the Helix units: the server's llm.default_provider=local
+# expects the coder lane, and its infraboot expects Postgres/Redis. Wants= (not
+# Requires=) throughout so the server still starts and reports its own health
+# when a backend is degraded — it has its own infraboot fallback path, and the
+# units named here are not all enabled in this deployment (After= on a unit that
+# never starts is inert, so this stays correct either way).
+After=network-online.target helixcode-infra.service helixllm-coder.service helixllm-gateway.service
+Wants=network-online.target
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
+PartOf=helix.target
+
+[Service]
+Type=simple
+# podman is required by the server's infraboot (auto-boots its Postgres+Redis).
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+# --- INFRA OWNERSHIP (measured 2026-09-03) -----------------------------------
+# HELIX_AUTOBOOT_INFRA is deliberately LEFT AT ITS DEFAULT (true), so
+# internal/infraboot EnsureInfra boots and owns this server's own
+# `helixcode-autoboot-postgres` (:55432) and `helixcode-autoboot-redis`
+# (:56379).
+#
+# An earlier revision set `HELIX_AUTOBOOT_INFRA=false` here, per an operator
+# decision (2026-07-28) making helixcode-infra.service the SOLE datastore owner.
+# That decision is sound for the shared-infra topology — and it is NOT what is
+# deployed. Measured on 2026-09-03: `podman ps -a` showed ZERO
+# `helixcode-infra-*` containers, while both `helixcode-autoboot-*` containers
+# were up and healthy. With autoboot disabled and no infra stack running, this
+# server would start with no datastore at all.
+#
+# The false setting is preserved here so the shared-infra topology stays
+# recoverable rather than silently deleted. To switch:
+#     Environment=HELIX_AUTOBOOT_INFRA=false
+#   + enable helixcode-infra.service
+#   + point HELIX_CONFIG at config/replica-8081.yaml (its DB/Redis stanzas
+#     address :5433/:6380, which is the infra stack)
+#
+# Two orchestrators are NOT contending under either topology: infraboot owns
+# `helixcode-autoboot-*` and compose owns `helixcode-infra-*` — disjoint names
+# AND disjoint ports (55432/56379 vs 5433/6380). What the 2026-07-28 decision
+# actually prevents is DUPLICATION (two Postgres, two Redis, double the RAM),
+# not a name collision. Enabling both is wasteful, not fatal; this unit takes
+# the single-owner path that matches the running stack (§11.4.119).
+
+# --- Config path (load-bearing) ----------------------------------------------
+# Set EXPLICITLY, not left to cwd-relative discovery. The binary's fallback
+# chain ends at ~/.config/helixcode/config.json, and that file is currently
+# INCOMPATIBLE with this build: started from any directory that does not contain
+# `config/config.yaml`, the server aborts with
+#   "Failed to load configuration: unknown configuration in
+#    /home/milosvasic/.config/helixcode/config.json: <75 stale keys>"
+# Reproduced 2026-09-03 by running the binary from the repo root; the identical
+# binary started cleanly from helix_code/ because the cwd-relative YAML won.
+# Relying on WorkingDirectory alone would leave that landmine armed. Both probes
+# with the path set explicitly loaded cleanly.
+#
+# :8080 is the port this config declares (config/config.yaml:6) and the port the
+# service actually serves. replica-8081.yaml is — as its name says — a SECOND
+# instance's config; it is not the primary.
+Environment=HELIX_CONFIG=/home/milosvasic/Projects/helix_code/helix_code/config/config.yaml
+
+# Secrets (HELIX_DATABASE_PASSWORD, HELIX_REDIS_PASSWORD, HELIX_AUTH_JWT_SECRET)
+# live in .env (mode 0600, gitignored per CONST-042/§12.1) and are NEVER inlined
+# into this unit, which is world-readable and version-controlled. The server
+# REFUSES to start when one is missing, naming it — so a missing .env produces a
+# clear error, not a silent insecure default. Verified bare `KEY=value` format,
+# so systemd parses it natively. That file also supplies HELIX_REDIS_HOST=localhost.
+EnvironmentFile=-/home/milosvasic/Projects/helix_code/.env
+
+WorkingDirectory=/home/milosvasic/Projects/helix_code/helix_code
+# Bare invocation, matching the process proven to serve :8080 on this host.
+ExecStart=/home/milosvasic/Projects/helix_code/helix_code/bin/helixcode
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple reports "active" at fork. Gate on the real endpoint so "active"
+# means "serving" (§11.4.108) — and so a config-load abort like the one
+# described above fails the unit LOUDLY instead of leaving a dead-but-green one.
+ExecStartPost=/home/milosvasic/Projects/helix_code/scripts/systemd/wait-http-ready.sh http://localhost:8080/health 150 3
+
+# Mirrors packaging/debian/helixcode.service (Restart=on-failure, RestartSec=10,
+# LimitNOFILE=65536) adapted to user scope.
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+TimeoutStartSec=180
+
+[Install]
+# default.target is what makes this start at BOOT; helix.target keeps it in the
+# umbrella group for `systemctl --user start|stop helix.target`.
+WantedBy=default.target helix.target
+
+=== helixllm-coder-native.service unit file ===
+# /home/milosvasic/.config/systemd/user/helixllm-coder-native.service
+[Unit]
+Description=HelixLLM coder (native llama.cpp, Qwen2.5-Coder-3B Q4_K_M) on :18434
+Documentation=file:///home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/OPERATOR_GUIDE.md
+After=network-online.target
+Wants=network-online.target
+# The podman/CDI coder unit serves the SAME port with a 30B model that does not
+# fit this host. Exactly one of the two may hold :18434, so they conflict.
+Conflicts=helixllm-coder.service
+PartOf=helix.target
+StartLimitBurst=5
+StartLimitIntervalSec=600
+
+[Service]
+Type=exec
+# /home/milosvasic/opt/llamacpp_gpu/current/llama-server / 99 are resolved by
+# scripts/install_systemd_units.sh, which PROBES each candidate binary with
+# `llama-server --list-devices` and picks the first that actually enumerates a
+# GPU (§11.4.201: assert the real condition, not the proxy "a path exists").
+#
+# WHY A NON-DISTRO BINARY IS PREFERRED HERE, measured 2026-09-03:
+# /usr/bin/llama-server (8681-Debian) is a CPU-ONLY build. It ships only
+# libggml-cpu-*.so under /usr/lib/x86_64-linux-gnu/ggml/backends0 — there is no
+# CUDA or Vulkan backend in the archive at all (`apt-cache search ggml` offers
+# blas/hip/vulkan but NO cuda backend package) — so `--list-devices` prints an
+# empty device list and the host's RTX 3060 is unreachable. Upstream ggml-org
+# publishes NO Linux CUDA prebuilt either (CUDA assets are win-* only), so the
+# GPU-capable binary installed at ~/opt/llamacpp_gpu/current is the upstream
+# ubuntu-vulkan-x64 build, which reaches the 3060 through the NVIDIA Vulkan ICD
+# and its NV_coopmat2 cooperative-matrix (tensor-core) path.
+#
+# The Debian package is deliberately left INSTALLED and UNTOUCHED as the
+# fallback candidate (§11.4.122: no capability removed) — if the GPU build ever
+# goes missing the installer resolves back to /usr/bin/llama-server with
+# 99=0 rather than installing a unit that claims an offload it cannot
+# perform.
+#
+# The upstream tarball is self-contained: its libllama/libggml* resolve via
+# rpath from the binary's own directory, verified from an unrelated cwd with no
+# LD_LIBRARY_PATH set. No library env var is therefore needed here, and NOT
+# setting one is what keeps the two installs from cross-loading each other's
+# ABI-incompatible backends.
+#
+# Measured on this host, same model, same binary, only -ngl varying:
+#   -ngl 0  (CPU) : pp128  200.73 t/s | tg32   0.74 t/s   (at load average 83)
+#   -ngl 99 (GPU) : pp512 3728.42 t/s | tg64 108.75 t/s
+# Generation is ~147x faster than the contended CPU path, and ~11-54x faster
+# than the 2-10 t/s the CPU path delivered at lower load. The GPU path is also
+# largely immune to the CPU contention that makes the CPU figure so variable.
+#
+# Threads stay at 8 of 16 deliberately: this is a shared host. With all layers
+# offloaded the CPU does little more than sampling and detokenisation, so 8 is
+# generous headroom rather than a throughput limit.
+#
+# --ctx-size stays at 4096 to keep this change single-variable (backend only).
+# The 3B Q4_K_M occupies ~2 GB of the 3060's ~10.7 GB free VRAM, so there is
+# ample room to raise context or move to a larger model later.
+ExecStart=/home/milosvasic/opt/llamacpp_gpu/current/llama-server \
+  --model %h/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf \
+  --alias qwen2.5-coder-3b-instruct-q4_k_m \
+  --host 127.0.0.1 --port 18434 \
+  --ctx-size 4096 --n-gpu-layers 99 \
+  --threads 8 --threads-batch 8 --batch-size 256 \
+  --jinja --metrics
+Restart=on-failure
+RestartSec=10
+# Model load from cold page cache is slow on a loaded host.
+TimeoutStartSec=300
+
+[Install]
+WantedBy=helix.target
+
+=== llmsverifier.service unit file ===
+# /home/milosvasic/.config/systemd/user/llmsverifier.service
+[Unit]
+Description=LLMsVerifier (model/provider verification + scoring API) on :8100
+Documentation=file:///home/milosvasic/Projects/helix_code/docs/SYSTEMD.md
+# Ordered before helixllm-gateway: the gateway polls this service's
+# /api/scores on an interval and falls back to a static score table whenever it
+# is unreachable (CONST-036 makes this service the single source of truth for
+# model/provider metadata and scoring, so the static table is a degraded mode).
+After=network-online.target
+Wants=network-online.target
+PartOf=helix.target
+
+[Service]
+Type=simple
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+# Port 8100 is the address HelixLLM's gateway already looks for
+# (HELIX_LLM_VERIFIER_URL, default http://localhost:8100). The binary's own
+# default is 8080, which collides with nothing here but is not where any
+# consumer looks -- so the port is passed explicitly rather than left to differ.
+#
+# NOTE: 8100 appears in this submodule's own sources as "HelixAgentPort" (see
+# pkg/cliagents/generator.go). That is a separate, unrelated use of the same
+# number for a different service; HelixAgent actually runs on 7061 here. The
+# binding below is the consumer-facing contract, not that constant.
+
+# The API JWT secret lives in .env (mode 0600, gitignored) -- never inlined into
+# this unit, which is world-readable and version-controlled (CONST-042 / §12.1).
+# Without it the binary logs "Using default JWT secret" and runs with the
+# placeholder committed in config.yaml.
+EnvironmentFile=-/home/milosvasic/Projects/helix_code/.env
+
+# WorkingDirectory is load-bearing: the binary resolves its default `-c
+# config.yaml` and its SQLite path (./llm-verifier.db, per that config)
+# relative to the working directory. Starting it elsewhere silently produces a
+# second, empty database in whatever directory systemd happened to use.
+WorkingDirectory=/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier
+#
+# -c points at OUR config, not the submodule's.
+#
+# The submodule ships a tracked config.yaml with `llms: []`. Adding this
+# platform's provider endpoints to that file would inject consuming-project
+# context into a reusable submodule (§11.4.28) AND be overwritten on the next
+# submodule update. config/llmsverifier/config.yaml is owned by this repo; the
+# server seeds its provider/model rows from that file's `llms:` at boot
+# (idempotent), so the submodule stays project-agnostic.
+ExecStart=/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier \
+    -c /home/milosvasic/Projects/helix_code/config/llmsverifier/config.yaml \
+    server --port 8100
+
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+TimeoutStartSec=120
+
+[Install]
+WantedBy=helix.target

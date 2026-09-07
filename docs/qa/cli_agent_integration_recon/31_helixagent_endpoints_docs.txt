@@ -1,0 +1,62 @@
+=== HelixAgent endpoint discovery via docs (read-only grep) ===
+--- also check docs/ for endpoint tables ---
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/opencode_helixagent_integration.md:135:    base_url: "https://api.example.com/v1/chat/completions"
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/opencode_helixagent_integration.md:144:- OpenAI-compatible chat completions (`POST /v1/chat/completions`)
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/SUBMODULE_ANALYSIS_aichat_aichat-llm-functions.md:128:POST /v1/chat/completions    # OpenAI-compatible
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/SUBMODULE_ANALYSIS_aichat_aichat-llm-functions.md:144:│  │  │/v1/chat/ │  │/v1/embed/│   │   │
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/FAQ.md:178:The debate system runs a query through multiple LLM providers simultaneously (5 positions × 5 LLMs = 25 total responses), then uses voting strategies (Weighted, Majority, Borda Count, Condorcet, Plurality, Unanimous) to produce a consensus answer. Use the `/v1/chat/completions` endpoint with model `helixagent-debate`.
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/FEATURES.md:562:| `/v1/chat/completions` | OpenAI | Chat completions (ensemble) |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/PERFORMANCE_COOKBOOK.md:475:- All SSE streaming endpoints (`/v1/chat/completions` with `stream: true`)
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_USER_MANUAL.md:206:curl -k https://localhost:8443/v1/models
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_USER_MANUAL.md:209:curl -k -X POST https://localhost:8443/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_USER_MANUAL.md:225:curl -X POST http://localhost:7061/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_USER_MANUAL.md:241:curl -k https://localhost:8443/v1/models
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_USER_MANUAL.md:244:curl -k -X POST https://localhost:8443/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:53:#### GET /v1/models
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:75:#### GET /v1/providers
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:98:#### POST /v1/chat/completions
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:138:#### POST /v1/chat/completions (Streaming)
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:160:#### POST /v1/chat/completions with Tools
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_REFERENCE.md:347:| Model Metadata | `/v1/models/metadata/*` | Models.dev integration |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/CLI_AGENTS_RESEARCH_2025.md:172:Chat Completions API: http://127.0.0.1:8000/v1/chat/completions
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/CLI_AGENTS_RESEARCH_2025.md:181:curl http://127.0.0.1:8000/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/IMPLEMENTATION_PLAN.md:100:            req := httptest.NewRequest("POST", "/v1/chat/completions", strings.NewReader(tt.requestBody))
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:89:| OpenAI | `GET /v1/models` | gpt-4o, gpt-4-turbo, gpt-3.5-turbo, o1-preview |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:90:| Anthropic | `GET /v1/models` | claude-3-5-sonnet, claude-3-opus, claude-3-haiku |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:91:| Google | `GET /v1/models` | gemini-1.5-pro, gemini-1.5-flash, gemini-pro |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:92:| Groq | `GET /v1/models` | llama-3.3-70b, mixtral-8x7b |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:93:| Together | `GET /v1/models` | llama-3-70b, mistral-7b, qwen-72b |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:94:| Mistral | `GET /v1/models` | mistral-large, mistral-medium, codestral |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:95:| DeepSeek | `GET /v1/models` | deepseek-chat, deepseek-coder |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/verifier/LLMSVERIFIER_POWER_FEATURES.md:97:| OpenRouter | `GET /v1/models` | All 100+ models from multiple providers |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/12-troubleshooting.md:152:  http://localhost:7061/v1/models
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/12-troubleshooting.md:379:curl -H "Accept: application/toon+json" http://localhost:7061/v1/chat/completions
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/12-troubleshooting.md:625:curl -s -X POST http://localhost:7061/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/04-configuration-guide.md:68:| `/v1/chat/completions` | Chat completions (AI Debate) |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/04-configuration-guide.md:71:| `/v1/models` | List available models |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:74:**POST** `/v1/chat/completions`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:135:**POST** `/v1/chat/completions` with `stream: true`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:149:**GET** `/v1/models`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:232:**GET** `/v1/providers`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:253:**GET** `/v1/providers/{provider_id}`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:257:**GET** `/v1/providers/{provider_id}/health`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/API_DOCUMENTATION.md:1072:curl -X POST http://localhost:7061/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/gpt-engineer/USAGE.md:484:curl http://localhost:8000/v1/models
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/PROVIDER_VERIFICATION.md:34:POST /v1/providers/verify
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/PROVIDER_VERIFICATION.md:73:POST /v1/providers/{provider_name}/verify
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/PROVIDER_VERIFICATION.md:89:GET /v1/providers/verification
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/PROVIDER_VERIFICATION.md:96:GET /v1/providers/{provider_name}/verification
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_TESTING_GUIDE.md:214:- **Purpose**: Verify /v1/models responds
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_TESTING_GUIDE.md:217:- **Command**: `curl -sfk 'https://localhost:8443/v1/models'`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_TESTING_GUIDE.md:220:- **Purpose**: Verify /v1/chat/completions works
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_TESTING_GUIDE.md:223:- **Command**: `curl -sfk -X POST .../v1/chat/completions -d '{...}'`
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/13-api-reference.md:9:**POST /v1/chat/completions**
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/13-api-reference.md:281:**GET /v1/models**
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/codename-goose/USER-GUIDE.md:524:curl https://api.openai.com/v1/models \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/AI_CODING_AGENT_COMPATIBILITY.md:239:curl -s http://localhost:7061/v1/chat/completions \
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/AI_CODING_AGENT_COMPATIBILITY.md:264:| `/v1/chat/completions` | POST | Chat completions (streaming supported) |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/AI_CODING_AGENT_COMPATIBILITY.md:266:| `/v1/models` | GET | List available models |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_INTEGRATION.md:131:| POST | `/v1/chat/completions` | Chat completions (streaming supported) |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/HELIXLLM_INTEGRATION.md:133:| GET | `/v1/models` | List available models |
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/junie/USER-GUIDE.md:246:#### Endpoint: POST /api/v1/chat/completions
+/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/cli-agents/11-development-guide.md:131:    return this.request('/v1/chat/completions', {

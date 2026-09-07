@@ -1,0 +1,87 @@
+=== ss/lsof listening ports for target services (read-only) ===
+LISTEN 0      512                            127.0.0.1:18434      0.0.0.0:*    users:(("llama-server",pid=2580,fd=24))                       
+LISTEN 0      4096                           127.0.0.1:11434      0.0.0.0:*                                                                  
+LISTEN 0      4096                                   *:8080             *:*    users:(("helixcode",pid=6563,fd=12))                          
+LISTEN 0      4096                                   *:8111             *:*    users:(("helixagent",pid=2577,fd=3))                          
+LISTEN 0      4096                                   *:7061             *:*    users:(("helixagent",pid=2577,fd=157))                        
+LISTEN 0      4096                                   *:8443             *:*    users:(("helixllm",pid=2583,fd=6))                            
+--- full ss -ltnp (no grep filter, for context) ---
+State  Recv-Q Send-Q                     Local Address:Port  Peer Address:PortProcess                                                        
+LISTEN 0      5                              127.0.0.1:36553      0.0.0.0:*    users:(("python3",pid=2036329,fd=3))                          
+LISTEN 0      5                              127.0.0.1:35299      0.0.0.0:*    users:(("python3",pid=2017155,fd=3))                          
+LISTEN 0      5                              127.0.0.1:35085      0.0.0.0:*    users:(("python3",pid=2033689,fd=3))                          
+LISTEN 0      5                              127.0.0.1:35009      0.0.0.0:*    users:(("python3",pid=2028038,fd=3))                          
+LISTEN 0      512                            127.0.0.1:18434      0.0.0.0:*    users:(("llama-server",pid=2580,fd=24))                       
+LISTEN 0      4096                             0.0.0.0:22         0.0.0.0:*                                                                  
+LISTEN 0      50                               0.0.0.0:139        0.0.0.0:*                                                                  
+LISTEN 0      50                               0.0.0.0:445        0.0.0.0:*                                                                  
+LISTEN 0      5                              127.0.0.1:34401      0.0.0.0:*    users:(("python3",pid=2024217,fd=3))                          
+LISTEN 0      4096                           127.0.0.1:631        0.0.0.0:*                                                                  
+LISTEN 0      30                  192.168.1.115%enp5s0:6881       0.0.0.0:*    users:(("qbittorrent-nox",pid=8183,fd=16))                    
+LISTEN 0      4096                           127.0.0.1:8087       0.0.0.0:*    users:(("workshop-server",pid=3096831,fd=4))                  
+LISTEN 0      244                              0.0.0.0:5432       0.0.0.0:*                                                                  
+LISTEN 0      30                          127.0.0.1%lo:6881       0.0.0.0:*    users:(("qbittorrent-nox",pid=8183,fd=13))                    
+LISTEN 0      2048                             0.0.0.0:8000       0.0.0.0:*    users:(("gunicorn",pid=14473,fd=5),("gunicorn",pid=8982,fd=5))
+LISTEN 0      2048                             0.0.0.0:8001       0.0.0.0:*    users:(("uvicorn",pid=5491,fd=12))                            
+LISTEN 0      5                                0.0.0.0:7186       0.0.0.0:*    users:(("python3",pid=17479,fd=4))                            
+LISTEN 0      2048                             0.0.0.0:7187       0.0.0.0:*    users:(("python3",pid=17479,fd=8))                            
+LISTEN 0      5                              127.0.0.1:38565      0.0.0.0:*    users:(("python3",pid=2021322,fd=3))                          
+LISTEN 0      512                            127.0.0.1:4096       0.0.0.0:*    users:(("opencode",pid=1703225,fd=17))                        
+LISTEN 0      4096                           127.0.0.1:11434      0.0.0.0:*                                                                  
+LISTEN 0      5                              127.0.0.1:43469      0.0.0.0:*    users:(("python3",pid=2014214,fd=3))                          
+LISTEN 0      4096                          127.0.0.54:53         0.0.0.0:*                                                                  
+LISTEN 0      5                              127.0.0.1:43921      0.0.0.0:*    users:(("python3",pid=2030777,fd=3))                          
+LISTEN 0      5                              127.0.0.1:41381      0.0.0.0:*    users:(("python3",pid=2039441,fd=3))                          
+LISTEN 0      4096                       127.0.0.53%lo:53         0.0.0.0:*                                                                  
+LISTEN 0      512                            127.0.0.1:46437      0.0.0.0:*                                                                  
+LISTEN 0      30     [fe80::f22f:74ff:fe52:21a]%enp5s0:6881          [::]:*    users:(("qbittorrent-nox",pid=8183,fd=20))                    
+LISTEN 0      50                    [::ffff:127.0.0.1]:52829            *:*    users:(("jetbrains-toolb",pid=9473,fd=513))                   
+LISTEN 0      4096                                [::]:22            [::]:*                                                                  
+LISTEN 0      50                                  [::]:139           [::]:*                                                                  
+LISTEN 0      50                                  [::]:445           [::]:*                                                                  
+LISTEN 0      244                                 [::]:5432          [::]:*                                                                  
+LISTEN 0      4096                                   *:8080             *:*    users:(("helixcode",pid=6563,fd=12))                          
+LISTEN 0      4096                                   *:8110             *:*    users:(("rootlessport",pid=11304,fd=5))                       
+LISTEN 0      4096                                   *:8111             *:*    users:(("helixagent",pid=2577,fd=3))                          
+LISTEN 0      4096                                   *:8099             *:*    users:(("aicur",pid=3135046,fd=9))                            
+LISTEN 0      4096                                   *:8102             *:*    users:(("rootlessport",pid=5244,fd=10))                       
+LISTEN 0      50                                     *:7185             *:*    users:(("qbittorrent-nox",pid=8183,fd=30))                    
+LISTEN 0      4096                                   *:7188             *:*    users:(("webui-bridge",pid=18908,fd=3))                       
+LISTEN 0      4096                                   *:7189             *:*    users:(("boba-jackett",pid=17332,fd=9))                       
+LISTEN 0      4096                                   *:56379            *:*    users:(("rootlessport",pid=7688,fd=9))                        
+LISTEN 0      4096                                   *:7061             *:*    users:(("helixagent",pid=2577,fd=157))                        
+LISTEN 0      4096                                   *:55432            *:*    users:(("rootlessport",pid=7578,fd=10))                       
+LISTEN 0      512                                    *:9117             *:*    users:(("jackett",pid=706121,fd=321))                         
+LISTEN 0      4096                                   *:8270             *:*    users:(("rootlessport",pid=13868,fd=10))                      
+LISTEN 0      4096                                   *:8260             *:*    users:(("rootlessport",pid=13395,fd=10))                      
+LISTEN 0      4096                                   *:8261             *:*    users:(("rootlessport",pid=13517,fd=5))                       
+LISTEN 0      4096                                   *:8262             *:*    users:(("rootlessport",pid=13641,fd=10))                      
+LISTEN 0      4096                                   *:8263             *:*    users:(("rootlessport",pid=13747,fd=5))                       
+LISTEN 0      4096                                   *:8200             *:*    users:(("rootlessport",pid=10330,fd=10))                      
+LISTEN 0      4096                                   *:8201             *:*    users:(("rootlessport",pid=10468,fd=10))                      
+LISTEN 0      4096                                   *:8202             *:*    users:(("rootlessport",pid=10576,fd=9))                       
+LISTEN 0      4096                                   *:8203             *:*    users:(("rootlessport",pid=10666,fd=9))                       
+LISTEN 0      4096                                   *:8204             *:*    users:(("rootlessport",pid=10910,fd=10))                      
+LISTEN 0      4096                                   *:8205             *:*    users:(("rootlessport",pid=11080,fd=10))                      
+LISTEN 0      4096                                   *:8206             *:*    users:(("rootlessport",pid=11175,fd=10))                      
+LISTEN 0      4096                                   *:8220             *:*    users:(("rootlessport",pid=11535,fd=10))                      
+LISTEN 0      4096                                   *:8221             *:*    users:(("rootlessport",pid=11621,fd=10))                      
+LISTEN 0      4096                                   *:8223             *:*    users:(("rootlessport",pid=1619878,fd=5))                     
+LISTEN 0      4096                                   *:8210             *:*    users:(("rootlessport",pid=14038,fd=9))                       
+LISTEN 0      4096                                   *:8212             *:*    users:(("rootlessport",pid=11392,fd=9))                       
+LISTEN 0      4096                                   *:8234             *:*    users:(("rootlessport",pid=11944,fd=9))                       
+LISTEN 0      4096                                   *:8235             *:*    users:(("rootlessport",pid=12040,fd=10))                      
+LISTEN 0      4096                                   *:8236             *:*    users:(("rootlessport",pid=12127,fd=9))                       
+LISTEN 0      4096                                   *:8238             *:*    users:(("rootlessport",pid=12238,fd=10))                      
+LISTEN 0      4096                                   *:8239             *:*    users:(("rootlessport",pid=12377,fd=5))                       
+LISTEN 0      4096                                   *:8224             *:*    users:(("rootlessport",pid=11827,fd=9))                       
+LISTEN 0      4096                                   *:8250             *:*    users:(("rootlessport",pid=12498,fd=9))                       
+LISTEN 0      4096                                   *:8251             *:*    users:(("rootlessport",pid=12621,fd=9))                       
+LISTEN 0      4096                                   *:8252             *:*    users:(("rootlessport",pid=13031,fd=10))                      
+LISTEN 0      4096                                   *:8253             *:*    users:(("rootlessport",pid=13134,fd=10))                      
+LISTEN 0      4096                                   *:8254             *:*    users:(("rootlessport",pid=13247,fd=10))                      
+LISTEN 0      4096                                   *:8443             *:*    users:(("helixllm",pid=2583,fd=6))                            
+LISTEN 0      4096                                   *:8444             *:*    users:(("aicur",pid=3135046,fd=10))                           
+LISTEN 0      30                              [::1]%lo:6881          [::]:*    users:(("qbittorrent-nox",pid=8183,fd=18))                    
+LISTEN 0      4096                               [::1]:631           [::]:*                                                                  
+LISTEN 0      4096                  [::ffff:127.0.0.1]:45249            *:*    users:(("jetbrains-toolb",pid=9473,fd=502))                   

@@ -1,0 +1,164 @@
+=== llmsverifier config (read-only) ===
+# LLMsVerifier configuration — owned by HelixCode, NOT by the submodule.
+#
+# The llms_verifier submodule ships its own tracked config.yaml with `llms: []`.
+# Editing that file to add this platform's endpoints would inject consuming-
+# project context into a reusable submodule (§11.4.28) and would be overwritten
+# on the next submodule update. Instead the unit passes this file with `-c`, so
+# the submodule stays project-agnostic and this platform supplies its own data.
+#
+# Providers listed here are seeded into the verifier's database at server boot
+# (idempotent — existing rows are reused, never duplicated).
+
+api:
+  enable_cors: true
+  port: '8100'
+  rate_limit: 100
+  # Secret comes from LLM_VERIFIER_API_JWT_SECRET in .env (mode 0600, gitignored)
+  # per CONST-042 / §12.1. Never inline a secret in a tracked config file.
+  #
+  # The ${VAR} placeholder is LOAD-BEARING — do not "simplify" it back to an
+  # omitted key. Omitting it does NOT pick the env var up:
+  #   llmverifier/config_loader.go:66-67 calls viper.AutomaticEnv() +
+  #   SetEnvPrefix("LLM_VERIFIER") with NO SetEnvKeyReplacer, so viper maps the
+  #   key api.jwt_secret to the env name "LLM_VERIFIER_API.JWT_SECRET" (dot
+  #   preserved) — not LLM_VERIFIER_API_JWT_SECRET. With the key absent, the
+  #   value fell through to the committed placeholder default at
+  #   config_loader.go:190, and the service logged on every start:
+  #     "WARNING: Using default JWT secret. Please set
+  #      LLM_VERIFIER_API_JWT_SECRET environment variable in production."
+  #   i.e. the secret WAS set in .env and was silently never read.
+  # An explicit ${VAR} value IS handled: expandEnvVar (config_loader.go:278-288)
+  # substitutes only when the value is literally ${VAR}. Verified 2026-07-28.
+  # The structural fix (adding SetEnvKeyReplacer) belongs upstream in the
+  # llms_verifier submodule.
+  jwt_secret: "${LLM_VERIFIER_API_JWT_SECRET}"
+
+database:
+  # Relative to the unit's WorkingDirectory (the llm-verifier module root), so
+  # this points at the same database the submodule's own default config uses --
+  # switching config files must not silently start a second, empty database.
+  path: ./llm-verifier.db
+  encryption_key: ''
+
+global:
+  max_retries: 3
+  timeout: 120s
+
+# Verifiable providers on this host.
+#
+# Only providers that can ACTUALLY be reached are listed. A provider entry whose
+# endpoint needs an API key we do not hold would seed a model that every
+# verification pass then fails on, polluting the score set with false negatives
+# (§11.4.6) — worse than publishing nothing for it. Cloud providers get added
+# here as their keys land in .env.
+llms:
+  # Local llama.cpp server, run by helixllm-coder.service. No API key required.
+  # `llamacpp` is deliberate, not cosmetic: HelixLLM's gateway treats that exact
+  # provider name as its local fallback and always ranks it last regardless of
+  # score (fallback.ScorerBridge.BuildEntries). Naming it anything else would
+  # make the gateway sort a local model in among the cloud providers.
+  - name: llamacpp
+    endpoint: http://localhost:18434/v1
+    model: /models/Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf
+    api_key: ''
+
+concurrency: 2
+timeout: 120s
+
+=== submodule presence check (is llm-verifier ever built?) ===
+total 4132
+drwxrwxr-x 50 milosvasic milosvasic    4096 Aug 31 20:24 .
+drwxrwxr-x 27 milosvasic milosvasic   20480 Aug 31 20:19 ..
+-rw-rw-r--  1 milosvasic milosvasic    1958 Aug 31 20:19 .gitignore
+-rw-rw-r--  1 milosvasic milosvasic   28993 Aug 31 20:24 AGENTS.md
+-rw-rw-r--  1 milosvasic milosvasic   15450 Aug 31 20:19 AUDIT_REPORT.md
+-rw-rw-r--  1 milosvasic milosvasic   21967 Aug 31 20:24 CLAUDE.md
+-rw-rw-r--  1 milosvasic milosvasic   24449 Aug 31 20:19 COMPREHENSIVE_AUDIT_AND_IMPLEMENTATION_PLAN.md
+-rw-rw-r--  1 milosvasic milosvasic    6193 Aug 31 20:19 CONSTITUTION.md
+-rw-rw-r--  1 milosvasic milosvasic   15030 Aug 31 20:19 FINAL_COMPREHENSIVE_REPORT.md
+-rw-rw-r--  1 milosvasic milosvasic   11720 Aug 31 20:19 FINAL_FIX_SUMMARY.md
+-rw-rw-r--  1 milosvasic milosvasic    8602 Aug 31 20:19 FINAL_SUMMARY.md
+-rw-rw-r--  1 milosvasic milosvasic   18867 Aug 31 20:19 IMPLEMENTATION_ROADMAP.md
+-rw-rw-r--  1 milosvasic milosvasic   30286 Aug 31 20:19 IMPLEMENTATION_STATUS.md
+-rw-rw-r--  1 milosvasic milosvasic    5026 Aug 31 20:19 PHASE34_COMPLETION_REPORT.md
+-rw-rw-r--  1 milosvasic milosvasic    4237 Aug 31 20:19 PHASE40_DEPLOYMENT_PLAN.md
+-rw-rw-r--  1 milosvasic milosvasic    2769 Aug 31 20:19 PROJECT_STATS.md
+-rw-rw-r--  1 milosvasic milosvasic   12048 Aug 31 20:19 README.md
+-rw-rw-r--  1 milosvasic milosvasic    5028 Aug 31 20:19 RELEASE_NOTES.md
+-rw-rw-r--  1 milosvasic milosvasic    4337 Aug 31 20:19 SECURITY_SETUP.md
+-rw-rw-r--  1 milosvasic milosvasic    4973 Aug 31 20:19 SPECIFICATION.md
+-rw-rw-r--  1 milosvasic milosvasic    3804 Aug 31 20:19 TEST_RESULTS.md
+-rw-rw-r--  1 milosvasic milosvasic    6072 Aug 31 20:19 VERIFICATION_COMPLETE.md
+-rw-rw-r--  1 milosvasic milosvasic    5872 Aug 31 20:19 VERIFICATION_SUMMARY.md
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 ai
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 analytics
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 api
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 api_keys
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 auth
+-rwxrwxr-x  1 milosvasic milosvasic    5742 Aug 31 20:19 benchmark.sh
+drwxrwxr-x  6 milosvasic milosvasic    4096 Aug 31 20:19 bigdata
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 build-artifacts
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 bulk_exports
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 bulk_exportsdefault
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 capabilities
+drwxrwxr-x  8 milosvasic milosvasic    4096 Aug 31 20:19 challenges
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 client
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 clientip
+drwxrwxr-x 16 milosvasic milosvasic    4096 Aug 31 20:19 cmd
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 config
+-rw-rw-r--  1 milosvasic milosvasic     330 Aug 31 20:19 config.yaml
+-rw-rw-r--  1 milosvasic milosvasic    1092 Aug 31 20:19 config.yaml.example
+-rw-rw-r--  1 milosvasic milosvasic    5598 Aug 31 20:19 config_full.yaml
+-rw-rw-r--  1 milosvasic milosvasic    2018 Aug 31 20:19 crush_config.json
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 database
+-rwxrwxr-x  1 milosvasic milosvasic    8549 Aug 31 20:19 deploy.sh
+drwxrwxr-x  4 milosvasic milosvasic    4096 Aug 31 20:19 desktop
+-rw-rw-r--  1 milosvasic milosvasic    2616 Aug 31 20:19 docker-compose.yml
+drwxrwxr-x  5 milosvasic milosvasic    4096 Aug 31 20:19 docs
+-rw-rw-r--  1 milosvasic milosvasic    8505 Aug 31 20:19 e2e_test.go
+drwxrwxr-x 10 milosvasic milosvasic    4096 Aug 31 20:19 enhanced
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 events
+-rw-rw-r--  1 milosvasic milosvasic     488 Aug 31 20:19 export.json
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 failover
+-rw-rw-r--  1 milosvasic milosvasic    8143 Aug 31 20:19 go.mod
+-rw-rw-r--  1 milosvasic milosvasic   38809 Aug 31 20:19 go.sum
+-rw-rw-r--  1 milosvasic milosvasic    6625 Aug 31 20:19 install.sh
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 k8s
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 llmverifier
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 logging
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 messaging
+drwxrwxr-x  7 milosvasic milosvasic    4096 Aug 31 20:19 mobile
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 monitoring
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 multimodal
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 notifications
+-rw-rw-r--  1 milosvasic milosvasic  590264 Aug 31 20:19 opencode_ultimate.json
+-rw-rw-r--  1 milosvasic milosvasic  589694 Aug 31 20:19 opencode_ultimate_public.json
+-rw-rw-r--  1 milosvasic milosvasic     710 Aug 31 20:19 packages.txt
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 partners
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 performance
+drwxrwxr-x  9 milosvasic milosvasic    4096 Aug 31 20:19 pkg
+-rw-rw-r--  1 milosvasic milosvasic    1032 Aug 31 20:19 provider_mapping.txt
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 providers
+-rwxrwxr-x  1 milosvasic milosvasic 2267236 Aug 31 20:19 run_provider_challenge
+-rwxrwxr-x  1 milosvasic milosvasic    5440 Aug 31 20:19 scalability-test.sh
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 scheduler
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 scoring
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 scripts
+drwxrwxr-x  5 milosvasic milosvasic    4096 Aug 31 20:19 sdk
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 security
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 seed
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 selection
+-rw-rw-r--  1 milosvasic milosvasic    6504 Aug 31 20:19 setup-monitoring.sh
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 suffix
+-rw-rw-r--  1 milosvasic milosvasic     405 Aug 31 20:19 test-config.yaml
+-rw-rw-r--  1 milosvasic milosvasic  116334 Aug 31 20:19 test-tui
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 test_exports
+-rwxrwxr-x  1 milosvasic milosvasic     838 Aug 31 20:19 test_runner.sh
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 testing
+drwxrwxr-x  4 milosvasic milosvasic    4096 Aug 31 20:19 tests
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 testsuite
+drwxrwxr-x  3 milosvasic milosvasic    4096 Aug 31 20:19 tui
+drwxrwxr-x  2 milosvasic milosvasic    4096 Aug 31 20:19 verification
+-rw-rw-r--  1 milosvasic milosvasic    3043 Aug 31 20:19 verify-deployment.sh
+drwxrwxr-x  5 milosvasic milosvasic    4096 Aug 31 20:19 web

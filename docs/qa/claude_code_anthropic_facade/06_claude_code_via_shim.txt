@@ -1,0 +1,46 @@
+-- facade :34259 <- shim :56465 <- claude code
+
+==============================================================
+S1  claude -p (no tools needed)
+==============================================================
+"helix-local" isn't described by this version's model catalog; update Claude Code, or map it with behavesAs on a modelPicker row (or modelOverrides, if it is a provider id of a model this version knows). Until then auto-compact keeps this session within 200k tokens (the context window it assumes); if the model accepts more, append [1m] to the model name for 1M, or set CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API behavior.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+
+[claude exit: 0]
+
+==============================================================
+S2  claude -p requiring a TOOL CALL (the agentic path)
+==============================================================
+"helix-local" isn't described by this version's model catalog; update Claude Code, or map it with behavesAs on a modelPicker row (or modelOverrides, if it is a provider id of a model this version knows). Until then auto-compact keeps this session within 200k tokens (the context window it assumes); if the model accepts more, append [1m] to the model name for 1M, or set CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API behavior.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+
+[claude exit: 0]
+
+==============================================================
+SHIM LOG (what the shim translated / what upstream answered)
+==============================================================
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+
+==============================================================
+FACADE ACCESS LOG
+==============================================================
+[GIN] 2026/09/05 - 23:11:05 | 200 |  49.65µs |       127.0.0.1 | GET      "/health"
+[GIN] 2026/09/05 - 23:11:08 | 404 |   4.79µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:11:13 | 200 | 642.23ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:11:14 | 200 | 581.11ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:11:14 | 404 |   5.19µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:11:20 | 200 |  636.2ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:11:21 | 200 | 616.95ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+
+-- shim e2e complete

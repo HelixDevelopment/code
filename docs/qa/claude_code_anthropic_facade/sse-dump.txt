@@ -1,0 +1,34 @@
+
+===== SSE RESPONSE (603 bytes) =====
+event: message_start
+data: {"message":{"content":[],"id":"msg_8f3e6f56-6e87-4958-a8db-ac7ea1f0bcb7","model":"helix-local","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+
+===== SSE RESPONSE (603 bytes) =====
+event: message_start
+data: {"message":{"content":[],"id":"msg_e5433760-1ff0-48df-8aa7-3d578a9326b9","model":"helix-local","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+

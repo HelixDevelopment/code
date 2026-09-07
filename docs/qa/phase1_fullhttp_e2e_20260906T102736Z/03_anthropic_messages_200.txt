@@ -1,0 +1,10 @@
+=== REQUEST ===
+POST http://127.0.0.1:39129/v1/messages
+Content-Type: application/json
+x-api-key: test-only-fullhttp-e2e-wire-facade-key-not-a-real-secret
+
+{"messages":[{"role":"user","content":"This is an automated full-HTTP e2e liveness probe. Reply with EXACTLY this token and nothing else: HELIXCODE-FULLHTTP-E2E-1591c0ed90e6"}],"max_tokens":32,"temperature":0}
+
+=== RESPONSE ===
+HTTP 200
+{"id":"msg_df44db23-df1e-42a0-ab8c-8056a3adcbcc","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"HELIXCODE-FULLHTTP-E2E-1591c0ed90e6"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":75,"output_tokens":22}}

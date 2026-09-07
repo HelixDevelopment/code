@@ -1,0 +1,56 @@
+-- ephemeral (HELIX_LLM_PROVIDER=local, facade key configured) on 127.0.0.1:36691
+
+--- C0  HEAD /api/hello  (connection-warming probe; docs say safe to reject)
+HTTP/1.1 404 Not Found
+Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With
+Access-Control-Allow-Methods: POST, OPTIONS, GET, PUT, DELETE
+
+--- C1  system as a plain STRING (the only shape the facade documents)
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 267
+
+{"id":"msg_85a63ec7-0224-436b-80f8-10e9c5218715","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":25,"output_tokens":5}}
+
+
+--- C2  system as an ARRAY of blocks — THE SHAPE CLAUDE CODE ACTUALLY SENDS
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Content-Length: 188
+
+{"error":{"message":"invalid request body: json: cannot unmarshal array into Go struct field anthropicMessagesRequest.system of type string","type":"invalid_request_error"},"type":"error"}
+
+
+--- C3  message content as an ARRAY of typed blocks + cache_control
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 267
+
+{"id":"msg_18f355f9-bde1-4176-989f-83223fc5e5a3","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+
+--- C4  thinking:{"type":"adaptive"} (sent for unrecognised model names)
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 267
+
+{"id":"msg_0518e497-833a-4ee2-a0c4-840a4f0d7587","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":36,"output_tokens":5}}
+
+
+--- C5  FULL Claude-Code-shaped request: array system + array content + tools + thinking + stream
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Content-Length: 188
+
+{"error":{"message":"invalid request body: json: cannot unmarshal array into Go struct field anthropicMessagesRequest.system of type string","type":"invalid_request_error"},"type":"error"}
+
+
+--- C6  tool_result turn (multi-turn agentic loop, content-block array)
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 443
+
+{"id":"msg_1dbfe161-d565-4c62-85a3-dfb262b0fe37","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"I see the output from the `ls` command, which lists the files `a.txt` and `b.txt` in the current directory. If you have any more questions or need further assistance, feel free to ask!"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":73,"output_tokens":46}}
+
+
+-- real-shape probe complete
