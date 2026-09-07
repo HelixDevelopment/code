@@ -85,10 +85,50 @@ command -v weasyprint >/dev/null 2>&1 || HAVE_WEASY=0
 HAVE_MMDC=1
 command -v mmdc >/dev/null 2>&1 || HAVE_MMDC=0
 
+# Browser resolution for mmdc (§11.4.6: probe, never assume).
+#
+# mmdc drives headless Chromium via puppeteer. Two things routinely break that
+# on a hardened host, and both were observed here:
+#
+#   1. puppeteer's bundled browser is often absent, because npm refuses to run
+#      its postinstall script without an explicit --allow-scripts.
+#   2. Even with a browser present, Chromium REFUSES TO START on distros that
+#      disable unprivileged user namespaces via AppArmor (Ubuntu 23.10+):
+#        FATAL zygote_host_impl_linux.cc: No usable sandbox!
+#
+# Either one makes every Mermaid block fall back to RAW SOURCE in the shipped
+# HTML/PDF -- the exact §11.4.168 defect this pipeline exists to prevent
+# (measured: 19 lines of readable `graph LR` source and 0 embedded images in a
+# generated PDF).
+#
+# We therefore (a) reuse an already-installed Chromium when puppeteer has none,
+# preferring an operator override, and (b) pass --no-sandbox.
+#
+# On --no-sandbox: this Chromium renders ONLY Mermaid source already committed
+# to this repository's own Markdown. It opens no remote URL and consumes no
+# untrusted input, so the sandbox is not standing between anything here. That is
+# what makes the flag acceptable in THIS pipeline and not a general default.
+MERMAID_PUPPETEER_CFG=""
+if [ "$HAVE_MMDC" -eq 1 ] && [ -z "${PUPPETEER_EXECUTABLE_PATH:-}" ]; then
+  for _cand in \
+    "$HOME"/.cache/puppeteer/chrome/*/chrome-linux64/chrome \
+    "$HOME"/.cache/ms-playwright/chromium-*/chrome-linux64/chrome \
+    "$HOME"/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
+    /usr/bin/chromium /usr/bin/chromium-browser /usr/bin/google-chrome; do
+    if [ -x "$_cand" ]; then
+      export PUPPETEER_EXECUTABLE_PATH="$_cand"
+      break
+    fi
+  done
+  unset _cand
+fi
+
 MERMAID_TMPROOT=""
 if [ "$HAVE_MMDC" -eq 1 ]; then
   MERMAID_TMPROOT="$(mktemp -d "${TMPDIR:-/tmp}/sync_md_mermaid.XXXXXX")"
   trap 'rm -rf "$MERMAID_TMPROOT"' EXIT
+  MERMAID_PUPPETEER_CFG="$MERMAID_TMPROOT/puppeteer.json"
+  printf '{"args":["--no-sandbox","--disable-dev-shm-usage"]}\n' > "$MERMAID_PUPPETEER_CFG"
 fi
 
 # A doc "has Mermaid" if it contains a ```mermaid (or :::mermaid) fence.
@@ -124,7 +164,7 @@ preprocess_mermaid() {
       in_block=0
       local png="$workdir/block_${idx}.png"
       local mlog="$workdir/block_${idx}.mmdc.log"
-      if mmdc -i "$block_file" -o "$png" -b white >"$mlog" 2>&1 && [ -f "$png" ]; then
+      if mmdc -i "$block_file" -o "$png" -b white -p "$MERMAID_PUPPETEER_CFG" >"$mlog" 2>&1 && [ -f "$png" ]; then
         printf '\n![Mermaid diagram %d](%s)\n\n' "$idx" "$png" >> "$out"
       else
         echo "WARN §11.4.6/§11.4.168: mmdc failed to render Mermaid block #$idx in $src" \
