@@ -12,6 +12,7 @@
 #   ./setup.sh --start         # ... and start the platform immediately
 #   ./setup.sh --no-systemd    # build only; skip systemd installation
 #   ./setup.sh --skip-build    # wire systemd only; assume binaries already built
+#   ./setup.sh --no-agents     # skip wiring the installed CLI agents to Helix
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,13 +20,15 @@ cd "${REPO_ROOT}"
 
 DO_SYSTEMD=1
 DO_BUILD=1
+DO_AGENTS=1
 START_FLAG=""
 for arg in "$@"; do
   case "$arg" in
     --start)      START_FLAG="--start" ;;
     --no-systemd) DO_SYSTEMD=0 ;;
     --skip-build) DO_BUILD=0 ;;
-    -h|--help)    sed -n '2,16p' "$0"; exit 0 ;;
+    --no-agents)  DO_AGENTS=0 ;;
+    -h|--help)    sed -n '2,15p' "$0"; exit 0 ;;
     *) echo "unknown option: $arg (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -155,6 +158,22 @@ gen_secret() {
 # fill_placeholder replaces a CHANGE_ME_* placeholder in .env with a generated
 # secret. It ONLY ever rewrites the placeholder, so re-running setup.sh never
 # clobbers a real value the operator (or a previous run) already set.
+# Like fill_placeholder, but for a key shipped EMPTY in .env.example. Empty is
+# the fail-closed state (no key configured => every facade request 401s), so a
+# hand-copied .env stays safe; running setup.sh upgrades that to a unique
+# per-install secret so the facade is usable WITHOUT a shared published default.
+fill_if_empty() {
+  key="$1"
+  if grep -q "^${key}=$" .env 2>/dev/null; then
+    secret="$(gen_secret)"
+    # Generated values are hex only, so they carry no sed metacharacters.
+    sed -i.bak "s|^${key}=$|${key}=${secret}|" .env
+    rm -f .env.bak
+    unset secret
+    ok "${key}: generated a unique local secret"
+  fi
+}
+
 fill_placeholder() {
   key="$1"; placeholder="$2"
   if grep -q "^${key}=${placeholder}\$" .env 2>/dev/null; then
@@ -186,8 +205,12 @@ if [ -f .env ]; then
   fill_placeholder HELIX_DATABASE_PASSWORD CHANGE_ME_db_password
   fill_placeholder HELIX_REDIS_PASSWORD    CHANGE_ME_redis_password
   fill_placeholder HELIX_AUTH_JWT_SECRET   CHANGE_ME_jwt_secret
+  # Inbound auth credential for the wire facades, NOT an outbound provider key.
+  # Shipped empty (fail-closed); generate a unique value so the facade works out
+  # of the box without a shared, published default. CONST-042.
+  fill_if_empty HELIX_WIRE_FACADE_API_KEYS
   if grep -q '=CHANGE_ME' .env 2>/dev/null; then
-    warn ".env still has CHANGE_ME placeholders (provider API keys) — fill them in before using those providers"
+    warn ".env still has CHANGE_ME placeholders (outbound provider API keys) — fill them in before using those providers"
   fi
 fi
 
@@ -197,6 +220,25 @@ if [ "${DO_SYSTEMD}" -eq 1 ]; then
   ./scripts/install_systemd_units.sh ${START_FLAG}
 else
   section "Skipping systemd installation (--no-systemd)"
+fi
+
+# --- 7. CLI agent configuration ----------------------------------------------
+# The Helix surfaces now exist; point every installed CLI coding agent at them.
+# The script detects what is actually installed, MERGES into each agent's own
+# config (never overwrites), is idempotent, and reports an explicit
+# skipped-with-reason line for every agent it does not configure (§11.4.3).
+AGENT_SUMMARY_FILE="$(mktemp)"
+trap 'rm -f "${AGENT_SUMMARY_FILE}"' EXIT
+if [ "${DO_AGENTS}" -eq 1 ]; then
+  section "Wiring installed CLI agents to the Helix model surfaces"
+  if ./scripts/install_agent_configs.sh --summary-file "${AGENT_SUMMARY_FILE}"; then
+    ok "CLI agent configuration complete"
+  else
+    warn "CLI agent configuration reported problems — see the lines above"
+  fi
+else
+  section "Skipping CLI agent configuration (--no-agents)"
+  printf '  %-9s %-12s %s\n' "(all)" "SKIPPED" "--no-agents given" > "${AGENT_SUMMARY_FILE}"
 fi
 
 # --- done --------------------------------------------------------------------
@@ -223,5 +265,10 @@ Services and ports:
   helixcode-infra     :5433 postgres  :6380 redis  :8083 weaviate
                       :8082 chromadb  :8000 cognee :6333 qdrant
                       :11434 ollama   :11211 memcached
+
+CLI agents wired to the Helix surfaces:
+$(cat "${AGENT_SUMMARY_FILE}" 2>/dev/null || printf '  (no agent configuration was run)\n')
+  Re-run / inspect   : ./scripts/install_agent_configs.sh --dry-run
+  Prove it works     : ./scripts/install_agent_configs.sh --verify
 
 EOF
