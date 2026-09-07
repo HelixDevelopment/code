@@ -208,7 +208,7 @@ test-docs:
 # FULL TEST INFRASTRUCTURE (Zero Skipped Tests)
 # ============================================
 
-.PHONY: test-infra-up test-infra-down test-infra-status test-full test-unit-full test-integration-full test-integration-tag test-e2e-full test-security-full
+.PHONY: test-infra-up test-infra-down test-infra-status test-full test-unit-full test-integration-full test-integration-tag test-e2e-full test-security-full test-loadtest
 
 # Compose runner auto-detection (Rule 4 / §11.4.76): prefer `docker compose`
 # when docker is on PATH, otherwise fall back to `podman compose` (or the
@@ -314,8 +314,30 @@ test-load-full: test-infra-up
 	@set -a && . ./.env.full-test && set +a && \
 	$(GO_TEST) -v -count=1 $(GO_TEST_PARFLAGS) -timeout=30m ./test/load/...
 
+# Load-generating suites, tagged OUT of the default `go test ./...` unit pass.
+#
+# WHY THEY ARE SEPARATED (measured, not assumed): a full-suite run was measured
+# driving the host ephemeral port range to 100% occupancy (28,221 of 28,232
+# ports) held by ~29,600 TIME-WAIT sockets for 60-90s at a time. Any package
+# binding `:0` / `127.0.0.1:0` inside that window fails EADDRINUSE, which is how
+# ~7 unrelated unit tests began failing in the suite while passing in isolation.
+# Kernel arithmetic: 28,232 ports / 60s TIME_WAIT = ~470 close-cycles/sec before
+# saturation, and `go test` defaults -p to NPROC, so the unit pass and these
+# suites were competing for one host-wide budget.
+#
+# -p 1 IS LOAD-BEARING: it runs these packages SERIALLY so they cannot flood
+# each other either. Do not "speed this up" by raising it — that reintroduces
+# the exact contention this target exists to remove.
+#
+# Evidence: docs/qa/2026-09-07-ephemeral-port-exhaustion/ANALYSIS.md
+test-loadtest:
+	@echo "⚡ Load-generating suites (ddos/performance/scaling/stresschaos), SERIAL (-p 1)..."
+	$(GO_TEST) -v -count=1 -p 1 -tags=loadtest -timeout=30m \
+		./tests/ddos/... ./tests/performance/... ./tests/scaling/... ./tests/stresschaos/...
+	@echo "✅ Load-generating suites complete"
+
 # Run all test types in sequence
-test-complete: test-unit-full test-integration-full test-e2e-full test-security-full test-load-full test-benchmark test-verifier-challenges
+test-complete: test-unit-full test-integration-full test-e2e-full test-security-full test-load-full test-loadtest test-benchmark test-verifier-challenges
 	@echo ""
 	@echo "🎉 ============================================="
 	@echo "🎉 ALL TESTS COMPLETED SUCCESSFULLY!"
@@ -565,6 +587,7 @@ help:
 	@echo "  make build           - Build the application"
 	@echo "  make test            - Run tests (build cache + -p/-parallel tuned)"
 	@echo "  make test-integration-tag - Run -tags=integration suite standalone, no infra bring-up"
+	@echo "  make test-loadtest        - Run load suites (ddos/perf/scaling/stresschaos) SERIALLY"
 	@echo "  make clean           - Clean build artifacts"
 	@echo ""
 	@echo "Test parallelism tuning (P5-T01 — override on the command line):"

@@ -1,3 +1,27 @@
+// Build-tagged OUT of the default `go test ./...` unit pass.
+//
+// WHY (measured, not assumed): these suites generate load. A full-suite run was
+// measured driving the host ephemeral port range to 100% occupancy (28,221 of
+// 28,232 ports) held by ~29,600 TIME-WAIT sockets, for 60-90s at a time. While
+// that window is open, ANY concurrently-running package that binds `:0` or
+// `127.0.0.1:0` fails with EADDRINUSE — which is exactly how ~7 unrelated unit
+// tests in internal/discovery, internal/tools/shell and internal/tools/web
+// began failing in the suite while passing in isolation.
+//
+// The kernel arithmetic: 28,232 ports / 60s TIME_WAIT = ~470 socket
+// close-cycles/sec before total saturation. `go test` defaults `-p` to NPROC
+// (16 here), so the unit pass and these load suites were competing for that one
+// budget. SO_REUSEADDR does not help (bind(0) treats every occupied port as a
+// hard conflict) and tcp_tw_reuse is connect()-path only.
+//
+// This is NOT a removal (§11.4.122): the suites still run, via
+//     make test-loadtest
+// which runs them SERIALLY (-p 1) so they cannot flood each other either, and
+// which is wired into `make test-complete`.
+//
+// Full evidence: docs/qa/2026-09-07-ephemeral-port-exhaustion/ANALYSIS.md
+//go:build loadtest
+
 package performance
 
 import (
@@ -16,14 +40,14 @@ import (
 
 // TestConfig holds performance test configuration
 type TestConfig struct {
-	BaseURL           string
-	ConcurrentUsers   int
-	RequestsPerUser   int
-	RampUpTime        time.Duration
-	TestDuration      time.Duration
-	TargetRPS         int
-	TargetLatencyP95  time.Duration
-	TargetLatencyP99  time.Duration
+	BaseURL          string
+	ConcurrentUsers  int
+	RequestsPerUser  int
+	RampUpTime       time.Duration
+	TestDuration     time.Duration
+	TargetRPS        int
+	TargetLatencyP95 time.Duration
+	TargetLatencyP99 time.Duration
 }
 
 func getTestConfig() *TestConfig {
@@ -200,7 +224,7 @@ func BenchmarkAuthLogin(b *testing.B) {
 
 func TestPerformance_HealthEndpointThroughput(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
@@ -344,7 +368,7 @@ func measureSerialBaselineRPS(config *TestConfig, client *http.Client) float64 {
 
 func TestPerformance_ConcurrentProjectCreation(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
@@ -412,7 +436,7 @@ func TestPerformance_ConcurrentProjectCreation(t *testing.T) {
 
 func TestPerformance_SustainedLoad(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
@@ -486,7 +510,7 @@ results:
 
 func TestPerformance_ConnectionPooling(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
@@ -534,7 +558,7 @@ func TestPerformance_ConnectionPooling(t *testing.T) {
 
 func TestPerformance_MemoryUnderLoad(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
@@ -602,7 +626,7 @@ func TestPerformance_ResponseSize(t *testing.T) {
 
 func TestPerformance_ErrorRecovery(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping performance test in short mode")  // SKIP-OK: #short-mode
+		t.Skip("Skipping performance test in short mode") // SKIP-OK: #short-mode
 	}
 	skipIfServerUnavailable(t)
 
