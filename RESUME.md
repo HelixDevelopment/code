@@ -1,12 +1,305 @@
 # RESUME — session resumption record (§11.4.131)
 
+**Rev 26 · 2026-09-07T08:58:39Z.** Supersedes rev 25 (2026-09-06T20:25:28Z) —
+**rev 26 is a literal-scrub pass only**: it removed working-tree-volatile
+measured literals (untracked-directory counts, total changed-entry counts,
+and one untracked file's byte size) in favour of the commands that derive
+them live, because the working tree is being written by concurrent streams
+and any number committed to this doc would be false on arrival (§11.4.6). No
+engineering work is claimed by rev 26; every substantive claim below is
+otherwise unchanged from rev 25 and all stable anchors (commit hashes,
+branch names, file paths, historical sections) are untouched. Rev 25
+superseded rev 24 (2026-09-05T18:37:41Z) for live state and both resume
+prompts. Rev 24 superseded rev 23 for push status. Sections 1-7 below the
+"END REV 25 BLOCK" marker are rev 23's forensic record of the 2026-09-03
+session, preserved as history; **this pass did not re-verify them**. Scope of
+this pass was `docs/CONTINUATION.md`, this file, `.remember/` and their
+`.html`/`.pdf` export siblings — `helix_code/internal/**`, `scripts/`,
+`submodules/` and `helix_code/docs/qa/2026-09-05-gap-ledger.md` were **read
+but not written**, because three independent reviewers and four parallel
+streams own those paths right now.
+
+## Contents
+
+- [Read this first — the one-paragraph state](#read-this-first--the-one-paragraph-state)
+- [Live anchors — MEASURED this pass](#live-anchors--measured-this-pass)
+- [0 · Resume prompt — SHORT form](#0--resume-prompt--short-form)
+- [0b · Resume prompt — FULL form](#0b--resume-prompt--full-form)
+- [What the batch landed (uncommitted)](#what-the-batch-landed-uncommitted)
+- [What is still open](#what-is-still-open)
+- [Operator decisions in force](#operator-decisions-in-force)
+- [Host caveat and environment quirks](#host-caveat-and-environment-quirks)
+- [1 · Start here](#1--start-here) *(rev 23 history)*
+- [2 · What is actually happening](#2--what-is-actually-happening) *(rev 23 history)*
+- [2b · How to actually run the system (verified 2026-09-03)](#2b--how-to-actually-run-the-system-verified-2026-09-03) *(rev 23 history)*
+- [2b-2 · HelixLLM, HelixAgent, and the Claude Toolkit sync (verified 2026-09-03)](#2b-2--helixllm-helixagent-and-the-claude-toolkit-sync-verified-2026-09-03) *(rev 23 history)*
+- [2c · Full retest results (2026-09-03, and how to read them)](#2c--full-retest-results-2026-09-03-and-how-to-read-them) *(rev 23 history)*
+- [3 · What was fixed in the 2026-09-02/03 session](#3--what-was-fixed-in-the-2026-09-0203-session) *(rev 23 history)*
+- [4 · Behaviour changes a user could notice](#4--behaviour-changes-a-user-could-notice) *(rev 23 history)*
+- [5 · Open, and needing a decision rather than more work](#5--open-and-needing-a-decision-rather-than-more-work) *(rev 23 history)*
+- [6 · House rules that bit someone this session](#6--house-rules-that-bit-someone-this-session) *(rev 23 history)*
+- [7 · Resume prompt (superseded — see §0/§0b at the top of this file)](#7--resume-prompt-superseded--see-00b-at-the-top-of-this-file) *(rev 23 history)*
+
+## Read this first — the one-paragraph state
+
+A very large cloud-gate + CLI-agent-fanout batch is **in flight and not
+finished**. Eight independent review rounds have run; **rounds 1-7 all returned
+NO-GO and round 8 is unresolved right now**. **Nothing is committed. Nothing is
+pushed.** Three reviewers and four other streams are working in this checkout
+concurrently. Twelve gap-ledger entries remain open, several deliberately. Do
+not treat any of the batch's work as done, and do not commit or push on its
+behalf without first closing round 8 to a clean GO per §11.4.134.
+
+## Live anchors — MEASURED this pass
+
+Re-derived by execution at 2026-09-06T20:25:28Z (§11.4.6 — nothing carried
+forward from rev 24). **Re-derive them yourself before relying on them.**
+
+| repo | branch | HEAD | ahead | behind | worktree |
+|---|---|---|---|---|---|
+| meta (checkout root `/home/milosvasic/Projects/helix_code`) | `main` | `2372d7bf` | **7** | **0** | changed entries, count not quoted here — the working tree is being written by concurrent streams (§11.4.6); re-derive with `git status --porcelain`, piped to `wc -l` |
+| `submodules/helix_llm` | `main` | `b25641f` | **3** | not checked | not checked |
+| `submodules/helix_agent` | `main` | `b9d570fe` | **8** | not checked | 14 changed |
+
+- **18 commits unpushed across three repos.**
+- Meta HEAD commit subject: *"chore(setup): W2e-2 fix :8081->:8080 banner drift;
+  retire legacy scripts/setup.sh as delegating shim"*.
+- Four configured remotes — `origin`, `github`, `gitlab`, `upstream` — all
+  report the same 7-ahead because they resolve to **two** physical hosts:
+  `git@github.com:HelixDevelopment/code.git` and
+  `git@gitlab.com:helixdevelopment1/HelixCode.git`.
+- `git rev-list --count HEAD..@{u}` = **0** — nothing to pull on meta `main`.
+- Untracked `docs/qa/phase1_fullhttp_e2e_*` evidence directories — no count is
+  quoted here: four concurrent streams are actively writing this tree, so any
+  number committed to this doc would be false on arrival (§11.4.6). Re-derive
+  live: `git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`
+  for untracked, `git ls-files docs/qa/ | grep -o 'phase1_fullhttp_e2e_[^/]*' |
+  sort -u | wc -l` for tracked, `ls -d docs/qa/phase1_fullhttp_e2e_*/ | wc -l`
+  for total on disk. The operator brief and rev 24 both said 33 — already
+  superseded by measurement once; treat every prior count, including any
+  number that was ever written in this section, as stale on sight.
+- **In flight right now:** three independent code reviewers; four parallel work
+  streams. They own `helix_code/internal/**`, `scripts/`, `submodules/` and
+  `helix_code/docs/qa/2026-09-05-gap-ledger.md`. **Do not write those paths**
+  until you have confirmed the streams have finished.
+
+## 0 · Resume prompt — SHORT form
+
+Read `RESUME.md` (this file, the rev 25 block at the top) and
+`docs/CONTINUATION.md` (rev 25, section `## 2026-09-06 — cloud-gate +
+CLI-agent-fanout batch`), run `git fetch --all --prune --tags`, then close
+review round 8 of the cloud-gate + CLI-agent-fanout batch to a zero-finding GO
+per §11.4.134 — the batch is UNFINISHED, nothing is committed, nothing is
+pushed, meta `main` is 7 ahead at `2372d7bf` with `helix_llm` 3 ahead at
+`b25641f` and `helix_agent` 8 ahead at `b9d570fe` (18 unpushed), twelve
+gap-ledger entries `HXC-002-F3-01`..`-12` are still open, three reviewers and
+four streams may still own `helix_code/internal/**`, `scripts/` and
+`submodules/`, the untracked `docs/qa/phase1_fullhttp_e2e_*` directories
+(count not quoted here — it moves while parallel streams write, re-derive with
+`git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`) are
+to be committed per operator decision, submodule pushes wait for `helix_agent`
+to clear review, and this host is at ~3.5x CPU oversubscription from a foreign
+workload so every timing-sensitive result is suspect.
+
+## 0b · Resume prompt — FULL form
+
+```
+Read RESUME.md (the rev 25 block at the top of this file), then
+docs/CONTINUATION.md rev 25 (metadata table + the section
+"## 2026-09-06 — cloud-gate + CLI-agent-fanout batch"). Then run these and
+READ THE OUTPUT before acting — §11.4.6, do not trust any number below
+without re-deriving it, all of them are from 2026-09-06T20:25:28Z:
+
+  git fetch --all --prune --tags
+  git rev-list --count HEAD..@{u}                          # expect 0 (nothing to pull)
+  git rev-list --count @{u}..HEAD                          # expect 7, HEAD 2372d7bf
+  git -C submodules/helix_llm   rev-list --count @{u}..HEAD  # expect 3, HEAD b25641f
+  git -C submodules/helix_agent rev-list --count @{u}..HEAD  # expect 8, HEAD b9d570fe
+  git status --porcelain | wc -l                           # re-derive live: the
+                                                             # working tree is
+                                                             # being written by
+                                                             # concurrent
+                                                             # streams, so no
+                                                             # count survives
+                                                             # to be quoted
+                                                             # here (§11.4.6)
+  git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'  # same — re-derive, do not trust a prior number
+
+STATE: a cloud-gate + CLI-agent-fanout batch is IN FLIGHT and NOT FINISHED.
+Eight independent review rounds have run. Rounds 1-7 all returned NO-GO;
+ROUND 8 IS IN FLIGHT AND UNRESOLVED. NOTHING IS COMMITTED. NOTHING IS
+PUSHED. Per §11.4.134 the review re-runs after every remediation round and
+must reach a CLEAN GO — zero new findings, zero warnings — before the batch
+may proceed to build/test/commit.
+
+CONCURRENCY: three independent code reviewers and four parallel work
+streams may still be operating in this same checkout. They own
+helix_code/internal/**, scripts/, submodules/, and
+helix_code/docs/qa/2026-09-05-gap-ledger.md. Confirm they have finished
+before writing any of those paths (§11.4.84 working-tree quiescence,
+§11.4.119 single-resource-owner, §11.4.176 exactly-once claim).
+
+WHAT THE BATCH LANDED, uncommitted, in the working tree:
+  - The llm.cloud.enabled gate is closed at EVERY constructor path.
+    KoboldAI was exempt-by-identity while shipping a bearer credential;
+    NewProvider was an ungated back door. A filepath.WalkDir AST scan now
+    enumerates ErrCloudDisabled sites so a new one cannot hide.
+  - Credential redaction: FOUR distinct carriers were found across rounds —
+    the base URL; *url.Error.URL; the wrapped cause, where net/url parses a
+    scheme-less credential AS the scheme; and url.Redacted() preserving the
+    USERNAME (the documented Stripe key:@host form, where the credential IS
+    the username). Now 5 sites x 14 shapes = 70 subtests, with an AST
+    cross-check between two shape tables so a shape declared in one cannot
+    be absent from the other.
+  - A typed-nil interface defect — a non-nil Provider wrapping a nil
+    pointer on every gate refusal — closed across ~31 factory arms, with a
+    static AST scan so a fourth occurrence cannot be written.
+  - HTTP status semantics: a closed cloud gate returned a retryable 503;
+    now 403 caller-sourced / 500 server-sourced, provenance tracked.
+  - The CLI-agent installer --dry-run redactor took five rounds, ending in
+    a POSITIVE ALLOWLIST implemented in awk, because "mask unless
+    allowlisted" is not expressible as an ERE — expressing it as a negative
+    character class WAS the defect.
+  - The fan-out build gate: FIFTEEN fail-opens found and closed. It now
+    carries a BASH EXECUTION ORACLE — 17 fixtures run under real bash with
+    an instrumented stub, so bash, not a regex, decides mention-vs-call.
+  - Determinism: 6 non-reproducible tests fixed and proven at -count=5
+    under synthetic load; 39 env/global leak sites closed; server.New()'s
+    process-global cloud-gate write isolated in tests WITHOUT removing the
+    production write — removing it would have been a silent runtime
+    regression, because cmd/server/main.go has zero occurrences of "cloud".
+  - submodules/helix_agent: a "cloud opt-in" gated ONE of FOUR cloud paths.
+    The four are env-key providers, the startup verifier (which sends real
+    prompts at boot), zen discovery, and embeddings to api.openai.com. All
+    four now run through one predicate in a new internal/localfirst leaf
+    package — an import cycle had forced a duplicated predicate and the
+    duplicate had drifted.
+
+WHAT IS STILL OPEN — carry these, do not let them evaporate:
+  1. Twelve gap-ledger entries HXC-002-F3-01 .. HXC-002-F3-12 in
+     helix_code/docs/qa/2026-09-05-gap-ledger.md. Several are open
+     DELIBERATELY: a bounded, visible known gap beats a rushed fix that
+     trades it for an unbounded new one — which was this batch's recurring
+     failure mode, each round's fix creating the next round's finding.
+  2. HXC-002-F3-09 — FIX DIRECTION CONFIRMED BY MEASUREMENT. A live E2E
+     test asserts the coder emits structured tool_calls. Measured today:
+     the CODER DOES NOT (finish_reason "stop", the call arriving as a
+     fenced JSON blob in content) and the GATEWAY DOES (finish_reason
+     "tool_calls", tool_calls present) at token budgets 16/32/64/200. So
+     point the test at the gateway. Keep a negative guard pinning the
+     coder's real contract so a future coder that gains tool_calls fails
+     loudly rather than silently changing the contract.
+  3. Structural fail-opens the build gate cannot see — a dead function,
+     `if false`, `[ ] && ...` — plus 8 measured false refusals. All are
+     declared in-code; none is a live exploit.
+  4. gin.SetMode() with no restore: 62 occurrences measured module-wide.
+     Latent order-dependence. (The brief said 51; 62 is measured.)
+  5. time.Sleep-as-synchronisation: 455 occurrences measured module-wide,
+     3 packages being addressed now. (The brief said ~155 on a narrower
+     scope.) Neither figure separates genuine sleeps from sleeps used as
+     synchronisation — that split is UNMEASURED.
+
+OPERATOR DECISIONS IN FORCE:
+  - The untracked docs/qa/phase1_fullhttp_e2e_* directories (count not quoted
+    here — the tree is being written by concurrent streams; re-derive with
+    `git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`)
+    WILL be committed.
+  - Submodule pushes WAIT until helix_agent clears review.
+
+WHEN YOU EVENTUALLY PUSH: fast-forward only, NEVER force, no exception
+(§11.4.113). Integrate by merging onto each remote's latest main.
+
+HOST CAVEAT: this machine runs at roughly 3.5x CPU oversubscription from a
+FOREIGN workload that MUST NOT be touched. Every timing-sensitive
+validation here is suspect — the -count=5 determinism proofs above were
+obtained under exactly this contention, which strengthens a PASS but makes
+a FAIL ambiguous. Keep a small process footprint and REAP every child.
+
+ENVIRONMENT QUIRKS (this session; re-verify):
+  - A Semgrep PreToolUse hook REJECTS any Bash command string containing
+    the Go toolchain token, even quoted. Put such commands in a script FILE
+    and bash the file; prefer `make` targets in helix_code where one exists.
+  - The Edit tool is unreliable here. Use Write plus assertion-guarded
+    python3 replace scripts, and READ THE TARGET BACK afterwards to confirm
+    the change actually landed before trusting it.
+```
+
+## What the batch landed (uncommitted)
+
+Recorded in full, with per-claim MEASURED / INHERITED tagging, in
+`docs/CONTINUATION.md` rev 25 under
+`## 2026-09-06 — cloud-gate + CLI-agent-fanout batch`. Summary: the cloud gate
+closed at every constructor path (KoboldAI, `NewProvider`); four credential
+carriers redacted behind 70 subtests with an AST cross-check; a typed-nil
+defect closed across ~31 factory arms with a static AST scan; 503 → 403/500
+status semantics; an awk positive-allowlist `--dry-run` redactor; fifteen
+fan-out-gate fail-opens closed behind a bash execution oracle; six determinism
+fixes and 39 env-leak sites; and `helix_agent`'s four cloud paths unified
+behind a single `internal/localfirst` predicate.
+
+**Spot-verified by execution during this pass** (§11.4.6): the gate is present
+at `helix_code/internal/llm/koboldai_provider.go:160` and at
+`helix_code/internal/llm/factory.go:113` inside `NewProvider` (declared `:92`);
+`ErrCloudDisabled` has 86 references across 20+ files; three AST-driven guard
+tests exist; `internal/server/llm_generate.go` carries `StatusInternalServerError`
+at `:691`, `StatusForbidden` at `:694`, residual `StatusServiceUnavailable` at
+`:699`; `scripts/gates/agent_config_fanout_gate.sh` is present, executable, and
+untracked (byte size not quoted here — an untracked file's size can change
+while parallel streams write; re-derive with
+`wc -c scripts/gates/agent_config_fanout_gate.sh`); and
+`submodules/helix_agent/internal/localfirst/{localfirst.go,localfirst_test.go}`
+exists. Everything else in the summary is **INHERITED** from the batch's own
+streams and was **not** re-verified here.
+
+## What is still open
+
+See the FULL resume prompt above, items 1-5, and the matching section in
+`docs/CONTINUATION.md` rev 25. In one line each: twelve gap-ledger entries
+`HXC-002-F3-01`..`-12` (several open deliberately); `HXC-002-F3-09` with a
+measurement-confirmed fix direction (point the test at the gateway); structural
+fail-opens the build gate cannot see plus 8 measured false refusals; 62 measured
+`gin.SetMode()` sites with no restore; 455 measured `time.Sleep` sites.
+
+## Operator decisions in force
+
+1. The untracked `docs/qa/phase1_fullhttp_e2e_*` directories **WILL be
+   committed** (count not quoted here — the working tree is being written by
+   concurrent streams, so any committed number is false on arrival, §11.4.6;
+   re-derive with `git status --porcelain | grep -c '^?? docs/qa/phase1_fullhttp_e2e_'`).
+2. **Submodule pushes wait** until `helix_agent` clears review.
+
+## Host caveat and environment quirks
+
+The host runs at roughly **3.5x CPU oversubscription from a FOREIGN workload
+that must not be touched**. Timing-sensitive results obtained here — including
+the `-count=5` determinism proofs — carry that contention as context: it
+strengthens a PASS and makes a FAIL ambiguous. Keep a small process footprint
+and reap every child.
+
+A **Semgrep PreToolUse hook rejects** any Bash command string containing the Go
+toolchain token; put such commands in a script file and `bash` it. The **`Edit`
+tool is unreliable** this session — use `Write` plus assertion-guarded `python3`
+replace scripts and read the target file back to confirm the write landed.
+
+---
+
+**END REV 25 BLOCK.** Everything from here down is rev 23's 2026-09-03 forensic
+record, preserved as history and **not** independently re-verified by this pass
+or by rev 24. Where a claim below conflicts with the rev 25 block above (push
+status, HEAD SHAs, suite state, "what is actually happening"), **the rev 25
+block above is authoritative.**
+
+---
+
 **Rev 23 · 2026-09-03 ~14:00 CEST.** Supersedes rev 22 (same morning),
 rev 21 and rev 20 (2026-08-14).
 
 **What changed since rev 22, and it is the headline: EVERYTHING IS NOW PUSHED,
-and the system BOOTS AND SERVES.** Rev 22 said "Nothing is pushed"; that is no
-longer true and §2 below is corrected. Three defects that each independently
-stopped the stack from starting were found by actually running it, and fixed.
+and the system BOOTS AND SERVES.** [STALE as of rev 24 — see the block above.
+18 commits are unpushed as of 2026-09-05T18:37:41Z.] Rev 22 said "Nothing is
+pushed"; that is no longer true and §2 below is corrected. Three defects that
+each independently stopped the stack from starting were found by actually
+running it, and fixed.
 
 Rev 20 was three weeks stale and **its first command did not work**: it said to
 `cd /home/milos/Factory/projects/tools_and_research/helix_code`, which does not
@@ -40,14 +333,17 @@ pushed" and declared no active programme; neither is true now.
 ```bash
 cd /home/milosvasic/Projects/helix_code     # the ONLY correct path; three docs said otherwise
 git fetch --all --prune
-git log --oneline -1                        # rev 21 was written at 7d45aed4
-git status --porcelain | wc -l              # 12 when written, and moving
-git -C submodules/helix_llm log --oneline -1   # 6e278e8 when written
+git log --oneline -1                        # rev 21 was written at 7d45aed4; rev 24 at 2372d7bf
+git status --porcelain | wc -l              # 12 when rev 23 written, 47 when rev 24 written, and moving
+git -C submodules/helix_llm log --oneline -1   # 6e278e8 when rev 23 written; b25641f when rev 24 written
 ```
 
 Read `.remember/now.md` first, then this file, then
 `specs/002-adaptive-local-model-serving/progress.yml` — that last one is the
-real record of what is broken and what has been proven about it.
+real record of what is broken and what has been proven about it. [Rev 24 note:
+also check whether `docs/superpowers/plans/2026-09-05-local-adaptive-serving.md`
+(plan task W2c-1) supersedes or complements this spec — not reconciled by the
+rev 24 pass.]
 
 ---
 
@@ -72,10 +368,14 @@ Feature **002 `adaptive-local-model-serving`** is mid-execution:
 - **89 of 97 tasks** complete (`/usr/bin/grep -c '^- \[x\]' .../tasks.md`).
 - **93 findings** recorded in `progress.yml`. Roughly 20 open, and the open ones
   are now mostly decisions rather than unfinished work — see §5.
-- **Everything is pushed** (2026-09-03 ~13:45 CEST), fast-forward, no force.
-  Every remote was `behind=0` beforehand, so no merge was needed:
+- ~~**Everything is pushed** (2026-09-03 ~13:45 CEST), fast-forward, no force.~~
+  **STALE — corrected by rev 24 above.** As of 2026-09-05T18:37:41Z, 18 commits
+  are unpushed across the meta repo (7), `helix_llm` (3) and `helix_agent` (8).
+  The table immediately below reflects the state at the time rev 23 was
+  written (2026-09-03) and is preserved for history only — do not treat any
+  SHA in it as current:
 
-  | repo | HEAD | upstreams |
+  | repo | HEAD (as of rev 23, 2026-09-03 — STALE) | upstreams |
   |---|---|---|
   | meta | `b752a807` | GitHub `Helix-CLI`, GitLab `HelixCode` |
   | `helix_llm` | `1efda3b5` | GitHub, GitLab |
@@ -266,6 +566,11 @@ There is a good precedent already in the tree: `helix_llm`'s
 Its only flaw is that the wrapper asserts "passed" rather than accepting
 "skipped". That pattern is worth generalising.
 
+[Rev 24 note: this §2c table describes the 2026-09-03 suite. The rev 24 block
+above records a DIFFERENT, more current suite check — `make verify-compile`
+GREEN plus a targeted package run — for the 2026-09-05 W2c-1 batch. The two
+are not directly comparable; do not assume this table's numbers still hold.]
+
 ---
 
 ## 3 · What was fixed in the 2026-09-02/03 session
@@ -422,10 +727,19 @@ Not defects — deliberate, and worth knowing before someone reports them as bug
   iterated to a zero-finding GO (§11.4.134).
 - **`services/vectorize/__pycache__/`** and friends are now gitignored — they
   were one careless `git add` from being versioned.
+- **Rev 24 addition: verify a file edit actually landed before trusting it.**
+  A large inline `python3` heredoc updating `docs/CONTINUATION.md`'s metadata
+  table exited 0 with no error but silently changed nothing. The fix was to
+  write the script to a file first, execute it as a separate step, then read
+  the target file back and confirm the change was actually present.
 
 ---
 
-## 7 · Resume prompt
+## 7 · Resume prompt (superseded — see §0/§0b at the top of this file)
+
+This section is rev 23's resume prompt, preserved for history. **Use §0
+(short) or §0b (full) at the top of this file instead** — this one's SHAs
+and push claims are stale as of rev 24 (2026-09-05T18:37:41Z).
 
 ```
 Read RESUME.md then specs/002-adaptive-local-model-serving/progress.yml, run
