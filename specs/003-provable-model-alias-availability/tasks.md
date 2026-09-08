@@ -160,6 +160,12 @@ so. This table exists so that constraint is visible before someone dispatches th
 - [ ] T029 [P] [SUBAGENT] [US5] Generalise the hardcoded third-party exclusion list in `CN/scripts/codegraph_validate.sh` to read from configuration rather than four inline patterns (FR-014)
 - [ ] T030 [P] [SUBAGENT] [US5] Add an index-freshness probe that distinguishes "index empty" from "no matches" at the query surface
 
+- [ ] T041 [P] [TDD] Build the acceptance-criterion mutation ledger (FR-016): for EVERY acceptance criterion in `spec.md`, record the paired check that guards it and the mutation that provably breaks that check. A criterion with no entry, or an entry whose mutation does NOT turn its check red, is a gap and is listed as one.
+- [ ] T042 Wire the T041 ledger into the standing suite so the property is CONTINUOUSLY enforced (FR-016) — a newly added acceptance criterion without a falsifying mutation fails the run. Without this, T041 is a one-time snapshot that decays.
+- [ ] T043 [P] [TDD] Inventory every measuring INSTRUMENT that establishes a verdict (FR-017) — gates, harnesses, censuses, freshness probes, OCR/liveness oracles, the readiness judge — and give each a golden-good and a golden-bad fixture, asserting it PASSES the good one and FAILS the bad one. An instrument that passes its golden-bad case is a bluff gate and MUST be reported, not fixed silently.
+- [ ] T044 [P] Add the control-needle discipline (§11.4.273) to every census/count query in the suite (FR-017) — each query carries a needle it MUST find and a needle it MUST NOT, so a query that silently matches nothing is distinguishable from a genuine zero. Twelve instrument errors this session were exactly this shape: a too-narrow grep, a `comm` on unsorted input, an exit code read after a pipeline.
+- [ ] T045 [REVIEW] Re-audit the EXISTING suites against T043 (FR-017). The known case: `CN/scripts/hooks/test_guard_forbidden_commands.sh` scored 42/42 against a guard with five live force-push escapes, because two cases were tautological — one asserted a boundary using a string containing no `push` token, and nothing guarded the `+<refspec>` check at all. Assume other suites carry the same defect until each is mutation-checked; HXC-243 tracks the adjacent finding.
+
 ## Requirement traceability (added 2026-09-08, analyze remediation)
 
 Every FR in `spec.md` must reach a task, be recorded as already shipped, or be
@@ -180,17 +186,17 @@ tasks so the same `comm` is a mechanical check rather than a judgement call.
 | FR-011 | Covered by description | T025, T026, T027 |
 | FR-014 | Covered by description | T029 |
 | FR-018 | Covered by description | T016 |
-| FR-016 | PARTIAL — the mutation harness (T001) supplies the mechanism, and T035 pairs mutations for the new adjacent tests, but nothing yet asserts the property holds for EVERY acceptance criterion | open |
-| FR-017 | PARTIAL — T002 control-needles the census helper specifically; no task extends golden-good/golden-bad validation to every instrument | open |
+| FR-016 | Covered (operator decision 2026-09-08 — brought into this feature) | T041, T042 |
+| FR-017 | Covered (operator decision 2026-09-08 — brought into this feature) | T043, T044, T045 |
 
-**FR-016 and FR-017 are recorded as PARTIAL, not closed.** They are the
-self-referential requirements — the ones demanding that checks and instruments
-be falsifiable — and this session produced twelve separate instrument errors
-(a too-narrow grep, a `comm` on unsorted input, an exit code read after a
-pipeline, and so on), each a confident wrong reading indistinguishable from a
-real finding. Marking them covered on the strength of two tasks would be the
-exact failure they exist to prevent. Closing them needs its own scope decision,
-which is why they are named here rather than quietly absorbed.
+**FR-016 and FR-017 are now owned, on the operator's decision (2026-09-08).**
+They were first recorded PARTIAL. The operator chose to bring them into this
+feature rather than defer them, and the evidence supporting that is unusually
+concrete: this session produced twelve separate instrument errors, and — the
+sharper case — a 42-case guard test suite scored 42/42 against a guard with
+five live force-push escape routes, because two of its cases could not fail
+under any mutation. A suite that cannot fail is worse than no suite: it
+converts absence of evidence into a positive report.
 
 **Shipped-status verification (§11.4.6).** FR-003/004/005 are recorded shipped
 on the strength of symbol presence confirmed against a positive control (a
