@@ -9,6 +9,42 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/constitution/scripts/hooks/guard-track-branch-label.sh\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/constitution/scripts/hooks/guard-forbidden-commands.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/constitution/scripts/hooks/guard-branch-consistency.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Bash|Task|TaskCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/constitution/scripts/hooks/guard-work-track-binding.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/constitution/scripts/hooks/guard-evidence-store-write.sh\""
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
