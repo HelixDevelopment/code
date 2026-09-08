@@ -8,11 +8,11 @@ Open workable items (current_location = Issues), regenerated from the SQLite sin
 |---|---|---|
 | Bug | In progress | 2 |
 | Bug | Operator-blocked | 1 |
-| Bug | Queued | 103 |
+| Bug | Queued | 104 |
 | Bug | Ready for testing | 4 |
 | Bug | Reopened | 1 |
 | Task | Queued | 20 |
-| **TOTAL** | | **131** |
+| **TOTAL** | | **132** |
 
 ## Items
 
@@ -149,3 +149,4 @@ Open workable items (current_location = Issues), regenerated from the SQLite sin
 | HXC-344 | Task | Queued | Medium | During the security-hook work a file was produced that appears to be a frozen snapshot of an earlier, deliberately-broken version of a script, kept so a test can prove the current version detects the old fault. Two sibling files of exactly this kind exist and are correctly set up: each carries a header marking it as an intentional test artifact, and each is executed by a named test. This third file has neither. Nothing in the project refers to it, and it carries no such header, so the commit safety check correctly refuses to accept it: from the checker's point of view it is indistinguishable from leftover damage accidentally left behind after an experiment. Two outcomes are possible and the difference matters. Either it is a genuine baseline whose wiring was never finished, in which case the fix is to connect it to a test and add the header its siblings have; or it is genuinely leftover, in which case it should be retired deliberately. Guessing either way is wrong: marking it as intentional to quiet the checker would make the checker agree with a claim nobody has verified, and deleting it without proof risks discarding real work. The file has been copied to a safe location outside the project and removed from the working area so the project is in a clean state while the question is settled. Who benefits: anyone relying on the commit safety check to mean what it says, and whoever next needs that baseline. Expected outcome: the file's origin is traced through project history, a decision is recorded with the evidence behind it, and the file is either restored and properly wired in with a test that exercises it, or retired in its own clearly-labelled change. |
 | HXC-345 | Bug | Queued | High | Word documents are produced outside the export tool, so nothing checks that they still contain their pictures |
 | HXC-346 | Task | Queued | Medium | The password-in-documentation check can be fooled by common ways of writing the same thing |
+| HXC-347 | Bug | Queued | Medium | One of our agent instruction manuals has fallen 36 rules behind the others |

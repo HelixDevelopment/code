@@ -888,3 +888,12 @@ Our documentation is published in three forms: the plain-text source, a web page
 **Created-By:** Claude
 
 We have a check that stops a real password from being written into our documentation in a form someone could copy and paste. It decides by looking at how a line STARTS, which means it recognises the ordinary way of writing a setting but misses several equally common ways: a password passed on a command line, one written inside a configuration block in a different notation, one sitting in a table cell, or one embedded in a connection address. None of those appear anywhere in our documents today, so nothing is currently leaking, but a future document using any of them would pass unnoticed. The same start-of-line rule also wrongly flags ordinary prose that merely mentions a value while explaining an incident. Both problems disappear if the check judges WHERE the value sits on the line rather than how the line begins. The logic is currently duplicated in two places that have already drifted apart, so this work should also merge them into one shared piece, and it needs its own deliberate break-it test to prove the new rule actually catches what the old one missed.
+
+## HXC-347 — One of our agent instruction manuals has fallen 36 rules behind the others
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** Medium
+**Created-By:** Claude
+
+We keep the same rulebook in several parallel files, one per AI coding tool we use, so whichever tool a person picks reads the same rules. Five of those files are kept in step with each other. A sixth, CRUSH.md, is listed as a peer in our own instructions but has been left out of recent updates: it currently carries rules up to number 238 while the others carry up to 274. That is thirty-six rules a person using that particular tool would never see, including several about not trusting a measurement before checking the measuring instrument, and about not removing things without asking first. Nobody noticed because nothing compares the files against each other. The work is to bring that file up to date with the same thirty-six entries the others already have, and then to add a check that compares the highest rule number across all the parallel files so the next omission is caught the day it happens rather than months later.

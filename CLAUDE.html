@@ -10279,12 +10279,23 @@ distinguishes between none of (§11.4.6); <strong>(d)</strong> a result
 CONTRADICTING directly-observed evidence is presumed an instrument fault
 until proven otherwise; <strong>(e)</strong> the instrument is part of
 the evidence — a captured claim cites the command that produced it
-(§11.4.5/§11.4.2). <strong>Honest boundary (§11.4.6):</strong> control
-needles prove an instrument can tell PRESENT from ABSENT; they do NOT
-prove it measures the RIGHT property, and a correctly-needled census of
-the wrong thing is still the wrong answer. Classification: universal
-(§11.4.17). Composes §11.4.5/.6/.2/.107(10)/.118/.201/§1.1. Propagation
-gate <code>CM-COVENANT-114-273-PROPAGATION</code> (literal
+(§11.4.5/§11.4.2); <strong>(f)</strong> when the criterion is a SET, the
+control must cover EVERY member — needling ONE member proves only that
+member is searchable, and (a) and (b) both PASS while the answer is
+wrong if the search and its control share the same single needle
+(measured: a two-literal denylist searched with one literal reported a
+live credential eliminated while it was still handed over in four
+copy-pasteable lines per file); <strong>(g)</strong> capture an exit
+status BEFORE any other expansion can overwrite it — <code>$?</code> is
+the LAST command’s status, which in a compound statement is often not
+the one being reported on, whether a pipeline’s last stage or a command
+substitution earlier in the same argument list. <strong>Honest boundary
+(§11.4.6):</strong> control needles prove an instrument can tell PRESENT
+from ABSENT; they do NOT prove it measures the RIGHT property, and a
+correctly-needled census of the wrong thing is still the wrong answer.
+Classification: universal (§11.4.17). Composes
+§11.4.5/.6/.2/.107(10)/.118/.201/§1.1. Propagation gate
+<code>CM-COVENANT-114-273-PROPAGATION</code> (literal
 <code>11.4.273</code>) + recommended gate
 <code>CM-CENSUS-CONTROL-NEEDLED</code> + paired §1.1 mutation (gate-code
 = separate work item, NOT claimed shipped). <strong>Canonical
