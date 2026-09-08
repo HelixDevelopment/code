@@ -63,3 +63,27 @@ rather than silently passed:
 
 Items marked incomplete require spec updates before `/speckit-clarify` or
 `/speckit-plan`. None are incomplete.
+
+
+## Clarify session 2026-09-08
+
+Re-validated after `/speckit-clarify` integrated four answers. No checkbox
+changed state: the additions are measurable and testable, so nothing newly
+passes and nothing regressed (16/16 → 16/16).
+
+Two answers went AGAINST the recommendation offered, and the risks named when
+they were put are encoded rather than dropped:
+
+- **Auto-refresh with stale fallback** was chosen over announce-and-serve-stale.
+  The risk raised was that a silent fallback is the false-null pattern — the
+  system looks healthy while running on expired data. FR-023 therefore REQUIRES
+  the fallback be announced and the cache age carried wherever stale data is
+  used. The operator's choice is honoured; the failure mode it invites is closed.
+- **Auto-generated pins** were chosen over requiring an explicit pin per record.
+  The risk raised was that a wrong auto-pin fails while looking like a working
+  alias. FR-024 therefore requires a generated pin to be VERIFIED before its
+  record may be presented as available, requires an unverifiable pin to surface
+  as a named error, and requires generated pins to be distinguishable from
+  operator-authored ones. Note this composes with the Q1 answer: since only
+  `verified` counts as available, an unverified generated pin cannot reach the
+  operator as a usable alias.

@@ -95,6 +95,7 @@ An operator or agent searching the codebase gets results covering code the team 
 - A route aggregates several internal calls, so its reported consumption legitimately varies. Validation must not treat that variance as failure.
 - The evidence store is reachable but empty. Reporting "nothing found" must be distinguishable from "could not look".
 - Two sessions validate concurrently. Neither may record a verdict derived from the other's activity.
+- An external catalogue expires and its refresh fails. The system must keep working from the stale copy AND say so everywhere the data is used; working silently on expired data is the failure, not the fallback itself.
 - A measuring instrument silently fails and returns nothing. Its empty result must not be read as a clean result — this occurred three times during the investigation that produced this specification.
 
 #### Brainstorm Prompts
@@ -115,11 +116,20 @@ An operator or agent searching the codebase gets results covering code the team 
 | Q2 | Does a model that answers a task correctly but in an unexpected style count as usable? | Resolved 2026-09-08 | **Yes — correctness is the bar, form is not.** A model that solves the task in its own style is usable. This does not weaken anything: the answer must still be right, and a canned or stubbed reply still fails because it is not correct for a prompt it could not have anticipated. Expected effect on the measured baseline is to move models blocked only on answer STYLE into the ready set; models blocked for other reasons are unaffected. |
 | Q3 | Does scope cover every model the hosts could serve, or only those already exposed? | Resolved 2026-09-08 | **Currently exposed, plus a documented and tested path to add more.** Bounds the work to a finishable set while ensuring a later addition is a routine operation rather than a fresh project. Enumerating everything the hosts *could* serve was rejected as unbounded — that set changes whenever a host's inventory changes, so it has no stable definition of done. |
 
+## Clarifications
+
+### Session 2026-09-08
+
+- Q: The spec treats an alias as usable or not, but the real system has at least four states (verified, failed, orphaned, no-twin). Should "presented as available" include the non-verified ones? → A: **Only `verified` counts as presented-as-available.** Other states are shown with their state and reason, never claimed usable.
+- Q: Listing aliases became 1.7x slower after the verdict-age column (measured 1.64s → 2.83s at 40 rows). What performance bar should the spec set? → A: **Under 1 second at current scale.**
+- Q: The model catalogue is cached with a 24-hour expiry. What should happen when it goes stale and cannot be refreshed? → A: **Attempt an automatic refresh on expiry, and fall back to the stale cache if that fails.** The fallback MUST be announced, never silent (see FR-023).
+- Q: Several provider records share one API key variable, and catalogue matching returns only one record per key — the mechanism behind 9 of the 20 orphans. Should multiple records per key be supported? → A: **Yes, with pins generated automatically** for records that lack one (see FR-024).
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: System MUST NOT present a capability as available unless it can be used. Every advertised entry either completes a round trip or is shown with its unusable state and reason.
+- **FR-001**: System MUST NOT present a capability as available unless it can be used. Every advertised entry either completes a round trip or is shown with its unusable state and reason. "Presented as available" means the `verified` state ONLY (per Q1); an entry in any other state (`failed`, `orphaned`, `no-twin`, or a state added later) MUST be shown with that state and its reason, and MUST NOT be counted toward FR-001 or SC-001.
 - **FR-002**: System MUST keep an alias and its supporting configuration consistent — it MUST NOT be possible to end in a state where one exists without the other, through any path that creates, restores, or refreshes them.
 - **FR-003**: System MUST select how it talks to a model from that model's declared protocol, never inferred from the shape of its address.
 - **FR-004**: System MUST report how old every verdict is, and MUST visibly mark a verdict older than the freshness horizon as no longer current.
@@ -141,10 +151,12 @@ An operator or agent searching the codebase gets results covering code the team 
 - **FR-020**: System MUST bring every currently-advertised alias to a usable state rather than withdrawing it (per Q1). Where an alias proves genuinely un-repairable, the system MUST surface it as a decision requiring operator input, and MUST NOT leave it presenting as available in the meantime.
 - **FR-021**: System MUST judge a model ready on whether its answer is correct, not on whether the answer matches an expected form (per Q2). A reply that could have been produced without processing the request MUST still fail.
 - **FR-022**: System MUST provide a documented, tested path for exposing an additional model, such that adding one is a routine operation (per Q3).
+- **FR-023**: On expiry of a cached external catalogue the system MUST attempt an automatic refresh, and MUST fall back to the stale cache if that refresh fails (per Q3, 2026-09-08). The fallback MUST be ANNOUNCED wherever the stale data is used — a silent fallback is forbidden, because a system running on expired data while appearing healthy is the false-null failure this specification exists to eliminate. Every result derived from a stale cache MUST carry the cache's age, on the same principle as FR-004.
+- **FR-024**: Where several records share one credential and the resolution path can match only one of them, the system MUST generate the missing pins automatically rather than leaving the remainder unresolvable (per Q4, 2026-09-08). A generated pin MUST be verified before its record may be presented as available under FR-001, and a pin that cannot be verified MUST surface as a named error identifying the record and the reason — never as a silently working-looking alias. Generated pins MUST be distinguishable from operator-authored ones, so an automatic decision is never mistaken for a human one.
 
 ### Key Entities
 
-- **Alias**: The name an operator uses to select a model. Carries the model's identity, how to reach it, which protocol it speaks, and whether it is currently usable.
+- **Alias**: The name an operator uses to select a model. Carries the model's identity, how to reach it, which protocol it speaks, and its current state. State is drawn from a closed set — at minimum `verified`, `failed`, `orphaned`, `no-twin` — of which only `verified` means usable (Q1).
 - **Verdict**: A recorded judgement about one alias. Carries the outcome, the moment it was established, its age, and a pointer to the evidence behind it.
 - **Evidence**: The captured material a verdict rests on. Must be sufficient for a second party to reach the same conclusion without rerunning anything.
 - **Capability**: An extension the operator can activate or deactivate, in exactly one of two states, with a listed path back from inactive.
@@ -164,6 +176,7 @@ An operator or agent searching the codebase gets results covering code the team 
 - **SC-008**: A search for a symbol defined only inside an owned submodule returns it; a search over vendored third-party code returns nothing from it.
 - **SC-009**: No credential appears in any verdict, log, evidence file, or diagnostic message.
 - **SC-010**: An operator new to the system can tell, from the presented list alone, which models they can use — without trying them.
+- **SC-011**: Listing aliases completes in under 1 second at current scale (per Q2, 2026-09-08). Measured baseline: 2.83s at 40 rows after the verdict-age column, against 1.64s before it.
 
 ## Assumptions
 
