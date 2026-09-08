@@ -6,174 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Issues_Summary</title>
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-  </style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">Issues_Summary</h1>
+</header>
 <h1 id="issues_summary">Issues_Summary</h1>
 <p>Open workable items (current_location = Issues), regenerated from the
 SQLite single-source-of-truth (§11.4.12).</p>
@@ -195,7 +70,7 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <tr>
 <td>Bug</td>
 <td>Operator-blocked</td>
-<td>2</td>
+<td>1</td>
 </tr>
 <tr>
 <td>Bug</td>
@@ -208,8 +83,8 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <td>4</td>
 </tr>
 <tr>
-<td>Task</td>
-<td>Operator-blocked</td>
+<td>Bug</td>
+<td>Reopened</td>
 <td>1</td>
 </tr>
 <tr>
@@ -220,7 +95,7 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <tr>
 <td><strong>TOTAL</strong></td>
 <td></td>
-<td><strong>130</strong></td>
+<td><strong>129</strong></td>
 </tr>
 </tbody>
 </table>
@@ -563,31 +438,6 @@ identifies both tickets as tracking the same vendored copy of
 idosal/git-mcp. The operator has approved removal of this vendored copy
 per §11.4.122 (approval granted 2026-09-02); this item is no longer
 awaiting an operator decision.</td>
-</tr>
-<tr>
-<td>HXC-172</td>
-<td>Task</td>
-<td>Operator-blocked</td>
-<td>High</td>
-<td>A small companion service we wrote ourselves is packaged into a
-container and started as part of the standard deployment, and it carries
-three known security warnings in its supporting packages, two of them
-rated high. Unlike the great bulk of the reported warnings, these have
-no mitigating evidence in either direction: we cannot say the code is
-unshipped, because it demonstrably ships, and no analysis has been run
-to establish whether the affected functionality is ever exercised. This
-matters because it is the one place in the whole review where something
-we genuinely run carries unassessed risk, which makes it far more
-deserving of attention than its small count suggests. One of the three
-is not really an upgrade problem at all: it concerns a protective
-setting that is switched off unless explicitly enabled, so updating the
-package without also turning the protection on would leave the exposure
-in place while appearing to resolve it. Users of any deployment running
-this service benefit. The expected outcome is a reachability assessment
-of the three warnings, the two straightforward package updates applied,
-the protective setting explicitly verified as enabled in our
-configuration rather than assumed, and the service rebuilt and confirmed
-working.</td>
 </tr>
 <tr>
 <td>HXC-175</td>
@@ -1031,7 +881,7 @@ name which mirror it came from.</td>
 <tr>
 <td>HXC-227</td>
 <td>Bug</td>
-<td>Operator-blocked</td>
+<td>Reopened</td>
 <td>Critical</td>
 <td>A design document committed forty-eight days ago contains, in its
 API-keys section, what appears to be a genuine access key for an
@@ -1815,9 +1665,9 @@ readers who copy a documentation example expecting it to compile. THE
 COUNTS, each verifiable by one command (the quotes are load-bearing —
 unquoted, the shell expands the pattern before git sees it and reports 2
 instead of 36): inside submodules/helix_agent,
-<code>git ls-files '*/go.mod' \| wc -l</code> reports 36 nested modules,
+<code>git ls-files &#39;*/go.mod&#39; \| wc -l</code> reports 36 nested modules,
 and
-<code>git ls-files 'challenges/codebase/go_files/*/go.mod' \| wc -l</code>
+<code>git ls-files &#39;challenges/codebase/go_files/*/go.mod&#39; \| wc -l</code>
 reports the 6 that the Makefile build-challenge-modules recipe walks. By
 directory the 36 are 23 under docs/, 6 under challenges/, 2 under
 plugins/, 2 under docker/, and one each under Toolkit/, pkg/, and

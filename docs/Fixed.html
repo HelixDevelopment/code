@@ -6,174 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Fixed</title>
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-  </style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">Fixed</h1>
+</header>
 <h1 id="helixcode-fixed-items-tracker">HelixCode — Fixed Items
 Tracker</h1>
 <blockquote>
@@ -364,7 +239,7 @@ all authenticated flows</td>
 docs/qa/HXC-035/)</td>
 <td>systematic-debugging per §11.4.102 (Iron Law — root cause before
 fix). ROOT CAUSE (confirmed by direct psql INSERT →
-<code>ERROR: column "display_name" of relation "users" does not exist</code>,
+<code>ERROR: column &quot;display_name&quot; of relation &quot;users&quot; does not exist</code>,
 the swallowed error behind the i18n-generic 400):
 <code>createSchemaSQL</code>’s <code>CREATE TABLE users</code> omitted
 <code>display_name</code>; the compensating
@@ -532,7 +407,7 @@ Pattern: mislabelled “X succeeded” branches firing on non-2xx →
 <code>AssertEqual</code> the expected 2xx; 401/403/429 auth/rate
 branches → assert that exact status; feature-404 branches → honest
 <code>v.Skip(reason)</code>; the 4 legitimate “Running on
-<arch/platform>” positive-platform asserts left untouched.
+<arch platform>” positive-platform asserts left untouched.
 <strong>Verification: <code>go build ./...</code> exit 0 +
 <code>go vet ./...</code> clean (independently re-verified by
 conductor); full-tree grep for literal-true bluffs = 0; anti-bluff
@@ -565,7 +440,7 @@ module) + <code>go vet ./...</code> clean — independently re-verified by
 conductor.</strong> HXC-021 runtime-verified through the now-compiling
 banks: platform SKIP=3 honest (macOS/Windows/ARM “not running on…”),
 integration SKIP=2 honest (Ollama unreachable / OPENAI_API_KEY unset), 0
-fake PASS, 0 green-empty; <code>grep 'Assert(true.*skip'</code> = 0. A
+fake PASS, 0 green-empty; <code>grep &#39;Assert(true.*skip&#39;</code> = 0. A
 larger residual sweep (~57 literal-true endpoint/auth bluffs) filed
 separately as HXC-023. Closed <code>Fixed (→ Fixed.md)</code> per
 CONST-057 (Type Bug).</td>
@@ -584,7 +459,7 @@ b4b790ea</td>
 <td>All 24 new constitution anchors (§11.4.69 + §11.4.75–97) cascaded
 into the 5 root govfiles AND all ~68 owned-submodule
 CONSTITUTION/CLAUDE/AGENTS/QWEN files. <strong>Anti-bluff
-hardening:</strong> a loose <code>grep -qF "§11.4.95 —"</code> falsely
+hardening:</strong> a loose <code>grep -qF &quot;§11.4.95 —&quot;</code> falsely
 matched the §11.4.95 cross-reference inside the §11.4.93 block body,
 skipping the §11.4.95 <em>heading</em> in batch-1-6 submodules — caught
 by tightening the gate to the H2 marker <code>## §11.4.NN —</code>
@@ -641,7 +516,7 @@ Task).</td>
 <tr>
 <td>2026-05-28</td>
 <td>HXC-021 + HXC-014a + HXC-015a: fake-skip
-<code>Assert(true,"...skipped")</code> bluffs (11) + empty
+<code>Assert(true,&quot;...skipped&quot;)</code> bluffs (11) + empty
 <code>TestProviderStress</code> stubs report green while exercising
 nothing</td>
 <td>Bug</td>
@@ -649,7 +524,7 @@ nothing</td>
 <td>2026-05-28 session</td>
 <td>f464adb0</td>
 <td>§11.4/§11.4.1/§11.4.3 anti-bluff. Confirmed firsthand (captured): 11
-<code>return v.Assert(true,"...test skipped...")</code> fake-skips — 7
+<code>return v.Assert(true,&quot;...test skipped...&quot;)</code> fake-skips — 7
 in <code>helix_code/tests/e2e/test_bank/platform/tests.go</code>
 (L61/164/622/663/704/745/784), 4 in <code>integration/tests.go</code>
 (L530/535/546/586) — counted as PASS while exercising nothing. Fix: new
@@ -660,14 +535,14 @@ honest-SKIP mechanism
 <code>*SkipError → pkg.StatusSkipped</code> (counted separately from
 Passed, never inflating green); all 11 fake-skips →
 <code>v.Skip(runtime.GOOS/GOARCH...)</code>; the legitimate
-<code>Assert(true,"Running on...")</code> positive assertions left
+<code>Assert(true,&quot;Running on...&quot;)</code> positive assertions left
 untouched. HXC-014a: <code>TestProviderStress</code>‘s 3 empty
 sub-functions (<code>t.Logf</code>+comment) → route through
 <code>stressProvider(t)</code> (real available+healthy provider OR
 honest <code>t.Skip</code> SKIP-OK:#HXC-014 — never green-empty).
 Verified: orchestrator <code>go build ./...</code> exit 0;
 <code>go vet -tags=integration ./tests/integration/...</code> exit 0;
-<code>grep 'Assert(true,".*skip'</code> in both banks = 0; §11.4.84
+<code>grep &#39;Assert(true,&quot;.*skip&#39;</code> in both banks = 0; §11.4.84
 mutation-residue scan clean. Pre-existing test_bank platform/integration
 non-compilation (blocks runtime-verifying those two banks’ honest-skips)
 filed as <strong>HXC-022</strong>. Closed
@@ -819,7 +694,7 @@ and 67 owned-submodule
 Meta <code>.gitmodules</code> constitution pointer confirmed at
 <code>34a82b3</code> (<code>git ls-tree HEAD constitution</code> →
 <code>160000 commit 34a82b3859...</code>). Spot-check:
-<code>grep -c "11.4.70\|11.4.74"</code> returns 6 for
+<code>grep -c &quot;11.4.70\|11.4.74&quot;</code> returns 6 for
 <code>helix_qa/CLAUDE.md</code>,
 <code>submodules/llm_provider/CLAUDE.md</code>,
 <code>challenges/CLAUDE.md</code> — all carry §11.4.70-74. CONST-049
@@ -938,13 +813,13 @@ asserted pre-idempotency behaviour — they pre-registered a
 same-(name,version) prompt expecting <code>CreatePromptExperiment</code>
 to fail, but commit <code>bb53c38</code> deliberately made prompt
 registration idempotent (duplicates tolerated as no-ops;
-integration.go:233/236 <code>"already exists"</code> tolerance). No
+integration.go:233/236 <code>&quot;already exists&quot;</code> tolerance). No
 production regression; production error-wrap code is correct. Fix:
 re-keyed both tests to exercise the genuine non-tolerated failure path
 (structurally-invalid prompt, empty <code>Content</code> → registry
-<code>"prompt content is required"</code> →
+<code>&quot;prompt content is required&quot;</code> →
 <code>CreatePromptExperiment</code> wraps with
-<code>"control prompt"</code>/<code>"treatment prompt"</code> prefix).
+<code>&quot;control prompt&quot;</code>/<code>&quot;treatment prompt&quot;</code> prefix).
 <code>go test -count=1 ./llmops/...</code> 2 FAIL → 0 FAIL;
 <code>go build ./...</code> clean</td>
 </tr>
@@ -1783,7 +1658,7 @@ clean; <code>go test -race -count=1 ./internal/executor/...</code> → ok
 <code>regression-present</code> → <code>fixed</code> (literal:
 <code>PASS [executor-marshal:utf8-detector:fixed]</code> +
 <code>KNOWN-ISSUE-RESOLVED: executor.appendJSONString now UTF-8 clean</code>).
-Probe <code>AppName="ü"</code> (UTF-8 <code>0xC3 0xBC</code>) preserved
+Probe <code>AppName=&quot;ü&quot;</code> (UTF-8 <code>0xC3 0xBC</code>) preserved
 end-to-end through MarshalJSON. |<br />
 2026-05-20 | HXC-005:
 <code>cmd/performance_optimization_standalone/main.go</code> is a
@@ -1864,8 +1739,8 @@ tolerance). Rationale: loosening the timing tolerance would weaken the
 test’s anti-bluff value (a genuine perf regression could then pass);
 path (b) preserves the strict assertions while making the flake
 deterministic. The three tests now gate on
-<code>os.Getenv("HOST_LOAD_DEDICATED")</code> —
-<code>t.Skip("SKIP-OK: #HXQ-001 …")</code> honestly when unset
+<code>os.Getenv(&quot;HOST_LOAD_DEDICATED&quot;)</code> —
+<code>t.Skip(&quot;SKIP-OK: #HXQ-001 …&quot;)</code> honestly when unset
 (loaded/shared host), strict run when <code>HOST_LOAD_DEDICATED=1</code>
 (quiescent dedicated host). NO timing tolerance loosened.
 <code>docs/test-coverage.md</code> §6.1 documents the env var. Evidence:
@@ -1901,7 +1776,7 @@ resolution:</strong> (1) 6 challenge scripts — kept HEAD canonical
 testify-v1.11.1 transitive graph, <code>go mod tidy</code> reconciled
 clean; (3) <code>pkg/analyzer/stub.go</code> — took vd anti-bluff
 sentinel bodies: HEAD body had RE-INTRODUCED the fabricated
-<code>ScreenAnalysis{Title:"Unknown Screen"}</code>+<code>err=nil</code>
+<code>ScreenAnalysis{Title:&quot;Unknown Screen&quot;}</code>+<code>err=nil</code>
 PASS-bluff that the file’s own unconflicted doc comments declare removed
 round-27 — per CONST-035/Article XI §11.9 the bluff must not survive;
 removed bluff-only
@@ -1922,7 +1797,7 @@ pure vd additions); (6)
 CONST-001..061 + §11.4.67; vd-unique CONST-030 superseded by CONST-035,
 vd-unique CONST-068 is the ID-form of §11.4.67 HEAD carries by literal).
 Evidence: zero conflict markers
-(<code>grep -rn '&lt;&lt;&lt;&lt;&lt;&lt;&lt;\|=======\|&gt;&gt;&gt;&gt;&gt;&gt;&gt;' --include='*.go'</code>
+(<code>grep -rn &#39;&lt;&lt;&lt;&lt;&lt;&lt;&lt;\|=======\|&gt;&gt;&gt;&gt;&gt;&gt;&gt;&#39; --include=&#39;*.go&#39;</code>
 empty); <code>go build ./...</code> exit 0; <code>go vet ./...</code>
 clean; <code>go test -count=1 ./...</code> → 7 packages PASS
 (<code>analyzer config graph i18n llmvision opencv remote</code>); all 4
@@ -2068,9 +1943,9 @@ callers distinguish API failure from negative verification — re-keyed to
 <code>require.Error</code> + <code>503</code> substring, response still
 carries <code>Verified=false</code>+<code>Error</code>.
 <code>VerifyModelCodeVisibility_ServerError</code> asserted
-<code>Status=="verified"</code>+score≥0.7 on a server returning HTTP 500
+<code>Status==&quot;verified&quot;</code>+score≥0.7 on a server returning HTTP 500
 for every sample (the “relaxed verification” bluff); zero successful
-responses → production correctly returns <code>Status=="failed"</code> —
+responses → production correctly returns <code>Status==&quot;failed&quot;</code> —
 re-keyed to assert <code>failed</code> + non-empty
 <code>ErrorMessage</code>. Evidence: before
 <code>go test ./verification/...</code> = 10 FAIL; after =
@@ -2091,7 +1966,7 @@ code — <code>BenchmarkSystem.Initialize</code> wires it as the runner’s
 <code>benchmark_test.go</code>), so honest deletion was not applicable.
 The bug: <code>Complete(ctx, prompt, systemPrompt)</code> body was
 <code>// Mock implementation - actual would call real provider</code> +
-<code>return "Response", 50, nil</code> — fabricated a hardcoded
+<code>return &quot;Response&quot;, 50, nil</code> — fabricated a hardcoded
 completion for an LLM call it never made (canonical BLUFF-001).
 <strong>Fix:</strong> the adapter’s <code>provider</code> field was an
 untyped <code>interface{}</code> it never used; retyped it to the real
@@ -2119,15 +1994,15 @@ tokens (no fabrication), and <code>_Complete_RealDispatch</code>
 constructs an <code>httptest.NewServer</code> OpenAI shim +
 <code>HTTPBenchmarkProvider</code>, asserts the adapter ACTUALLY hits
 the server (hit-counter == 1) and returns the real server payload
-(<code>"4 is the real answer"</code>, server-reported
+(<code>&quot;4 is the real answer&quot;</code>, server-reported
 <code>total_tokens</code> 19) — explicitly
-<code>NotEqual("Response")</code> / <code>NotEqual(50)</code>. Evidence:
+<code>NotEqual(&quot;Response&quot;)</code> / <code>NotEqual(50)</code>. Evidence:
 <code>go build ./...</code> exit 0;
 <code>go test -count=1 ./internal/benchmark/...</code> →
 <code>ok llmsverifier/internal/benchmark 12.334s</code> (PASS); the 3
 <code>TestProviderAdapterForBenchmark*</code> tests all
 <code>--- PASS</code>; anti-bluff smoke
-<code>grep -rn "Mock implementation\|simulated\|for now" internal/benchmark/*.go</code>
+<code>grep -rn &quot;Mock implementation\|simulated\|for now&quot; internal/benchmark/*.go</code>
 (prod only) = clean. |</div>
 <div class="line-block">2026-05-20 | HXC-006: HelixCode Speed Programme
 — 3-5× faster than competitor AI CLI agents (6-phase / 31-task) |
@@ -2161,7 +2036,7 @@ hoist ~7.4×, P2-T03 repo-map cache ~10.6× warm, P2-T04 parallel repo-map
 cut, P3-T03 fast-apply ~516×, P3-T04 tool parallelism ~5.99×, P4-T01 PGO
 −46% CPU-bound. <strong>Release-gate sweep (P5-T04):</strong> anti-bluff
 smoke
-<code>grep -rn "simulated\|for now\|TODO implement\|placeholder" helix_code/internal helix_code/cmd</code>
+<code>grep -rn &quot;simulated\|for now\|TODO implement\|placeholder&quot; helix_code/internal helix_code/cmd</code>
 (prod) = clean; <code>scripts/audit-const046-hardcoded-content.sh</code>
 ran exit 0 (speed work added no user-facing strings, no new hardcoded
 content); <code>scripts/verify-governance-cascade.sh</code> = 2
@@ -2179,8 +2054,7 @@ introduced a regression, a new bluff pattern, or new hardcoded content.
 OpenAI-compatible providers (DeepSeek/etc.) reject function names,
 breaking LLM chat with MCP enabled | Bug | Fixed (→ Fixed.md) |
 2026-06-16 session | c4c88f91 | mcpToolRegisteredName sanitises MCP tool
-names to server__name (OpenAI-compatible <a href="#fn1"
-class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>+);
+names to server__name (OpenAI-compatible <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>+);
 dispatch unaffected (Execute uses original server/toolName). 2
 mcp_readonly tests reconciled (§11.4.120); guard test + full
 internal/tools pkg pass; build exit 0. |<br />
@@ -2596,8 +2470,7 @@ CONSTITUTION/CLAUDE/AGENTS.md. Authored deterministic additive
 scripts/backfill_anchor_cascade.sh (verbatim golden helix_qa cascade,
 idempotent, §11.4.122 no-removal); backfilled+committed+pushed all 7 to
 origin; verifier now 0 FAIL PASS.</p>
-<h2
-id="hxc-040-claude.md-93.4-anti-bluff-smoke-command-false-alarm-527-i18ntest-hits-case-sensitivity-miss-of-bluff-001">HXC-040
+<h2 id="hxc-040-claude.md-93.4-anti-bluff-smoke-command-false-alarm-527-i18ntest-hits-case-sensitivity-miss-of-bluff-001">HXC-040
 — CLAUDE.md §9/§3.4 anti-bluff smoke command false-alarm (527 i18n/test
 hits) + case-sensitivity miss of BLUFF-001</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2612,8 +2485,7 @@ generation’ (capital F). Refined to word-bounded case-insensitive
 markers with _test.go/i18n/comment-citation exclusions; clean on real
 tree; §1.1 mutation-proven (planted 3 bluffs caught then reverted
 byte-identical). Both §3.4 and §9 updated.</p>
-<h2
-id="hxc-041-helixqa-standalone-http-bank-runner-subcommand-helixqa-http-drives-http-banks-vs-live-server-without-playwright-or-llm">HXC-041
+<h2 id="hxc-041-helixqa-standalone-http-bank-runner-subcommand-helixqa-http-drives-http-banks-vs-live-server-without-playwright-or-llm">HXC-041
 — helixqa standalone HTTP bank-runner subcommand (helixqa http) drives
 http: banks vs live server without Playwright or LLM</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -2627,8 +2499,7 @@ http: cases against the live server was wired only internally. Built
 ‘helixqa http -bank <yaml> -base-url <url>’ (cmd/helixqa/http.go +281,
 http_test.go +285, 2 mutation tests); build+tests green; live run vs
 booted helixcode = 15/16 PASS exit 1. helix_qa commit d6c084d6.</p>
-<h2
-id="hxc-042-const-050b-challenge-coverage-gap-12-missing-challenge-scripts-in-debate_orchestrator-helix_agent-ddosstresschaosscalinguiux">HXC-042
+<h2 id="hxc-042-const-050b-challenge-coverage-gap-12-missing-challenge-scripts-in-debate_orchestrator-helix_agent-ddosstresschaosscalinguiux">HXC-042
 — CONST-050(B) challenge-coverage gap: 12 missing challenge scripts in
 debate_orchestrator + helix_agent (ddos/stress/chaos/scaling/ui/ux)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -2643,8 +2514,7 @@ malformed+slowloris chaos, multi-replica sha256 body-identity, CLI
 panic/leak detection; honest SKIP-OK when no env target. bash -n 12/12
 PASS; real DDoS run 200/200 ok. Committed debate_orchestrator 19bd8e5b +
 helix_agent 6eee57e1.</p>
-<h2
-id="hxc-043-auth-login-nil-db-panic-causes-http-500-server-advertises-graceful-no-db-operation-but-first-apiv1authlogin-dereferences-nil-s.db">HXC-043
+<h2 id="hxc-043-auth-login-nil-db-panic-causes-http-500-server-advertises-graceful-no-db-operation-but-first-apiv1authlogin-dereferences-nil-s.db">HXC-043
 — auth Login nil-DB panic causes HTTP 500: server advertises graceful
 no-DB operation but first /api/v1/auth/login dereferences nil s.db</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2658,8 +2528,7 @@ s.db.GetUserByUsername on nil s.db then nil-pointer panic then Gin
 Recovery then HTTP 500. Fix: guard nil s.db in Login and sibling
 db-touching auth paths, return clean 401/503. RED test exists:
 helixcode-auth.yaml HXC-AUTH-003 via helixqa http.</p>
-<h2
-id="hxc-046-internalmemoryproviders-generatethreadid-non-unique-under-fast-back-to-back-calls-timestamp-only-same-nanosecond-collision">HXC-046
+<h2 id="hxc-046-internalmemoryproviders-generatethreadid-non-unique-under-fast-back-to-back-calls-timestamp-only-same-nanosecond-collision">HXC-046
 — internal/memory/providers: generateThreadID() non-unique under fast
 back-to-back calls (timestamp-only, same-nanosecond collision)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2670,8 +2539,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-046/evidence.md
 54ab4e95, hermetic test, no infra). See docs/qa/HXC-046/evidence.md for
 the exact failing test + file:line + message. Genuine product defect
 reproducible deterministically.</p>
-<h2
-id="hxc-045-internalhooks-cancelled-hook-executionresult-leaves-duration-unset-should-always-be-populated">HXC-045
+<h2 id="hxc-045-internalhooks-cancelled-hook-executionresult-leaves-duration-unset-should-always-be-populated">HXC-045
 — internal/hooks: cancelled hook ExecutionResult leaves duration unset
 (should always be populated)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2682,8 +2550,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-045/evidence.md
 54ab4e95, hermetic test, no infra). See docs/qa/HXC-045/evidence.md for
 the exact failing test + file:line + message. Genuine product defect
 reproducible deterministically.</p>
-<h2
-id="hxc-044-internalcognee-amd-gpu-rocm-smi-json-parser-returns--1-sentinel-instead-of-parsed-gpu-use-value">HXC-044
+<h2 id="hxc-044-internalcognee-amd-gpu-rocm-smi-json-parser-returns--1-sentinel-instead-of-parsed-gpu-use-value">HXC-044
 — internal/cognee: AMD-GPU rocm-smi JSON parser returns -1 sentinel
 instead of parsed GPU-use value</h2>
 <p><strong>Status:</strong> Obsolete (→ Fixed.md) <strong>Type:</strong>
@@ -2696,8 +2563,7 @@ Triple-check evidence: docs/qa/HXC-044/evidence.md</p>
 54ab4e95, hermetic test, no infra). See docs/qa/HXC-044/evidence.md for
 the exact failing test + file:line + message. Genuine product defect
 reproducible deterministically.</p>
-<h2
-id="hxc-047-internalredis-testnewclient_withdatabase-needs-live-redis-with-no-skip-ok-guard-11.4.98-i18n-error-no-longer-contains-literal-redis">HXC-047
+<h2 id="hxc-047-internalredis-testnewclient_withdatabase-needs-live-redis-with-no-skip-ok-guard-11.4.98-i18n-error-no-longer-contains-literal-redis">HXC-047
 — internal/redis TestNewClient_WithDatabase needs-live-Redis with no
 SKIP-OK guard (§11.4.98) + i18n error no longer contains literal
 Redis</h2>
@@ -2712,8 +2578,7 @@ contains literal ‘Redis’ which the i18n-keyed error
 (internal_redis_failed_connect) no longer contains. Fix: SKIP-OK guard
 when no Redis + reconcile assertion. Evidence
 docs/qa/HXC-047/evidence.md (HEAD 54ab4e95).</p>
-<h2
-id="hxc-048-helixcode-system.yaml-helixqa-bank-11-self-driving-http-cases-for-the-non-auth-server-surface-healthserver-infosystem-statusllm-providers-negatives">HXC-048
+<h2 id="hxc-048-helixcode-system.yaml-helixqa-bank-11-self-driving-http-cases-for-the-non-auth-server-surface-healthserver-infosystem-statusllm-providers-negatives">HXC-048
 — helixcode-system.yaml HelixQA bank: 11 self-driving http cases for the
 non-auth server surface (health/server-info/system-status/llm-providers
 + negatives)</h2>
@@ -2729,8 +2594,7 @@ Claude</p>
 helixqa list → 11 cases; dry run fired real requests. Confident body
 asserts from captured responses; status-only/_skip where unverified
 (§11.4.6). helix_qa f18a5d3b. Live-run vs booted server queued.</p>
-<h2
-id="hxc-049-doc_processor-testautomation_upstreamsexist-reads-capital-upstreams-but-canonical-dir-is-lowercase-upstreams-const-052-case-drift-deterministic-fail">HXC-049
+<h2 id="hxc-049-doc_processor-testautomation_upstreamsexist-reads-capital-upstreams-but-canonical-dir-is-lowercase-upstreams-const-052-case-drift-deterministic-fail">HXC-049
 — doc_processor TestAutomation_UpstreamsExist reads capital ‘Upstreams’
 but canonical dir is lowercase ‘upstreams’ (CONST-052 case drift,
 deterministic FAIL)</h2>
@@ -2743,8 +2607,7 @@ os.ReadDir(“Upstreams”) failing every run because the on-disk dir is
 lowercase ‘upstreams’ per CONST-052. Test-side fix
 ‘“Upstreams”→“upstreams”’. GREEN: ok digital.vasic.docprocessor. Commit
 ecb384f.</p>
-<h2
-id="hxc-050-event_bus-nats-env-gated-integration-skips-lack-skip-ok-markers-required-by-the-no-silent-skips-gate-11.4.98">HXC-050
+<h2 id="hxc-050-event_bus-nats-env-gated-integration-skips-lack-skip-ok-markers-required-by-the-no-silent-skips-gate-11.4.98">HXC-050
 — event_bus NATS env-gated integration skips lack SKIP-OK markers
 required by the no-silent-skips gate (§11.4.98)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -2757,8 +2620,7 @@ pkg/nats/integration_test.go:23,120 env-gated t.Skip (legitimately runs
 vs real NATS when NATS_URL is set) without literal SKIP-OK markers.
 Added ‘SKIP-OK: #HXC-050 …’ to both; build+skip clean. Commit
 1cae683.</p>
-<h2
-id="hxc-052-background_tasks-go.mod-build-break-capitalised-replace-paths">HXC-052
+<h2 id="hxc-052-background_tasks-go.mod-build-break-capitalised-replace-paths">HXC-052
 — background_tasks go.mod build break — capitalised replace paths</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> docs/qa/HXC-052/evidence.md
@@ -2767,8 +2629,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-052/evidence.md
 ../Concurrency and ../Models which no longer exist after the CONST-052
 lowercase rename; go build ./… failed until corrected to ../concurrency
 and ../models.</p>
-<h2
-id="hxc-053-conversation-go.mod-build-break-capitalised-replace-path-..messaging">HXC-053
+<h2 id="hxc-053-conversation-go.mod-build-break-capitalised-replace-path-..messaging">HXC-053
 — conversation go.mod build break — capitalised replace path
 ../Messaging</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2778,8 +2639,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-053/evidence.md
 digital.vasic.messaging pointed at ../Messaging (capitalised) which
 broke go build ./… after the CONST-052 lowercase rename; corrected to
 ../messaging.</p>
-<h2
-id="hxc-038-docs_chain-g14-fixed.yaml-fixed_summary-transform-contract-mismatch-stale-state.json-baseline-false-conflict-on-issues-context">HXC-038
+<h2 id="hxc-038-docs_chain-g14-fixed.yaml-fixed_summary-transform-contract-mismatch-stale-state.json-baseline-false-conflict-on-issues-context">HXC-038
 — docs_chain G14: fixed.yaml fixed_summary transform-contract mismatch +
 stale state.json baseline false-CONFLICT on issues context</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2795,8 +2655,7 @@ a stdout mode or a writes-file declaration; (2) issues context reports a
 §11.4.6 CONFLICT (both issues_md + items_db dirty vs stale state.json
 baseline) though MD⇄DB are verified byte-identical via db-to-md — needs
 a baseline refresh. governance context already in-sync this session.</p>
-<h2
-id="hxc-051-helix_llm-helix_memory-go.mod-replace-directives-point-to-non-existent-....vasic-digital-sibling-layout-const-051c-dependency-layout">HXC-051
+<h2 id="hxc-051-helix_llm-helix_memory-go.mod-replace-directives-point-to-non-existent-....vasic-digital-sibling-layout-const-051c-dependency-layout">HXC-051
 — helix_llm + helix_memory go.mod replace directives point to
 non-existent ../../vasic-digital/* sibling layout (CONST-051(C)
 dependency-layout)</h2>
@@ -2815,8 +2674,7 @@ Investigation: confirm whether HelixCode’s build actually compiles these
 (vs reference/standalone), then rewire replace paths to the root
 submodule layout OR document the standalone-build requirement. Not
 breaking helix_code’s own build. Found by D-2 health sweep.</p>
-<h2
-id="hxc-054-leak_detector-parallel-test-flake-11.4.50-determinism">HXC-054
+<h2 id="hxc-054-leak_detector-parallel-test-flake-11.4.50-determinism">HXC-054
 — leak_detector parallel test flake — §11.4.50 determinism</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> docs/qa/HXC-054/evidence.md
@@ -2825,8 +2683,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-054/evidence.md
 PASS/FAIL under parallel execution (timing-sensitive), violating
 §11.4.50 determinism; needs forensic root-cause before a deterministic
 fix. Open.</p>
-<h2
-id="hxc-055-formatters-brittle-cat-version-probe-go_hello-fixtures-break-go-build">HXC-055
+<h2 id="hxc-055-formatters-brittle-cat-version-probe-go_hello-fixtures-break-go-build">HXC-055
 — formatters brittle cat –version probe + go_hello fixtures break go
 build</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2835,8 +2692,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-055/evidence.md
 <p>Discovery sweep: formatters test relies on brittle ‘cat –version’
 (§11.4.81 cross-platform), and committed go_hello fixture sources break
 a tree-wide go build; both need isolation/fixing. Open.</p>
-<h2
-id="hxc-056-7-submodules-const-052-capitalised-replace-..pliniuscommon-dir-is-plinius_common">HXC-056
+<h2 id="hxc-056-7-submodules-const-052-capitalised-replace-..pliniuscommon-dir-is-plinius_common">HXC-056
 — 7 submodules: CONST-052 capitalised replace =&gt; ../PliniusCommon
 (dir is plinius_common)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2847,8 +2703,7 @@ ouroborous, veritas each have go.mod line replace
 digital.vasic.pliniuscommon =&gt; ../PliniusCommon; capitalised dir
 absent, lowercase sibling plinius_common exists; go build ./… fails on
 all 7.</p>
-<h2
-id="hxc-057-recovery-go.mod-missing-requirereplace-for-digital.vasic.concurrency-pkgbreaker-import-unwired">HXC-057
+<h2 id="hxc-057-recovery-go.mod-missing-requirereplace-for-digital.vasic.concurrency-pkgbreaker-import-unwired">HXC-057
 — recovery go.mod missing require+replace for digital.vasic.concurrency
 (pkg/breaker import unwired)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2859,8 +2714,7 @@ digital.vasic.concurrency/pkg/breaker but recovery/go.mod has no
 require/replace for the concurrency sibling; go build ./… fails: no
 required module provides package. Sibling submodules/concurrency
 provides pkg/breaker.</p>
-<h2
-id="hxc-058-helix_agent-go-build-fails-on-vendored-third-party-cli_agentscontinue-test-fixture-quarantine">HXC-058
+<h2 id="hxc-058-helix_agent-go-build-fails-on-vendored-third-party-cli_agentscontinue-test-fixture-quarantine">HXC-058
 — helix_agent go build fails on vendored third-party cli_agents/continue
 test fixture (quarantine)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2871,8 +2725,7 @@ cli_agents/continue/ subtree (upstream continue project test fixture
 with bogus relative import); no owned dev.helix.agent package fails;
 needs build-exclusion/quarantine of the vendored fixture subtree, not an
 owned-code fix.</p>
-<h2
-id="hxc-039-g7-11.4.83-docsqa-evidence-gap-8-past-featurefix-commits-lack-docsqa-directories">HXC-039
+<h2 id="hxc-039-g7-11.4.83-docsqa-evidence-gap-8-past-featurefix-commits-lack-docsqa-directories">HXC-039
 — G7 §11.4.83 docs/qa evidence gap: 8 past feature/fix commits lack
 docs/qa/<run-id>/ directories</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -2888,8 +2741,7 @@ worker consensus W6B, cee5cdae Phase-2 cascade, 5c5c44bc, c63c8963,
 §11.4.113 forbids — operator decision on remediation (baseline reset vs
 documented exception). New work this session (HXC-037) ships its docs/qa
 evidence.</p>
-<h2
-id="hxc-031-deferred-long-tail-const-052-renames-resolved-none-remain-codexcline-reference-agent-ports">HXC-031
+<h2 id="hxc-031-deferred-long-tail-const-052-renames-resolved-none-remain-codexcline-reference-agent-ports">HXC-031
 — Deferred long-tail: CONST-052 renames (RESOLVED — none remain) +
 Codex/Cline reference-agent ports</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -2897,8 +2749,7 @@ Codex/Cline reference-agent ports</h2>
 docs/qa/HXC-031/evidence.md</p>
 <p>Deferred long-tail: CONST-052 renames (RESOLVED — none remain) +
 Codex/Cline reference-agent ports</p>
-<h2
-id="hxc-059-debate_orchestrator-sandbox-ctx-canceltimeout-fails-to-kill-child-process-tree-on-non-linux-11.4.81">HXC-059
+<h2 id="hxc-059-debate_orchestrator-sandbox-ctx-canceltimeout-fails-to-kill-child-process-tree-on-non-linux-11.4.81">HXC-059
 — debate_orchestrator sandbox: ctx-cancel/timeout fails to kill child
 process tree on non-Linux (§11.4.81)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2910,8 +2761,7 @@ and the sleep-30 grandchild survives. TestSandboxExecute_CtxCancel +
 TestSandboxExecute_TimeoutEnforced FAIL deterministically (elapsed ~30s
 vs 100ms cap). Linux process-group kill has no functioning non-Linux
 equivalent (§11.4.81 parity gap).</p>
-<h2
-id="hxc-060-debate_orchestrator-challengesrunnermain.go516-context-cancel-not-called-on-all-return-paths-vet-leak">HXC-060
+<h2 id="hxc-060-debate_orchestrator-challengesrunnermain.go516-context-cancel-not-called-on-all-return-paths-vet-leak">HXC-060
 — debate_orchestrator challenges/runner/main.go:516 context cancel not
 called on all return paths (vet leak)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2920,8 +2770,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-060/evidence.md
 <p>go vet: challenges/runner/main.go:516 the cancel function is not used
 on all paths (possible context leak); 571 return may be reached without
 using the cancel var defined on line 516. Owned-code vet finding.</p>
-<h2
-id="hxc-061-helix_agent-legacy-unit-test-calls-memory.getrelevant-with-stale-2-arg-signature-wont-compile">HXC-061
+<h2 id="hxc-061-helix_agent-legacy-unit-test-calls-memory.getrelevant-with-stale-2-arg-signature-wont-compile">HXC-061
 — helix_agent legacy unit-test calls memory.GetRelevant with stale 2-arg
 signature (won’t compile)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2931,8 +2780,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-061/evidence.md
 memory.GetRelevant(string, number) but the current signature is
 (context.Context, string, int); go vet of the owned test tree fails to
 compile. Stale API call in test code.</p>
-<h2
-id="hxc-062-helix_specifier-pkgmetrics-copies-sync.rwmutex-by-value-vet-lock-copy-concurrency-hazard">HXC-062
+<h2 id="hxc-062-helix_specifier-pkgmetrics-copies-sync.rwmutex-by-value-vet-lock-copy-concurrency-hazard">HXC-062
 — helix_specifier pkg/metrics copies sync.RWMutex by value (vet
 lock-copy, concurrency hazard)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2942,8 +2790,7 @@ Bug <strong>Evidence:</strong> docs/qa/HXC-062/evidence.md
 cp; :163 return copies lock value — Metrics struct contains sync.RWMutex
 copied by value. Genuine owned-code concurrency hazard; build+tests pass
 but the copied mutex does not protect the original.</p>
-<h2
-id="hxc-063-panoptic-startrecording-unreachable-recording-bootstrap-after-early-return-nil-recorder-never-starts">HXC-063
+<h2 id="hxc-063-panoptic-startrecording-unreachable-recording-bootstrap-after-early-return-nil-recorder-never-starts">HXC-063
 — panoptic StartRecording: unreachable recording-bootstrap after early
 return nil — recorder never starts</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2955,8 +2802,7 @@ creation + background recorder process startup never execute, so
 StartRecording returns success without recording. Latent correctness
 defect; investigate per §11.4.124 (likely restore by removing the early
 return, not delete the block).</p>
-<h2
-id="hxc-064-cognee-amd-gpu-parser-tests-flake-under-parallel-load-rocm-smi-fake-subprocess-signal-killed-before-2s-timeout-11.4.50">HXC-064
+<h2 id="hxc-064-cognee-amd-gpu-parser-tests-flake-under-parallel-load-rocm-smi-fake-subprocess-signal-killed-before-2s-timeout-11.4.50">HXC-064
 — cognee AMD-GPU parser tests flake under parallel load (rocm-smi fake
 subprocess signal-killed before 2s timeout, §11.4.50)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2969,8 +2815,7 @@ signal-killed before completing → product correctly returns sentinel -1
 but the parser tests assert 33/77 → non-deterministic FAIL. Product
 correct; test timeout load-fragile. Fix: make rocmSmiQueryTimeout an
 overridable var (prod default unchanged) + parser tests raise it.</p>
-<h2
-id="hxc-065-cachepkgpostgres-finite-ttl-set-invisible-to-immediate-get-expires_at-clocktimezone-skew-vs-real-pg">HXC-065
+<h2 id="hxc-065-cachepkgpostgres-finite-ttl-set-invisible-to-immediate-get-expires_at-clocktimezone-skew-vs-real-pg">HXC-065
 — cache/pkg/postgres: finite-TTL Set invisible to immediate Get
 (expires_at clock/timezone skew vs real PG)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2983,8 +2828,7 @@ TestSetGet/Exists/ZeroTTL pass, so isolated to the finite-TTL expires_at
 WHERE-clause: likely Go-process time.Now() vs PG server now()
 timezone/clock skew making the just-written row appear already-expired.
 Real cache-backend correctness defect.</p>
-<h2
-id="hxc-066-inner-internaldatabase-integration-tests-hardcode-localhost5433helix_test-never-read-helix_database_-env">HXC-066
+<h2 id="hxc-066-inner-internaldatabase-integration-tests-hardcode-localhost5433helix_test-never-read-helix_database_-env">HXC-066
 — inner internal/database integration tests hardcode
 localhost:5433/helix_test, never read HELIX_DATABASE_* env</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -2996,8 +2840,7 @@ Config{Host:localhost,Port:5433,User:helix_test,DBName:helix_test}
 internal_database_ping_failed against booted PG (15432). DB layer sound
 (persistence passes). Harness defect: should read
 DB_<em>/HELIX_DATABASE_</em> env.</p>
-<h2
-id="hxc-067-inner-internalredis-stress-suite-reads-test_redis_hostport-default-6379-not-helix_redis_hostport">HXC-067
+<h2 id="hxc-067-inner-internalredis-stress-suite-reads-test_redis_hostport-default-6379-not-helix_redis_hostport">HXC-067
 — inner internal/redis stress suite reads TEST_REDIS_HOST/PORT (default
 :6379) not HELIX_REDIS_HOST/PORT</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3009,8 +2852,7 @@ standard HELIX_REDIS_HOST/HELIX_REDIS_PORT contract; causes false
 100%-error FAIL against booted Redis on 16379. Pointed at
 TEST_REDIS_PORT=16379 it’s GREEN. Env-var-contract inconsistency
 (harness).</p>
-<h2
-id="hxc-068-speckit-debate-adapter-wireable-into-agentic-debate-flow">HXC-068
+<h2 id="hxc-068-speckit-debate-adapter-wireable-into-agentic-debate-flow">HXC-068
 — speckit debate adapter wireable into agentic debate flow</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong>
@@ -3020,8 +2862,7 @@ commit:95b7385c speckit debate adapter wireable
 <p>Wire the speckit debate adapter so the agentic debate flow can invoke
 it end-to-end; adapter is constructable and dispatchable from the
 orchestrator (commit 95b7385c).</p>
-<h2
-id="hxc-069-helixmemory-default-on-durable-persistence-with-graceful-fallback">HXC-069
+<h2 id="hxc-069-helixmemory-default-on-durable-persistence-with-graceful-fallback">HXC-069
 — HelixMemory default-on durable persistence with graceful fallback</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong>
@@ -3031,8 +2872,7 @@ commit:ac3ad237 HelixMemory default-on persist+fallback
 <p>HelixMemory persists cross-session memory by default and falls back
 gracefully when the backend store is unavailable, so recall works out of
 the box (commit ac3ad237).</p>
-<h2
-id="hxc-070-helixmemory-persist-log-no-longer-misreports-success-on-failure">HXC-070
+<h2 id="hxc-070-helixmemory-persist-log-no-longer-misreports-success-on-failure">HXC-070
 — HelixMemory persist log no longer misreports success on failure</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> commit:a0239f52 honest HelixMemory
@@ -3042,8 +2882,7 @@ Claude</p>
 <p>The HelixMemory persistence log now reports the real outcome instead
 of an unconditional success line, removing a §11.4 honest-logging bluff
 (commit a0239f52).</p>
-<h2
-id="hxc-071-web-llm-handler-httptest-coverage-for-generate-and-stream">HXC-071
+<h2 id="hxc-071-web-llm-handler-httptest-coverage-for-generate-and-stream">HXC-071
 — Web LLM handler httptest coverage for generate and stream</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Evidence:</strong> commit:6f382b95
@@ -3053,8 +2892,7 @@ Claude</p>
 <p>Add httptest-based handler tests exercising the web /llm/generate and
 /llm/stream endpoints with real request/response round-trips (commit
 6f382b95).</p>
-<h2
-id="hxc-072-cli-undo-and-diff-slash-commands-over-autocommit-substrate">HXC-072
+<h2 id="hxc-072-cli-undo-and-diff-slash-commands-over-autocommit-substrate">HXC-072
 — CLI /undo and /diff slash commands over autocommit substrate</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong>
@@ -3064,8 +2902,7 @@ Claude</p>
 <p>Implement CLI /undo and /diff commands that revert and show changes
 against the git autocommit substrate, giving users real edit history
 control (commit bd5228f8).</p>
-<h2
-id="hxc-073-autocommit-git-substrate-backing-cli-edit-history">HXC-073 —
+<h2 id="hxc-073-autocommit-git-substrate-backing-cli-edit-history">HXC-073 —
 Autocommit git substrate backing CLI edit history</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Severity:</strong> Medium
@@ -3074,8 +2911,7 @@ Claude</p>
 <p>The CLI keeps an automatic git-backed history of every edit it makes
 so users can review and safely roll back changes; this item established
 that autocommit substrate underneath the edit history.</p>
-<h2
-id="hxc-074-mobile-gomobile-generate-binding-for-on-device-llm-calls">HXC-074
+<h2 id="hxc-074-mobile-gomobile-generate-binding-for-on-device-llm-calls">HXC-074
 — Mobile gomobile Generate binding for on-device LLM calls</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong>
@@ -3085,8 +2921,7 @@ commit:28465071 mobile gomobile Generate binding
 <p>Expose a gomobile-bound Generate entrypoint so the mobile
 applications can invoke the LLM provider through the shared client core
 (commit 28465071).</p>
-<h2
-id="hxc-075-phase-1-cli-agent-fusion-plan-reconciliation-with-delivered-state">HXC-075
+<h2 id="hxc-075-phase-1-cli-agent-fusion-plan-reconciliation-with-delivered-state">HXC-075
 — Phase-1 CLI-Agent Fusion plan reconciliation with delivered state</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Evidence:</strong> commit:e3063af1
@@ -3096,8 +2931,7 @@ Claude</p>
 <p>Reconcile the Phase-1 implementation plan against actually-delivered
 state so the programme plan reflects reality, not aspiration (commit
 e3063af1).</p>
-<h2
-id="hxc-076-web-llmgenerate-llmstream-endpoints-with-frontend-partial-e2e-pending">HXC-076
+<h2 id="hxc-076-web-llmgenerate-llmstream-endpoints-with-frontend-partial-e2e-pending">HXC-076
 — Web /llm/generate + /llm/stream endpoints with frontend (partial — e2e
 pending)</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -3110,8 +2944,7 @@ provider:ollama qwen2.5:0.5b, conductor-reproduced
 landed (commit 32e7e5b8); REMAINING: full browser-driven end-to-end test
 proving real streamed output renders in the UI is not yet captured —
 keep open until e2e evidence lands.</p>
-<h2
-id="hxc-079-debate_orchestrator-consensus-emits-unresolved-i18n-key">HXC-079
+<h2 id="hxc-079-debate_orchestrator-consensus-emits-unresolved-i18n-key">HXC-079
 — debate_orchestrator consensus emits unresolved i18n key</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> debate_orchestrator 4df3874: embed-bundle
@@ -3124,8 +2957,7 @@ literal ‘debate.orchestrator.consensus_conclusion’ i18n message-key
 instead of resolved prose; per-agent LLM content is real, consensus
 synthesis layer in submodules/debate_orchestrator does not resolve the
 key. §11.4.118 discovery finding.</p>
-<h2
-id="hxc-080-debate-and-specify-broken-at-runtime-single-agent-vs-2-min">HXC-080
+<h2 id="hxc-080-debate-and-specify-broken-at-runtime-single-agent-vs-2-min">HXC-080
 — /debate and /specify broken at runtime — single agent vs 2-min</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> cmd/cli+TUI register 2 agents;
@@ -3137,8 +2969,7 @@ Claude</p>
 but orchestrator MinAgentsPerDebate=2; users hit ‘insufficient agents
 (have 1, need 2)’. Round-7 debate proof used a 2-agent test, masking the
 1-agent production gap (§11.4.108).</p>
-<h2
-id="hxc-081-helix_specifier-speckit-topic-i18n-key-unresolved-plus-format-verb-mismatch">HXC-081
+<h2 id="hxc-081-helix_specifier-speckit-topic-i18n-key-unresolved-plus-format-verb-mismatch">HXC-081
 — helix_specifier speckit topic i18n key unresolved plus format-verb
 mismatch</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3153,8 +2984,7 @@ helixspecifier_speckit_topic_specify%!(EXTRA string=…)’ — the speckit
 phase prompt emits a raw i18n message-key with a Go Sprintf arg-count
 mismatch instead of resolved prose. Same class as HXC-079, in
 submodules/helix_specifier. Captured in specify_e2e_test.go output.</p>
-<h2
-id="hxc-082-performance-optimizer-fabricates-success-8-apply-methods-sleep-and-return-success-true">HXC-082
+<h2 id="hxc-082-performance-optimizer-fabricates-success-8-apply-methods-sleep-and-return-success-true">HXC-082
 — performance optimizer fabricates success — 8 apply methods sleep and
 return Success true</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3169,8 +2999,7 @@ Optimization each time.Sleep(200ms) doing NO real work then return
 Success:true with fabricated MetricsChange. User-reachable via
 cmd/performance_optimization/main.go:89. Rule 2 / §11.4 bluff. Fix: real
 tuning OR honest ErrOptimizationNotWired sentinel.</p>
-<h2
-id="hxc-083-production_deployer-fabricates-rollback-env-prep-server-validation-and-strategy-differentiation">HXC-083
+<h2 id="hxc-083-production_deployer-fabricates-rollback-env-prep-server-validation-and-strategy-differentiation">HXC-083
 — production_deployer fabricates rollback env-prep server-validation and
 strategy differentiation</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3186,8 +3015,7 @@ executeBlueGreen/Canary/Rolling/Recreate(962) all just call
 executeProductionDeploy (no-op differentiation); executeMonitoring(758)
 ends with success notification contradicting its honest gap-log. §11.4
 bluffs. Fix: real work or honest sentinels.</p>
-<h2
-id="hxc-084-challenge-scripts-use-gnu-only-grep--p-backslash-k-breaks-on-macos-bsd-grep">HXC-084
+<h2 id="hxc-084-challenge-scripts-use-gnu-only-grep--p-backslash-k-breaks-on-macos-bsd-grep">HXC-084
 — challenge scripts use GNU-only grep -P backslash-K — breaks on macOS
 BSD grep</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3202,8 +3030,7 @@ each proven on sample input + edge cases, bash -n 0
 -&gt; empty evidence capture -&gt; corrupted PASS/FAIL gates (false FAIL
 or silently-masked). §11.4.81. Fix: portable sed -E/awk/perl. Highest:
 challenges android_save, helix_agent cognee/runtime_debate/mcps.</p>
-<h2
-id="hxc-085-14-llm-providers-healthcheck-hardcodes-production-url-ignoring-injected-baseurl">HXC-085
+<h2 id="hxc-085-14-llm-providers-healthcheck-hardcodes-production-url-ignoring-injected-baseurl">HXC-085
 — 14 LLM providers HealthCheck hardcodes production URL ignoring
 injected baseURL</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3219,8 +3046,7 @@ uses p.baseURL — config-injection / CONST-051(B), breaks httptest +
 proxy/Azure endpoints. Duplicated in helix_agent/internal/llm/providers
 + llm_provider/pkg/providers. Fix: mirror the existing kimi.go
 derive-from-baseURL fix.</p>
-<h2
-id="hxc-086-sse-broker-client-id-unixnano-collision-under-concurrent-connect">HXC-086
+<h2 id="hxc-086-sse-broker-client-id-unixnano-collision-under-concurrent-connect">HXC-086
 — SSE broker client-ID UnixNano collision under concurrent connect</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> streaming 3e15904: SSE fallback client-ID
@@ -3232,8 +3058,7 @@ clientID=fmt.Sprintf(‘client-%d’,UnixNano()) used as b.clients map key,
 generated per concurrent SSE connect — same-tick collision
 overwrites/loses a client. Fix: crypto/rand or atomic counter
 suffix.</p>
-<h2
-id="hxc-087-skill_registry-randomstring-unixnano-same-tick-produces-identical-chars-and-colliding-ids">HXC-087
+<h2 id="hxc-087-skill_registry-randomstring-unixnano-same-tick-produces-identical-chars-and-colliding-ids">HXC-087
 — skill_registry randomString UnixNano same-tick produces identical
 chars and colliding IDs</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3244,8 +3069,7 @@ Claude</p>
 <p>skill_registry/types.go:173 randomString used charset[UnixNano%len]
 in a tight loop -&gt; all-identical chars + colliding execution IDs.
 Fixed with crypto/rand. Proven class.</p>
-<h2
-id="hxc-088-llm_orchestrator-opencode-cancel-path-hangs-30s-cmd.waitdelay-unset">HXC-088
+<h2 id="hxc-088-llm_orchestrator-opencode-cancel-path-hangs-30s-cmd.waitdelay-unset">HXC-088
 — llm_orchestrator opencode cancel path hangs 30s — cmd.WaitDelay
 unset</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3257,8 +3081,7 @@ cmd.WaitDelay=2s; ContextCancel ok -count=3, pkg/agent ok
 cmd.Cancel but WaitDelay==0 -&gt; on ctx-cancel Wait() blocks on pipe
 drainage when a grandchild holds stdout (30s hang vs 5s test). Fixed
 cmd.WaitDelay=2s.</p>
-<h2
-id="hxc-089-panoptic-web-element-infinite-retry-hang-plus-recorder-zero-frames">HXC-089
+<h2 id="hxc-089-panoptic-web-element-infinite-retry-hang-plus-recorder-zero-frames">HXC-089
 — panoptic web Element infinite-retry hang plus recorder
 zero-frames</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3271,8 +3094,7 @@ unbounded ctx -&gt; missing selector retries forever (9m hang);
 screencast.go relied only on async CDP events -&gt; 0 frames on
 immediate start/stop. Fixed: bounded page.Timeout + synchronous initial
 Screenshot frame.</p>
-<h2
-id="hxc-091-containers-custom-health-check-duration-can-be-0-timer-resolution-flake">HXC-091
+<h2 id="hxc-091-containers-custom-health-check-duration-can-be-0-timer-resolution-flake">HXC-091
 — containers custom health-check duration can be 0 (timer-resolution
 flake)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3284,8 +3106,7 @@ Claude</p>
 duration=time.Since(start) returns 0 for a no-op check -&gt;
 TestNewCustomCheckFunc_Success NotZero flake. Fixed: floor to
 time.Nanosecond when &lt;=0 (no fabricated delay).</p>
-<h2
-id="hxc-092-debate_orchestrator-30s-defaulttimeout-too-short-for-capable-models-on-multi-round-specify">HXC-092
+<h2 id="hxc-092-debate_orchestrator-30s-defaulttimeout-too-short-for-capable-models-on-multi-round-specify">HXC-092
 — debate_orchestrator 30s DefaultTimeout too short for capable models on
 multi-round /specify</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3302,8 +3123,7 @@ context deadline exceeded. /debate works (WithMaxRounds(1), rich quality
 0.875 proven). Fix: raise per-debate timeout for the speckit Specify use
 case (adapter WithTimeout or orchestrator default). Tunable, not a code
 defect; surfaced honestly (no fabrication).</p>
-<h2
-id="hxc-094-f12-workspace-checkpoints-file-snapshot-restoreundo-safety-net">HXC-094
+<h2 id="hxc-094-f12-workspace-checkpoints-file-snapshot-restoreundo-safety-net">HXC-094
 — F12 workspace checkpoints — file snapshot + restore/undo safety
 net</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -3316,8 +3136,7 @@ Claude</p>
 /checkpoint create/list/restore CLI command: snapshot working-tree file
 contents and restore real bytes later (the cli_agents F12 oops-revert
 net). Existing checkpoints were task-DB rows, not file snapshots.</p>
-<h2
-id="hxc-095-cli-binary-generatedebatespecify-return-404-against-live-local-ollama">HXC-095
+<h2 id="hxc-095-cli-binary-generatedebatespecify-return-404-against-live-local-ollama">HXC-095
 — CLI binary generate/debate/specify return 404 against live local
 ollama</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3334,8 +3153,7 @@ work with the same NewOllamaProvider — so the CLI’s
 default-local-provider path uses a wrong endpoint/model-name (§11.4.108
 different-path gap). AI features are broken for the end user via the
 binary. Found while recording feature videos.</p>
-<h2
-id="hxc-096-desktop-nogui-prints-raw-i18n-keys-extra-format-mismatch-in-statushelp">HXC-096
+<h2 id="hxc-096-desktop-nogui-prints-raw-i18n-keys-extra-format-mismatch-in-statushelp">HXC-096
 — desktop nogui prints raw i18n keys + %!(EXTRA) format mismatch in
 status/help</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3349,8 +3167,7 @@ message keys (desktop_cli_status_header, desktop_cli_help_body) + a
 Printf arg-count mismatch (%!(EXTRA int=0…)) in status. Same
 i18n-resolution class as HXC-079/081. CLI binary unaffected. Found while
 assessing desktop for video.</p>
-<h2
-id="hxc-097-systemic-standalone-binaries-internalconfig-internaldatabase-never-wire-i18n-translator---raw-keys-at-runtime">HXC-097
+<h2 id="hxc-097-systemic-standalone-binaries-internalconfig-internaldatabase-never-wire-i18n-translator---raw-keys-at-runtime">HXC-097
 — SYSTEMIC: standalone binaries + internal/config + internal/database
 never wire i18n Translator -&gt; raw keys at runtime</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3373,8 +3190,7 @@ fixed-in-source-not-at-runtime). Also internal/config
 real Translator (embed-bundle pattern) at each binary’s main()/package
 init; add runtime guards that assert resolved prose (not just
 key-presence).</p>
-<h2
-id="hxc-090-panoptic-tracks-test-generated-audit.json-users.json-const-053-hygiene">HXC-090
+<h2 id="hxc-090-panoptic-tracks-test-generated-audit.json-users.json-const-053-hygiene">HXC-090
 — panoptic tracks test-generated audit.json users.json (CONST-053
 hygiene)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3388,8 +3204,7 @@ but overwritten by the enterprise test suite every run
 (timestamps/random IDs) -&gt; perpetual dirty tree. CONST-053:
 test-generated data should be gitignored + a fixture template used.
 Pre-existing, low severity.</p>
-<h2
-id="hxc-093-helix_code-module-graph-has-phantom-digital.vasic.-requires-private-transitive-blocking-go-list--m-all-gomobile-bind">HXC-093
+<h2 id="hxc-093-helix_code-module-graph-has-phantom-digital.vasic.-requires-private-transitive-blocking-go-list--m-all-gomobile-bind">HXC-093
 — helix_code module graph has phantom digital.vasic.* requires + private
 transitive blocking go list -m all / gomobile bind</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3410,8 +3225,7 @@ build): add replace directives for the phantom paths OR prune them, make
 Toolkit resolvable (replace/GOPRIVATE+SSH), persist x/mobile as a tool
 directive. Toolchain+NDK+Xcode all present; gobind codegen already works
 -&gt; artifact achievable once graph resolves.</p>
-<h2
-id="hxc-098-out-of-box-config-fails-version-required-validation-blocks-client-statussystem-commands">HXC-098
+<h2 id="hxc-098-out-of-box-config-fails-version-required-validation-blocks-client-statussystem-commands">HXC-098
 — out-of-box config fails ‘version required’ validation — blocks client
 status/system commands</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3433,8 +3247,7 @@ fresh user. Found while recording client videos (had to use a throwaway
 minimal valid config). Fix: ship a valid default Version in
 config/config.yaml (+ docs), or default it in config.Load when
 absent.</p>
-<h2
-id="hxc-077-t1.5-context-window-percentage-indicator-partial">HXC-077 —
+<h2 id="hxc-077-t1.5-context-window-percentage-indicator-partial">HXC-077 —
 T1.5 context-window percentage indicator (partial)</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong> TUI status bar
@@ -3467,8 +3280,7 @@ Claude <strong>Assigned-To:</strong> Claude</p>
 task T1.6); REMAINING: full precedence-conflict resolution + tests
 covering overlapping skill definitions still outstanding — keep open
 until precedence is fully resolved and tested.</p>
-<h2
-id="hxc-100-resync-docscontinuation.md-to-current-head-de-bloat-the-32k-token-line-1-header-const-04412.10-const-064-hygiene">HXC-100
+<h2 id="hxc-100-resync-docscontinuation.md-to-current-head-de-bloat-the-32k-token-line-1-header-const-04412.10-const-064-hygiene">HXC-100
 — Resync docs/CONTINUATION.md to current HEAD + de-bloat the 32k-token
 line-1 header (CONST-044/§12.10 + CONST-064 hygiene)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3494,8 +3306,7 @@ i18n sweep discarded+stashed -&gt; HXC-099; HXC-098 config-default fix),
 (3) restore CONST-064 ToC parity, (4) regen .html/.pdf. Live resumption
 currently served by the up-to-date .remember/remember.md
 (§11.4.131).</p>
-<h2
-id="hxc-101-securitysecurity_test.go-testtlsconfiguration-external-network-dependency-nil-deref-panic-crashes-the-whole-security-test-binary">HXC-101
+<h2 id="hxc-101-securitysecurity_test.go-testtlsconfiguration-external-network-dependency-nil-deref-panic-crashes-the-whole-security-test-binary">HXC-101
 — security/security_test.go TestTLSConfiguration — external-network
 dependency + nil-deref panic crashes the whole security test binary</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3512,8 +3323,7 @@ return -&gt; defer resp.Body.Close() with resp==nil -&gt; SIGSEGV panic
 that crashed the entire security test binary (took every other test in
 the package down). Fixed: hermetic httptest.NewTLSServer + t.Fatalf on
 error path.</p>
-<h2
-id="hxc-099-systemic-i18n-raw-key-sweep-redo-const-046-corrected-regression-free-with-default-translator-contract-decision">HXC-099
+<h2 id="hxc-099-systemic-i18n-raw-key-sweep-redo-const-046-corrected-regression-free-with-default-translator-contract-decision">HXC-099
 — Systemic i18n raw-key sweep redo (CONST-046) — corrected,
 regression-free, with default-translator contract decision</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3541,8 +3351,7 @@ MUST fix templating + needs operator decision: missing i18n key echoes
 raw key (loud default) OR falls back to embedded English (polished,
 risks hiding missing translations). Work in git stash; green tree
 restored (build exit 0, 13/13 pass).</p>
-<h2
-id="hxc-102-harmony_os-main_nogui.go-2-user-facing-strings-goodbye-error-v-bypass-i18n-const-046-low-severity">HXC-102
+<h2 id="hxc-102-harmony_os-main_nogui.go-2-user-facing-strings-goodbye-error-v-bypass-i18n-const-046-low-severity">HXC-102
 — harmony_os main_nogui.go — 2 user-facing strings (‘Goodbye!’, ‘Error:
 %v’) bypass i18n (CONST-046, low severity)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3559,8 +3368,7 @@ are user-facing UI text printed via fmt without the translator
 (CONST-046 localization gap). Lines 784/789-793 are developer-facing
 diagnostics (arguably out of scope). Low severity; may be folded into
 the HXC-099 entry-path i18n work.</p>
-<h2
-id="hxc-104-streamllm-apiv1llmstream-hangs-forever-chunkchan-never-closed-done-never-emitted-production-defect-found-by-web-e2e">HXC-104
+<h2 id="hxc-104-streamllm-apiv1llmstream-hangs-forever-chunkchan-never-closed-done-never-emitted-production-defect-found-by-web-e2e">HXC-104
 — streamLLM /api/v1/llm/stream hangs forever — chunkChan never closed,
 [DONE] never emitted (production defect found by web e2e)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3578,8 +3386,7 @@ terminal data:[DONE] frame, and EVERY /stream request blocked until the
 120s ctx deadline — a real user-facing hang that handler/httptest tests
 missed. Exposed by the new TestLLMStreamE2E runtime e2e. Fixed: defer
 close(chunkChan).</p>
-<h2
-id="hxc-103-web-client-runtime-e2e-proof-live-browserhttp---server---llm-provider-round-trip-for-apiv1llmgenerate-llmstream-continuation-honest-gap">HXC-103
+<h2 id="hxc-103-web-client-runtime-e2e-proof-live-browserhttp---server---llm-provider-round-trip-for-apiv1llmgenerate-llmstream-continuation-honest-gap">HXC-103
 — Web-client runtime e2e proof — live browser/HTTP -&gt; server -&gt;
 LLM provider round-trip for /api/v1/llm/generate + /llm/stream
 (CONTINUATION honest gap)</h2>
@@ -3600,8 +3407,7 @@ layer-3/4. Deliver a real automated e2e (boot server, real HTTP/chromedp
 client hits the endpoints, REAL provider responds, capture the
 round-trip evidence). SKIP-OK per §11.4.3 when no real provider
 reachable (CONST-050(A) real-infra mandate) — never a fake PASS.</p>
-<h2
-id="hxc-105-runtime-e2e-for-server-post-apiv1specify-boot-server---real-spec-output-via-live-provider-speckit-http-endpoint-gap">HXC-105
+<h2 id="hxc-105-runtime-e2e-for-server-post-apiv1specify-boot-server---real-spec-output-via-live-provider-speckit-http-endpoint-gap">HXC-105
 — Runtime e2e for server POST /api/v1/specify — boot server -&gt; real
 spec output via live provider (speckit HTTP-endpoint gap)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3619,8 +3425,7 @@ the real HTTP server and POSTs to /api/v1/specify (server
 specifyHandler). Add one mirroring llm_generate_e2e_test.go: boot
 server.New, POST a real request, assert a genuine 200 + non-fabricated
 phase output from live ollama; honest 502/SKIP otherwise.</p>
-<h2
-id="hxc-106-helix_agent-durable-memory-process-lifetime-in-memory-fallback-is-not-disk-durable-recall-lost-on-restart-continuation-honest-gap">HXC-106
+<h2 id="hxc-106-helix_agent-durable-memory-process-lifetime-in-memory-fallback-is-not-disk-durable-recall-lost-on-restart-continuation-honest-gap">HXC-106
 — helix_agent durable memory: process-lifetime in-memory fallback is NOT
 disk-durable — recall lost on restart (CONTINUATION honest gap)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3643,8 +3448,7 @@ Investigate the fallback in the helix_agent submodule; make it
 disk-durable (e.g. local file/sqlite-backed store) so recall survives
 restart out-of-the-box, OR document precisely why not + the required
 backend. Submodule work: own commit + push discipline.</p>
-<h2
-id="hxc-109-mobile-apps-are-scaffolds-android-has-no-build.gradleandroidmanifest-ios-has-no-xcode-project-not-buildable---not-recordable">HXC-109
+<h2 id="hxc-109-mobile-apps-are-scaffolds-android-has-no-build.gradleandroidmanifest-ios-has-no-xcode-project-not-buildable---not-recordable">HXC-109
 — Mobile apps are scaffolds — Android has no
 build.gradle/AndroidManifest, iOS has no Xcode project (not buildable
 -&gt; not recordable)</h2>
@@ -3663,8 +3467,7 @@ single-screen scaffolds with hardcoded localhost and NO build system.
 Must create Android Gradle build + manifest and an iOS Xcode project
 (gomobile or native) before the apps build/run on the Genymotion
 emulator / iOS simulators for recording.</p>
-<h2
-id="hxc-110-extend-containers-submodule-to-launch-ios-simulators-operator-directed-apple-support-mechanism">HXC-110
+<h2 id="hxc-110-extend-containers-submodule-to-launch-ios-simulators-operator-directed-apple-support-mechanism">HXC-110
 — Extend containers submodule to launch iOS simulators
 (operator-directed Apple-support mechanism)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3682,8 +3485,7 @@ xcrun simctl on macOS (cannot run inside Linux containers) — the
 containers submodule mechanism must orchestrate the host-native simctl
 lifecycle (boot/install/record) under its unified API. Investigate +
 extend containers (§11.4.76).</p>
-<h2
-id="hxc-111-desktop-gui-shows-raw-i18n-keys-desktop_dashboard_header_activity_title-const-046-gap">HXC-111
+<h2 id="hxc-111-desktop-gui-shows-raw-i18n-keys-desktop_dashboard_header_activity_title-const-046-gap">HXC-111
 — Desktop GUI shows raw i18n keys
 (desktop_dashboard_header/_activity_title) — CONST-046 gap</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3700,29 +3502,25 @@ desktop_dashboard_activity_title) instead of localized text. Likely the
 desktop i18n bundle is missing those keys OR Fyne locale-parse error
 (‘subtag at unknown’) broke bundle loading. Real CONST-046 defect
 visible in helixcode-desktop-dashboard-20260615.mp4.</p>
-<h2
-id="hxc-113-mcp-tool-names-use-servername-colon-openai-compatible-providers-deepseeketc.-reject-function-names-breaking-llm-chat-with-mcp-enabled">HXC-113
+<h2 id="hxc-113-mcp-tool-names-use-servername-colon-openai-compatible-providers-deepseeketc.-reject-function-names-breaking-llm-chat-with-mcp-enabled">HXC-113
 — MCP tool names use ‘server:name’ (colon) — OpenAI-compatible providers
 (DeepSeek/etc.) reject function names, breaking LLM chat with MCP
 enabled</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong> mcpToolRegisteredName sanitises MCP tool
-names to server__name (OpenAI-compatible <a href="#fn2"
-class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>+);
+names to server__name (OpenAI-compatible <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>+);
 dispatch unaffected (Execute uses original server/toolName). 2
 mcp_readonly tests reconciled (§11.4.120); guard test + full
 internal/tools pkg pass; build exit 0. <strong>Created-By:</strong>
 Claude <strong>Assigned-To:</strong> Claude</p>
 <p>internal/tools/registry.go:897 RegisterMCPManager names MCP tools
 server+‘:’+name (e.g. fs:read_file). OpenAI/DeepSeek function-calling
-requires names matching <a href="#fn3" class="footnote-ref" id="fnref3"
-role="doc-noteref"><sup>3</sup></a>+$, so a chat turn with MCP tools
+requires names matching <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>+$, so a chat turn with MCP tools
 enabled returns HTTP 400. Found while recording the TUI (had to disable
 .helixcode/mcp.yml to record). Fix: sanitize MCP tool names
 (e.g. server__name or server-name) at registration + map back when
 dispatching.</p>
-<h2
-id="hxc-114-wire-facade-v1chatcompletions-v1messages-had-no-authentication-unauthenticated-paid-provider-consuming-surface-reachable-on-0.0.0.0">HXC-114
+<h2 id="hxc-114-wire-facade-v1chatcompletions-v1messages-had-no-authentication-unauthenticated-paid-provider-consuming-surface-reachable-on-0.0.0.0">HXC-114
 — Wire facade (/v1/chat/completions, /v1/messages) had NO authentication
 — unauthenticated, paid-provider-consuming surface reachable on
 0.0.0.0</h2>
@@ -3792,8 +3590,7 @@ Fixed by wiring a dedicated wireFacadeAuthMiddleware (fail-closed
 API-key check accepting Authorization: Bearer or x-api-key) onto both
 routes; see wire_facade_auth_test.go for the RED-&gt;GREEN regression
 guard.</p>
-<h2
-id="hxc-112-desktop-gui-feature-recording-fyne-opengl-canvas-ignores-osascript-synthetic-clicks-need-cliclickreal-event-automation-to-record-llm-chat-in-gui">HXC-112
+<h2 id="hxc-112-desktop-gui-feature-recording-fyne-opengl-canvas-ignores-osascript-synthetic-clicks-need-cliclickreal-event-automation-to-record-llm-chat-in-gui">HXC-112
 — Desktop GUI feature-recording: Fyne OpenGL canvas ignores osascript
 synthetic clicks — need cliclick/real-event automation to record
 LLM-chat in-GUI</h2>
@@ -3805,8 +3602,7 @@ Claude</p>
 <p>Desktop GUI feature-recording: Fyne OpenGL canvas ignores osascript
 synthetic clicks — need cliclick/real-event automation to record
 LLM-chat in-GUI</p>
-<h2
-id="hxc-108-video-qa-program-record-all-clients-x-all-features-with-strongest-models-ensemble---volumest7downloadsrecordings-analyze-fix">HXC-108
+<h2 id="hxc-108-video-qa-program-record-all-clients-x-all-features-with-strongest-models-ensemble---volumest7downloadsrecordings-analyze-fix">HXC-108
 — Video-QA program: record all clients x all features with strongest
 models + ensemble -&gt; /Volumes/T7/Downloads/Recordings, analyze +
 fix</h2>
@@ -3818,8 +3614,7 @@ Claude</p>
 <p>Video-QA program: record all clients x all features with strongest
 models + ensemble -&gt; /Volumes/T7/Downloads/Recordings, analyze +
 fix</p>
-<h2
-id="hxc-107-feature-status-docs-program-docsfeatures-comprehensive-per-feature-inventory-across-all-componentsclientssubmodulesported-cli_agents-docs_chain-synced">HXC-107
+<h2 id="hxc-107-feature-status-docs-program-docsfeatures-comprehensive-per-feature-inventory-across-all-componentsclientssubmodulesported-cli_agents-docs_chain-synced">HXC-107
 — Feature Status docs program (docs/features) — comprehensive
 per-feature inventory across all
 components/clients/submodules/ported-cli_agents, docs_chain-synced</h2>
@@ -3831,8 +3626,7 @@ Claude</p>
 <p>Feature Status docs program (docs/features) — comprehensive
 per-feature inventory across all
 components/clients/submodules/ported-cli_agents, docs_chain-synced</p>
-<h2
-id="hxc-115-const-046-anti-bluff-gate-is-non-functional-on-any-non-original-checkout">HXC-115
+<h2 id="hxc-115-const-046-anti-bluff-gate-is-non-functional-on-any-non-original-checkout">HXC-115
 — CONST-046 anti-bluff gate is non-functional on any non-original
 checkout</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3848,8 +3642,7 @@ disables a governance safety-net everywhere except its original machine.
 The fix stores the known-good list using paths relative to the project
 folder so the check works anywhere. This restores real enforcement for
 every developer and automated run.</p>
-<h2
-id="hxc-116-missing-multi-track-development-runbook-referenced-by-config-and-tooling">HXC-116
+<h2 id="hxc-116-missing-multi-track-development-runbook-referenced-by-config-and-tooling">HXC-116
 — Missing multi-track development runbook referenced by config and
 tooling</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3865,8 +3658,7 @@ risks mistakes with the shared storage drives. The task is to write the
 missing guide covering the track layout, how to start tracks safely, and
 the storage-drive precautions. Operators can then run the multi-track
 system correctly from documented steps.</p>
-<h2
-id="hxc-120-regression-test-asserted-insecure-wildcard-cors-the-hardened-server-no-longer-returns">HXC-120
+<h2 id="hxc-120-regression-test-asserted-insecure-wildcard-cors-the-hardened-server-no-longer-returns">HXC-120
 — Regression test asserted insecure wildcard CORS the hardened server no
 longer returns</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3882,8 +3674,7 @@ insecure expectation. The fix updates the test to verify the secure
 behavior (only listed sites allowed, others refused) without
 reintroducing the wildcard. The test suite now protects the secure
 behavior instead of demanding an insecure one.</p>
-<h2
-id="hxc-121-two-production-model-provider-integrations-huggingface-together-had-no-automated-tests">HXC-121
+<h2 id="hxc-121-two-production-model-provider-integrations-huggingface-together-had-no-automated-tests">HXC-121
 — Two production model-provider integrations (HuggingFace, Together) had
 no automated tests</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3898,8 +3689,7 @@ would catch it. The work adds real tests exercising the actual client
 code against a simulated provider endpoint, checking the outgoing
 request, the parsed reply, and error handling. These two integrations
 become protected against silent regressions.</p>
-<h2
-id="hxc-123-the-security-scan-command-tool-has-no-automated-tests">HXC-123
+<h2 id="hxc-123-the-security-scan-command-tool-has-no-automated-tests">HXC-123
 — The security-scan command tool has no automated tests</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Evidence:</strong>
@@ -3910,8 +3700,7 @@ covering its behavior, so bugs could go unnoticed until a real scan
 produces wrong results. The work adds tests verifying the tool’s core
 scanning and reporting logic. The security-scan tool then becomes
 protected against silent breakage.</p>
-<h2
-id="hxc-130-building-the-desktop-and-mobile-guis-fails-without-documented-x11opengl-system-libraries">HXC-130
+<h2 id="hxc-130-building-the-desktop-and-mobile-guis-fails-without-documented-x11opengl-system-libraries">HXC-130
 — Building the desktop and mobile GUIs fails without documented
 X11/OpenGL system libraries</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3927,8 +3716,7 @@ required, the command to install them, and the headless no-graphics
 build path used for development and continuous integration. Anyone can
 then build the project or knowingly choose the headless path without
 surprise failures.</p>
-<h2
-id="hxc-125-integration-tagged-tests-are-invisible-to-the-default-test-run">HXC-125
+<h2 id="hxc-125-integration-tagged-tests-are-invisible-to-the-default-test-run">HXC-125
 — Integration-tagged tests are invisible to the default test run</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Evidence:</strong>
@@ -3941,8 +3729,7 @@ supplied, so this is a visibility gap, not a broken feature. The work
 makes the standard test command or a documented target include them so
 their status is always visible. Everyday test results then reflect
 integration coverage.</p>
-<h2
-id="hxc-127-the-obsolete-items-detail-table-is-empty-so-retired-items-lack-required-justification">HXC-127
+<h2 id="hxc-127-the-obsolete-items-detail-table-is-empty-so-retired-items-lack-required-justification">HXC-127
 — The obsolete-items detail table is empty, so retired items lack
 required justification</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3955,8 +3742,7 @@ details is completely empty, including for the one currently obsolete
 item. This leaves retirements unexplained and non-compliant. The work
 populates the required justification details for obsolete items so every
 retired item carries an auditable reason.</p>
-<h2
-id="hxc-129-severity-is-blank-on-79-closed-feature-items-blocking-risk-based-prioritization">HXC-129
+<h2 id="hxc-129-severity-is-blank-on-79-closed-feature-items-blocking-risk-based-prioritization">HXC-129
 — Severity is blank on 79 closed feature items, blocking risk-based
 prioritization</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3968,8 +3754,7 @@ risk-ordered validation and reporting cannot rank them by importance.
 The work backfills an appropriate severity for each item based on its
 content and impact. Risk-based ordering and reporting then work
 correctly across the full item set.</p>
-<h2
-id="hxc-128-thirty-six-work-items-have-descriptions-too-short-to-be-understandable">HXC-128
+<h2 id="hxc-128-thirty-six-work-items-have-descriptions-too-short-to-be-understandable">HXC-128
 — Thirty-six work items have descriptions too short to be
 understandable</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -3982,8 +3767,7 @@ understand them without reading code. The work rewrites these into clear
 plain-language descriptions explaining what each item is and why it
 matters. Every item then becomes understandable to non-developers and
 stakeholders.</p>
-<h2
-id="hxc-133-azure-provider-factory-test-assumes-an-ambient-endpoint-environment-variable">HXC-133
+<h2 id="hxc-133-azure-provider-factory-test-assumes-an-ambient-endpoint-environment-variable">HXC-133
 — Azure provider factory test assumes an ambient endpoint environment
 variable</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -3997,8 +3781,7 @@ is fragile and can give misleading results depending on the environment.
 The work is to make the test hermetic (control its own environment) like
 the sibling test already fixed. This makes the Azure test suite reliable
 regardless of how it is run.</p>
-<h2
-id="hxc-124-helixqa-task-workflow-bank-cannot-fully-self-run-due-to-a-jwt-token-minting-gap">HXC-124
+<h2 id="hxc-124-helixqa-task-workflow-bank-cannot-fully-self-run-due-to-a-jwt-token-minting-gap">HXC-124
 — HelixQA task-workflow bank cannot fully self-run due to a JWT
 token-minting gap</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4012,8 +3795,7 @@ not meet the fully-automated no-human-intervention standard. The work
 provides an automated way to obtain a valid token during the test so the
 workflow runs unattended. The QA bank then becomes fully automated and
 re-runnable.</p>
-<h2
-id="hxc-131-cognee-client-authentication-and-bearer-token-caching-regressed">HXC-131
+<h2 id="hxc-131-cognee-client-authentication-and-bearer-token-caching-regressed">HXC-131
 — Cognee client authentication and bearer-token caching regressed</h2>
 <p><strong>Status:</strong> Obsolete (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong>
@@ -4029,8 +3811,7 @@ calls would fail. This means memory features that rely on Cognee cannot
 authenticate reliably. The work is to restore the login-then-cache-token
 flow and prove it with the existing auth tests. Users regain dependable
 access to Cognee-backed memory.</p>
-<h2
-id="hxc-132-full-test-container-stack-cannot-build-the-helixcode-server-and-tests-hardcode-port-8080">HXC-132
+<h2 id="hxc-132-full-test-container-stack-cannot-build-the-helixcode-server-and-tests-hardcode-port-8080">HXC-132
 — Full-test container stack cannot build the HelixCode server and tests
 hardcode port 8080</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -4045,8 +3826,7 @@ override it. As a result a whole class of tests never run against a real
 server. The work is to fix the container build path and make the server
 URL configurable so those tests execute. This unlocks real end-to-end
 coverage of server-dependent features.</p>
-<h2
-id="hxc-137-re-verify-every-owned-code-module-builds-checks-and-tests-cleanly">HXC-137
+<h2 id="hxc-137-re-verify-every-owned-code-module-builds-checks-and-tests-cleanly">HXC-137
 — Re-verify every owned code module builds, checks, and tests
 cleanly</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -4059,8 +3839,7 @@ tests) did not finish in the latest session. The work is to run that
 complete health sweep and record the result for every module. This
 assures that the whole codebase, not just the main application, is in
 good shape.</p>
-<h2
-id="hxc-139-a-vendored-reference-agent-fixture-breaks-the-helix_agent-module-build">HXC-139
+<h2 id="hxc-139-a-vendored-reference-agent-fixture-breaks-the-helix_agent-module-build">HXC-139
 — A vendored reference-agent fixture breaks the helix_agent module
 build</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4076,8 +3855,7 @@ of the agent module. The work is to isolate those vendored reference
 files so they are not compiled as part of our module (a build-ignore or
 nested module marker). Developers regain a clean, buildable agent
 module.</p>
-<h2
-id="hxc-141-mcp_module-docker-adapter-crashes-when-stopping-a-container-that-was-never-started">HXC-141
+<h2 id="hxc-141-mcp_module-docker-adapter-crashes-when-stopping-a-container-that-was-never-started">HXC-141
 — mcp_module Docker adapter crashes when stopping a container that was
 never started</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4091,8 +3869,7 @@ instead of returning cleanly. This can bring down callers that expect a
 safe no-op. The work is to guard the stop path so a not-started or
 missing container is handled gracefully. The adapter becomes robust
 against stop-before-start and missing-container situations.</p>
-<h2
-id="hxc-134-model-verifier-returns-the-model-id-as-a-number-but-the-platform-expects-text">HXC-134
+<h2 id="hxc-134-model-verifier-returns-the-model-id-as-a-number-but-the-platform-expects-text">HXC-134
 — Model verifier returns the model id as a number but the platform
 expects text</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4106,8 +3883,7 @@ that can break how verified models are matched and displayed. The work
 is to align the two so the id is consistently text end to end. Correct
 model identity keeps verification, listing, and status accurate for
 users.</p>
-<h2
-id="hxc-140-helix_qa-copies-a-lock-by-value-and-one-test-bank-test-fails">HXC-140
+<h2 id="hxc-140-helix_qa-copies-a-lock-by-value-and-one-test-bank-test-fails">HXC-140
 — helix_qa copies a lock by value and one test-bank test fails</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Evidence:</strong>
@@ -4121,8 +3897,7 @@ loads real test banks is failing. The work is to pass the lock-bearing
 value by reference (pointer) instead of copying it, and to fix or
 reconcile the failing test-bank test. This makes the QA module
 concurrency-safe and its tests green.</p>
-<h2
-id="hxc-135-model-verifier-should-publish-the-six-advanced-capability-flags-so-the-platform-can-show-them">HXC-135
+<h2 id="hxc-135-model-verifier-should-publish-the-six-advanced-capability-flags-so-the-platform-can-show-them">HXC-135
 — Model verifier should publish the six advanced-capability flags so the
 platform can show them</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -4136,8 +3911,7 @@ those fields, so the flags always read as unsupported. The work is to
 have the verifier publish these capability values it already computes.
 Then users see accurate per-model capability information across the
 product.</p>
-<h2
-id="hxc-117-model-capability-flags-mcp-lsp-acp-rag-skills-plugins-are-not-sourced-from-the-verifier-as-required">HXC-117
+<h2 id="hxc-117-model-capability-flags-mcp-lsp-acp-rag-skills-plugins-are-not-sourced-from-the-verifier-as-required">HXC-117
 — Model capability flags (MCP, LSP, ACP, RAG, Skills, Plugins) are not
 sourced from the verifier as required</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4153,8 +3927,7 @@ cannot truthfully tell users which models support which capabilities.
 The work adds these capability fields to the verifier’s results and has
 the product read them from there. Users then receive accurate,
 single-source-of-truth capability information.</p>
-<h2
-id="hxa-001-ex-issue-009-helix_agent-handler-tests-surfaced-after-round-109-fix">HXA-001
+<h2 id="hxa-001-ex-issue-009-helix_agent-handler-tests-surfaced-after-round-109-fix">HXA-001
 (ex-ISSUE-009) — helix_agent handler tests surfaced after round-109
 fix</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4175,8 +3948,7 @@ investigation, similar to round 109’s test-side bluff pattern.
 <code>Fixed.md</code> + <code>Issues_Summary.md</code> (§11.4.12
 sync).</p>
 <hr />
-<h2
-id="hxa-002-ex-issue-010-helix_agent-debatellmprovider-sibling-submodule-api-drift">HXA-002
+<h2 id="hxa-002-ex-issue-010-helix_agent-debatellmprovider-sibling-submodule-api-drift">HXA-002
 (ex-ISSUE-010) — helix_agent debate/llmprovider sibling-submodule API
 drift</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4213,8 +3985,7 @@ were rewritten down to the slim API. <strong>Resolution:</strong> See
 import swap + Part-2 slim-API rewrite + score-scale + go.mod
 rename-drift fix + captured evidence).</p>
 <hr />
-<h2
-id="hxa-003-ex-issue-011-venice-testgetcapabilities-model-list-drift-const-037">HXA-003
+<h2 id="hxa-003-ex-issue-011-venice-testgetcapabilities-model-list-drift-const-037">HXA-003
 (ex-ISSUE-011) — venice <code>TestGetCapabilities</code> model-list
 drift (CONST-037)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4229,16 +4000,15 @@ family rotated to <code>venice-uncensored-1-2</code> /
 the single source of truth for model metadata) the assertion violated
 the no-hardcoded-list rule. <strong>Resolution:</strong>
 <code>helix_agent/internal/llm/providers/venice/venice_test.go::TestGetCapabilities</code>
-— replaced <code>assert.Contains(..., "venice-uncensored")</code> and
-<code>assert.Contains(..., "llama-3.3-70b")</code> with structural
+— replaced <code>assert.Contains(..., &quot;venice-uncensored&quot;)</code> and
+<code>assert.Contains(..., &quot;llama-3.3-70b&quot;)</code> with structural
 assertion: <code>NotEmpty(SupportedModels)</code> plus a substring scan
 for the <code>venice-uncensored*</code> family. SKIP-OK marker per
 CONST-035 fires if the entire family disappears (avoids false-positive
 PASS). Mutation-verified (revert → FAIL with the original drift, restore
 → PASS).</p>
 <hr />
-<h2
-id="hxc-001-ex-issue-005-const-052-rename-programme-meta-repo-directories-still-pascalcase-closed-fixed.md">HXC-001
+<h2 id="hxc-001-ex-issue-005-const-052-rename-programme-meta-repo-directories-still-pascalcase-closed-fixed.md">HXC-001
 (ex-ISSUE-005) — CONST-052 rename programme: meta-repo directories still
 PascalCase — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -4348,8 +4118,7 @@ D-10)</td>
 breakage). HXC-001 stays In progress pending the deferred
 submodule-entangled and parent-dir batches.</p>
 <hr />
-<h2
-id="hxc-002-ex-issue-006-round-74-residual-logic-class-fails-closed">HXC-002
+<h2 id="hxc-002-ex-issue-006-round-74-residual-logic-class-fails-closed">HXC-002
 (ex-ISSUE-006) — Round-74 residual LOGIC-class FAILs (CLOSED)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
 Bug <strong>Discovered:</strong> 2026-05-19 (round 74 —
@@ -4372,8 +4141,7 @@ cross-cutting work (venice CONST-037 model-wiring + compliance CONST-051
 architectural reconciliation). See HXA-001 through HXA-003 (filed
 below).</p>
 <hr />
-<h2
-id="hxc-003-ex-issue-007-const-046-i18n-migration-backlog-closed-migrated-to-docsfixed.md">HXC-003
+<h2 id="hxc-003-ex-issue-007-const-046-i18n-migration-backlog-closed-migrated-to-docsfixed.md">HXC-003
 (ex-ISSUE-007) — CONST-046 i18n migration backlog — CLOSED (migrated to
 docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md) — see
@@ -4395,8 +4163,7 @@ Closed by round 463. Section retained as a migration tombstone per
 §11.4.19 — the authoritative closure narrative is in
 <code>docs/Fixed.md</code>.</p>
 <hr />
-<h2
-id="hxc-004-recovery-batch-under-verification-40-fail-rate-per-round-193-audit">HXC-004
+<h2 id="hxc-004-recovery-batch-under-verification-40-fail-rate-per-round-193-audit">HXC-004
 — Recovery-batch under-verification (40% FAIL rate per round-193
 audit)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4433,8 +4200,7 @@ per package: revert to literal → FAIL (production emits the ID), restore
 <code>docs/audits/2026-05-19-recovery-batch-verification.md</code>
 (commit <code>1badef1</code>).</p>
 <hr />
-<h2
-id="hxc-005-cmdperformance_optimization_standalonemain.go-is-a-const-035-simulation-bluff">HXC-005
+<h2 id="hxc-005-cmdperformance_optimization_standalonemain.go-is-a-const-035-simulation-bluff">HXC-005
 — <code>cmd/performance_optimization_standalone/main.go</code> is a
 CONST-035 simulation bluff</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4480,8 +4246,7 @@ reading (not an RNG single-digit). Post-fix evidence:
 <code>optimizer baseline MemoryUsage=33812624 bytes, runtime.HeapAlloc=33802008 bytes — both real measurements, same order of magnitude. No RNG-fabricated improvement percentages.</code>);
 anti-bluff smoke on the deleted path returns N/A (directory gone).</p>
 <hr />
-<h2
-id="hxc-006-helixcode-speed-programme-closed-migrated-to-docsfixed.md">HXC-006
+<h2 id="hxc-006-helixcode-speed-programme-closed-migrated-to-docsfixed.md">HXC-006
 — HelixCode Speed Programme — CLOSED (migrated to docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md) — see
 <code>docs/Fixed.md</code> for the full closure record.
@@ -4492,8 +4257,7 @@ PARTIAL + 0 DEFERRED). Closed by P5-T04 round 400. Section retained as a
 migration tombstone per §11.4.19 — the authoritative closure narrative
 is in <code>docs/Fixed.md</code>.</p>
 <hr />
-<h2
-id="hxc-007-constitution-11.4.6870-74-cascade-meta-pointer-bump-closed-migrated-to-docsfixed.md">HXC-007
+<h2 id="hxc-007-constitution-11.4.6870-74-cascade-meta-pointer-bump-closed-migrated-to-docsfixed.md">HXC-007
 — Constitution §11.4.68/70-74 cascade + meta-pointer bump — CLOSED
 (migrated to docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -4504,8 +4268,7 @@ cascaded to the meta-repo + 67 owned submodules, meta pointer confirmed
 at <code>34a82b3</code>. Section retained as a migration tombstone per
 §11.4.19.</p>
 <hr />
-<h2
-id="hxc-008-const-055-g1-governance-gaps-surfaced-by-post-constitution-pull-validation-sweep-closed-migrated-to-docsfixed.md">HXC-008
+<h2 id="hxc-008-const-055-g1-governance-gaps-surfaced-by-post-constitution-pull-validation-sweep-closed-migrated-to-docsfixed.md">HXC-008
 — CONST-055 G1 governance gaps surfaced by post-constitution-pull
 validation sweep — CLOSED (migrated to docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) — see
@@ -4519,8 +4282,7 @@ CONST-047..057 cascaded into <code>helix_qa/CONSTITUTION.md</code>,
 <code>verify-all-constitution-rules.sh</code> → 6 gates / 0 failures.
 Section retained as a migration tombstone per §11.4.19.</p>
 <hr />
-<h2
-id="hxc-009-owned-submodule-github-gitlab-mirror-divergence-reconciliation-closed-migrated-to-docsfixed.md">HXC-009
+<h2 id="hxc-009-owned-submodule-github-gitlab-mirror-divergence-reconciliation-closed-migrated-to-docsfixed.md">HXC-009
 — Owned-submodule GitHub ↔︎ GitLab mirror-divergence reconciliation —
 CLOSED (migrated to docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -4531,8 +4293,7 @@ DocProcessor all reconciled via merge-first (CONST-061 / §11.4.71), all
 owned submodules converged + pushed to all upstreams. Section retained
 as a migration tombstone per §11.4.19.</p>
 <hr />
-<h2
-id="hxc-010-end-to-end-kimi-cli-qwen-code-codegraph-verification-closed-migrated-to-docsfixed.md">HXC-010
+<h2 id="hxc-010-end-to-end-kimi-cli-qwen-code-codegraph-verification-closed-migrated-to-docsfixed.md">HXC-010
 — End-to-end Kimi CLI + Qwen Code CodeGraph verification — CLOSED
 (migrated to docs/Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -4549,8 +4310,7 @@ injected via environment variables only, never written to any tracked
 file (CONST-042). Section retained as a migration tombstone per
 §11.4.19.</p>
 <hr />
-<h2
-id="hxc-013-adopt-sqlite-backed-single-source-of-truth-for-workable-items-11.4.9395">HXC-013
+<h2 id="hxc-013-adopt-sqlite-backed-single-source-of-truth-for-workable-items-11.4.9395">HXC-013
 — Adopt SQLite-backed single-source-of-truth for workable items
 (§11.4.93/95)</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -4859,7 +4619,7 @@ subagent-driven §11.4.70):</strong> internal/auth + internal/deployment
 + internal/project. <strong>4 MORE REAL production bugs SURFACED +
 FIXED:</strong> (1) <strong>SECURITY</strong>
 <code>internal/auth/auth.go</code> VerifyJWT — unchecked type assertions
-<code>claims["username"].(string)</code>/<code>claims["email"].(string)</code>;
+<code>claims[&quot;username&quot;].(string)</code>/<code>claims[&quot;email&quot;].(string)</code>;
 a validly-signed token carrying a missing/numeric/null username/email
 claim PANICS the process (crash-on-untrusted-input DoS — a single forged
 request). Fixed with comma-ok assertions → ErrTokenInvalid. (2+3)
@@ -4872,8 +4632,7 @@ under read-lock) → data race; fixed with exclusive Lock + re-check. Each
 anti-bluff-proven: revert → panic / DATA RACE → restore → PASS.
 <strong>31 in-process targets now covered; 29 real production bugs fixed
 this session.</strong></p>
-<h2
-id="hxc-014b-systemic-unguarded-i18n-translator.go-data-race-panic-crash-cross-package">HXC-014b
+<h2 id="hxc-014b-systemic-unguarded-i18n-translator.go-data-race-panic-crash-cross-package">HXC-014b
 — Systemic unguarded i18n translator.go data-race + panic-crash
 (cross-package)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -4901,7 +4660,7 @@ follow-up (2026-05-28, same day):</strong> the sweep’s claim of
 that asserted tr() SELF-HEALS the package-level var back to non-nil —
 i.e. they asserted exactly the racy write the sweep correctly removed.
 The HXC-014b verification gap: it ran <code>go build</code> +
-<code>make stress-chaos</code> (<code>-run 'Stress|Chaos'</code>
+<code>make stress-chaos</code> (<code>-run &#39;Stress|Chaos&#39;</code>
 filtered) but NOT the swept packages’ full unit suites, so these unit
 failures were masked. Fixed by removing the stale self-heal assertion
 from all 10 (the msgID-echo assertion already proves graceful
@@ -5022,7 +4781,7 @@ linux/macos/windows host-shell targets +
 ios/android/aurora_os/harmony_os cross-compile (macos/windows
 <code>ci_test_hardware: false</code> — honest, no hardware enrolled).
 <code>scripts/gates/cross_platform_parity_gate.sh</code>
-(CM-CROSS-PLATFORM-PARITY) scans for <code>case "$(uname -s)"</code>
+(CM-CROSS-PLATFORM-PARITY) scans for <code>case &quot;$(uname -s)&quot;</code>
 dispatch + asserts no multi-platform script silently drops a manifest
 platform without a <code># PARITY-GAP:</code> honest-kernel-gap
 citation; wired into the CONST-055 sweep as <strong>G10</strong> (PASS).
@@ -5058,7 +4817,7 @@ dispatch) for platform-specific primitives + honest kernel-gap
 citations. Gaps: shell scripts rarely uname-dispatch, no
 CM-CROSS-PLATFORM-PARITY gate, no supported-platforms manifest,
 shell/sandbox.go rlimits a never-applied stub. Sub-defect
-<strong>HXC-015a (7 platform <code>Assert(true,"...skipped")</code>
+<strong>HXC-015a (7 platform <code>Assert(true,&quot;...skipped&quot;)</code>
 fake-skips) already FIXED in commit f464adb0</strong> (honest v.Skip on
 runtime.GOOS). This item tracks the remaining parity gate + manifest +
 rlimit work. Open decision: which non-Linux platforms have test hardware
@@ -5066,8 +4825,7 @@ rlimit work. Open decision: which non-Linux platforms have test hardware
 §3.2.1 prose says inner module is <code>helix_code/helix_code/</code>;
 actual is <code>helix_code/</code> — correct the prose.</p>
 <hr />
-<h2
-id="hxc-016-11.4.6997-governance-cascade-into-owned-submodules-const-0473-closed-fixed.md">HXC-016
+<h2 id="hxc-016-11.4.6997-governance-cascade-into-owned-submodules-const-0473-closed-fixed.md">HXC-016
 — §11.4.69–97 governance cascade into owned submodules (CONST-047/§3) —
 CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -5089,8 +4847,7 @@ failures</strong>, 204 submodule covenant-114 PASS lines; paired §1.1
 mutation proven (strip §11.4.95 → 1 failure → restore → 0). Section
 retained as a migration tombstone per §11.4.19.</p>
 <hr />
-<h2
-id="hxc-017-codegraph-own-org-submodule-indexing-update-automation-11.4.7980-closed-fixed.md">HXC-017
+<h2 id="hxc-017-codegraph-own-org-submodule-indexing-update-automation-11.4.7980-closed-fixed.md">HXC-017
 — CodeGraph own-org submodule indexing + update automation (§11.4.79/80)
 — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -5117,8 +4874,7 @@ Status_Summary.md created (§11.4.80; weekly automation inherited by
 reference from constitution codegraph_update.sh/codegraph_sync.sh).
 Section retained as a migration tombstone per §11.4.19.</p>
 <hr />
-<h2
-id="hxc-018-obsolete-status-11.4.90-summary-doc-clarity-11.4.91-tracker-tooling">HXC-018
+<h2 id="hxc-018-obsolete-status-11.4.90-summary-doc-clarity-11.4.91-tracker-tooling">HXC-018
 — Obsolete status (§11.4.90) + summary-doc clarity (§11.4.91) tracker
 tooling</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -5184,8 +4940,7 @@ untagged→1, no-since→2, pre-baseline-exempt→0), exit 0.
 <code>bash -n</code> clean (CONST-068). NOT wired into
 pre-commit/pre-push (release-gate-only per the mandate wording).</p>
 <hr />
-<h2
-id="hxc-022-test_bank-platform-integration-packages-do-not-compile-pre-existing-closed-fixed.md">HXC-022
+<h2 id="hxc-022-test_bank-platform-integration-packages-do-not-compile-pre-existing-closed-fixed.md">HXC-022
 — test_bank platform + integration packages do not compile
 (pre-existing) — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) — see
@@ -5209,8 +4964,7 @@ runtime-verified through the now-compiling banks: platform SKIP=3
 PASS/green-empty. Section retained as a migration tombstone per
 §11.4.19.</p>
 <hr />
-<h2
-id="hxc-023-asserttrue-asserttruetrue-literal-true-bluffs-across-test_bank-closed-fixed.md">HXC-023
+<h2 id="hxc-023-asserttrue-asserttruetrue-literal-true-bluffs-across-test_bank-closed-fixed.md">HXC-023
 — <code>Assert(true,…)</code> / <code>AssertTrue(true,…)</code>
 literal-true bluffs across test_bank — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) — see
@@ -5225,14 +4979,13 @@ core/tests.go 4, performance 1 = 33). Pattern: mislabelled “X succeeded”
 branches that fired on non-2xx → assert the expected 2xx; 401/403/429
 branches → assert that exact status; feature-404 branches → honest
 <code>v.Skip(reason)</code> (§11.4.3); the 4 legitimate “Running on
-<arch/platform>” positive-platform asserts left untouched. Verification:
+<arch platform>” positive-platform asserts left untouched. Verification:
 <code>go build ./...</code> + <code>go vet ./...</code> exit 0;
 full-tree grep for literal-true bluffs = 0; runtime harness (down
 server) → all changed cases HONEST-FAIL, 0 green-empty. Section retained
 as a migration tombstone per §11.4.19.</p>
 <hr />
-<h2
-id="hxc-024-internalllm--tagsintegration-build-broken-stale-tests-reference-deleted-providers">HXC-024
+<h2 id="hxc-024-internalllm--tagsintegration-build-broken-stale-tests-reference-deleted-providers">HXC-024
 — internal/llm <code>-tags=integration</code> build broken (stale tests
 reference deleted providers)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -5287,8 +5040,7 @@ promoting <code>tests/stresschaos/</code> into the constitution
 submodule for cross-project reuse (triggers §11.4.26 cross-project
 workflow) — interim home is project-local.</p>
 <hr />
-<h2
-id="hxc-025-constitution-11.4.9899101-cascade-const-047311.4.26">HXC-025
+<h2 id="hxc-025-constitution-11.4.9899101-cascade-const-047311.4.26">HXC-025
 — Constitution §11.4.98/99/101 cascade (CONST-047/§3/§11.4.26)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Discovered:</strong> 2026-05-29
@@ -5317,8 +5069,7 @@ full-automation) + §11.4.99 (latest-source doc xref) imply future
 HelixCode work (audit live tests for manual-action dependencies; add
 Sources-verified footers to operator docs) — tracked for follow-up.</p>
 <hr />
-<h2
-id="hxc-026-workable-items-mddb-sync-gate-11.4.9395-follow-up">HXC-026 —
+<h2 id="hxc-026-workable-items-mddb-sync-gate-11.4.9395-follow-up">HXC-026 —
 workable-items md↔︎db sync gate (§11.4.93/95 follow-up)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Discovered:</strong> 2026-05-29
@@ -5341,8 +5092,7 @@ gate PASSes; 3/3 assertions). <code>bash -n</code> clean. Completes the
 HXC-013 §11.4.93 enforcement loop (the remaining
 auto-invoke-from-commit_all.sh wiring stays a forward note).</p>
 <hr />
-<h2
-id="hxc-027-11.4.98-live-test-full-automation-compliance-audit">HXC-027
+<h2 id="hxc-027-11.4.98-live-test-full-automation-compliance-audit">HXC-027
 — §11.4.98 live-test full-automation compliance audit</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Discovered:</strong> 2026-05-29
@@ -5368,8 +5118,7 @@ configurable/shorter window would speed iteration; non-blocking. No
 NON-COMPLIANT tests found → no remediation campaign needed (unlike the
 CONST-046 i18n campaign).</p>
 <hr />
-<h2
-id="hxc-028-11.4.99-latest-source-documentation-cross-reference-readme">HXC-028
+<h2 id="hxc-028-11.4.99-latest-source-documentation-cross-reference-readme">HXC-028
 — §11.4.99 latest-source documentation cross-reference (README)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Discovered:</strong> 2026-05-29
@@ -5431,8 +5180,7 @@ pass: 7 operator-facing docs corrected, all systemic stale-Go-version +
 Rule-4-docker + broken-path/link + non-existent-command defects fixed.
 The §11.4.99 discipline now binds future operator-doc edits.</p>
 <hr />
-<h2
-id="hxc-029-11.4.98-full-automation-compliance-sweep-of-every-liveintegratione2echallenge-test-no-human-in-the-loop-closed-fixed.md">HXC-029
+<h2 id="hxc-029-11.4.98-full-automation-compliance-sweep-of-every-liveintegratione2echallenge-test-no-human-in-the-loop-closed-fixed.md">HXC-029
 — §11.4.98 full-automation compliance sweep of every
 live/integration/e2e/Challenge test (no human-in-the-loop) — CLOSED (→
 Fixed.md)</h2>
@@ -5461,8 +5209,7 @@ docs/qa/HXC-029/{compliance-ledger,<em>/run_</em>,integration-classification,pla
 Closed <code>Completed (→ Fixed.md)</code> per CONST-057 (Type
 Task).</p>
 <hr />
-<h2
-id="hxc-030-11.4.99-forward-latest-source-documentation-cross-reference-sweep-across-all-operator-facing-docs-closed-fixed.md">HXC-030
+<h2 id="hxc-030-11.4.99-forward-latest-source-documentation-cross-reference-sweep-across-all-operator-facing-docs-closed-fixed.md">HXC-030
 — §11.4.99 forward: latest-source documentation cross-reference sweep
 across all operator-facing docs — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
@@ -5501,8 +5248,7 @@ criteria:</strong> Every operator-facing doc carries a
 check for the footer added; stale-beyond-grace docs triaged.
 <strong>Composes-with:</strong> §11.4.99, §11.4.92, HXC-028.</p>
 <hr />
-<h2
-id="hxc-032-llmorchestrator-submodule-committed-merge-conflict-markers-break-helix_agent-build-closed-fixed.md">HXC-032
+<h2 id="hxc-032-llmorchestrator-submodule-committed-merge-conflict-markers-break-helix_agent-build-closed-fixed.md">HXC-032
 — LLMOrchestrator submodule: committed merge-conflict markers break
 <code>helix_agent</code> build — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) — see
@@ -5530,15 +5276,15 @@ committed into 5 tracked Go files — <code>pkg/i18n/translator.go</code>
 <code>cmd/orchestrator/main.go</code> (7),
 <code>challenges/runner/main.go</code> (16) = 26 hunks.
 <code>go build ./...</code> fails
-<code>expected 'package', found '&lt;&lt;'</code>. The markers are
+<code>expected &#39;package&#39;, found &#39;&lt;&lt;&#39;</code>. The markers are
 present in commit <code>5d9f5fc</code> and the current HEAD merge
-<code>1e198e3 "Merge branch 'master'"</code>, and are <strong>already
+<code>1e198e3 &quot;Merge branch &#39;master&#39;&quot;</code>, and are <strong>already
 pushed to <code>origin/master</code></strong>. <strong>Root cause
 (forensic, no guessing per §11.4.6):</strong> a merge between the
 i18n-migration lineage (clean at <code>8032035</code> /
 <code>a7fda2a</code> round-383 CONST-046) and the CONST-052 rename
 commit
-<code>4350384 "fix(const052): rename Upstreams/→upstreams/ (HXC-001)"</code>
+<code>4350384 &quot;fix(const052): rename Upstreams/→upstreams/ (HXC-001)&quot;</code>
 was committed with conflict markers unresolved. <strong>Resolution
 direction (verified-correct side):</strong> the
 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> side is the canonical one
@@ -5568,8 +5314,7 @@ committed state until all 5 are fixed together.
 <strong>Composes-with:</strong> §11.4 (build-layer bluff), §11.4.41
 (merge-first), §11.4.71, HXC-001, CONST-046, CONST-052.</p>
 <hr />
-<h2
-id="hxc-033-codegraph-0.9.7-update-full-indexsync-crashes-own-org-submodules-dropped-from-the-index-11.4.79-regression-closed-fixed.md">HXC-033
+<h2 id="hxc-033-codegraph-0.9.7-update-full-indexsync-crashes-own-org-submodules-dropped-from-the-index-11.4.79-regression-closed-fixed.md">HXC-033
 — codegraph 0.9.7 update: full index/sync crashes + own-org submodules
 dropped from the index (§11.4.79 regression) — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) — see
@@ -5624,15 +5369,13 @@ this 76k-file repo; whether stability bug / submodule-traversal change /
 config-schema change is undetermined. <strong>Composes-with:</strong>
 §11.4.78, §11.4.79, §11.4.80, §11.4.6, §11.4.101, HXC-017.</p>
 <hr />
-<h2
-id="hxc-034-cascade-constitution-11.4.102-into-owned-submodules-implement-cm-covenant-114-102-propagation-gate-closed-fixed.md">HXC-034
+<h2 id="hxc-034-cascade-constitution-11.4.102-into-owned-submodules-implement-cm-covenant-114-102-propagation-gate-closed-fixed.md">HXC-034
 — Cascade constitution §11.4.102 into owned submodules + implement
 CM-COVENANT-114-102-PROPAGATION gate — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md) — see
 <code>docs/Fixed.md</code> for the full closure record.</p>
 <hr />
-<h2
-id="hxc-035-post-apiv1authregister-returns-400-internal_auth_failed_create_user-on-the-live-server-blocks-all-authenticated-flows-closed-fixed.md">HXC-035
+<h2 id="hxc-035-post-apiv1authregister-returns-400-internal_auth_failed_create_user-on-the-live-server-blocks-all-authenticated-flows-closed-fixed.md">HXC-035
 — <code>POST /api/v1/auth/register</code> returns 400
 <code>internal_auth_failed_create_user</code> on the live server (blocks
 all authenticated flows) — CLOSED (→ Fixed.md)</h2>
@@ -5640,7 +5383,7 @@ all authenticated flows) — CLOSED (→ Fixed.md)</h2>
 <code>docs/Fixed.md</code> for the full closure record. <strong>Closure
 (2026-05-29, systematic-debugging per §11.4.102):</strong> ROOT CAUSE
 (confirmed via direct psql INSERT →
-<code>ERROR: column "display_name" of relation "users" does not exist</code>):
+<code>ERROR: column &quot;display_name&quot; of relation &quot;users&quot; does not exist</code>):
 <code>createSchemaSQL</code>‘s <code>CREATE TABLE users</code> omitted
 <code>display_name</code>, while the compensating
 <code>ALTER TABLE … ADD display_name</code> migration in
@@ -5751,8 +5494,7 @@ WireAll → raw keys → FAIL). Evidence docs/qa/HXC-036/phase{1,2,3,4}/.
 Commits f3b864f4 (P1) + 31c57a2a (P2, 70 pkgs) + 1ea79fd2 (P3, 9 mains)
 + d570b05e (P4, autonomy/planmode).</p>
 <hr />
-<h2
-id="hxl-001-ex-issue-003-helixllm-internalagentstoolsanalysis_test.go-hardcoded-absolute-path">HXL-001
+<h2 id="hxl-001-ex-issue-003-helixllm-internalagentstoolsanalysis_test.go-hardcoded-absolute-path">HXL-001
 (ex-ISSUE-003) — HelixLLM
 <code>internal/agents/tools/analysis_test.go</code> hardcoded absolute
 path</h2>
@@ -5772,8 +5514,7 @@ fixture files. Bonus: same bug-pattern discovered in
 — refactored <code>gitSandbox()</code> signature. 6 tests now PASS on
 any host. Mutation verified.</p>
 <hr />
-<h2
-id="hxl-002-ex-issue-004-helixllm-internalgatewaymiddleware-toon-writetoon-returns-500">HXL-002
+<h2 id="hxl-002-ex-issue-004-helixllm-internalgatewaymiddleware-toon-writetoon-returns-500">HXL-002
 (ex-ISSUE-004) — HelixLLM <code>internal/gateway/middleware</code> TOON
 <code>WriteTOON</code> returns 500</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -5791,8 +5532,7 @@ back to <code>json.Marshal</code> while preserving
 middleware). 500 still returned for genuinely unmarshallable values
 (channels). 19 middleware tests now PASS. Mutation verified.</p>
 <hr />
-<h2
-id="hxq-001-ex-issue-008-helix_qa-intermittent-testperformance-flake-host-load-sensitive">HXQ-001
+<h2 id="hxq-001-ex-issue-008-helix_qa-intermittent-testperformance-flake-host-load-sensitive">HXQ-001
 (ex-ISSUE-008) — helix_qa intermittent TestPerformance flake
 (host-load-sensitive)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -5812,8 +5552,8 @@ ceilings (5 ms / 25 ms / 5 ms) are only meaningful on a quiescent host.
 loosening the timing tolerance would weaken the test’s anti-bluff value
 — a genuine perf regression could then pass. Path (b) preserves the
 strict assertions while making the flake deterministic: the three tests
-now check <code>os.Getenv("HOST_LOAD_DEDICATED")</code> and
-<code>t.Skip("SKIP-OK: #HXQ-001 …")</code> honestly when unset, running
+now check <code>os.Getenv(&quot;HOST_LOAD_DEDICATED&quot;)</code> and
+<code>t.Skip(&quot;SKIP-OK: #HXQ-001 …&quot;)</code> honestly when unset, running
 strict only on a quiescent dedicated host
 (<code>HOST_LOAD_DEDICATED=1</code>). This is the CONST-035-compliant
 choice. Landed in helix_qa submodule commit <code>649e2dd</code> + meta
@@ -5828,8 +5568,7 @@ evidence: <code>go build ./pkg/vision/...</code> exit 0,
 → all 3 <code>--- PASS</code> strict (DHash64 average 741ns, PHash
 average 88.969µs — well under the 5 ms / 25 ms ceilings).</p>
 <hr />
-<h2
-id="hxv-002-llmsverifier-verification-package-10-pre-existing-test-failures">HXV-002
+<h2 id="hxv-002-llmsverifier-verification-package-10-pre-existing-test-failures">HXV-002
 — LLMsVerifier <code>verification/</code> package 10 pre-existing test
 failures</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -5922,7 +5661,7 @@ only</td>
 <td>8</td>
 <td><code>TestVerifier_Verify_MultipleRequests</code></td>
 <td>verification_test.go</td>
-<td><code>NoError</code> + <code>Status=="completed"</code> per
+<td><code>NoError</code> + <code>Status==&quot;completed&quot;</code> per
 request</td>
 <td><code>ErrVerificationNotWired</code> for every request in batch</td>
 </tr>
@@ -5938,8 +5677,8 @@ carries <code>Verified=false</code>+<code>Error</code></td>
 <td>10</td>
 <td><code>TestCodeVerificationService_VerifyModelCodeVisibility_ServerError</code></td>
 <td>code_verification_test.go</td>
-<td><code>Status=="verified"</code> + score≥0.7 on HTTP 500</td>
-<td><code>Status=="failed"</code> + non-empty <code>ErrorMessage</code>;
+<td><code>Status==&quot;verified&quot;</code> + score≥0.7 on HTTP 500</td>
+<td><code>Status==&quot;failed&quot;</code> + non-empty <code>ErrorMessage</code>;
 a 500 server never yields a passing verification</td>
 </tr>
 </tbody>
@@ -5951,8 +5690,7 @@ error propagation + zero-response→<code>failed</code>) was already
 honest; only the stale test assertions needed re-keying to certify
 it.</p>
 <hr />
-<h2
-id="pan-001-panoptic-appendjsonstring-truncates-multi-byte-utf-8-runes-to-bytes-testresult.marshaljson-corrupts-non-ascii">PAN-001
+<h2 id="pan-001-panoptic-appendjsonstring-truncates-multi-byte-utf-8-runes-to-bytes-testresult.marshaljson-corrupts-non-ascii">PAN-001
 — panoptic <code>appendJSONString</code> truncates multi-byte UTF-8
 runes to bytes (<code>TestResult.MarshalJSON</code> corrupts
 non-ASCII)</h2>
@@ -5985,8 +5723,7 @@ ok 4.470s; <code>bash challenges/panoptic_describe_challenge.sh</code> →
 <code>KNOWN-ISSUE-RESOLVED: executor.appendJSONString now UTF-8 clean</code>).
 Closed in this round.</p>
 <hr />
-<h2
-id="ven-001-ex-issue-001-visionengine-helix-gitlab-remote-repo-missing-404-closed-fixed.md">VEN-001
+<h2 id="ven-001-ex-issue-001-visionengine-helix-gitlab-remote-repo-missing-404-closed-fixed.md">VEN-001
 (ex-ISSUE-001) — VisionEngine <code>helix-gitlab</code> remote repo
 missing (404) — CLOSED (→ Fixed.md)</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6017,8 +5754,7 @@ by name (not URL), so it continues to work unchanged.
 HEAD) - Original broken URL still 404s when probed directly (proves URL
 was the issue, not perms)</p>
 <hr />
-<h2
-id="hxc-126-eleven-closed-items-still-appear-in-the-open-issues-tracker-instead-of-the-resolved-tracker">HXC-126
+<h2 id="hxc-126-eleven-closed-items-still-appear-in-the-open-issues-tracker-instead-of-the-resolved-tracker">HXC-126
 — Eleven closed items still appear in the open-issues tracker instead of
 the resolved tracker</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6031,8 +5767,7 @@ views disagree about their state and become untrustworthy. The work
 regenerates the tracker documents from the authoritative database so
 finished items appear only in the resolved view. The human-readable
 trackers then accurately reflect the true state.</p>
-<h2
-id="hxc-142-automation-test-suite-testautomation--tagsautomation-does-not-compile">HXC-142
+<h2 id="hxc-142-automation-test-suite-testautomation--tagsautomation-does-not-compile">HXC-142
 — Automation test suite (test/automation, -tags=automation) does not
 compile</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6049,8 +5784,7 @@ package. The work is to reconcile the automation tests with the current
 provider API and remove the duplicate helpers so the suite compiles and
 runs against real infrastructure. Evidence:
 docs/qa/infra_retest_20260712_hxc122_138/automation_tests.log.</p>
-<h2
-id="hxc-143-e2e-test-suite-teste2e--tagse2e-does-not-compile-due-to-redeclared-getenvordefault">HXC-143
+<h2 id="hxc-143-e2e-test-suite-teste2e--tagse2e-does-not-compile-due-to-redeclared-getenvordefault">HXC-143
 — E2E test suite (test/e2e, -tags=e2e) does not compile due to
 redeclared getEnvOrDefault</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6064,8 +5798,7 @@ cannot execute. The work is to remove the duplicate declaration
 can run end-to-end against a real server. Discovered during the
 2026-07-12 real-infra retest. Evidence:
 docs/qa/infra_retest_20260712_hxc122_138/EVIDENCE.md.</p>
-<h2
-id="hxc-118-retrieval-augmented-generation-rag-module-exists-but-is-not-connected-to-the-application">HXC-118
+<h2 id="hxc-118-retrieval-augmented-generation-rag-module-exists-but-is-not-connected-to-the-application">HXC-118
 — Retrieval-Augmented-Generation (RAG) module exists but is not
 connected to the application</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
@@ -6080,8 +5813,7 @@ users despite the code existing. The work integrates the existing RAG
 module into the application, wires it into the request flow, and exposes
 its capability flag. Users gain working document-grounded answers
 instead of an orphaned, unused component.</p>
-<h2
-id="hxc-144-server-leaks-goroutines-under-sustained-ddos-flood-load-chaos-test">HXC-144
+<h2 id="hxc-144-server-leaks-goroutines-under-sustained-ddos-flood-load-chaos-test">HXC-144
 — Server leaks goroutines under sustained DDoS-flood load (chaos
 test)</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6096,8 +5828,7 @@ stability under load. The work is to find the leaking goroutine (likely
 an unclosed channel, context, or connection in a hot handler) and fix it
 so the count stays within tolerance under flood. Evidence:
 docs/qa/infra_retest_20260712_hxc122_138/EVIDENCE.md (Server 7/8).</p>
-<h2
-id="hxc-122-memory-and-automation-test-suites-mostly-skip-themselves-without-a-running-server">HXC-122
+<h2 id="hxc-122-memory-and-automation-test-suites-mostly-skip-themselves-without-a-running-server">HXC-122
 — Memory and automation test suites mostly skip themselves without a
 running server</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6113,8 +5844,7 @@ work provides a documented, repeatable way to run them against real
 infrastructure so they actually execute and prove the behavior. Memory
 and automation behavior then becomes genuinely tested rather than merely
 scaffolded.</p>
-<h2
-id="hxc-136-verify-the-remaining-automated-test-types-run-with-real-captured-evidence">HXC-136
+<h2 id="hxc-136-verify-the-remaining-automated-test-types-run-with-real-captured-evidence">HXC-136
 — Verify the remaining automated test types run with real captured
 evidence</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6129,8 +5859,7 @@ is unconfirmed. The work is to run each of these test types against real
 infrastructure and capture proof of the results. This completes the
 promised full test-type coverage and confirms the product holds up under
 load and adverse conditions.</p>
-<h2
-id="hxc-138-run-the-end-to-end-challenge-suite-against-a-running-server">HXC-138
+<h2 id="hxc-138-run-the-end-to-end-challenge-suite-against-a-running-server">HXC-138
 — Run the end-to-end challenge suite against a running server</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
 <strong>Type:</strong> Task <strong>Evidence:</strong>
@@ -6142,8 +5871,7 @@ executed against a live server with a real model to confirm the complete
 user journeys work. The work is to stand up a server and run the
 challenges, capturing the results. This provides real proof that the
 headline user workflows function end to end.</p>
-<h2
-id="hxc-150-testsddos-env-var-names-test_pg_test_redis_-mismatch-.env.full-test-causing-false-skip">HXC-150
+<h2 id="hxc-150-testsddos-env-var-names-test_pg_test_redis_-mismatch-.env.full-test-causing-false-skip">HXC-150
 — tests/ddos env-var names (TEST_PG_/TEST_REDIS_) mismatch
 .env.full-test causing false SKIP</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6160,8 +5888,7 @@ once the correct credentials were passed manually during the 2026-07-12
 retest). The work is to align the harness env-var names/defaults with
 .env.full-test so load/DDoS executes out of the box. Low severity,
 test-harness only.</p>
-<h2
-id="hxc-148-wire-rag-retrieval-augmentation-into-the-openaianthropic-wire-facade-endpoints">HXC-148
+<h2 id="hxc-148-wire-rag-retrieval-augmentation-into-the-openaianthropic-wire-facade-endpoints">HXC-148
 — Wire RAG retrieval-augmentation into the OpenAI/Anthropic wire-facade
 endpoints</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6177,8 +5904,7 @@ enabled. The work is to apply the same applyRAGContext wiring to those
 facade handlers so RAG behaves consistently across every generate
 surface. This is a smaller secondary surface than the native path
 already fixed. Found during HXC-118 review 2026-07-12.</p>
-<h2
-id="hxc-149-stale-git-gitlink-at-pre-rename-path-containers-breaks-git-submodule-walk">HXC-149
+<h2 id="hxc-149-stale-git-gitlink-at-pre-rename-path-containers-breaks-git-submodule-walk">HXC-149
 — Stale git gitlink at pre-rename path containers breaks git submodule
 walk</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6199,8 +5925,7 @@ consistent with .gitmodules and submodule-walking tooling completes.
 This is a git-index-only change, reversible via git reset. Found by the
 2026-07-12 release-readiness survey. Low runtime risk but blocks release
 automation.</p>
-<h2
-id="hxc-145-configured-xiaomi-model-mimo-v2-flash-is-rejected-by-the-real-xiaomi-api">HXC-145
+<h2 id="hxc-145-configured-xiaomi-model-mimo-v2-flash-is-rejected-by-the-real-xiaomi-api">HXC-145
 — Configured Xiaomi model mimo-v2-flash is rejected by the real Xiaomi
 API</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6215,8 +5940,7 @@ would get errors. The work is to determine the correct current Xiaomi
 model id (from the provider or the verifier as single source of truth)
 and update the configuration so Xiaomi requests succeed. Evidence:
 docs/qa/infra_retest_20260712_hxc122_138/EVIDENCE.md (Xiaomi 3/5).</p>
-<h2
-id="hxc-147-openrouter-provider-automation-test-nil-pointer-panics-on-stale-model-deepseek-r1-free">HXC-147
+<h2 id="hxc-147-openrouter-provider-automation-test-nil-pointer-panics-on-stale-model-deepseek-r1-free">HXC-147
 — OpenRouter provider automation test nil-pointer panics on stale model
 deepseek-r1-free</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6235,8 +5959,7 @@ as single source of truth) and add the missing nil-check so a rejected
 model degrades gracefully instead of panicking. NOTE this environment
 has live provider API keys set so provider tests spend real money;
 guard/skip accordingly. Found 2026-07-12.</p>
-<h2
-id="hxc-146-e2e-challenge-runner-interfaces-cliresttuiwebsocket-do-not-drive-the-real-server-http-api">HXC-146
+<h2 id="hxc-146-e2e-challenge-runner-interfaces-cliresttuiwebsocket-do-not-drive-the-real-server-http-api">HXC-146
 — E2E challenge runner interfaces (cli/rest/tui/websocket) do not drive
 the real server HTTP API</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6253,8 +5976,7 @@ genuinely call the running server’s HTTP API so the challenges prove the
 real user-facing endpoints work. Discovered 2026-07-12 real-infra
 retest. Evidence:
 docs/qa/infra_retest_20260712_hxc122_138/hxc138_challenge_report.json.</p>
-<h2
-id="hxc-119-agent-client-protocol-acp-support-is-absent-from-the-platform">HXC-119
+<h2 id="hxc-119-agent-client-protocol-acp-support-is-absent-from-the-platform">HXC-119
 — Agent Client Protocol (ACP) support is absent from the platform</h2>
 <p><strong>Status:</strong> Implemented (→ Fixed.md)
 <strong>Type:</strong> Feature <strong>Evidence:</strong>
@@ -6267,8 +5989,7 @@ currently cannot use it. The work is to design and implement real ACP
 support, or, if it proves structurally infeasible, to document that with
 cited evidence. The platform will then either genuinely support ACP or
 hold an honest, evidenced position instead of an unmet claim.</p>
-<h2
-id="hxc-152-llm_working_funnel_test.go-defaults-to-red-mode-so-its-fix-verifying-assertions-never-run-and-it-still-reports-success">HXC-152
+<h2 id="hxc-152-llm_working_funnel_test.go-defaults-to-red-mode-so-its-fix-verifying-assertions-never-run-and-it-still-reports-success">HXC-152
 — llm_working_funnel_test.go defaults to RED mode, so its fix-verifying
 assertions never run and it still reports success</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6297,8 +6018,7 @@ so the fix-verifying assertions run in ordinary runs, the
 reproduce-the-old-bug mode still works when explicitly requested, and
 captured evidence shows those assertions genuinely execute and genuinely
 fail when the filtering is removed.</p>
-<h2
-id="hxc-151-residual-replica-red-branches-in-internalserver-regression-guards-cannot-fail-so-they-guard-nothing">HXC-151
+<h2 id="hxc-151-residual-replica-red-branches-in-internalserver-regression-guards-cannot-fail-so-they-guard-nothing">HXC-151
 — Residual replica-RED branches in internal/server regression guards
 cannot fail, so they guard nothing</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6337,8 +6057,7 @@ RED_MODE=1 passes on an artifact with only its own fix reverted and
 fails on the current artifact, that this four-way result is captured as
 evidence, and that a repeat of the enumerated search finds no remaining
 test-local stand-ins.</p>
-<h2
-id="hxc-156-harmony_os-background-system-monitor-used-an-unsynchronised-onoff-flag-as-its-stop-signal-racing-application-shutdown">HXC-156
+<h2 id="hxc-156-harmony_os-background-system-monitor-used-an-unsynchronised-onoff-flag-as-its-stop-signal-racing-application-shutdown">HXC-156
 — harmony_os background system monitor used an unsynchronised on/off
 flag as its stop signal, racing application shutdown</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6373,8 +6092,7 @@ test package completes with zero races over repeated consecutive runs
 under the race detector, and deliberately restoring the old code makes
 the identical race reappear, proving the guard is real and not merely
 agreeable.</p>
-<h2
-id="hxc-157-harmony_os-and-aurora_os-changed-on-screen-elements-directly-from-background-threads-which-the-fyne-ui-toolkit-forbids">HXC-157
+<h2 id="hxc-157-harmony_os-and-aurora_os-changed-on-screen-elements-directly-from-background-threads-which-the-fyne-ui-toolkit-forbids">HXC-157
 — harmony_os and aurora_os changed on-screen elements directly from
 background threads, which the Fyne UI toolkit forbids</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6412,8 +6130,7 @@ application shuts down. Acceptance: both packages build and pass with
 the race detector enabled over repeated runs, no background worker in
 either file touches an on-screen element without going through the
 helper, and the desktop front-end’s behaviour is unchanged.</p>
-<h2
-id="hxc-153-testguard_getsystemstatus_withdb_stillreports-is-named-for-a-database-present-case-it-never-exercises">HXC-153
+<h2 id="hxc-153-testguard_getsystemstatus_withdb_stillreports-is-named-for-a-database-present-case-it-never-exercises">HXC-153
 — TestGuard_GetSystemStatus_WithDB_StillReports is named for a
 database-present case it never exercises</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6438,8 +6155,7 @@ being falsely asserted about the product — the defect is confined to the
 misleading name. Done means the test either is renamed to describe what
 it genuinely checks, or is given a fake-database seam so it earns the
 name it already has, with the choice backed by a captured run.</p>
-<h2
-id="hxc-155-standardise-the-divergent-polarity-switch-environment-variable-convention-across-the-server-test-package">HXC-155
+<h2 id="hxc-155-standardise-the-divergent-polarity-switch-environment-variable-convention-across-the-server-test-package">HXC-155
 — Standardise the divergent polarity-switch environment variable
 convention across the server test package</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6463,8 +6179,7 @@ and record the convention in a single place so the next guard author
 copies something correct. Done means every switch follows the documented
 pattern, every default is the safe standing-guard direction, and a check
 exists that would catch a future file breaking the convention.</p>
-<h2
-id="hxc-154-teststartqasession_success-asserts-on-a-session-field-a-background-goroutine-is-concurrently-changing">HXC-154
+<h2 id="hxc-154-teststartqasession_success-asserts-on-a-session-field-a-background-goroutine-is-concurrently-changing">HXC-154
 — TestStartQASession_Success asserts on a session field a background
 goroutine is concurrently changing</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6489,8 +6204,7 @@ likely correct outcome is to make the assertion accept either value or
 to observe the status through a synchronised read instead. Done means
 the test no longer depends on goroutine scheduling, proven by repeated
 runs under the race detector, with the reproduction captured first.</p>
-<h2
-id="hxc-158-no-test-builds-the-harmony_os-or-aurora_os-screens-so-their-widget-threading-fixes-rest-on-code-review-rather-than-captured-runtime-proof">HXC-158
+<h2 id="hxc-158-no-test-builds-the-harmony_os-or-aurora_os-screens-so-their-widget-threading-fixes-rest-on-code-review-rather-than-captured-runtime-proof">HXC-158
 — No test builds the harmony_os or aurora_os screens, so their
 widget-threading fixes rest on code review rather than captured runtime
 proof</h2>
@@ -6535,8 +6249,7 @@ widgets, passes with zero races over repeated runs, and demonstrably
 fails when the dispatch helper is removed from any one of those sites.
 Until that exists, the fixes for those specific sites should be
 described as review-justified, not runtime-proven.</p>
-<h2
-id="hxc-162-skill-auto-trigger-is-dead-in-the-interactive-cli-the-dispatcher-is-built-then-thrown-away">HXC-162
+<h2 id="hxc-162-skill-auto-trigger-is-dead-in-the-interactive-cli-the-dispatcher-is-built-then-thrown-away">HXC-162
 — Skill auto-trigger is dead in the interactive CLI: the dispatcher is
 built then thrown away</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6559,8 +6272,7 @@ input is handled, and prove it with a test that types a matching request
 and observes the skill actually run. Reported at cmd/cli/main.go:1060 by
 SOURCE-layer inspection; still needs runtime confirmation per
 11.4.108.</p>
-<h2
-id="hxc-163-none-of-the-seven-shared-governance-skills-are-registered-so-none-of-them-can-ever-run">HXC-163
+<h2 id="hxc-163-none-of-the-seven-shared-governance-skills-are-registered-so-none-of-them-can-ever-run">HXC-163
 — None of the seven shared governance skills are registered, so none of
 them can ever run</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6581,8 +6293,7 @@ practice. Closing this means registering the seven skills through the
 supported mechanism, repairing or removing the broken link, and adding a
 check that fails if a shipped skill is present on disk but unreachable
 at runtime.</p>
-<h2
-id="hxc-161-fixed.md-h2-section-to-pipe-row-parity-gate-fails-on-58-items-because-the-db-emits-each-item-in-only-one-representation">HXC-161
+<h2 id="hxc-161-fixed.md-h2-section-to-pipe-row-parity-gate-fails-on-58-items-because-the-db-emits-each-item-in-only-one-representation">HXC-161
 — Fixed.md H2-section-to-pipe-row parity gate fails on 58 items because
 the DB emits each item in only one representation</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6636,8 +6347,7 @@ evidence, the guard passes for the right reason rather than by being
 softened, its paired mutation still makes it fail when the invariant is
 broken, and if the generator was at fault the affected items are
 restored.</p>
-<h2
-id="hxc-160-governance-manuals-still-name-the-superseded-shell-summary-generators-as-the-canonical-tracker-summary-generators">HXC-160
+<h2 id="hxc-160-governance-manuals-still-name-the-superseded-shell-summary-generators-as-the-canonical-tracker-summary-generators">HXC-160
 — Governance manuals still name the superseded shell summary generators
 as the canonical tracker-summary generators</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6676,8 +6386,7 @@ current generator with no mention of supersession. Acceptance: every
 carrier names the DB exporter, no carrier presents the shell scripts as
 current, the five root carriers stay in lockstep, and a check exists
 that would fail if a manual reintroduced the stale naming.</p>
-<h2
-id="hxc-182-a-corrupted-performance-reference-file-is-sitting-uncommitted-and-any-broad-commit-would-make-it-permanent">HXC-182
+<h2 id="hxc-182-a-corrupted-performance-reference-file-is-sitting-uncommitted-and-any-broad-commit-would-make-it-permanent">HXC-182
 — A corrupted performance reference file is sitting uncommitted and any
 broad commit would make it permanent</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6712,8 +6421,7 @@ stop writing the file, but that fix does not clean up the damage already
 present. This needs the file restored now, and it needs to be visible to
 everyone working in this copy rather than mentioned only in a commit
 message where no one will see it.</p>
-<h2
-id="hxc-165-a-stress-test-overwrites-its-own-committed-reference-baseline-every-time-it-runs">HXC-165
+<h2 id="hxc-165-a-stress-test-overwrites-its-own-committed-reference-baseline-every-time-it-runs">HXC-165
 — A stress test overwrites its own committed reference baseline every
 time it runs</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6764,8 +6472,7 @@ baseline likely. A reviewer had to actively argue against committing it
 during unrelated work. The fix is to write run results to a location
 that is not version controlled and treat the committed baseline as
 read-only.</p>
-<h2
-id="hxc-184-running-a-command-that-leaves-a-background-process-behind-now-hangs-forever-and-permanently-consumes-a-slot">HXC-184
+<h2 id="hxc-184-running-a-command-that-leaves-a-background-process-behind-now-hangs-forever-and-permanently-consumes-a-slot">HXC-184
 — Running a command that leaves a background process behind now hangs
 forever and permanently consumes a slot</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6799,8 +6506,7 @@ because cutting it off would discard output someone is reading. Three
 smaller findings were also closed, one of them by deriving the
 truncation flag from a recorded error rather than from which timing
 branch ran, so no scheduling coincidence can set it falsely.</p>
-<h2
-id="hxc-174-the-terminal-interface-reads-live-qa-session-values-while-another-thread-is-changing-them">HXC-174
+<h2 id="hxc-174-the-terminal-interface-reads-live-qa-session-values-while-another-thread-is-changing-them">HXC-174
 — The terminal interface reads live QA session values while another
 thread is changing them</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6823,8 +6529,7 @@ project that ignores the locking rule the rest of the code follows and
 that the session code explicitly documents. The fix is to take a
 consistent copy of each session while holding the lock, then draw the
 screen from that copy.</p>
-<h2
-id="hxc-176-the-shared-skill-installer-writes-machine-specific-paths-that-break-on-any-other-computer">HXC-176
+<h2 id="hxc-176-the-shared-skill-installer-writes-machine-specific-paths-that-break-on-any-other-computer">HXC-176
 — The shared skill installer writes machine-specific paths that break on
 any other computer</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6845,8 +6550,7 @@ re-running it recreates the same problem. A guard now catches the broken
 result, which is a safety net rather than a cure. The proper fix belongs
 in the shared component: record the location relative to the project so
 the shortcut works on every machine that checks the project out.</p>
-<h2
-id="hxc-177-a-shipped-skill-uses-a-placeholder-the-system-cannot-fill-so-raw-placeholder-text-is-sent-to-the-ai">HXC-177
+<h2 id="hxc-177-a-shipped-skill-uses-a-placeholder-the-system-cannot-fill-so-raw-placeholder-text-is-sent-to-the-ai">HXC-177
 — A shipped skill uses a placeholder the system cannot fill, so raw
 placeholder text is sent to the AI</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6865,8 +6569,7 @@ found while working on unrelated skill wiring and is not caused by that
 work. The fix is to correct the placeholder to the recognised form, and
 to add a check that refuses to ship a skill containing a placeholder the
 system cannot resolve, so the same mistake cannot recur silently.</p>
-<h2
-id="hxc-170-small-low-risk-library-updates-that-close-eleven-of-the-agents-eighteen-confirmed-weak-spots">HXC-170
+<h2 id="hxc-170-small-low-risk-library-updates-that-close-eleven-of-the-agents-eighteen-confirmed-weak-spots">HXC-170
 — Small, low-risk library updates that close eleven of the agent’s
 eighteen confirmed weak spots</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -6889,8 +6592,7 @@ rebuilt, its tests run, and a fresh scan confirming those eleven
 weaknesses no longer appear, with the before-and-after scan output kept
 as evidence. Two of the eight are minor rather than bug-fix releases and
 deserve a slightly closer look at build and test results.</p>
-<h2
-id="hxc-173-an-aurora_os-screen-refresh-test-reports-failure-when-the-machine-is-merely-busy">HXC-173
+<h2 id="hxc-173-an-aurora_os-screen-refresh-test-reports-failure-when-the-machine-is-merely-busy">HXC-173
 — An aurora_os screen-refresh test reports failure when the machine is
 merely busy</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6911,8 +6613,7 @@ test run happens while many other jobs are active. The fix is to make
 the check wait for the condition it cares about rather than assuming the
 screen refreshes within a fixed window, so that a slow machine produces
 a slow pass instead of a false failure.</p>
-<h2
-id="hxc-183-one-ai-provider-still-leaks-a-background-worker-when-the-caller-stops-listening">HXC-183
+<h2 id="hxc-183-one-ai-provider-still-leaks-a-background-worker-when-the-caller-stops-listening">HXC-183
 — One AI provider still leaks a background worker when the caller stops
 listening</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6931,8 +6632,7 @@ The fix is mechanical, because the correct pattern already exists in its
 six siblings and there is a shared test harness it can be added to. This
 was found by an independent review noticing that the round of fixes
 stopped one directory short of covering every affected provider.</p>
-<h2
-id="hxc-185-the-fix-for-modern-network-addresses-was-applied-in-two-places-but-not-to-fourteen-others-that-need-it">HXC-185
+<h2 id="hxc-185-the-fix-for-modern-network-addresses-was-applied-in-two-places-but-not-to-fourteen-others-that-need-it">HXC-185
 — The fix for modern network addresses was applied in two places but not
 to fourteen others that need it</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6953,8 +6653,7 @@ infrastructure. Each is a one-line change using the standard helper that
 handles this correctly. Left alone, any deployment using these newer
 addresses sees confusing partial failures where some checks pass and
 others fail against the same healthy service.</p>
-<h2
-id="hxc-167-the-tool-that-strips-secrets-from-recorded-test-transcripts-can-fail-without-anyone-noticing">HXC-167
+<h2 id="hxc-167-the-tool-that-strips-secrets-from-recorded-test-transcripts-can-fail-without-anyone-noticing">HXC-167
 — The tool that strips secrets from recorded test transcripts can fail
 without anyone noticing</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -6977,8 +6676,7 @@ file with no warning to anyone. The fix is to make the replacement treat
 secrets as plain text, make any failure loud rather than silent, and add
 a scan of the finished file that also catches secrets the remote side
 sent us.</p>
-<h2
-id="hxc-203-asking-for-local-model-status-corrupts-that-status-when-two-requests-arrive-at-once">HXC-203
+<h2 id="hxc-203-asking-for-local-model-status-corrupts-that-status-when-two-requests-arrive-at-once">HXC-203
 — Asking for local model status corrupts that status when two requests
 arrive at once</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7046,8 +6744,7 @@ reverse, and in the worst case corrupted records shared across the whole
 component. The fix is to protect the shared records with a lock, return
 a copy rather than the live collection, and separate the act of
 refreshing health from the act of reporting it.</p>
-<h2
-id="hxc-169-container-sandbox-library-has-four-known-flaws-we-actively-use-and-the-vendor-has-published-no-fix">HXC-169
+<h2 id="hxc-169-container-sandbox-library-has-four-known-flaws-we-actively-use-and-the-vendor-has-published-no-fix">HXC-169
 — Container-sandbox library has four known flaws we actively use and the
 vendor has published no fix</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7073,8 +6770,7 @@ unreachable in our configuration, or a concrete containment change such
 as disabling the feature, constraining the copy paths, or isolating
 access to the container service. Because no upgrade can close these, a
 deliberate decision is the only way to resolve them.</p>
-<h2
-id="hxc-193-a-shipped-service-container-declares-a-health-check-that-can-never-succeed">HXC-193
+<h2 id="hxc-193-a-shipped-service-container-declares-a-health-check-that-can-never-succeed">HXC-193
 — A shipped service container declares a health check that can never
 succeed</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7094,8 +6790,7 @@ replaces unhealthy containers will do so endlessly. This was found while
 investigating unrelated security advisories in the same service, which
 is worth noting because it means nobody had exercised the health check
 since it was written.</p>
-<h2
-id="hxc-195-a-container-setting-meant-to-choose-the-service-port-has-no-effect-because-the-code-never-reads-it">HXC-195
+<h2 id="hxc-195-a-container-setting-meant-to-choose-the-service-port-has-no-effect-because-the-code-never-reads-it">HXC-195
 — A container setting meant to choose the service port has no effect
 because the code never reads it</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7116,8 +6811,7 @@ with what the service actually does. Either the service should read the
 setting, or the setting should be removed and the real behaviour
 documented; leaving an inert knob in place is the worst of the three
 options.</p>
-<h2
-id="hxc-194-a-service-we-wrote-accepts-requests-from-any-website-with-no-origin-checking">HXC-194
+<h2 id="hxc-194-a-service-we-wrote-accepts-requests-from-any-website-with-no-origin-checking">HXC-194
 — A service we wrote accepts requests from any website with no origin
 checking</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7137,8 +6831,7 @@ are separate problems that merely look alike. That distinction matters,
 because closing the advisory would make the warning disappear while
 leaving the actual hole open. The fix is to check the origin of incoming
 requests against a list of permitted ones and reject anything else.</p>
-<h2
-id="hxc-198-a-second-command-running-path-has-the-same-hang-that-was-just-fixed-in-its-sibling">HXC-198
+<h2 id="hxc-198-a-second-command-running-path-has-the-same-hang-that-was-just-fixed-in-its-sibling">HXC-198
 — A second command-running path has the same hang that was just fixed in
 its sibling</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7159,8 +6852,7 @@ and not to its sibling a few lines away, which suggests the review step
 should routinely ask what else in the same file shares the pattern. The
 remedy already exists and is proven next door, so this is a matter of
 applying it rather than designing anything.</p>
-<h2
-id="hxc-201-the-documented-way-to-regenerate-the-tracker-documents-writes-them-to-the-wrong-place-and-reports-success">HXC-201
+<h2 id="hxc-201-the-documented-way-to-regenerate-the-tracker-documents-writes-them-to-the-wrong-place-and-reports-success">HXC-201
 — The documented way to regenerate the tracker documents writes them to
 the wrong place and reports success</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7182,8 +6874,7 @@ attributed to a different mistake. The correction is to give an absolute
 output path, or to make the tool resolve its output against the project
 root regardless of where it was built, and then to update the manuals
 and the check that currently enforces the broken form.</p>
-<h2
-id="hxc-205-a-second-model-manager-owns-a-lock-and-then-writes-shared-state-without-using-it">HXC-205
+<h2 id="hxc-205-a-second-model-manager-owns-a-lock-and-then-writes-shared-state-without-using-it">HXC-205
 — A second model manager owns a lock and then writes shared state
 without using it</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7205,8 +6896,7 @@ and it is the eighth time in this working cycle that a defect has had an
 unfixed twin elsewhere. The fix is the same shape as the one already
 proven: hold the lock around the field writes only, never across process
 start, process wait, or the readiness poll.</p>
-<h2
-id="hxc-209-running-a-shell-command-in-the-background-skips-every-command-security-check">HXC-209
+<h2 id="hxc-209-running-a-shell-command-in-the-background-skips-every-command-security-check">HXC-209
 — Running a shell command in the background skips every command-security
 check</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7229,8 +6919,7 @@ whereas this costs the security boundary. The fix is to route the
 background path through the same validation the foreground paths use,
 and to add a test proving a blocked command stays blocked when the
 background flag is set.</p>
-<h2
-id="hxc-210-background-shell-commands-silently-ignore-the-working-directory-they-were-given">HXC-210
+<h2 id="hxc-210-background-shell-commands-silently-ignore-the-working-directory-they-were-given">HXC-210
 — Background shell commands silently ignore the working directory they
 were given</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7251,8 +6940,7 @@ which is the more dangerous outcome because it looks like success. The
 fix is to read the same parameter name the schema publishes, and to add
 a test asserting that a background command actually runs in the
 directory it was given rather than merely accepting the parameter.</p>
-<h2
-id="hxc-212-the-port-fix-turned-a-dormant-any-origin-hole-into-a-live-one-on-a-published-port">HXC-212
+<h2 id="hxc-212-the-port-fix-turned-a-dormant-any-origin-hole-into-a-live-one-on-a-published-port">HXC-212
 — The port fix turned a dormant any-origin hole into a live one on a
 published port</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7277,8 +6965,7 @@ repository, so the class was reported closed while this instance
 remained. The fix is the one already proven in those siblings: check the
 origin against a configured allowlist and reject anything else, covering
 both the preflight and the ordinary request.</p>
-<h2
-id="hxc-213-the-deployment-tracker-guards-one-line-of-shared-state-and-leaves-seventy-seven-unguarded">HXC-213
+<h2 id="hxc-213-the-deployment-tracker-guards-one-line-of-shared-state-and-leaves-seventy-seven-unguarded">HXC-213
 — The deployment tracker guards one line of shared state and leaves
 seventy-seven unguarded</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7301,8 +6988,7 @@ The remedy is the one already proven twice in this codebase: bring every
 access to the shared record under the existing lock, keeping the lock
 away from any long-running call, and add a guard that runs under the
 race detector.</p>
-<h2
-id="hxc-214-four-model-providers-hand-callers-a-live-pointer-to-their-own-health-record">HXC-214
+<h2 id="hxc-214-four-model-providers-hand-callers-a-live-pointer-to-their-own-health-record">HXC-214
 — Four model providers hand callers a live pointer to their own health
 record</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7325,8 +7011,7 @@ remedy matches the two fixes already landed for this pattern: perform
 the update under the lock and return a copy, then guard both halves with
 a test that fails if the returned value is ever aliased to the stored
 one.</p>
-<h2
-id="hxc-215-the-commit-compile-gate-blames-a-different-innocent-commit-on-each-run">HXC-215
+<h2 id="hxc-215-the-commit-compile-gate-blames-a-different-innocent-commit-on-each-run">HXC-215
 — The commit-compile gate blames a different innocent commit on each
 run</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7353,8 +7038,7 @@ broken commit that habit will let the breakage through. The work is to
 make the gate produce the same verdict every time it is given the same
 input, and to prove that by running it repeatedly against an unchanged
 tree.</p>
-<h2
-id="hxc-211-four-more-unbounded-waits-remain-in-the-shell-package-after-the-latest-hang-fix">HXC-211
+<h2 id="hxc-211-four-more-unbounded-waits-remain-in-the-shell-package-after-the-latest-hang-fix">HXC-211
 — Four more unbounded waits remain in the shell package after the latest
 hang fix</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7377,8 +7061,7 @@ the function named in the report, which was necessary because the
 reported defect and its already-fixed twin turned out to live in
 different files, so a reviewer re-reading the same file would have found
 nothing.</p>
-<h2
-id="hxc-186-evidence-files-can-accidentally-satisfy-the-evidence-requirement-for-an-unrelated-change">HXC-186
+<h2 id="hxc-186-evidence-files-can-accidentally-satisfy-the-evidence-requirement-for-an-unrelated-change">HXC-186
 — Evidence files can accidentally satisfy the evidence requirement for
 an unrelated change</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7402,8 +7085,7 @@ the evidence is for, ignoring the incidental position stamp. This needs
 care because tightening the rule may withdraw acceptance from evidence
 already recorded, so it is a deliberate decision rather than a quiet
 correction.</p>
-<h2
-id="hxc-202-the-network-address-fix-reached-the-server-but-not-the-app-that-connects-to-it">HXC-202
+<h2 id="hxc-202-the-network-address-fix-reached-the-server-but-not-the-app-that-connects-to-it">HXC-202
 — The network address fix reached the server but not the app that
 connects to it</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7425,8 +7107,7 @@ worse. This is the seventh time in one working cycle that a correct
 change was applied in one place and not to a sibling doing the same
 thing nearby, which is worth treating as a review habit rather than
 seven separate oversights.</p>
-<h2
-id="hxc-230-helixagent-crashes-once-on-every-cold-boot-because-it-checks-cognee-before-cognee-is-ready">HXC-230
+<h2 id="hxc-230-helixagent-crashes-once-on-every-cold-boot-because-it-checks-cognee-before-cognee-is-ready">HXC-230
 — HelixAgent crashes once on every cold boot because it checks Cognee
 before Cognee is ready</h2>
 <p><strong>Status:</strong> Obsolete (→ Fixed.md) <strong>Type:</strong>
@@ -7454,8 +7135,7 @@ platform produced the identical failure seen in an earlier run from
 2026-07-27. The fix is to make the infrastructure service wait for its
 containers to become healthy before reporting success, rather than
 reporting success as soon as they are created.</p>
-<h2
-id="hxc-221-when-secure-randomness-fails-api-key-generation-quietly-falls-back-to-a-guessable-value">HXC-221
+<h2 id="hxc-221-when-secure-randomness-fails-api-key-generation-quietly-falls-back-to-a-guessable-value">HXC-221
 — When secure randomness fails, API key generation quietly falls back to
 a guessable value</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7489,8 +7169,7 @@ abort, whereas a caller that receives a weak key has no way to know it
 must. The fix is to return the error instead of the clock reading, and
 to add a test that forces the randomness source to fail and confirms no
 key is produced.</p>
-<h2
-id="hxc-222-downloaded-third-party-libraries-are-committed-into-the-agent-repository-104-megabytes-of-them">HXC-222
+<h2 id="hxc-222-downloaded-third-party-libraries-are-committed-into-the-agent-repository-104-megabytes-of-them">HXC-222
 — Downloaded third-party libraries are committed into the agent
 repository, 104 megabytes of them</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7521,8 +7200,7 @@ being added. The fix is to stop tracking both folders, add them to the
 ignore file, and confirm the documented install step still reproduces
 them exactly on a fresh checkout — the last part matters, because
 removing them is only safe if the recreation path is proven to work.</p>
-<h2
-id="hxc-223-the-safety-check-that-stops-half-finished-experiments-also-blocks-the-proof-they-were-finished">HXC-223
+<h2 id="hxc-223-the-safety-check-that-stops-half-finished-experiments-also-blocks-the-proof-they-were-finished">HXC-223
 — The safety check that stops half-finished experiments also blocks the
 proof they were finished</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7557,8 +7235,7 @@ markers in live source are a real hazard. The check must keep refusing
 the second while permitting the first, and must be tested against both
 so it cannot drift back to refusing everything or accepting
 everything.</p>
-<h2
-id="hxc-228-the-agent-service-crashes-on-every-cold-boot-because-it-starts-before-one-of-its-dependencies">HXC-228
+<h2 id="hxc-228-the-agent-service-crashes-on-every-cold-boot-because-it-starts-before-one-of-its-dependencies">HXC-228
 — The agent service crashes on every cold boot because it starts before
 one of its dependencies</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7584,8 +7261,7 @@ when in fact they are already starting and simply have not finished. The
 fix is to declare the ordering so the supervisor waits, and to make the
 dependency check tolerate a component that is still coming up rather
 than treating slow startup as permanent absence.</p>
-<h2
-id="hxc-237-the-workable-items-checker-everyone-runs-is-an-old-copy-that-silently-skips-the-closure-evidence-check">HXC-237
+<h2 id="hxc-237-the-workable-items-checker-everyone-runs-is-an-old-copy-that-silently-skips-the-closure-evidence-check">HXC-237
 — The workable-items checker everyone runs is an old copy that silently
 skips the closure-evidence check</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7610,8 +7286,7 @@ appears to. It also means the ticket that introduced the check cannot
 honestly be called done. The fix is to rebuild the program file, publish
 it, and add a check that fails when the built copy is older than its
 source so this cannot recur silently.</p>
-<h2
-id="hxc-218-container-health-checks-still-fail-for-ipv6-addresses-so-starting-the-scan-service-breaks">HXC-218
+<h2 id="hxc-218-container-health-checks-still-fail-for-ipv6-addresses-so-starting-the-scan-service-breaks">HXC-218
 — Container health checks still fail for IPv6 addresses, so starting the
 scan service breaks</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7636,8 +7311,7 @@ properly is that operators running on IPv6 networks can start and
 monitor the scanner normally instead of hitting a confusing dead end.
 Success means the start command completes its health checks on an IPv6
 host exactly as it does on an IPv4 one.</p>
-<h2
-id="hxc-187-two-different-pieces-of-code-claim-the-same-identity-so-which-one-gets-used-depends-on-where-the-build-starts">HXC-187
+<h2 id="hxc-187-two-different-pieces-of-code-claim-the-same-identity-so-which-one-gets-used-depends-on-where-the-build-starts">HXC-187
 — Two different pieces of code claim the same identity, so which one
 gets used depends on where the build starts</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7658,8 +7332,7 @@ two builds of the same source with no error to explain it. The fix is to
 give the top-level module a distinct identity so the collision cannot
 occur. Removing the placeholder is a separate decision and is
 deliberately not bundled with this.</p>
-<h2
-id="hxc-220-the-module-name-check-has-no-permanent-test-so-the-fixed-false-alarm-could-return-unnoticed">HXC-220
+<h2 id="hxc-220-the-module-name-check-has-no-permanent-test-so-the-fixed-false-alarm-could-return-unnoticed">HXC-220
 — The module-name check has no permanent test, so the fixed false alarm
 could return unnoticed</h2>
 <p><strong>Status:</strong> Completed (→ Fixed.md)
@@ -7683,8 +7356,7 @@ benefit are engineers relying on this diagnostic to tell them the true
 state of the project. Success means a registered test exists that passes
 on the current corrected code and fails if the loose name matching is
 ever reintroduced.</p>
-<h2
-id="hxc-244-the-gateways-health-check-reported-everything-healthy-without-ever-checking-anything">HXC-244
+<h2 id="hxc-244-the-gateways-health-check-reported-everything-healthy-without-ever-checking-anything">HXC-244
 — The gateway’s health check reported everything healthy without ever
 checking anything</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7718,8 +7390,7 @@ names the four dependencies it checked and reports how long each check
 really took, and a standing guard fails whenever that list is empty
 again, so the endpoint can no longer claim a verdict it did not
 earn.</p>
-<h2
-id="hxc-199-a-check-for-a-just-fixed-problem-would-still-report-it-as-broken-because-it-matches-on-a-fragment">HXC-199
+<h2 id="hxc-199-a-check-for-a-just-fixed-problem-would-still-report-it-as-broken-because-it-matches-on-a-fragment">HXC-199
 — A check for a just-fixed problem would still report it as broken,
 because it matches on a fragment</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7738,8 +7409,7 @@ believing it had never worked. The project handbook also still describes
 the old arrangement in three places. The fix is to make the check match
 the whole name rather than a fragment, and to update the handbook so
 both agree with what the code actually does now.</p>
-<h2
-id="hxc-217-fifteen-closure-records-describe-their-proof-in-prose-instead-of-pointing-at-it">HXC-217
+<h2 id="hxc-217-fifteen-closure-records-describe-their-proof-in-prose-instead-of-pointing-at-it">HXC-217
 — Fifteen closure records describe their proof in prose instead of
 pointing at it</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7771,8 +7441,7 @@ about the wrong one. The work is to move the narrative into the record’s
 description where it belongs, put the actual location in the location
 field, and add a check that refuses a closure whose stated location does
 not resolve.</p>
-<h2
-id="hxc-249-the-script-that-declares-the-project-validated-reported-success-on-tests-that-never-ran">HXC-249
+<h2 id="hxc-249-the-script-that-declares-the-project-validated-reported-success-on-tests-that-never-ran">HXC-249
 — The script that declares the project validated reported success on
 tests that never ran</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7806,8 +7475,7 @@ acceptable excuse, and makes a run that executed zero tests fail
 outright. The expected outcome is that a green run from this script
 means the tests genuinely ran against the genuine server, and a run that
 validates nothing can no longer report success.</p>
-<h2
-id="hxc-253-three-regression-safety-checks-existed-in-the-codebase-and-nothing-ever-executed-them">HXC-253
+<h2 id="hxc-253-three-regression-safety-checks-existed-in-the-codebase-and-nothing-ever-executed-them">HXC-253
 — Three regression safety checks existed in the codebase and nothing
 ever executed them</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7838,8 +7506,7 @@ The honest limit worth recording is that the sweep is started by a
 person rather than automatically, so these checks now run whenever
 someone runs the sweep, which is a real improvement but is not the same
 as unattended enforcement.</p>
-<h2
-id="hxc-252-the-tracker-consistency-check-advises-the-reverse-sync-direction-which-would-delete-live-records">HXC-252
+<h2 id="hxc-252-the-tracker-consistency-check-advises-the-reverse-sync-direction-which-would-delete-live-records">HXC-252
 — The tracker consistency check advises the reverse sync direction,
 which would delete live records</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7868,8 +7535,7 @@ for a long time. The expected outcome is that the message names the
 correct direction - regenerate the documents from the database - so that
 following the tool’s own advice repairs the disagreement instead of
 causing data loss.</p>
-<h2
-id="hxc-229-the-gateway-service-runs-in-development-mode-when-started-as-a-production-service">HXC-229
+<h2 id="hxc-229-the-gateway-service-runs-in-development-mode-when-started-as-a-production-service">HXC-229
 — The gateway service runs in development mode when started as a
 production service</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7894,8 +7560,7 @@ the service unit is the natural place to set the former. The fix is to
 select release mode when the service runs under the supervisor, and to
 add a check that fails if a production unit ever starts in debug mode
 again.</p>
-<h2
-id="hxc-233-the-gateways-built-in-local-model-server-program-is-not-installed-on-the-machine-at-all">HXC-233
+<h2 id="hxc-233-the-gateways-built-in-local-model-server-program-is-not-installed-on-the-machine-at-all">HXC-233
 — The gateway’s built-in local model server program is not installed on
 the machine at all</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7918,8 +7583,7 @@ platform boot. Fixing this requires actually obtaining and installing
 the program, then making sure the service can find it; it also raises
 the question of whether the gateway should be downloading models at all
 when the program that would consume them is not present.</p>
-<h2
-id="hxc-270-helixqa-copies-failed-reply-bodies-verbatim-into-reports-and-errors-at-five-sites-one-of-them-the-sign-in-path">HXC-270
+<h2 id="hxc-270-helixqa-copies-failed-reply-bodies-verbatim-into-reports-and-errors-at-five-sites-one-of-them-the-sign-in-path">HXC-270
 — HelixQA copies failed reply bodies verbatim into reports and errors at
 five sites, one of them the sign-in path</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7962,8 +7626,7 @@ character; and a standing test asserts a marker placed in a failure body
 never appears in any finding or error at any of the five sites, proven
 real by a paired mutation that restores the echo and makes the test
 fail.</p>
-<h2
-id="hxc-250-generated-assistant-configs-send-users-to-the-wrong-service-so-46-of-48-assistants-get-a-not-found">HXC-250
+<h2 id="hxc-250-generated-assistant-configs-send-users-to-the-wrong-service-so-46-of-48-assistants-get-a-not-found">HXC-250
 — Generated assistant configs send users to the wrong service, so 46 of
 48 assistants get a not-found</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -7993,8 +7656,7 @@ names the address the agent runtime genuinely serves, that all
 forty-eight documented assistants are covered rather than two, and that
 a generated config works when the user follows the documented setup
 without editing anything by hand.</p>
-<h2
-id="hxc-269-model-verifier-silently-discards-the-configured-port-when-the-host-carries-a-query-fragment-or-path">HXC-269
+<h2 id="hxc-269-model-verifier-silently-discards-the-configured-port-when-the-host-carries-a-query-fragment-or-path">HXC-269
 — Model verifier silently discards the configured port when the host
 carries a query, fragment, or path</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -8031,8 +7693,7 @@ operator is told rather than left with a silently wrong address; and a
 standing test covers all three shapes plus the ordinary host and address
 cases, proven real by a paired mutation that removes the handling and
 makes the test fail.</p>
-<h2
-id="hxc-261-hxc-261-the-grpc-protocol-challenge-recorded-success-on-every-branch-and-probed-a-port-nobody-binds-certifying-grpc-healthy-without-ever-contacting-a-grpc-server">HXC-261
+<h2 id="hxc-261-hxc-261-the-grpc-protocol-challenge-recorded-success-on-every-branch-and-probed-a-port-nobody-binds-certifying-grpc-healthy-without-ever-contacting-a-grpc-server">HXC-261
 — HXC-261: the gRPC protocol challenge recorded success on every branch
 and probed a port nobody binds, certifying gRPC healthy without ever
 contacting a gRPC server</h2>
@@ -8080,8 +7741,7 @@ that same guard with RED_MODE=0 reports zero PASSED assertions against a
 proven-free port with every probe SKIPPED and SKIP-OK tagged, and the
 challenge still records a genuine PASSED assertion when a real gRPC
 server is listening on the registry port.</p>
-<h2
-id="hxc-271-the-agents-facade-family-of-remote-calls-can-never-succeed-on-any-host-because-its-server-was-never-given-the-provider-registry">HXC-271
+<h2 id="hxc-271-the-agents-facade-family-of-remote-calls-can-never-succeed-on-any-host-because-its-server-was-never-given-the-provider-registry">HXC-271
 — The agent’s facade family of remote calls can never succeed on any
 host because its server was never given the provider registry</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -8117,8 +7777,7 @@ naming its replacement; a test drives each of the three calls end to end
 against a real configured provider and asserts a genuine response rather
 than an absence of error; and a paired mutation that removes the
 registry wiring makes that test fail.</p>
-<h2
-id="hxc-278-the-sign-in-helper-still-copies-reply-field-names-into-reports-unbounded-on-the-one-route-two-earlier-fixes-did-not-cover">HXC-278
+<h2 id="hxc-278-the-sign-in-helper-still-copies-reply-field-names-into-reports-unbounded-on-the-one-route-two-earlier-fixes-did-not-cover">HXC-278
 — The sign-in helper still copies reply field names into reports,
 unbounded, on the one route two earlier fixes did not cover</h2>
 <p><strong>Status:</strong> Fixed (→ Fixed.md) <strong>Type:</strong>
@@ -8162,8 +7821,7 @@ test proves both directions, that a marker planted as a field name never
 appears in any error, finding or log line, while an ordinary field list
 still does, each proven real by a paired mutation restoring the raw list
 and by one removing it entirely.</p>
-<h2
-id="hxc-225-one-vendored-helper-server-accounts-for-two-thirds-of-all-our-reported-vulnerabilities">HXC-225
+<h2 id="hxc-225-one-vendored-helper-server-accounts-for-two-thirds-of-all-our-reported-vulnerabilities">HXC-225
 — One vendored helper server accounts for two thirds of all our reported
 vulnerabilities</h2>
 <p><strong>Status:</strong> Obsolete (→ Fixed.md) <strong>Type:</strong>
@@ -8189,16 +7847,68 @@ upgrade its dependencies, or remove it — and record which was chosen and
 why. The decision matters more than the individual advisories, because
 upgrading dependencies inside a component we do not need would be effort
 spent on nothing.</p>
-<section id="footnotes" class="footnotes footnotes-end-of-document"
-role="doc-endnotes">
+<h2 id="hxc-172-three-security-warnings-in-a-small-plugin-service-we-wrote-and-actually-deploy-with-no-reachability-evidence-either-way">HXC-172
+— Three security warnings in a small plugin service we wrote and
+actually deploy, with no reachability evidence either way</h2>
+<p><strong>Status:</strong> Completed (→ Fixed.md)
+<strong>Type:</strong> Task <strong>Operator-Block-Details:</strong>
+WHAT: Both ws advisories (GHSA-96hv-2xvq-fx4p high, GHSA-58qx-3vcg-4xpx
+medium) are CLOSED - ws 8.19.0 -&gt; 8.21.1, package.json floor raised
+^8.14.0 -&gt; ^8.21.1. The third, <span class="citation" data-cites="modelcontextprotocol/sdk">@modelcontextprotocol/sdk</span>
+GHSA-w48q-cv73-mx4w (high, DNS rebinding protection off by default), is
+NOT closed and needs an owner decision. WHY: Reachability was
+established (Ground B): neither ws nor the MCP SDK is EVER imported -
+the shipped dist/ requires only ./tools and ./transport. So the SDK
+vulnerability is installed but never loaded. The advisory fix is 1.24.0
+while we pin ^0.5.0, i.e. a MAJOR jump that a trial showed grows the
+dependency tree 19 -&gt; 98 packages / 3634 files, adding ~79 packages
+of new surface to the shipped image to patch code that is never
+executed, and churning ~3600 files of TRACKED node_modules. The
+protective setting was verified explicitly rather than assumed: it does
+not exist in our code path at all, because runSSE() hand-rolls
+http.createServer instead of using the SDK transport, and sets
+Access-Control-Allow-Origin * with no Origin or Host validation.
+Upgrading the SDK would therefore close the alert while changing nothing
+about our real exposure. Option B (remove) is the technically correct
+fix but is a component removal requiring operator confirmation under
+11.4.122 and a git-history investigation under 11.4.124, which an agent
+may not do unilaterally. UNBLOCK: [A] UPGRADE the SDK to ^1.24.0+ -
+closes the alert, zero API risk (nothing imports it, tsc verified), but
+adds ~79 packages to the shipped image and a ~3600-file
+tracked-node_modules diff, for no change in real exposure. [B] REMOVE
+<span class="citation" data-cites="modelcontextprotocol/sdk">@modelcontextprotocol/sdk</span>
+(and arguably ws) as unused dependencies - the correct fix, eliminates
+the advisory permanently and shrinks the image, but is a 11.4.122
+component removal needing explicit operator approval plus a 11.4.124
+dead-code git-history investigation. [C] ACCEPT and suppress with a
+documented rationale - cheapest, exposure genuinely unchanged since the
+package is never loaded, but the alert stays on the board as audit
+noise. WHO: Operator <strong>Severity:</strong> High</p>
+<p>A small companion service we wrote ourselves is packaged into a
+container and started as part of the standard deployment, and it carries
+three known security warnings in its supporting packages, two of them
+rated high. Unlike the great bulk of the reported warnings, these have
+no mitigating evidence in either direction: we cannot say the code is
+unshipped, because it demonstrably ships, and no analysis has been run
+to establish whether the affected functionality is ever exercised. This
+matters because it is the one place in the whole review where something
+we genuinely run carries unassessed risk, which makes it far more
+deserving of attention than its small count suggests. One of the three
+is not really an upgrade problem at all: it concerns a protective
+setting that is switched off unless explicitly enabled, so updating the
+package without also turning the protection on would leave the exposure
+in place while appearing to resolve it. Users of any deployment running
+this service benefit. The expected outcome is a reachability assessment
+of the three warnings, the two straightforward package updates applied,
+the protective setting explicitly verified as enabled in our
+configuration rather than assumed, and the service rebuilt and confirmed
+working.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>A-Za-z0-9_-<a href="#fnref1" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>A-Za-z0-9_-<a href="#fnref2" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>a-zA-Z0-9_-<a href="#fnref3" class="footnote-back"
-role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>A-Za-z0-9_-<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>A-Za-z0-9_-<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>a-zA-Z0-9_-<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 </body>

@@ -9,10 +9,10 @@ Closed workable items (current_location = Fixed), regenerated from the SQLite si
 | Bug | Fixed (→ Fixed.md) | 221 |
 | Bug | Obsolete (→ Fixed.md) | 4 |
 | Feature | Implemented (→ Fixed.md) | 95 |
-| Task | Completed (→ Fixed.md) | 84 |
+| Task | Completed (→ Fixed.md) | 85 |
 | Task | Fixed (→ Fixed.md) | 3 |
 | Task | Obsolete (→ Fixed.md) | 1 |
-| **TOTAL** | | **408** |
+| **TOTAL** | | **409** |
 
 ## Items
 
@@ -426,3 +426,4 @@ Closed workable items (current_location = Fixed), regenerated from the SQLite si
 | 406 | — | Completed (→ Fixed.md) | Task | — | VEN-001 — VEN-001 (ex-ISSUE-001): VisionEngine `helix-gitlab` URL fix (was misconfigured, not missing) |
 | 407 | — | Fixed (→ Fixed.md) | Bug | — | VEN-002 — VEN-002 (ex-ISSUE-002): VisionEngine `vasic-digital-github` fork lineage divergent at SHA 93c830a |
 | 408 | — | Fixed (→ Fixed.md) | Bug | — | VEN-002#1 — VEN-002 (ex-ISSUE-002): VisionEngine `vasic-digital-github` fork lineage divergent at SHA 93c830a |
+| 409 | High | Completed (→ Fixed.md) | Task | — | HXC-172 — three advisories in a self-written companion service closed by an SDK upgrade already merged; npm audit 0, confirmed against a golden-bad control; NOT-REACHABLE at source and shipped-artifact layers |

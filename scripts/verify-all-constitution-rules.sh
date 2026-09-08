@@ -65,6 +65,8 @@
 #   G31 §11.4.135 HXC-233 guard      — completion path returns a REAL generation (live e2e)
 #   G32 §11.4.135 HXC-244 guard      — health endpoint names the components it checked
 #   G34 §11.4.111 endpoint agreement — configured Helix endpoints agree across sources
+#   G35 CONST-042 HXC-168 guard     — no tracked file hands over a DB credential; DB ports bind loopback
+#   G36 HXC-168 regression guard  — the standing RED_MODE=0 polarity guard for the HXC-168 exposure class
 #                                      AND reach the service they name (live, 3-state)
 #
 # REGISTRATION DRIFT IS NOW SELF-REPORTING (review R4, 2026-08-10).
@@ -1378,6 +1380,80 @@ if want_gate G34; then
     else
         gate_fail G34 "a configured Helix endpoint has drifted — records contradict each other, or an endpoint does not reach the service it names while that service answers elsewhere (see /tmp/g34-endpoint-agreement.out)" \
             "$(grep 'FAIL:' /tmp/g34-endpoint-agreement.out | head -4)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G35 — HXC-168 no hardcoded DB credential + loopback DB bind
+#       (CONST-042 / Article XII §12.1 / §11.4.135)
+#
+# WHY THIS EXISTS
+# ---------------
+# scripts/gates/no_hardcoded_db_credential_gate.sh has existed since 11861996 and
+# was invoked by NOTHING. Grepping the tree on 2026-09-08 found it referenced only
+# by its own source, an Issues entry describing it, and one Go test — no sweep, no
+# hook, no Makefile target. A guard nobody runs is a guard that cannot catch a
+# regression, which is the §11.4.226 result restated: it is the EVIDENCE CLASS at
+# the seam that predicts whether a fix holds, and an unwired gate produces none.
+#
+# The gate itself is falsifiable in both directions — `--self-test` runs eight
+# paired §1.1 mutations, including one that plants a copy-pasteable credential line
+# in a .md (must FAIL) alongside incident prose naming the same value (must PASS),
+# and one that plants a wildcard port publish (must FAIL) beside a loopback publish
+# (must PASS). Wiring it here is what makes that falsifiability load-bearing.
+#
+# HONEST BOUNDARY (§11.4.6): green here means no tracked file HANDS OVER a
+# historical credential in a copy-pasteable line and every scoped database port
+# binds loopback. It does NOT mean the credential is safe. The value is in git
+# history on four mirrors and REMAINS VALID until it is rotated at the database;
+# no gate can withdraw it.
+# ---------------------------------------------------------------------------
+if want_gate G35; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G35 — HXC-168 no hardcoded DB credential + loopback DB bind (CONST-042)"
+    if bash "$ROOT/scripts/gates/no_hardcoded_db_credential_gate.sh" >/tmp/g35-dbcred.out 2>&1; then
+        gate_pass G35 "no tracked file hands over a historical DB credential and every scoped DB port publish binds 127.0.0.1 — NOTE: this does not rotate the published value"
+    else
+        gate_fail G35 "a database credential literal is back in tracked config/source, or a database port is published on the wildcard address (see /tmp/g35-dbcred.out)" \
+            "$(grep -E '^(FAIL|  )' /tmp/g35-dbcred.out | head -6)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G36 — HXC-168 standing regression guard (§11.4.135 / §11.4.115)
+#
+# WHY THIS EXISTS
+# ---------------
+# scripts/tests/hxc168_db_exposure_red_test.sh was authored as the §11.4.115
+# polarity test for HXC-168 and, like the gate above before G35, was invoked by
+# NOTHING — a tree-wide grep on 2026-09-08 returned zero references outside its
+# own source. §11.4.135 requires a closed defect's guard to be REGISTERED in the
+# standing suite, not merely to exist; an unregistered guard cannot catch the
+# recurrence it was written for.
+#
+# It is NOT a duplicate of G35. G35 checks tracked SOURCE. This runs the same
+# class against the RUNNING artifact too (§11.4.108 layer 3), which is how the
+# two disagreed at review time: G35 was green while a wildcard listener was live.
+#
+# HONEST BOUNDARY (§11.4.6): the runtime leg distinguishes three states, not
+# two. A listener that is non-loopback while its SOURCE already binds 127.0.0.1
+# is reported OPERATOR-BLOCKED and does not fail the gate — the running
+# container predates the fix and podman cannot rebind a published port in place,
+# so it closes only on an operator-gated recreate. Calling that a regression
+# would be false (§11.4.6); passing it silently would be the false-null this
+# test exists to catch (§11.4.21). If the source does NOT declare loopback, it
+# is a finding and the gate FAILS — verified by a paired §1.1 mutation that
+# reverts the source publish to the wildcard and turns the report from
+# OPERATOR-BLOCKED into two findings.
+# ---------------------------------------------------------------------------
+if want_gate G36; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G36 — HXC-168 standing regression guard (RED_MODE=0)"
+    if RED_MODE=0 bash "$ROOT/scripts/tests/hxc168_db_exposure_red_test.sh" >/tmp/g36-hxc168.out 2>&1; then
+        gate_pass G36 "the HXC-168 exposure class has not regressed in source or at runtime — see /tmp/g36-hxc168.out for any OPERATOR-BLOCKED items, which are source-fixed but not yet live and are NOT certified closed"
+    else
+        gate_fail G36 "the HXC-168 exposure class has regressed (see /tmp/g36-hxc168.out)" \
+            "$(grep -E 'FOUND|GREEN FAIL' /tmp/g36-hxc168.out | head -6)"
     fi
 fi
 

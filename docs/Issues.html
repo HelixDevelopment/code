@@ -6,174 +6,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Issues</title>
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-  </style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">Issues</h1>
+</header>
 <h1 id="helixcode-open-issues-tracker">HelixCode — Open Issues
 Tracker</h1>
 <blockquote>
@@ -459,8 +334,7 @@ use.</p>
 </tbody>
 </table>
 <hr />
-<h2
-id="hxc-159-fully-incorporate-the-helixskills-system-into-helixcode-helixagent-all-power-features-speckit-driven">HXC-159
+<h2 id="hxc-159-fully-incorporate-the-helixskills-system-into-helixcode-helixagent-all-power-features-speckit-driven">HXC-159
 — Fully incorporate the HelixSkills System into HelixCode + HelixAgent
 (all power-features, SpecKit-driven)</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -676,8 +550,7 @@ SuperSpec and SuperB are THIRD-PARTY, non-own-org dependencies (§11.4.74
 vendor path) — their health, maintenance status and supply-chain
 exposure must be assessed, not assumed from the design doc referencing
 them.</p>
-<h2
-id="hxc-164-infrastructure-startup-script-drives-containers-directly-instead-of-through-the-shared-containers-component">HXC-164
+<h2 id="hxc-164-infrastructure-startup-script-drives-containers-directly-instead-of-through-the-shared-containers-component">HXC-164
 — Infrastructure startup script drives containers directly instead of
 through the shared containers component</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -701,8 +574,7 @@ is not an obligation anyone will act on, which is why it is being
 tracked here. Closing this means routing the startup through the shared
 component and removing the remaining error-hiding so a failed start is
 visible.</p>
-<h2
-id="hxc-166-the-agent-component-has-204-known-security-advisories-against-its-dependencies-including-5-critical">HXC-166
+<h2 id="hxc-166-the-agent-component-has-204-known-security-advisories-against-its-dependencies-including-5-critical">HXC-166
 — The agent component has 204 known security advisories against its
 dependencies, including 5 critical</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -736,8 +608,7 @@ separate the ones we genuinely reach from the ones we do not, and
 upgrade or replace the dependencies behind the critical and high
 findings first. Until that triage is done we cannot honestly claim the
 component is free of known vulnerabilities.</p>
-<h2
-id="hxc-168-a-database-password-is-written-directly-into-published-setup-files-and-has-never-been-changed">HXC-168
+<h2 id="hxc-168-a-database-password-is-written-directly-into-published-setup-files-and-has-never-been-changed">HXC-168
 — A database password is written directly into published setup files and
 has never been changed</h2>
 <p><strong>Status:</strong> Operator-blocked <strong>Type:</strong> Bug
@@ -817,8 +688,7 @@ changed everywhere it is used, and the setup files must then read it
 from a private configuration source rather than containing it. Until
 both halves are done the project cannot honestly claim its credentials
 are protected.</p>
-<h2
-id="hxc-171-a-copied-in-third-party-web-app-carries-most-of-our-reported-security-warnings-but-cannot-even-be-built">HXC-171
+<h2 id="hxc-171-a-copied-in-third-party-web-app-carries-most-of-our-reported-security-warnings-but-cannot-even-be-built">HXC-171
 — A copied-in third-party web app carries most of our reported security
 warnings but cannot even be built</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -853,67 +723,7 @@ identifies both tickets as tracking the same vendored copy of
 idosal/git-mcp. The operator has approved removal of this vendored copy
 per §11.4.122 (approval granted 2026-09-02); this item is no longer
 awaiting an operator decision.</p>
-<h2
-id="hxc-172-three-security-warnings-in-a-small-plugin-service-we-wrote-and-actually-deploy-with-no-reachability-evidence-either-way">HXC-172
-— Three security warnings in a small plugin service we wrote and
-actually deploy, with no reachability evidence either way</h2>
-<p><strong>Status:</strong> Operator-blocked <strong>Type:</strong> Task
-<strong>Operator-Block-Details:</strong> WHAT: Both ws advisories
-(GHSA-96hv-2xvq-fx4p high, GHSA-58qx-3vcg-4xpx medium) are CLOSED - ws
-8.19.0 -&gt; 8.21.1, package.json floor raised ^8.14.0 -&gt; ^8.21.1.
-The third, <span class="citation"
-data-cites="modelcontextprotocol/sdk">@modelcontextprotocol/sdk</span>
-GHSA-w48q-cv73-mx4w (high, DNS rebinding protection off by default), is
-NOT closed and needs an owner decision. WHY: Reachability was
-established (Ground B): neither ws nor the MCP SDK is EVER imported -
-the shipped dist/ requires only ./tools and ./transport. So the SDK
-vulnerability is installed but never loaded. The advisory fix is 1.24.0
-while we pin ^0.5.0, i.e. a MAJOR jump that a trial showed grows the
-dependency tree 19 -&gt; 98 packages / 3634 files, adding ~79 packages
-of new surface to the shipped image to patch code that is never
-executed, and churning ~3600 files of TRACKED node_modules. The
-protective setting was verified explicitly rather than assumed: it does
-not exist in our code path at all, because runSSE() hand-rolls
-http.createServer instead of using the SDK transport, and sets
-Access-Control-Allow-Origin * with no Origin or Host validation.
-Upgrading the SDK would therefore close the alert while changing nothing
-about our real exposure. Option B (remove) is the technically correct
-fix but is a component removal requiring operator confirmation under
-11.4.122 and a git-history investigation under 11.4.124, which an agent
-may not do unilaterally. UNBLOCK: [A] UPGRADE the SDK to ^1.24.0+ -
-closes the alert, zero API risk (nothing imports it, tsc verified), but
-adds ~79 packages to the shipped image and a ~3600-file
-tracked-node_modules diff, for no change in real exposure. [B] REMOVE
-<span class="citation"
-data-cites="modelcontextprotocol/sdk">@modelcontextprotocol/sdk</span>
-(and arguably ws) as unused dependencies - the correct fix, eliminates
-the advisory permanently and shrinks the image, but is a 11.4.122
-component removal needing explicit operator approval plus a 11.4.124
-dead-code git-history investigation. [C] ACCEPT and suppress with a
-documented rationale - cheapest, exposure genuinely unchanged since the
-package is never loaded, but the alert stays on the board as audit
-noise. WHO: Operator <strong>Severity:</strong> High</p>
-<p>A small companion service we wrote ourselves is packaged into a
-container and started as part of the standard deployment, and it carries
-three known security warnings in its supporting packages, two of them
-rated high. Unlike the great bulk of the reported warnings, these have
-no mitigating evidence in either direction: we cannot say the code is
-unshipped, because it demonstrably ships, and no analysis has been run
-to establish whether the affected functionality is ever exercised. This
-matters because it is the one place in the whole review where something
-we genuinely run carries unassessed risk, which makes it far more
-deserving of attention than its small count suggests. One of the three
-is not really an upgrade problem at all: it concerns a protective
-setting that is switched off unless explicitly enabled, so updating the
-package without also turning the protection on would leave the exposure
-in place while appearing to resolve it. Users of any deployment running
-this service benefit. The expected outcome is a reachability assessment
-of the three warnings, the two straightforward package updates applied,
-the protective setting explicitly verified as enabled in our
-configuration rather than assumed, and the service rebuilt and confirmed
-working.</p>
-<h2
-id="hxc-175-an-unreachable-safety-fallback-in-the-model-cache-could-silently-serve-stale-data-forever-if-edited">HXC-175
+<h2 id="hxc-175-an-unreachable-safety-fallback-in-the-model-cache-could-silently-serve-stale-data-forever-if-edited">HXC-175
 — An unreachable safety fallback in the model cache could silently serve
 stale data forever if edited</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -932,8 +742,7 @@ product would keep serving outdated model information indefinitely with
 no error and no failing test. The choice is to either add a small test
 that pins the fallback’s behaviour, or remove the branch entirely and
 document that there is one supported way to construct the cache.</p>
-<h2
-id="hxc-178-the-api-key-check-compares-secrets-in-a-way-that-can-leak-them-one-character-at-a-time">HXC-178
+<h2 id="hxc-178-the-api-key-check-compares-secrets-in-a-way-that-can-leak-them-one-character-at-a-time">HXC-178
 — The API key check compares secrets in a way that can leak them one
 character at a time</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -950,8 +759,7 @@ but it is a genuine weakness and the remedy is standard and cheap: use
 the comparison function designed for secrets, which always takes the
 same amount of time regardless of where the difference falls. This is
 pre-existing and was not introduced by recent work.</p>
-<h2
-id="hxc-179-a-browser-origin-check-safely-allows-requests-with-no-origin-but-only-because-a-separate-login-check-is-wired-in">HXC-179
+<h2 id="hxc-179-a-browser-origin-check-safely-allows-requests-with-no-origin-but-only-because-a-separate-login-check-is-wired-in">HXC-179
 — A browser-origin check safely allows requests with no origin, but only
 because a separate login check is wired in</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -970,8 +778,7 @@ completely ungated, and no existing test would notice. The work here is
 to add a check that specifically confirms the login step is still wired
 ahead of the connection upgrade, so the dependency is protected rather
 than merely true by luck.</p>
-<h2
-id="hxc-180-three-historical-commits-cannot-be-built-and-this-must-be-documented-because-it-can-never-be-repaired">HXC-180
+<h2 id="hxc-180-three-historical-commits-cannot-be-built-and-this-must-be-documented-because-it-can-never-be-repaired">HXC-180
 — Three historical commits cannot be built, and this must be documented
 because it can never be repaired</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -989,8 +796,7 @@ conclude the fault lies there. The work here is simply to record the
 three affected points and their shared cause somewhere a person doing
 that search will find it, so the failure is recognised immediately as
 known and irrelevant rather than investigated from scratch.</p>
-<h2
-id="hxc-181-amend-the-constitution-canons-superseded-summary-generator-naming-and-re-cascade-to-the-129-owned-submodule-copies">HXC-181
+<h2 id="hxc-181-amend-the-constitution-canons-superseded-summary-generator-naming-and-re-cascade-to-the-129-owned-submodule-copies">HXC-181
 — Amend the constitution canon’s superseded summary-generator naming and
 re-cascade to the 129 owned-submodule copies</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1026,8 +832,7 @@ wording, the change is pushed to every constitution upstream, all 129
 submodule copies are re-cascaded, submodule pointers are bumped, and the
 cascade verifier plus CM-SUPERSEDED-GENERATOR-NAMING both pass with
 scope widened to the fleet.</p>
-<h2
-id="hxc-188-the-project-handbook-describes-a-folder-layout-the-project-no-longer-has">HXC-188
+<h2 id="hxc-188-the-project-handbook-describes-a-folder-layout-the-project-no-longer-has">HXC-188
 — The project handbook describes a folder layout the project no longer
 has</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1043,8 +848,7 @@ also undermines trust in the rest of the document, which is otherwise
 the authoritative description of how to work here. The correction is
 small and purely descriptive: measure the actual layout and update the
 section to match, then keep the two in step as the layout changes.</p>
-<h2
-id="hxc-189-a-dependency-is-pinned-to-an-old-project-name-that-only-works-because-of-a-redirect">HXC-189
+<h2 id="hxc-189-a-dependency-is-pinned-to-an-old-project-name-that-only-works-because-of-a-redirect">HXC-189
 — A dependency is pinned to an old project name that only works because
 of a redirect</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1060,8 +864,7 @@ fails with an error that points at a name nobody recognises, which is
 unusually confusing to diagnose. The fix is to record the project’s
 current canonical name so the reference stands on its own rather than
 depending on a redirect continuing to exist.</p>
-<h2
-id="hxc-190-commands-stopped-by-a-timeout-are-reported-as-though-they-were-not">HXC-190
+<h2 id="hxc-190-commands-stopped-by-a-timeout-are-reported-as-though-they-were-not">HXC-190
 — Commands stopped by a timeout are reported as though they were
 not</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1079,8 +882,7 @@ failure and no indication that a time limit was the cause, which sends
 them looking in the wrong place. A sibling code path that runs commands
 the ordinary way sets the flag correctly by doing it inside the timer’s
 own callback, so a working pattern already exists to copy.</p>
-<h2
-id="hxc-191-cancelling-a-command-cannot-actually-stop-it-when-the-protective-sandbox-is-switched-off">HXC-191
+<h2 id="hxc-191-cancelling-a-command-cannot-actually-stop-it-when-the-protective-sandbox-is-switched-off">HXC-191
 — Cancelling a command cannot actually stop it when the protective
 sandbox is switched off</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1098,8 +900,7 @@ only configuration that disables the sandbox is used by a single test,
 so no shipped path reaches it. It is worth fixing because the failure is
 completely silent and would appear only in an unusual configuration,
 which is the hardest kind of problem to diagnose later.</p>
-<h2
-id="hxc-192-a-single-over-long-line-of-output-permanently-stops-reading-which-can-freeze-the-command-producing-it">HXC-192
+<h2 id="hxc-192-a-single-over-long-line-of-output-permanently-stops-reading-which-can-freeze-the-command-producing-it">HXC-192
 — A single over-long line of output permanently stops reading, which can
 freeze the command producing it</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1116,8 +917,7 @@ naturally, can wedge the command that produced it. The fix is to keep
 draining and discarding the remainder of an over-long line rather than
 abandoning the stream, so the producing command is never starved of a
 reader.</p>
-<h2
-id="hxc-196-the-project-handbook-names-a-component-version-the-code-no-longer-uses">HXC-196
+<h2 id="hxc-196-the-project-handbook-names-a-component-version-the-code-no-longer-uses">HXC-196
 — The project handbook names a component version the code no longer
 uses</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1136,8 +936,7 @@ makes the whole document less trustworthy. The fix is to update the
 recorded version to what is actually in use, and to note that the
 security upgrade is the reason, so nobody later reverts it believing the
 handbook was correct.</p>
-<h2
-id="hxc-197-a-directory-tree-contains-a-stale-copy-of-itself-nested-several-levels-deep">HXC-197
+<h2 id="hxc-197-a-directory-tree-contains-a-stale-copy-of-itself-nested-several-levels-deep">HXC-197
 — A directory tree contains a stale copy of itself nested several levels
 deep</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1155,8 +954,7 @@ accidentally-nested duplicates cannot be enabled while this one exists,
 because it would report a failure on every run. Removing it requires
 first confirming through the project history that the nested copy is
 genuinely the leftover and not the original.</p>
-<h2
-id="hxc-200-a-leak-detector-recognises-only-one-of-the-two-shapes-the-leak-can-take">HXC-200
+<h2 id="hxc-200-a-leak-detector-recognises-only-one-of-the-two-shapes-the-leak-can-take">HXC-200
 — A leak detector recognises only one of the two shapes the leak can
 take</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1175,8 +973,7 @@ future change that keeps the newer structure while breaking its escape
 route would slip past. Widening it to recognise both descriptions is a
 small change and restores the guard to covering the whole defect rather
 than half of it.</p>
-<h2
-id="hxc-204-two-more-endurance-tests-report-failure-whenever-the-machine-is-busy">HXC-204
+<h2 id="hxc-204-two-more-endurance-tests-report-failure-whenever-the-machine-is-busy">HXC-204
 — Two more endurance tests report failure whenever the machine is
 busy</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1198,8 +995,7 @@ by making an inconclusive run report as skipped rather than failed,
 while keeping its real checks strict; the same treatment fits here. Both
 should wait for the condition they care about rather than assuming a
 fixed time is enough.</p>
-<h2
-id="hxc-206-a-provider-stopped-and-restarted-during-a-health-probe-can-have-a-stale-verdict-applied">HXC-206
+<h2 id="hxc-206-a-provider-stopped-and-restarted-during-a-health-probe-can-have-a-stale-verdict-applied">HXC-206
 — A provider stopped and restarted during a health probe can have a
 stale verdict applied</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1219,8 +1015,7 @@ than expensive: a hidden counter incremented on each state change is
 invisible to the outside world and requires no change to any published
 structure. An earlier note describing it as a published-interface change
 was wrong and has been retracted.</p>
-<h2
-id="hxc-207-every-model-manager-shares-one-settings-map-by-reference-so-a-future-write-would-corrupt-all-of-them">HXC-207
+<h2 id="hxc-207-every-model-manager-shares-one-settings-map-by-reference-so-a-future-write-would-corrupt-all-of-them">HXC-207
 — Every model manager shares one settings map by reference, so a future
 write would corrupt all of them</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1238,8 +1033,7 @@ properly-locked write to a provider’s settings, it will silently alter
 every other manager’s view as well, and the locking will look correct
 while failing. Copying the settings when the record is created removes
 the hazard permanently and costs nothing.</p>
-<h2
-id="hxc-208-two-mock-services-are-wired-into-e2e-compose-stacks-that-cannot-build-them">HXC-208
+<h2 id="hxc-208-two-mock-services-are-wired-into-e2e-compose-stacks-that-cannot-build-them">HXC-208
 — Two mock services are wired into e2e compose stacks that cannot build
 them</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1265,8 +1059,7 @@ discipline exists to catch. The work is to add the missing Dockerfiles,
 or to remove the build entries if these services are genuinely never
 meant to run containerised, and then to prove the choice by building the
 stack.</p>
-<h2
-id="hxc-216-thirty-five-historical-evidence-folders-hold-runs-that-were-never-saved-to-the-repository">HXC-216
+<h2 id="hxc-216-thirty-five-historical-evidence-folders-hold-runs-that-were-never-saved-to-the-repository">HXC-216
 — Thirty-five historical evidence folders hold runs that were never
 saved to the repository</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1290,8 +1083,7 @@ work is to review the thirty-five, keep what genuinely substantiates a
 closed item, trim or summarise the two very large ones rather than
 storing them whole, and record explicitly which ones are being let go
 and why, so the gap is visible rather than silent.</p>
-<h2
-id="hxc-219-evidence-gate-handbook-never-explained-the-new-citation-rule-and-its-exported-copies-are-stale">HXC-219
+<h2 id="hxc-219-evidence-gate-handbook-never-explained-the-new-citation-rule-and-its-exported-copies-are-stale">HXC-219
 — Evidence-gate handbook never explained the new citation rule, and its
 exported copies are stale</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1314,8 +1106,7 @@ who benefit are contributors recording evidence and reviewers reading
 it, who currently have no accurate written description of the rule being
 enforced. Success means someone can follow the written guide and produce
 evidence that passes the gate on the first attempt.</p>
-<h2
-id="hxc-224-closure-evidence-pointers-are-unchecked-free-text-so-proof-of-completed-work-silently-becomes-unreachable">HXC-224
+<h2 id="hxc-224-closure-evidence-pointers-are-unchecked-free-text-so-proof-of-completed-work-silently-becomes-unreachable">HXC-224
 — Closure-evidence pointers are unchecked free text, so proof of
 completed work silently becomes unreachable</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1350,8 +1141,8 @@ worse than no claim at all.</p>
 every one:</p>
 <ul>
 <li><strong>4 rows</strong> (HXC-107, HXC-108 x2, HXC-112) were
-<code>event_type='Updated'</code>,
-<code>reason='operator-blocked'</code> <strong>progress notes, not
+<code>event_type=&#39;Updated&#39;</code>,
+<code>reason=&#39;operator-blocked&#39;</code> <strong>progress notes, not
 closures</strong>. Their real closure events resolve cleanly. These were
 false positives of the audit’s own population query — a guard that
 refuses a valid state (§11.4.201(1)).</li>
@@ -1406,11 +1197,10 @@ report the same figures, and add a periodic check that compares the two
 so a future divergence is noticed rather than trusted. Until that is
 done, any statement about this component’s vulnerability status must
 name which mirror it came from.</p>
-<h2
-id="hxc-227-a-working-access-key-for-an-external-service-is-published-in-a-design-document">HXC-227
+<h2 id="hxc-227-a-working-access-key-for-an-external-service-is-published-in-a-design-document">HXC-227
 — A working access key for an external service is published in a design
 document</h2>
-<p><strong>Status:</strong> Operator-blocked <strong>Type:</strong> Bug
+<p><strong>Status:</strong> Reopened <strong>Type:</strong> Bug
 <strong>Operator-Block-Details:</strong> WHAT: A genuine external
 model-provider access key sits in a tracked design document’s API-keys
 section, published to all four mirrors for forty-eight days. The value
@@ -1453,8 +1243,7 @@ that happens the key must be assumed compromised. Once revoked, the
 document should be edited to reference the credentials file by name
 instead of quoting its contents, and a check added that refuses any
 commit introducing a value of this shape.</p>
-<h2
-id="hxc-231-helixllm-gateway-reports-itself-as-running-for-over-half-an-hour-while-refusing-all-connections">HXC-231
+<h2 id="hxc-231-helixllm-gateway-reports-itself-as-running-for-over-half-an-hour-while-refusing-all-connections">HXC-231
 — HelixLLM gateway reports itself as running for over half an hour while
 refusing all connections</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1474,8 +1263,7 @@ was abandoned. If that site were unreachable the gateway might never
 start listening at all. The fix is to start accepting connections first
 and download models in the background, and to report an honest not-ready
 state while the downloads are still in progress.</p>
-<h2
-id="hxc-232-two-database-tables-the-software-expects-are-missing-so-helixagent-logs-an-error-every-minute-forever">HXC-232
+<h2 id="hxc-232-two-database-tables-the-software-expects-are-missing-so-helixagent-logs-an-error-every-minute-forever">HXC-232
 — Two database tables the software expects are missing, so HelixAgent
 logs an error every minute forever</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1495,8 +1283,7 @@ locking feature these tables were meant to support is silently doing
 nothing at all. Fixing this needs someone who knows what these tables
 were intended to contain to write the setup script; the columns must not
 be guessed.</p>
-<h2
-id="hxc-234-helixagents-plug-in-tool-servers-fail-to-build-on-startup-and-never-become-available">HXC-234
+<h2 id="hxc-234-helixagents-plug-in-tool-servers-fail-to-build-on-startup-and-never-become-available">HXC-234
 — HelixAgent’s plug-in tool servers fail to build on startup and never
 become available</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1515,8 +1302,7 @@ where the build was attempted twice and failed both times after
 downloading and unpacking a large container image each time, which also
 makes every startup slower. The fix requires repairing the dependency
 installation inside those container build files.</p>
-<h2
-id="hxc-235-search-by-meaning-quietly-falls-back-to-a-method-that-cannot-understand-meaning">HXC-235
+<h2 id="hxc-235-search-by-meaning-quietly-falls-back-to-a-method-that-cannot-understand-meaning">HXC-235
 — Search-by-meaning quietly falls back to a method that cannot
 understand meaning</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1535,8 +1321,7 @@ during a full platform boot. Resolving this means pointing the relevant
 configuration setting at a genuine embedding provider, and deciding
 whether returning meaningless results silently is acceptable behaviour
 or whether the feature should refuse to answer instead.</p>
-<h2
-id="hxc-236-address-parsing-behaves-differently-in-two-parts-of-the-codebase-and-will-change-silently-on-a-version-bump">HXC-236
+<h2 id="hxc-236-address-parsing-behaves-differently-in-two-parts-of-the-codebase-and-will-change-silently-on-a-version-bump">HXC-236
 — Address parsing behaves differently in two parts of the codebase, and
 will change silently on a version bump</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1560,8 +1345,7 @@ change. The work is to make the difference explicit rather than
 incidental: decide deliberately which behaviour each component should
 have, record that decision where a reader will find it, and add a check
 that fails if the two drift apart again without anyone noticing.</p>
-<h2
-id="hxc-238-captured-proof-files-are-trusted-as-harmless-because-of-their-name-not-because-anything-stops-them-running">HXC-238
+<h2 id="hxc-238-captured-proof-files-are-trusted-as-harmless-because-of-their-name-not-because-anything-stops-them-running">HXC-238
 — Captured proof files are trusted as harmless because of their name,
 not because anything stops them running</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1581,8 +1365,7 @@ leaving the project unable to save the proof it is required to keep.
 Recording it so the exception is understood as bounded rather than
 absolute, and so anyone widening it later can see what it never claimed
 to cover.</p>
-<h2
-id="hxc-239-helixqa-http-runner-defaults-to-the-wrong-login-token-field-so-every-authenticated-test-bank-fails-to-log-in">HXC-239
+<h2 id="hxc-239-helixqa-http-runner-defaults-to-the-wrong-login-token-field-so-every-authenticated-test-bank-fails-to-log-in">HXC-239
 — HelixQA http runner defaults to the wrong login token field, so every
 authenticated test bank fails to log in</h2>
 <p><strong>Status:</strong> Ready for testing <strong>Type:</strong> Bug
@@ -1628,8 +1411,7 @@ configuration changes; a failure to find a usable pass is reported as
 its own explicit finding rather than as service faults; no credential
 value ever appears in a message or log; and a standing test proves the
 behaviour, shown real by a paired mutation that makes it fail.</p>
-<h2
-id="hxc-240-the-generate-e2e-test-bank-can-only-ever-be-run-once-because-it-registers-a-fixed-user-name-that-then-already-exists">HXC-240
+<h2 id="hxc-240-the-generate-e2e-test-bank-can-only-ever-be-run-once-because-it-registers-a-fixed-user-name-that-then-already-exists">HXC-240
 — The generate-e2e test bank can only ever be run once because it
 registers a fixed user name that then already exists</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1649,8 +1431,7 @@ As written this bank breaks that rule and quietly poisons its own
 results, so a permanent red mark accumulates that has nothing to do with
 whether the product works. The fix is for the bank to use a fresh unique
 name each run, or to remove the account it created when it finishes.</p>
-<h2
-id="hxc-241-test-bank-reports-a-fully-working-ai-text-generation-feature-as-broken-because-it-matches-wording-with-the-wrong-capital-letters">HXC-241
+<h2 id="hxc-241-test-bank-reports-a-fully-working-ai-text-generation-feature-as-broken-because-it-matches-wording-with-the-wrong-capital-letters">HXC-241
 — Test bank reports a fully working AI text-generation feature as broken
 because it matches wording with the wrong capital letters</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1672,8 +1453,7 @@ in small letters while the server writes ‘Authorization’ with a capital
 A. Expecting exact capitalisation of freely generated AI wording is
 unreliable by nature. The consequence is false alarms that hide real
 problems and waste investigation time.</p>
-<h2
-id="hxc-242-screenshot-and-qa-session-features-are-switched-off-in-the-running-deployment-so-five-checks-cannot-be-exercised-at-all">HXC-242
+<h2 id="hxc-242-screenshot-and-qa-session-features-are-switched-off-in-the-running-deployment-so-five-checks-cannot-be-exercised-at-all">HXC-242
 — Screenshot and QA-session features are switched off in the running
 deployment so five checks cannot be exercised at all</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1694,8 +1474,7 @@ behind it functions. Someone needs to decide whether this feature is
 meant to be available, and if so switch it on and re-run these checks so
 the behaviour is actually proven; if it is meant to stay off, the checks
 should say so rather than reporting failures.</p>
-<h2
-id="hxc-243-some-of-our-own-test-suites-cannot-fail-so-their-passes-mean-nothing">HXC-243
+<h2 id="hxc-243-some-of-our-own-test-suites-cannot-fail-so-their-passes-mean-nothing">HXC-243
 — Some of our own test suites cannot fail, so their passes mean
 nothing</h2>
 <p><strong>Status:</strong> Ready for testing <strong>Type:</strong> Bug
@@ -1720,8 +1499,7 @@ collection were traced to the test harness looking for the wrong field
 name in the login reply, not to any fault in the product, and that
 mismatch should be corrected so real failures are not lost among false
 ones.</p>
-<h2
-id="hxc-245-regenerating-the-tracker-documents-from-the-database-silently-destroys-the-blocked-item-explanations">HXC-245
+<h2 id="hxc-245-regenerating-the-tracker-documents-from-the-database-silently-destroys-the-blocked-item-explanations">HXC-245
 — Regenerating the tracker documents from the database silently destroys
 the blocked-item explanations</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1745,8 +1523,7 @@ operator keeps the context needed to make blocking decisions, and future
 contributors can see why an item stalled. The expected outcome is that a
 regenerate-and-reread cycle preserves all five explanation records,
 proven by a test that fails today and passes after the fix.</p>
-<h2
-id="hxc-246-the-agent-runtimes-automated-test-suite-reports-74-failures-and-most-look-like-the-tests-not-the-product">HXC-246
+<h2 id="hxc-246-the-agent-runtimes-automated-test-suite-reports-74-failures-and-most-look-like-the-tests-not-the-product">HXC-246
 — The agent runtime’s automated test suite reports 74 failures, and most
 look like the tests, not the product</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1776,8 +1553,7 @@ get a signal they can act on. The expected outcome is every one of the
 defect, an environment coupling, or a contention artifact, each real
 defect fixed with a test that reproduces it first, and the suite
 returning to a trustworthy state.</p>
-<h2
-id="hxc-247-two-services-both-claim-network-port-8100-so-82-test-files-test-the-wrong-program">HXC-247
+<h2 id="hxc-247-two-services-both-claim-network-port-8100-so-82-test-files-test-the-wrong-program">HXC-247
 — Two services both claim network port 8100, so 82 test files test the
 wrong program</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1829,8 +1605,7 @@ establishes which side is stale and why; it does not by itself establish
 that renumbering is safe to execute, because that entry is consumed
 across the whole component and the change still needs its impact review
 before it lands.</p>
-<h2
-id="hxc-248-test-cleanup-can-shut-down-the-live-platform-only-a-coincidence-prevents-it-today">HXC-248
+<h2 id="hxc-248-test-cleanup-can-shut-down-the-live-platform-only-a-coincidence-prevents-it-today">HXC-248
 — Test cleanup can shut down the live platform; only a coincidence
 prevents it today</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1885,8 +1660,7 @@ connect. Whoever runs or debugs the platform benefits, and the expected
 outcome is that the service starts reliably alongside the rest of the
 stack and that every message it prints names the address it genuinely
 bound.</p>
-<h2
-id="hxc-254-connector-tests-share-one-network-handler-so-shutting-down-one-test-server-breaks-other-running-tests">HXC-254
+<h2 id="hxc-254-connector-tests-share-one-network-handler-so-shutting-down-one-test-server-breaks-other-running-tests">HXC-254
 — Connector tests share one network handler, so shutting down one test
 server breaks other running tests</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1915,8 +1689,7 @@ that each connector is given its own connection handler so shutting one
 pretend server down cannot disturb any other test, and the suite becomes
 trustworthy enough that a red result means something is genuinely
 wrong.</p>
-<h2
-id="hxc-255-validation-runners-show-green-on-file-existence-and-never-fail-the-run-which-needs-an-operator-decision">HXC-255
+<h2 id="hxc-255-validation-runners-show-green-on-file-existence-and-never-fail-the-run-which-needs-an-operator-decision">HXC-255
 — Validation runners show green on file existence and never fail the
 run, which needs an operator decision</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -1945,8 +1718,7 @@ only that the script reached the end. The expected outcome is that the
 summary line reflects the real result rather than the presence of a
 file, and that the operator makes an explicit, recorded choice about
 whether these runners should fail when tests fail.</p>
-<h2
-id="hxc-256-regenerating-the-tracker-documents-without-naming-a-destination-writes-an-untracked-copy-and-leaves-the-real-ones-stale">HXC-256
+<h2 id="hxc-256-regenerating-the-tracker-documents-without-naming-a-destination-writes-an-untracked-copy-and-leaves-the-real-ones-stale">HXC-256
 — Regenerating the tracker documents without naming a destination writes
 an untracked copy and leaves the real ones stale</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -1982,8 +1754,7 @@ today: the existing guard for a closely related problem always supplies
 the destination explicitly, so it can never exercise the case where the
 setting is left out - adding that second case is the specified
 follow-up.</p>
-<h2
-id="hxc-257-the-tracker-consistency-check-calls-its-input-the-committed-database-but-never-reads-version-control">HXC-257
+<h2 id="hxc-257-the-tracker-consistency-check-calls-its-input-the-committed-database-but-never-reads-version-control">HXC-257
 — The tracker consistency check calls its input the committed database
 but never reads version control</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2022,8 +1793,7 @@ test plants a disagreement between the documents and the database, but
 nothing plants a difference between the committed copy and the working
 copy and requires the check to object - adding that case is the
 specified follow-up.</p>
-<h2
-id="hxc-258-the-tracker-database-records-only-one-sync-direction-so-it-always-reports-the-wrong-one-after-documents-are-regenerated">HXC-258
+<h2 id="hxc-258-the-tracker-database-records-only-one-sync-direction-so-it-always-reports-the-wrong-one-after-documents-are-regenerated">HXC-258
 — The tracker database records only one sync direction, so it always
 reports the wrong one after documents are regenerated</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2050,8 +1820,7 @@ performs the synchronisation, which must record the direction that
 genuinely ran on both paths rather than assuming one of them; editing
 the stored value by hand would be undone by the next run and is
 therefore not a fix.</p>
-<h2
-id="hxc-259-most-closed-tracker-records-carry-no-history-of-who-closed-them-or-when-and-the-gap-is-far-wider-than-two-items">HXC-259
+<h2 id="hxc-259-most-closed-tracker-records-carry-no-history-of-who-closed-them-or-when-and-the-gap-is-far-wider-than-two-items">HXC-259
 — Most closed tracker records carry no history of who closed them or
 when, and the gap is far wider than two items</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -2077,8 +1846,7 @@ witnessed would produce an audit trail that is worse than an absent one
 because it would look authoritative. What is needed instead is a
 decision on how to mark these records as genuinely unaudited, and a
 check that prevents any newly created item from joining them.</p>
-<h2
-id="hxc-260-hxc-260-helixagent-k8s-manifests-published-a-dead-grpc_port-env-var-and-port-9090-so-the-declared-grpc-endpoint-could-never-be-reachable">HXC-260
+<h2 id="hxc-260-hxc-260-helixagent-k8s-manifests-published-a-dead-grpc_port-env-var-and-port-9090-so-the-declared-grpc-endpoint-could-never-be-reachable">HXC-260
 — HXC-260: HelixAgent k8s manifests published a dead GRPC_PORT env var
 and port 9090, so the declared gRPC endpoint could never be
 reachable</h2>
@@ -2118,8 +1886,7 @@ internal/ports/published_grpc_port_test.go passes with RED_MODE unset
 (asserting every manifest names the registry port and none sets the dead
 variable outside a comment) and fails on the pre-fix tree, citing
 deployment.yaml line 32.</p>
-<h2
-id="hxc-262-a-safety-check-in-the-live-service-test-battery-occasionally-reports-a-failure-that-is-not-real">HXC-262
+<h2 id="hxc-262-a-safety-check-in-the-live-service-test-battery-occasionally-reports-a-failure-that-is-not-real">HXC-262
 — A safety check in the live-service test battery occasionally reports a
 failure that is not real</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2147,8 +1914,7 @@ deliberately left unfixed by the reviewer who found it because it
 changes the sampling behaviour of a check that was itself under review
 at the time, and such a change deserves its own review rather than being
 folded into someone else’s batch.</p>
-<h2
-id="hxc-263-twelve-of-the-fourteen-tests-that-verify-our-safety-checks-are-never-actually-run-by-anything">HXC-263
+<h2 id="hxc-263-twelve-of-the-fourteen-tests-that-verify-our-safety-checks-are-never-actually-run-by-anything">HXC-263
 — Twelve of the fourteen tests that verify our safety checks are never
 actually run by anything</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2174,8 +1940,7 @@ each of the twelve whether to wire it into the release sweep so it runs,
 or to retire it honestly, and then making the choice visible rather than
 leaving the file sitting there implying coverage it does not
 deliver.</p>
-<h2
-id="hxc-264-one-tracker-entry-describes-three-different-problems-and-recommends-a-fix-that-was-never-used">HXC-264
+<h2 id="hxc-264-one-tracker-entry-describes-three-different-problems-and-recommends-a-fix-that-was-never-used">HXC-264
 — One tracker entry describes three different problems and recommends a
 fix that was never used</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2202,8 +1967,7 @@ database entry itself. Resolving it means reconciling the three fields
 into one accurate account that records both what was originally observed
 and how it was actually resolved, without erasing the original
 report.</p>
-<h2
-id="hxc-265-twenty-five-nested-go-modules-in-helix_agent-have-no-compile-path-and-two-more-build-only-in-un-gated-container-images-so-breakage-inside-them-is-invisible">HXC-265
+<h2 id="hxc-265-twenty-five-nested-go-modules-in-helix_agent-have-no-compile-path-and-two-more-build-only-in-un-gated-container-images-so-breakage-inside-them-is-invisible">HXC-265
 — Twenty-five nested Go modules in helix_agent have no compile path and
 two more build only in un-gated container images, so breakage inside
 them is invisible</h2>
@@ -2224,9 +1988,9 @@ readers who copy a documentation example expecting it to compile. THE
 COUNTS, each verifiable by one command (the quotes are load-bearing —
 unquoted, the shell expands the pattern before git sees it and reports 2
 instead of 36): inside submodules/helix_agent,
-<code>git ls-files '*/go.mod' | wc -l</code> reports 36 nested modules,
+<code>git ls-files &#39;*/go.mod&#39; | wc -l</code> reports 36 nested modules,
 and
-<code>git ls-files 'challenges/codebase/go_files/*/go.mod' | wc -l</code>
+<code>git ls-files &#39;challenges/codebase/go_files/*/go.mod&#39; | wc -l</code>
 reports the 6 that the Makefile build-challenge-modules recipe walks. By
 directory the 36 are 23 under docs/, 6 under challenges/, 2 under
 plugins/, 2 under docker/, and one each under Toolkit/, pkg/, and
@@ -2267,8 +2031,7 @@ either wired into a build or compile-check target the test suite
 actually runs, or deliberately excluded with a recorded reason in the
 manner of class (5); and a gate fails when a new nested module appears
 that is neither built nor explicitly excluded.</p>
-<h2
-id="hxc-266-agent-client-url-builder-emits-a-malformed-address-for-ipv6-hosts-because-it-never-brackets-the-literal">HXC-266
+<h2 id="hxc-266-agent-client-url-builder-emits-a-malformed-address-for-ipv6-hosts-because-it-never-brackets-the-literal">HXC-266
 — Agent client URL builder emits a malformed address for IPv6 hosts
 because it never brackets the literal</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2294,8 +2057,7 @@ CRITERIA: the builder brackets IPv6 literals per RFC 3986 so ::1 yields
 http://[::1]:7061, IPv4 and hostnames are unchanged, and a regression
 test covers IPv6 literal, bracketed input that must not be
 double-bracketed, IPv4, and hostname cases.</p>
-<h2
-id="hxc-267-helixqa-stays-silent-when-a-sign-in-reply-cannot-be-parsed-so-unauthenticated-runs-are-still-misreported-as-api-faults">HXC-267
+<h2 id="hxc-267-helixqa-stays-silent-when-a-sign-in-reply-cannot-be-parsed-so-unauthenticated-runs-are-still-misreported-as-api-faults">HXC-267
 — HelixQA stays silent when a sign-in reply cannot be parsed, so
 unauthenticated runs are still misreported as API faults</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2340,8 +2102,7 @@ mutation that removes the new reporting and makes that test fail; and
 the two already-working shapes must produce byte-identical output before
 and after, so the change cannot disturb the path that already reports
 correctly.</p>
-<h2
-id="hxc-268-model-verifier-emits-unusable-addresses-for-ipv6-hosts-at-fifteen-capability-config-sites-that-never-bracket-the-literal">HXC-268
+<h2 id="hxc-268-model-verifier-emits-unusable-addresses-for-ipv6-hosts-at-fifteen-capability-config-sites-that-never-bracket-the-literal">HXC-268
 — Model verifier emits unusable addresses for IPv6 hosts at fifteen
 capability-config sites that never bracket the literal</h2>
 <p><strong>Status:</strong> Ready for testing <strong>Type:</strong> Bug
@@ -2395,8 +2156,7 @@ the IPv6 literal, already-bracketed, IPv4 and hostname cases and is
 proven real by a paired mutation that removes the bracketing and makes
 the test fail; and the count of remaining unbracketed sites in that file
 is zero, verified by the same command that produced the fifteen.</p>
-<h2
-id="hxc-272-automated-checks-starting-in-the-same-second-share-a-results-folder-so-one-run-is-judged-on-another-runs-failures">HXC-272
+<h2 id="hxc-272-automated-checks-starting-in-the-same-second-share-a-results-folder-so-one-run-is-judged-on-another-runs-failures">HXC-272
 — Automated checks starting in the same second share a results folder,
 so one run is judged on another run’s failures</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2438,8 +2198,7 @@ or log; the recent-run pointer always names the genuinely most recent
 run; a test starts two runs in the same second and asserts their
 verdicts are independent in BOTH directions, proven real by a paired
 mutation that restores the shared naming and makes the test fail.</p>
-<h2
-id="hxc-273-three-health-checks-accept-a-not-found-reply-as-proof-of-health-so-a-half-broken-service-passes-the-gate">HXC-273
+<h2 id="hxc-273-three-health-checks-accept-a-not-found-reply-as-proof-of-health-so-a-half-broken-service-passes-the-gate">HXC-273
 — Three health checks accept a not-found reply as proof of health, so a
 half-broken service passes the gate</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2469,8 +2228,7 @@ can return rather than merely a successful status; and a test points
 each check at a server returning not-found and asserts it fails, proven
 real by a paired mutation that restores the permissive behaviour and
 makes the test fail.</p>
-<h2
-id="hxc-274-starting-the-remote-call-server-makes-real-outbound-provider-calls-using-ambient-credentials-and-delays-serving-by-18-seconds">HXC-274
+<h2 id="hxc-274-starting-the-remote-call-server-makes-real-outbound-provider-calls-using-ambient-credentials-and-delays-serving-by-18-seconds">HXC-274
 — Starting the remote-call server makes real outbound provider calls
 using ambient credentials and delays serving by ~18 seconds</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2512,8 +2270,7 @@ environment, and the server begins serving promptly after it begins
 accepting; a test starts the server with credentials present and asserts
 no outbound calls occur, proven real by a paired mutation that restores
 eager discovery and makes the test fail.</p>
-<h2
-id="hxc-275-two-branches-of-the-grpc-identity-check-are-never-exercised-so-a-future-edit-could-silently-weaken-them">HXC-275
+<h2 id="hxc-275-two-branches-of-the-grpc-identity-check-are-never-exercised-so-a-future-edit-could-silently-weaken-them">HXC-275
 — Two branches of the gRPC identity check are never exercised, so a
 future edit could silently weaken them</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2554,8 +2311,7 @@ drives the unrecognised-wording fallback using a peer that answers every
 request as unknown; the not-speaking-the-protocol message gains its own
 assertion; and each new test is proven real by a paired mutation that
 weakens the branch it covers and makes that test fail.</p>
-<h2
-id="hxc-276-test-bank-assertion-diagnostics-copy-reply-bodies-into-reports-which-is-intended-but-currently-unbounded-in-the-wrong-dimension">HXC-276
+<h2 id="hxc-276-test-bank-assertion-diagnostics-copy-reply-bodies-into-reports-which-is-intended-but-currently-unbounded-in-the-wrong-dimension">HXC-276
 — Test-bank assertion diagnostics copy reply bodies into reports, which
 is intended but currently unbounded in the wrong dimension</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2595,8 +2351,7 @@ quoting input; and a standing test proves both directions at every site
 still does — each proven real by a paired mutation that restores the raw
 copy and makes the first assertion fail, and one that strips the excerpt
 entirely and makes the second fail.</p>
-<h2
-id="hxc-277-the-project-resumption-record-has-not-advanced-in-two-weeks-while-roughly-236-commits-changed-the-state-it-describes">HXC-277
+<h2 id="hxc-277-the-project-resumption-record-has-not-advanced-in-two-weeks-while-roughly-236-commits-changed-the-state-it-describes">HXC-277
 — The project resumption record has not advanced in two weeks while
 roughly 236 commits changed the state it describes</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
@@ -2631,8 +2386,7 @@ state-advancing commit which leaves the record untouched is caught
 automatically rather than noticed weeks later; and the catch is proven
 real by deliberately making such a commit and confirming it is
 refused.</p>
-<h2
-id="hxc-279-the-grpc-identity-checks-verdict-can-be-inverted-or-skipped-entirely-and-nothing-would-notice">HXC-279
+<h2 id="hxc-279-the-grpc-identity-checks-verdict-can-be-inverted-or-skipped-entirely-and-nothing-would-notice">HXC-279
 — The gRPC identity check’s verdict can be inverted or skipped entirely,
 and nothing would notice</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2682,8 +2436,7 @@ exchanging the branches, or killing reachability are each caught; it is
 proven real by paired mutations performing each of those three edits and
 confirming each makes the guard fail; and the existing composition guard
 keeps its own narrow scope rather than absorbing this one.</p>
-<h2
-id="hxc-280-seven-addresses-for-outside-services-are-built-the-same-broken-way-but-cannot-use-the-fix-that-repaired-the-rest">HXC-280
+<h2 id="hxc-280-seven-addresses-for-outside-services-are-built-the-same-broken-way-but-cannot-use-the-fix-that-repaired-the-rest">HXC-280
 — Seven addresses for outside services are built the same broken way,
 but cannot use the fix that repaired the rest</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2734,8 +2487,7 @@ host produces an explicit refusal rather than a silent substitution; and
 a standing test proves every direction at every site, each proven real
 by a paired mutation restoring the old concatenation, one swapping in
 the substituting builder, and one removing the escaping.</p>
-<h2
-id="hxc-281-a-streaming-test-asserts-over-a-list-that-was-always-empty-so-it-has-never-checked-anything">HXC-281
+<h2 id="hxc-281-a-streaming-test-asserts-over-a-list-that-was-always-empty-so-it-has-never-checked-anything">HXC-281
 — A streaming test asserts over a list that was always empty, so it has
 never checked anything</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2766,8 +2518,7 @@ server with a provider that genuinely streams more than one piece, so
 the list it examines is non-empty; the check runs against real pieces;
 and it is proven real by a paired mutation that makes a piece carry a
 fabricated confidence figure and confirms the test then fails.</p>
-<h2
-id="hxc-282-our-check-for-leftover-test-experiment-damage-looks-for-a-confession-so-damage-that-removes-code-is-invisible-to-it">HXC-282
+<h2 id="hxc-282-our-check-for-leftover-test-experiment-damage-looks-for-a-confession-so-damage-that-removes-code-is-invisible-to-it">HXC-282
 — Our check for leftover test-experiment damage looks for a confession,
 so damage that removes code is invisible to it</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2811,8 +2562,7 @@ reference before it starts; restoration is verified by comparison
 against that reference and the verification is captured; and the whole
 mechanism is proven by a paired test that deletes a protective rule,
 leaves it un-restored, and confirms the check refuses the commit.</p>
-<h2
-id="hxc-283-rate-limiting-splits-a-caller-address-the-wrong-way-so-modern-numeric-callers-are-counted-inconsistently">HXC-283
+<h2 id="hxc-283-rate-limiting-splits-a-caller-address-the-wrong-way-so-modern-numeric-callers-are-counted-inconsistently">HXC-283
 — Rate limiting splits a caller address the wrong way, so modern-numeric
 callers are counted inconsistently</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2846,8 +2596,7 @@ one identity across every request shape; and a standing test proves it
 for old-style, modern-style, bracketed, zone-carrying and hostname
 callers, proven real by a paired mutation restoring the
 split-at-last-colon and confirming the test fails.</p>
-<h2
-id="hxc-340-readiness-probe-answers-http-200-while-the-server-is-still-starting-so-traffic-is-routed-to-a-server-that-cannot-serve">HXC-340
+<h2 id="hxc-340-readiness-probe-answers-http-200-while-the-server-is-still-starting-so-traffic-is-routed-to-a-server-that-cannot-serve">HXC-340
 — Readiness probe answers HTTP 200 while the server is still starting,
 so traffic is routed to a server that cannot serve</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2876,8 +2625,7 @@ returns a failure status code whenever the server genuinely cannot
 serve, liveness stays separate and always succeeds while the process is
 alive, and the ready state can go back to false when a dependency is
 lost.</p>
-<h2
-id="hxc-341-server-health-endpoint-silently-skips-every-check-when-no-database-is-configured-while-its-documentation-claims-it-checks-all-dependencies">HXC-341
+<h2 id="hxc-341-server-health-endpoint-silently-skips-every-check-when-no-database-is-configured-while-its-documentation-claims-it-checks-all-dependencies">HXC-341
 — Server health endpoint silently skips every check when no database is
 configured, while its documentation claims it checks all
 dependencies</h2>
@@ -2904,8 +2652,7 @@ endpoint reports an honest failure when a required dependency is absent
 or unreachable rather than treating absence as success, provider health
 is included in the verdict, and the documentation is corrected to
 describe exactly what is and is not covered.</p>
-<h2
-id="hxc-342-agent-basic-health-endpoint-returns-a-fixed-success-message-and-performs-no-check-of-any-kind">HXC-342
+<h2 id="hxc-342-agent-basic-health-endpoint-returns-a-fixed-success-message-and-performs-no-check-of-any-kind">HXC-342
 — Agent basic health endpoint returns a fixed success message and
 performs no check of any kind</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2930,8 +2677,7 @@ Expected outcome: either the endpoint performs a genuine check and can
 report failure, or it is explicitly relabelled as a liveness-only signal
 in both the code and the published API documentation so that nobody
 mistakes it for a dependency check.</p>
-<h2
-id="hxc-343-fifty-six-tracked-work-items-would-be-silently-deleted-from-the-documents-if-the-trackers-were-regenerated">HXC-343
+<h2 id="hxc-343-fifty-six-tracked-work-items-would-be-silently-deleted-from-the-documents-if-the-trackers-were-regenerated">HXC-343
 — Fifty-six tracked work items would be silently deleted from the
 documents if the trackers were regenerated</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
@@ -2956,8 +2702,7 @@ Expected outcome: the missing links are restored for all fifty-six
 items, the checker reports no such gaps, and a regeneration can be run
 and verified to produce documents containing every item the database
 holds.</p>
-<h2
-id="hxc-344-decide-whether-an-unreferenced-frozen-test-baseline-should-be-wired-in-or-retired">HXC-344
+<h2 id="hxc-344-decide-whether-an-unreferenced-frozen-test-baseline-should-be-wired-in-or-retired">HXC-344
 — Decide whether an unreferenced frozen test baseline should be wired in
 or retired</h2>
 <p><strong>Status:</strong> Queued <strong>Type:</strong> Task
