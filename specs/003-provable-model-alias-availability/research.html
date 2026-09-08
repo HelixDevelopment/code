@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>research</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">research</h1>
+</header>
+<h1 id="phase-0-research-provable-model-alias-availability">Phase 0
+Research — Provable Model Alias Availability</h1>
+<p><strong>Date</strong>: 2026-09-08 | <strong>Plan</strong>: <a href="./plan.md">plan.md</a> | <strong>Spec</strong>: <a href="./spec.md">spec.md</a></p>
+<p>Phase 0 exists to resolve the plan’s NEEDS ATTENTION items before any
+repair is designed. The principal unknown was: <strong>why are 11
+providers pinned in <code>overrides.json</code> and still reported
+<code>orphaned</code>?</strong> FR-020 commits to repairing all 20
+orphans, and the repair shape depends entirely on the cause, so planning
+a repair before knowing it would be the §11.4.102 violation this phase
+exists to prevent.</p>
+<h2 id="decision-the-orphan-cause-is-not-yet-known.-four-candidates-are-eliminated-by-measurement.">Decision:
+the orphan cause is NOT YET KNOWN. Four candidates are eliminated by
+measurement.</h2>
+<p><strong>Rationale.</strong> Each candidate below was tested, not
+reasoned about. Four are eliminated. Reporting a repair plan now would
+require guessing between the survivors, which §11.4.6 forbids.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Candidate cause</th>
+<th>Verdict</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Credentials missing or rotated</td>
+<td><strong>ELIMINATED</strong></td>
+<td>All 29 provider records name a key variable and all 29 of those
+variables are SET in the environment. Compared by hash throughout; no
+value read or printed (§11.4.10).</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Model catalogue stale, absent or incomplete</td>
+<td><strong>ELIMINATED</strong></td>
+<td><code>models.dev.cache.json</code> is 4.5 MB, parses, carries 213
+providers, was 23.6 h old against a 24 h TTL, and contains 6 of the 7
+orphan key variables checked. <code>HUGGINGFACE_API_KEY</code> is
+genuinely absent from it — a separate, single-provider issue, not the
+class cause.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Missing pins in <code>overrides.json</code></td>
+<td><strong>ELIMINATED as the class cause</strong></td>
+<td>Running the resolver directly: <strong>10 of the 11
+pinned-yet-orphaned providers DO resolve</strong>
+(<code>deepseek</code>, <code>huggingface</code>, <code>hyper</code>,
+<code>kc-for-coding</code>, <code>kilo</code>, <code>nvidia</code>,
+<code>opencode</code>, <code>openrouter</code>, <code>poe</code>,
+<code>zai-coding-plan</code>). Only <code>kc-for-coding2</code> does
+not, and it shares <code>ApiKey_Kimi</code> with
+<code>kc-for-coding</code> — the same one-record-per-key-variable
+mechanism as the 9 unpinned records. So pins are necessary for the 9;
+they are not what is failing for the 11.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Key variables invisible to <code>present_key_vars</code></td>
+<td><strong>ELIMINATED — refuted by experiment</strong></td>
+<td><code>present_key_vars</code> greps <code>$CMA_KEYS_FILE</code> for
+literal <code>NAME=</code> assignments only, and cannot see variables
+supplied by a file that keys file SOURCES. Measured: the operator’s
+<code>api_keys.sh</code> carries exactly ONE literal assignment while
+the records reference FOURTEEN, so 13 of 14 are invisible to that grep.
+That looked decisive. It is not: re-running <code>list-all</code>
+against a temporary keys file containing all 14 names as literal
+(obviously fake) assignments produced <strong>byte-identical
+counts</strong> — 6 failed, 20 orphaned, 1 stale:verified, 2 verified.
+Visibility does not drive orphan status.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Alternatives still open (the honest remainder).</strong> The
+leading surviving candidate is that <code>list-all</code> computes
+orphan status from a <strong>cached or stored resolved set</strong>
+rather than resolving live — which would explain precisely why changing
+the resolver’s inputs changed nothing. That is testable and is the first
+task of the next research pass. It is recorded as a hypothesis, not a
+finding.</p>
+<p><strong>Why candidate 4 is written up despite being wrong.</strong>
+It produced a striking, publishable-looking measurement — “13 of 14 key
+variables are invisible” — and the arithmetic that followed from it fit
+the observed 20 orphans closely enough to be persuasive. It was still
+wrong. Recording the elimination is worth more than deleting it, because
+the next person to measure key-variable visibility will otherwise reach
+the same dead end and believe it (§11.4.7, §11.4.112).</p>
+<h2 id="instrument-note-11.4.273-this-phase-is-the-anchors-first-real-use">Instrument
+note (§11.4.273) — this phase is the anchor’s first real use</h2>
+<p>The anchor requiring a positive and negative control on any
+decision-bearing census was minted from this session’s earlier errors,
+and it earned itself twice within this single research pass:</p>
+<ol type="1">
+<li>The first resolver invocation returned one record and no ids. The
+<strong>positive control failed</strong> (<code>helixllm-gateway</code>
+absent), so the instrument was treated as the suspect rather than the
+system — and it was: <code>--keys</code> takes a comma-separated list of
+key-variable NAMES, and it had been handed a file PATH, which it
+dutifully treated as a variable name. Without the control the reading
+would have been “the resolver resolves nothing”, which is alarming,
+plausible, and false.</li>
+<li>The corrected run’s positive control ALSO failed, for a different
+reason: <code>helixllm-gateway</code> is out of the resolver’s declared
+scope by design — Helix providers are added by the shell
+(<code>claude-providers.sh:248</code>, “providers_resolve.py stays
+pure”). <strong>A positive control must lie inside the instrument’s
+declared scope</strong>; one chosen outside it produces a false
+instrument-is-broken signal. Re-run with <code>deepseek</code>, an
+in-scope catalogue provider, the control passed and the measurement
+became trustworthy.</li>
+</ol>
+<p>A third case is the reason candidate 4 is in the eliminated column
+rather than the findings column: <code>DEEPSEEK_API_KEY</code> was used
+as a positive control for key-file visibility when <strong>its presence
+was the very question under test</strong>. A control whose truth is what
+you are measuring is not a control.</p>
+<h2 id="decision-honest-skip-with-reason-for-three-mandatory-test-types-11.4.169-11.4.3">Decision:
+honest SKIP-with-reason for three mandatory test types (§11.4.169 /
+§11.4.3)</h2>
+<p><strong>Rationale.</strong> §11.4.169 requires the full test-type set
+where the domain warrants it. Three do not apply here, and fabricating
+them would produce green suites asserting nothing — the PASS-bluff the
+anchor exists to prevent.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Test type</th>
+<th>Disposition</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DDoS / load-flood</td>
+<td><strong>SKIP-with-reason</strong></td>
+<td>The subject is a single-model gateway on loopback with one operator.
+There is no flood surface; a synthetic one would measure the
+harness.</td>
+</tr>
+<tr>
+<td>Scaling</td>
+<td><strong>SKIP-with-reason</strong></td>
+<td>No horizontal dimension exists — one model, one host, one process.
+Re-evaluate if a second serving host is added.</td>
+</tr>
+<tr>
+<td>Chaos (infrastructure failure injection)</td>
+<td><strong>PARTIAL</strong></td>
+<td>Process-death and network-fault injection against the gateway ARE
+meaningful and in scope. Disk-full and OOM injection are not: the
+component holds no significant state and allocates per request.</td>
+</tr>
+</tbody>
+</table>
+<p>Unit, integration, e2e, full-automation, security, stress,
+concurrency, race, memory and benchmark all apply and are in scope for
+<code>tasks.md</code>.</p>
+<h2 id="decision-cross-platform-parity-is-a-declared-tracked-gap-11.4.81">Decision:
+cross-platform parity is a declared, tracked gap (§11.4.81)</h2>
+<p><strong>Rationale.</strong> The <code>Darwin*</code> date branches
+and the <code>uname -s</code> cache exist in the code and are
+unexercised — this host is Linux only. Deleting them would break macOS
+outright; claiming them verified would be a §11.4 bluff. The honest
+position is a declared gap carried in Complexity Tracking until a Darwin
+host is available, stated rather than implied by an all-PASS table.</p>
+<p><strong>Alternatives considered.</strong> Emulation was rejected: a
+macOS <code>date</code> implementation running under emulation proves
+the flag parsing, not the platform, and would produce evidence
+stronger-looking than it is.</p>
+<h2 id="t005-diagnosis-gate-advance-measured-2026-09-08-read-only">T005
+diagnosis-gate advance — measured 2026-09-08 (read-only)</h2>
+<p>Run against the live host with the toolkit tree quiescent (0
+uncommitted files), which is the condition the earlier pass deliberately
+waited for.</p>
+<h3 id="two-more-candidate-causes-eliminated">Two more candidate causes
+ELIMINATED</h3>
+<p><strong>Environment / key-variable presence — ELIMINATED.</strong>
+<code>resolve_records()</code> builds <code>--keys</code> from
+<code>present_key_vars</code>, i.e. the key variables exported in the
+INVOKING shell, so the resolved set is environment-dependent and this
+was a live hypothesis. Measured: 45 key variables present in the working
+shell, and 45 after sourcing the operator’s key file — identical. The
+environment is not the differentiator.</p>
+<p><strong>The export-ownership escape misfiring — ELIMINATED.</strong>
+<code>cma_find_orphans</code> skips any record carrying a
+<code>CMA_PROVIDER_SOURCE</code> marker, so a bug there would orphan
+export-owned records wrongly. Measured across all 28 orphans: ZERO carry
+the marker, i.e. the escape is not being bypassed. Control: a non-orphan
+DOES carry it, proving the detector is not simply blind.</p>
+<h3 id="the-set-is-larger-than-the-baseline-recorded">The set is larger
+than the baseline recorded</h3>
+<p>28 orphaned entries in <code>status.json</code> (53 total), not 20.
+The baseline figure has grown, so it is drift, not a fixed number —
+worth re-measuring rather than citing.</p>
+<p>The 28 split cleanly by a property the baseline did not record: -
+<strong>20 carry an <code>.env</code></strong> — these are the
+“presented as available, refuse on use” class the specification is
+about. - <strong>8 are status-only</strong>, with no <code>.env</code>
+at all — pure leftovers, and a different remedy (prune) from the 20.</p>
+<h3 id="phase-0s-causal-model-is-refuted-for-9-of-the-20">Phase 0’s
+causal model is REFUTED for 9 of the 20</h3>
+<p>Phase 0 held that the 9 unpinned orphans share a key variable with
+siblings, so catalogue matching — which yields exactly one record per
+key variable — can never reach them; and that the 11 pinned ones are
+orphaned for an undetermined reason. That reads the pinned/unpinned
+split and the shared/unique-key split as the same partition.
+Cross-tabulated, they are not:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>shares key var</th>
+<th>unique key var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pinned</td>
+<td>4</td>
+<td>7</td>
+</tr>
+<tr>
+<td>unpinned</td>
+<td>7</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>The largest single cell is <strong>pinned AND unique key var
+(7)</strong> — neither proposed cause applies to it. Adding the 2
+unpinned-with-unique-key, <strong>9 of the 20 have a key variable no
+sibling shares</strong>, so “one record per key variable” cannot be
+their explanation. Three key variables account for all the sharing:
+<code>OPENROUTER_API_KEY</code> (5), <code>NVIDIA_API_KEY</code> (4),
+<code>ApiKey_Kimi</code> (2).</p>
+<h3 id="what-this-leaves-11.4.6">What this leaves (§11.4.6)</h3>
+<p>The cause for the 9 unique-key orphans is UNDETERMINED. It is NOT
+credentials, NOT catalogue staleness, NOT missing pins, NOT key-variable
+visibility, NOT the shell environment, NOT the ownership escape, and NOT
+key-variable sharing — seven causes eliminated with measurement rather
+than argument. The surviving hypothesis is unchanged and still untested:
+that the resolver simply emits no record for these ids, which would make
+orphaning a correct verdict on a real gap rather than a reporting
+defect. Testing it needs the resolver’s own output diffed against the
+status keyset, which needs the models.dev cache path — that did not
+resolve in this pass (<code>cma_models_dev_cache</code> returned empty
+from a non-interactive shell) and is the immediate next step.</p>
+<p><strong>Honest boundary.</strong> Everything above is a property of
+the RECORDS. None of it establishes whether any of these 20 aliases
+would work if invoked; that is the end-to-end question T005 gates and it
+remains open.</p>
+</body>
+</html>

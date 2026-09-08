@@ -78,3 +78,71 @@ Tracking until a Darwin host is available, stated rather than implied by an all-
 **Alternatives considered.** Emulation was rejected: a macOS `date` implementation running under
 emulation proves the flag parsing, not the platform, and would produce evidence stronger-looking
 than it is.
+
+## T005 diagnosis-gate advance — measured 2026-09-08 (read-only)
+
+Run against the live host with the toolkit tree quiescent (0 uncommitted
+files), which is the condition the earlier pass deliberately waited for.
+
+### Two more candidate causes ELIMINATED
+
+**Environment / key-variable presence — ELIMINATED.** `resolve_records()` builds
+`--keys` from `present_key_vars`, i.e. the key variables exported in the
+INVOKING shell, so the resolved set is environment-dependent and this was a
+live hypothesis. Measured: 45 key variables present in the working shell, and
+45 after sourcing the operator's key file — identical. The environment is not
+the differentiator.
+
+**The export-ownership escape misfiring — ELIMINATED.** `cma_find_orphans`
+skips any record carrying a `CMA_PROVIDER_SOURCE` marker, so a bug there would
+orphan export-owned records wrongly. Measured across all 28 orphans: ZERO carry
+the marker, i.e. the escape is not being bypassed. Control: a non-orphan DOES
+carry it, proving the detector is not simply blind.
+
+### The set is larger than the baseline recorded
+
+28 orphaned entries in `status.json` (53 total), not 20. The baseline figure has
+grown, so it is drift, not a fixed number — worth re-measuring rather than
+citing.
+
+The 28 split cleanly by a property the baseline did not record:
+- **20 carry an `.env`** — these are the "presented as available, refuse on use"
+  class the specification is about.
+- **8 are status-only**, with no `.env` at all — pure leftovers, and a different
+  remedy (prune) from the 20.
+
+### Phase 0's causal model is REFUTED for 9 of the 20
+
+Phase 0 held that the 9 unpinned orphans share a key variable with siblings, so
+catalogue matching — which yields exactly one record per key variable — can
+never reach them; and that the 11 pinned ones are orphaned for an undetermined
+reason. That reads the pinned/unpinned split and the shared/unique-key split as
+the same partition. Cross-tabulated, they are not:
+
+| | shares key var | unique key var |
+|---|---|---|
+| pinned | 4 | 7 |
+| unpinned | 7 | 2 |
+
+The largest single cell is **pinned AND unique key var (7)** — neither proposed
+cause applies to it. Adding the 2 unpinned-with-unique-key, **9 of the 20 have a
+key variable no sibling shares**, so "one record per key variable" cannot be
+their explanation. Three key variables account for all the sharing:
+`OPENROUTER_API_KEY` (5), `NVIDIA_API_KEY` (4), `ApiKey_Kimi` (2).
+
+### What this leaves (§11.4.6)
+
+The cause for the 9 unique-key orphans is UNDETERMINED. It is NOT credentials,
+NOT catalogue staleness, NOT missing pins, NOT key-variable visibility, NOT the
+shell environment, NOT the ownership escape, and NOT key-variable sharing —
+seven causes eliminated with measurement rather than argument. The surviving
+hypothesis is unchanged and still untested: that the resolver simply emits no
+record for these ids, which would make orphaning a correct verdict on a real
+gap rather than a reporting defect. Testing it needs the resolver's own output
+diffed against the status keyset, which needs the models.dev cache path — that
+did not resolve in this pass (`cma_models_dev_cache` returned empty from a
+non-interactive shell) and is the immediate next step.
+
+**Honest boundary.** Everything above is a property of the RECORDS. None of it
+establishes whether any of these 20 aliases would work if invoked; that is the
+end-to-end question T005 gates and it remains open.
