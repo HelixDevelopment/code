@@ -1,0 +1,54 @@
+[1m== D1: instruction-shaped credential blocks in tracked docs ==[0m
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.html:603 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.html:788 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.html:833 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.html:987 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.md:308 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.md:493 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.md:538 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 COMPREHENSIVE_COMPLETION_PLAN.md:708 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/bluff_proofing/architecture_and_diagrams/ARCHITECTURE_AND_DIAGRAMS.html:812 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/bluff_proofing/architecture_and_diagrams/ARCHITECTURE_AND_DIAGRAMS.md:476 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/bluff_proofing/full_plan/ARCHITECTURE_AND_DIAGRAMS.html:812 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/bluff_proofing/full_plan/ARCHITECTURE_AND_DIAGRAMS.md:476 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.html:592 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.html:12148 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.html:12281 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.html:23050 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.md:316 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.md:9658 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.md:9775 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/LLMsVerifier_HelixCode_Integration_Plan.md:19490 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.html:592 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.html:12148 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.html:12281 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.html:23050 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.md:316 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.md:9658 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.md:9775 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/LLMsVerifier_HelixCode_Integration_Plan.md:19490 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/helixcode_analysis.html:538 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/helixcode_analysis.md:279 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/phased_implementation_plan.html:6708 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/phased_implementation_plan.md:6533 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/testing_strategy.html:2360 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/testing_strategy.html:2493 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/testing_strategy.md:1663 — credential handed over in a copy-pasteable config line
+  [31mFOUND[0m D1 docs/llms_verifier/llms_verifier_integration/research/testing_strategy.md:1780 — credential handed over in a copy-pasteable config line
+
+[1m== D2: credential gate wired into the pre-build sweep ==[0m
+  [31mFOUND[0m D2 scripts/verify-all-constitution-rules.sh — credential gate is invoked by no sweep; nothing runs it automatically
+
+[1m== D3: DB port publishes bind loopback ==[0m
+  [31mFOUND[0m D3 compose.helixcode-infra.yml — publishes 5433:5432 on the WILDCARD address (LAN-reachable)
+  [31mFOUND[0m D3 helix_code/docker/autoboot/docker-compose.autoboot.yml — publishes 55432:5432 on the WILDCARD address (LAN-reachable)
+  [31mFOUND[0m D3 helix_code/docker/docker-compose.yml — publishes 5432:5432 on the WILDCARD address (LAN-reachable)
+
+[1m== D3-runtime: running listener binds ==[0m
+  [1m—[0m D3-runtime :5433 not listening (certifies nothing; SKIP-OK §11.4.3)
+  [31mFOUND[0m D3-runtime :55432 NON-loopback (*:55432) AND the source does not declare loopback either
+
+SUMMARY: 0 passed, 41 failed, 0 operator-blocked (guard polarity; RED_MODE=1)
+
+[1m== VERDICT (RED_MODE=1) ==[0m
+[32mRED PASS[0m — defect REPRODUCED on the current artifact: 41 finding(s).
