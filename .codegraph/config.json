@@ -141,8 +141,6 @@
     "dependencies/LLama_CPP/**",
     "dependencies/Ollama/**",
     "dependencies/HuggingFace_Hub/**",
-    "github_pages_website/**",
-    "Github-Pages-website/**",
     "awesome-ai-memory/**",
     "submodules/**/tools/opensource/**",
     "**/tools/opensource/**",
@@ -153,7 +151,13 @@
     "**/.env.*",
     "**/*.key",
     "**/*.pem",
-    "**/secrets/**"
+    "**/secrets/**",
+    "submodules/claude-toolkit/submodules/go/**",
+    "mcp_servers/**",
+    "dependencies/colibri/**",
+    "submodules/superspec/**",
+    "submodules/claude-toolkit/submodules/containers/**",
+    "submodules/claude-toolkit/submodules/challenges/**"
   ],
   "languages": [],
   "frameworks": [],
