@@ -111,9 +111,9 @@ An operator or agent searching the codebase gets results covering code the team 
 
 | # | Question | Status | Resolution |
 |---|----------|--------|------------|
-| Q1 | For the 19 aliases that are advertised but unusable: repair them so they work, or withdraw them so the list is honest? | Open | — |
-| Q2 | Does a model that answers a task correctly but in an unexpected style count as usable? | Open | — |
-| Q3 | Does scope cover every model the hosts could serve, or only those already exposed? | Open | — |
+| Q1 | For the 19 aliases that are advertised but unusable: repair them so they work, or withdraw them so the list is honest? | Resolved 2026-09-08 | **Repair all 19.** Operator decision. Nothing is withdrawn, so no operator-visible capability is lost (FR-018 is satisfied by not exercising it). The residual risk was stated when the decision was taken and is accepted: if an alias proves genuinely un-repairable — retired provider, absent credential, dead endpoint — repairing "all" is not achievable for it, and it would keep presenting as available. That case is NOT to be absorbed silently; it returns as a fresh decision (repair differently, or withdraw with confirmation). |
+| Q2 | Does a model that answers a task correctly but in an unexpected style count as usable? | Resolved 2026-09-08 | **Yes — correctness is the bar, form is not.** A model that solves the task in its own style is usable. This does not weaken anything: the answer must still be right, and a canned or stubbed reply still fails because it is not correct for a prompt it could not have anticipated. Expected effect on the measured baseline is to move models blocked only on answer STYLE into the ready set; models blocked for other reasons are unaffected. |
+| Q3 | Does scope cover every model the hosts could serve, or only those already exposed? | Resolved 2026-09-08 | **Currently exposed, plus a documented and tested path to add more.** Bounds the work to a finishable set while ensuring a later addition is a routine operation rather than a fresh project. Enumerating everything the hosts *could* serve was rejected as unbounded — that set changes whenever a host's inventory changes, so it has no stable definition of done. |
 
 ## Requirements *(mandatory)*
 
@@ -138,6 +138,9 @@ An operator or agent searching the codebase gets results covering code the team 
 - **FR-017**: Every measuring instrument used to establish a verdict MUST itself be validated against a known-good and a known-bad case, and MUST fail on the known-bad one.
 - **FR-018**: System MUST NOT withdraw an operator-visible capability without explicit operator confirmation.
 - **FR-019**: System MUST NOT expose a credential in any verdict, log, evidence file, or diagnostic message.
+- **FR-020**: System MUST bring every currently-advertised alias to a usable state rather than withdrawing it (per Q1). Where an alias proves genuinely un-repairable, the system MUST surface it as a decision requiring operator input, and MUST NOT leave it presenting as available in the meantime.
+- **FR-021**: System MUST judge a model ready on whether its answer is correct, not on whether the answer matches an expected form (per Q2). A reply that could have been produced without processing the request MUST still fail.
+- **FR-022**: System MUST provide a documented, tested path for exposing an additional model, such that adding one is a routine operation (per Q3).
 
 ### Key Entities
 
@@ -169,7 +172,7 @@ An operator or agent searching the codebase gets results covering code the team 
 - The reference host's measured state (8 of 27 aliases usable; 3 of 7 models not yet meeting the readiness bar) is the current baseline, not a target already met.
 - Model hosts may be unreachable at validation time. That is an honest unavailable, not a failure of this feature, provided it is reported as such.
 - Freshness horizon defaults to the horizon the system already applies to comparable data rather than a newly chosen number, and remains overridable.
-- Withdrawing any operator-visible capability requires explicit operator confirmation, so Q1 cannot be resolved unilaterally.
+- Q1 was put to the operator and answered **repair all 19** on 2026-09-08, so no capability is withdrawn by this feature and FR-018's confirmation requirement is not exercised. The accepted residual — an alias that cannot in fact be repaired — returns as a fresh decision rather than being absorbed.
 - Capability catalogue size is expected in the high hundreds; active count at any moment is expected to be a small fraction.
 - Existing aliases predating this feature are in scope: they must reach a correct state, and none may lose capability without confirmation.
 

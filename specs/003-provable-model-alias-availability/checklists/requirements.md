@@ -34,15 +34,18 @@
 Validation performed 2026-09-08. Honest qualifications on three items, recorded
 rather than silently passed:
 
-1. **"No [NEEDS CLARIFICATION] markers remain" — passes literally, but three
-   questions ARE unresolved.** They are carried in the spec's Open Questions
-   table (Q1–Q3), which is the template's designated mechanism for tracked
-   unknowns, rather than as inline markers. This is not a way of dodging the
-   item: Q1 in particular CANNOT be resolved by the authoring agent, because
-   withdrawing an operator-visible capability requires explicit operator
-   confirmation. Treating it as settled would be the violation. Q2 and Q3 have
-   documented defaults in Assumptions and are safe to proceed on, but each
-   changes measured scope if answered differently.
+1. **"No [NEEDS CLARIFICATION] markers remain" — passes, and all three tracked
+   questions are now RESOLVED (updated 2026-09-08).** Q1–Q3 were carried in the
+   spec's Open Questions table rather than as inline markers, then put to the
+   operator and answered: repair all 19 aliases; judge readiness on correctness
+   rather than form; scope to currently-exposed models plus a documented path to
+   add more. Q1 could not have been settled by the authoring agent — withdrawing
+   an operator-visible capability requires explicit operator confirmation, so
+   deciding it unilaterally would itself have been the violation. Three
+   requirements (FR-020, FR-021, FR-022) were added to carry the answers, and
+   the Q1 assumption was rewritten to record the accepted residual: an alias
+   that proves genuinely un-repairable returns as a fresh decision rather than
+   being absorbed silently.
 
 2. **"Written for non-technical stakeholders" — passes with a caveat.** The
    stakeholder for this feature is a developer or agent operating a
