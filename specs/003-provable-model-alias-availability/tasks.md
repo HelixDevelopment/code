@@ -118,13 +118,15 @@ so. This table exists so that constraint is visible before someone dispatches th
 - [ ] T013 [US1] Implement pin generation for records sharing a credential in `TK/scripts/providers/overrides.json` + `TK/scripts/providers_resolve.py`; generated pins MUST be distinguishable from operator-authored ones (FR-024)
 - [ ] T014 [REVIEW] [US1] Apply the T005 cause to the remaining orphan class. Shape unknown until T005 returns — this task is a placeholder for a repair that MUST NOT be designed before the diagnosis
 - [ ] T015 [US1] Restrict "presented as available" to `verified` in `TK/scripts/claude-providers.sh` list rendering; other states show state + reason (FR-001)
-- [ ] T016 [REVIEW] [US1] `huggingface`: its key variable is absent from the catalogue entirely. If un-repairable, surface as an operator decision per FR-020 — never withdraw it unilaterally (§11.4.122)
+- [ ] T016 [REVIEW] [US1] `huggingface`: its key variable is absent from the catalogue entirely. If un-repairable, surface as an operator decision per FR-020 — never withdraw it unilaterally (§11.4.122) (FR-018)
 
 ## Phase 4: User Story 2 — A verdict that means the same thing twice (Priority: P1)
 
 **Goal**: repeated validation against unchanged state yields identical verdicts, each stating its age.
 **Independent test**: run validation repeatedly, compare byte-for-byte; confirm each verdict states its age.
 
+- [ ] T037 [P] [TDD] [US2] RED: reproduce a model judged READY on the SHAPE of its reply rather than its CORRECTNESS (FR-021) — the RED fixture is a reply that matches the expected form while being obtainable WITHOUT processing the request; it MUST be judged not-ready. Covers analyze finding E1.
+- [ ] T038 [US2] Replace form-matching with a correctness oracle in the readiness harness (FR-021). The two measured not-READY causes are distinct and MUST be separated: a small model answering procedurally is a CORRECTNESS failure; per-call usage variance on a route whose usage is a sum over a variable number of internal calls is NOT — conflating them makes a working model look broken.
 - [ ] T017 [P] [TDD] [US2] RED: reproduce a verdict that varies between runs against unchanged state (FR-006)
 - [ ] T018 [P] [TDD] [US2] RED: reproduce stale data being served without announcement (FR-023)
 - [ ] T019 [US2] Make the replayed-wire corpus the DEFAULT verdict path in `HC/testdata/toolcall_wire_corpus/`; the live probe becomes an opt-in distribution check (FR-007)
@@ -146,7 +148,7 @@ so. This table exists so that constraint is visible before someone dispatches th
 **Independent test**: measure active count and governance volume in a fresh session; restore any inactive capability in one command.
 
 - [ ] T025 [P] [TDD] [US4] RED: reproduce an explicit opt-out being silently undone by a routine refresh (FR-012)
-- [ ] T026 [P] [US4] Put `~/.claude-shared/bin` on PATH via the documented shell-rc mechanism so `skill-activate` is reachable without a full path (FR-013)
+- [ ] T026 [P] [US4] Put `~/.claude-shared/bin` on PATH via the documented shell-rc mechanism so `skill-activate` is reachable without a full path (FR-013) (FR-011)
 - [ ] T027 [US4] Correct the activation tool's "live in the running session now" message — hot-load is eventually-consistent across a tool round, and two "Unknown skill" errors currently read as activation failure (§11.4.201: a message must assert the real condition)
 
 ## Phase 7: User Story 5 — Navigation that reflects the real codebase (Priority: P3)
@@ -155,14 +157,56 @@ so. This table exists so that constraint is visible before someone dispatches th
 **Independent test**: query a symbol existing only inside an owned submodule; query vendored code.
 
 - [ ] T028 [P] [TDD] [US5] RED: reproduce an empty or stale index returning "no matches" rather than reporting its emptiness (FR-015)
-- [ ] T029 [P] [SUBAGENT] [US5] Generalise the hardcoded third-party exclusion list in `CN/scripts/codegraph_validate.sh` to read from configuration rather than four inline patterns
+- [ ] T029 [P] [SUBAGENT] [US5] Generalise the hardcoded third-party exclusion list in `CN/scripts/codegraph_validate.sh` to read from configuration rather than four inline patterns (FR-014)
 - [ ] T030 [P] [SUBAGENT] [US5] Add an index-freshness probe that distinguishes "index empty" from "no matches" at the query surface
+
+## Requirement traceability (added 2026-09-08, analyze remediation)
+
+Every FR in `spec.md` must reach a task, be recorded as already shipped, or be
+named here as a known gap. A requirement that is silently uncited is how E1/E2
+went unnoticed: the analyze pass reported 2 zero-coverage FRs, but an explicit
+`comm` of declared-vs-cited ids showed **10** uncited, of which 2 were genuine
+gaps, 3 were already shipped, 3 were covered by task text that simply never
+named the id, and 2 were partial. The ids are now cited on their covering
+tasks so the same `comm` is a mechanical check rather than a judgement call.
+
+| FR | Disposition | Where |
+|---|---|---|
+| FR-021 | GAP → now covered | T037 (RED), T038 (correctness oracle) |
+| FR-022 | GAP → now covered | T039 (document), T040 (executable proof) |
+| FR-003 | Already shipped — wire selected from the declared `transport` field, carried into the provider record, not inferred from URL shape | verify at T034 |
+| FR-004 | Already shipped — `cma_status_age_human` present in 3 files | verify at T034 |
+| FR-005 | Already shipped — `cma_status_is_stale` present in 3 files, so unknown age is distinguishable from recent | verify at T034 |
+| FR-011 | Covered by description | T025, T026, T027 |
+| FR-014 | Covered by description | T029 |
+| FR-018 | Covered by description | T016 |
+| FR-016 | PARTIAL — the mutation harness (T001) supplies the mechanism, and T035 pairs mutations for the new adjacent tests, but nothing yet asserts the property holds for EVERY acceptance criterion | open |
+| FR-017 | PARTIAL — T002 control-needles the census helper specifically; no task extends golden-good/golden-bad validation to every instrument | open |
+
+**FR-016 and FR-017 are recorded as PARTIAL, not closed.** They are the
+self-referential requirements — the ones demanding that checks and instruments
+be falsifiable — and this session produced twelve separate instrument errors
+(a too-narrow grep, a `comm` on unsorted input, an exit code read after a
+pipeline, and so on), each a confident wrong reading indistinguishable from a
+real finding. Marking them covered on the strength of two tasks would be the
+exact failure they exist to prevent. Closing them needs its own scope decision,
+which is why they are named here rather than quietly absorbed.
+
+**Shipped-status verification (§11.4.6).** FR-003/004/005 are recorded shipped
+on the strength of symbol presence confirmed against a positive control (a
+deliberately absent name returned 0 files, proving the search discriminates).
+Presence is not behaviour: T034's full-suite retest is what converts these
+three from "the code is there" to "it works".
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
 - [ ] T031 [P] Record honest §11.4.3 SKIP-with-reason entries for DDoS, scaling and the inapplicable chaos subtypes per research.md, so absent coverage is declared rather than implied
+- [ ] T035 [P] [TDD] For EVERY §11.4.3 SKIP recorded by T031, add the §11.4.81(C) ADJACENT-EQUIVALENT test exercising the closest invariant this platform CAN enforce, in `TK/scripts/tests/` — a SKIP alone leaves §11.4.81 HALF-satisfied (analyze finding D1). Each adjacent test carries its own paired §1.1 mutation, so it provably fails when its subject breaks (FR-016).
+- [ ] T036 [P] Give every T031 SKIP the two fields §11.4.81(C) requires beyond the reason — the exact platform limitation and a runnable reproducer — plus a link to the honest-gap doc; a SKIP without a reproducer is unfalsifiable and cannot be re-tested when the platform changes.
 - [ ] T032 [P] [REVIEW] Author the recommended gates named but NOT shipped: `CM-CENSUS-CONTROL-NEEDLED`, `CM-MECHANICAL-WORK-EXTRACTED`, `CM-EXTRACTED-TOOL-DOCUMENTED-AND-TESTED`, each with a paired §1.1 mutation
 - [ ] T033 [P] Re-scan for mechanical work still performed by agents and extract it (§11.4.274(c)) — a recurring obligation, not a one-off
+- [ ] T039 [P] Document the path for exposing an ADDITIONAL model end to end (FR-022) in `TK/docs/` — every file touched, both wires, and the Kimi twin (alias AND config), so adding one is routine rather than archaeology. Covers analyze finding E2.
+- [ ] T040 [TDD] Make T039 an EXECUTABLE path, not prose (FR-022): a test that adds a throwaway model by following the documented steps, asserts it reaches `verified` on both wires with its twin present, then removes it — leaving the tree byte-identical. Doc drift then fails the test instead of surfacing months later as a broken alias.
 - [ ] T034 [REVIEW] Full-suite retest (§11.4.40) and the review loop to a clean GO (§11.4.134) before merge
 
 ## Dependencies & Execution Order
