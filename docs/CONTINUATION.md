@@ -1881,3 +1881,100 @@ Operator decision (2026-06-22): semgrep is no longer a mandatory requirement. Al
 - **Canon defect:** §11.4.64 / §11.4.205 / §11.4.206 cited but never defined in `constitution/Constitution.md`.
 - **CONST-053:** `reports/latency/p99-baseline-2026-03-16.txt` + `releases/.version-data/helixagent.last-hash` are tracked files rewritten by tests. Exclude from staging; never `git add -A`.
 - **`.docs_chain/contexts/{issues,fixed}.yaml`** still point the legacy summary generators at Markdown rather than the DB — inert only because the engine is absent; would reproduce the corruption G12 now blocks.
+
+---
+
+## Session 2026-09-08 — lockstep restored, two reviews caught two real defects
+
+### Corrections to entries above (both were true when written, both now stale)
+
+- **§11.4.157 lockstep gap — CLOSED.** The note above ("the six root carriers still top
+  out at §11.4.234") is superseded by meta `94c8b2c3`. All five repo-root carriers
+  (`CLAUDE.md`, `AGENTS.md`, `QWEN.md`, `GEMINI.md`, `CONSTITUTION.md`) now carry 271
+  anchors, top §11.4.272, with anchor-set md5 **identical** across all five
+  (`084ae1e39940`) and each new anchor heading exactly one block (§11.4.227(B)).
+- **Canon non-anchor set — INCOMPLETE above.** The entry lists §11.4.64 / §11.4.205 /
+  §11.4.206. Measured against BOTH canonical block-opener forms, the full set of tokens
+  present in carriers but not heading a canon block is **§11.4.64, §11.4.175, §11.4.203,
+  §11.4.204, §11.4.205, §11.4.206**. Canon defines **265** blocks.
+  METHOD NOTE (§11.4.6): a pattern matching only `^### §11.4.N` under-counts canon by ~24
+  and manufactures phantom dangling anchors — canon also opens blocks as `^**§11.4.N —`.
+  Any `CM-COVENANT-*` gate written against the narrow pattern will report green while
+  silently under-counting. Count BLOCKS, both forms.
+
+### Landed and pushed (GitLab; GitHub blocked)
+
+`94c8b2c3` lockstep cascade · `c9187041` redaction-fixture de-fang ·
+`27e63d4c` + `2855c812` SpecKit feature 003. helix_agent `45457735` is committed but
+**HELD, NOT PUSHED** pending review closure.
+
+### GitHub push block — diagnosed, safe to unblock, still needs the operator
+
+The flagged secret is a Stripe **TEST-mode**-shaped fixture (`sk_test_` + 24 alphanumerics)
+shared by four redaction suites and quoted once at `docs/qa/2026-09-05-gap-ledger.md:75` as
+the measured pre-fix leak in the HXC-002-F3-11 CONST-042 record. Not a production
+credential. UNCONFIRMED (§11.4.6): whether that exact string was ever a live test-mode key
+on a real account — establishing it means sending the credential to a third party, which
+was not done.
+The unblock URL is still required: the literal is in published history (`0d8be909`,
+`2abc7a1f`) and force-push is forbidden without exception (§11.4.113). `c9187041` only
+stops NEW commits re-tripping the scanner; it does not unblock the existing range.
+
+### Two defects that passed self-verification and were caught by independent review
+
+1. **claude_toolkit** — the unconditional Kimi-twin rebuild at `claude-providers.sh:3232`
+   broke the refresh no-op invariant (`test_alias_file_concurrency.sh` 69/69 → 2 failed),
+   and `test_kimi_wire_and_status_freshness.sh:312` carried a **vacuous** assertion that
+   survived mutation M1c because the column it grepped already contained the expected
+   character for an unrelated reason. Both CLOSED (config-exists gate; column-4 read plus
+   the negative property). Re-review in flight at time of writing.
+2. **helix_agent `45457735`** — the `TokenSplit` partial-branch fix is correct inside
+   `internal/models` but breaks `services/debate_service.go:257`, which RE-ENCODES the
+   triple into metadata and reads it back. `(7,0,41)` is written as `completion_tokens: 0`,
+   which that same commit's test defines as a MEASURED zero, so the re-read takes the
+   both-directions branch and derives total = 7. Measured through `debateResultToEnsemble`:
+   `(200,6,247)` → `(207,6,213)` — **34 tokens silently dropped**, past a guard written to
+   forbid exactly that, bypassed because the shrink happens upstream of it.
+   ROOT CAUSE: `TokenSplit` returns plain `int`s, so a measured zero and an unknown
+   collapse. Fix in flight at the encode seam with round-trip stability as the asserted
+   invariant — NOT at the arithmetic symptom.
+
+### Live host state (read-only census)
+
+27 `kimi-` twin aliases exist; only **8** have a `config.toml`. The other **19** present as
+available and refuse on use. UNCONFIRMED whether the uncommitted refresh loop authored all
+19 — not bisected, and not claimed.
+
+### Operator decisions taken 2026-09-08
+
+- **Q1 — the 19 unusable aliases: REPAIR ALL 19.** Nothing withdrawn, so §11.4.122
+  confirmation is never exercised. Accepted residual, recorded in FR-020: an alias that
+  proves genuinely un-repairable returns as a fresh decision rather than being absorbed
+  silently or left presenting as available.
+- **Q2 — readiness bar: CORRECTNESS, NOT FORM** (FR-021). A canned reply still fails.
+- **Q3 — scope: CURRENTLY-EXPOSED MODELS + a documented, tested path to add more**
+  (FR-022). "Everything the hosts could serve" rejected as unbounded.
+
+All three carried into `specs/003-provable-model-alias-availability/spec.md`
+(22 FRs, 10 SCs, zero open questions).
+
+### Instrument-error pattern — carry this forward
+
+Three times this session a MEASURING tool failed silently and produced a confident wrong
+reading indistinguishable from a real finding: a too-narrow anchor grep (manufactured 24
+phantom dangling anchors), `comm` on unsorted input (reported all 34 anchors missing), and
+`$?` read after a pipeline (reported a script failure as exit 0). Same false-null class as
+the product defects being hunted. **Control-needle every census before believing it** — a
+fabricated needle that comes back as the only diff proves the instrument can still report a
+real absence.
+
+### Next
+
+1. Land the two in-flight review outcomes; push helix_agent only on a clean GO (§11.4.134).
+2. Repair the 19 twin-less aliases per the Q1 decision (FR-020).
+3. Continue the SpecKit pipeline: clarify → plan → tasks → analyze → superspec handover.
+   `/speckit-constitution` deliberately NOT run — `.specify/memory/constitution.md` is an
+   inheritance pointer and says in its own text that running it re-opens risk R-23 by
+   creating a third constitution (CONST-059).
+4. Operator: click the GitHub unblock URL; optionally put `~/.claude-shared/bin` on PATH so
+   `skill-activate` is reachable without a full path.
