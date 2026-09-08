@@ -305,9 +305,28 @@ for src in "${SOURCES[@]}"; do
     if timeout "$TIMEOUT_SECS" weasyprint "$html" "$pdf" >/dev/null 2>&1; then
       rendered=$((rendered+1))
     else
-      # weasyprint emits benign warnings on stderr but may still exit 0;
-      # a real failure (timeout / no output) is caught here.
-      if [ -f "$pdf" ]; then rendered=$((rendered+1)); else
+      _wp_rc=$?
+      # FALSE-SUCCESS FIX (2026-09-08, §11.4.201).
+      #
+      # This fallback used to ask `[ -f "$pdf" ]`. Existence is NOT freshness:
+      # when weasyprint TIMED OUT, the STALE pdf from a previous run was still
+      # on disk, so the run counted it as `rendered`. Measured: a batch of 8
+      # documents reported `rendered=16 failed=0` while 2 pdfs were never
+      # written and kept an eight-day-old mtime — and because those two were
+      # regenerations of a CREDENTIAL SCRUB, the stale copies went on handing
+      # the credential over under a green summary line. Absence of a fresh
+      # render was indistinguishable from success.
+      #
+      # A timeout is now ALWAYS a failure (124 is timeout(1)'s own code), and
+      # the fallback requires the pdf to be NEWER than the html it renders,
+      # never merely present.
+      if [ "$_wp_rc" -eq 124 ]; then
+        echo "FAIL pdf (timeout after ${TIMEOUT_SECS}s): $src" >&2; failed=$((failed+1))
+      elif [ -f "$pdf" ] && [ ! "$pdf" -ot "$html" ]; then
+        # weasyprint emits benign warnings and can exit non-zero while still
+        # having written a CURRENT pdf; that case is a genuine pass.
+        rendered=$((rendered+1))
+      else
         echo "FAIL pdf: $src" >&2; failed=$((failed+1))
       fi
     fi

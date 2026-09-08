@@ -65,9 +65,9 @@
 #   G31 §11.4.135 HXC-233 guard      — completion path returns a REAL generation (live e2e)
 #   G32 §11.4.135 HXC-244 guard      — health endpoint names the components it checked
 #   G34 §11.4.111 endpoint agreement — configured Helix endpoints agree across sources
+#                                      AND reach the service they name (live, 3-state)
 #   G35 CONST-042 HXC-168 guard     — no tracked file hands over a DB credential; DB ports bind loopback
 #   G36 HXC-168 regression guard  — the standing RED_MODE=0 polarity guard for the HXC-168 exposure class
-#                                      AND reach the service they name (live, 3-state)
 #
 # REGISTRATION DRIFT IS NOW SELF-REPORTING (review R4, 2026-08-10).
 # --explain lists the entries above; the sweep defines gates as `want_gate GN`

@@ -93,7 +93,11 @@ source_declares_loopback() {
   for entry in "${PORT_TARGETS[@]}"; do
     file="${entry%%|*}"; mapping="${entry##*|}"
     case "$mapping" in
-      "$port":*) [ -f "$file" ] && grep -q "127\.0\.0\.1:${port}:" "$file" && return 0 ;;
+      # Review W9: this grepped the whole file, so a COMMENTED-OUT loopback
+      # line beside a LIVE wildcard publish would read as "source already
+      # binds loopback" and downgrade a real finding to OPERATOR-BLOCKED.
+      # Comment lines are stripped before the test.
+      "$port":*) [ -f "$file" ] && grep -v '^[[:space:]]*#' "$file" | grep -q "127\.0\.0\.1:${port}:" && return 0 ;;
     esac
   done
   return 1
