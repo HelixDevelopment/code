@@ -1,0 +1,38 @@
+=== §11.4.122 PROOF ON THE REAL PROJECT (corrected measurement) ===
+2026-09-07T12:22:52Z
+
+NOTE (§11.4.6): a first attempt compared two DIFFERENT file sets — the
+'before' command carried '-not -type l', excluding the 5 skills whose
+SKILL.md is itself a symlink (10 files vs 15). The hash mismatch it
+produced was a measurement artifact, NOT content loss. Corrected below by
+comparing per-skill CONTENT against the §9.2 pre-op hardlink backup.
+
+--- (1) NOTHING DELETED: per-skill content, pre-op backup vs attic ---
+  IDENTICAL  speckit-analyze                  d954b5114ddb8a1da6d275e4afc7bc4d
+  IDENTICAL  speckit-checklist                5a3798aad248142f7afe86d8a7576aeb
+  IDENTICAL  speckit-clarify                  cd6dcde2d9a858a31e8ef8e1ea26d69c
+  IDENTICAL  speckit-constitution             813093ef57eb2ad7e2fb00d0ca4ed569
+  IDENTICAL  speckit-converge                 865f831a17c079b13bf8dff2c7bbfeb1
+  IDENTICAL  speckit-implement                943970d34988ee7024ad47c52e0ae1ac
+  IDENTICAL  speckit-plan                     d70abeb773ad1113e2366d216b12018f
+  IDENTICAL  speckit-specify                  70939fcfcb1ed426f79ff2791f702abd
+  IDENTICAL  speckit-superspec-brainstorm     f781b3909fd33e05ee952dc60c7e744a
+  IDENTICAL  speckit-superspec-execute        65f7dfbc24c1159de308f006ddf7f62c
+  IDENTICAL  speckit-superspec-review         8e37ba13cd492dbd507fdecc1b212c4b
+  IDENTICAL  speckit-superspec-status         c373c6713226e799b1172f4d8fd334af
+  IDENTICAL  speckit-superspec-tasks          09d3a315e4cbf5fab2601e9f5e344776
+  IDENTICAL  speckit-tasks                    f9d898aa15929f7135151399c30b1ce4
+  IDENTICAL  speckit-taskstoissues            da7abd9c441d06a69924a17fedf7e766
+  => skills with differing content: 0  (0 == nothing altered or lost)
+
+--- (2) STILL LISTED by the always-core skill-catalog ---
+  [ ] reporting-workable-items
+  [ ] speckit-plan
+  [ ] speckit-superspec-review
+
+--- (3) STILL ACTIVATABLE (round-trip on a real pruned skill) ---
+skill-activation: ACTIVATED: speckit-superspec-review -> /home/milosvasic/Projects/helix_code/.claude/.skill-activation/pool/speckit-superspec-review
+---
+name: speckit-superspec-review
+description: 'Spec-kit workflow command: speckit-superspec-review'
+skill-activation: DEACTIVATED: speckit-superspec-review (unlinked)

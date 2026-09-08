@@ -1,0 +1,44 @@
+=== BEFORE: active skill surface (helix_code) ===
+2026-09-07T12:13:35Z
+
+--- ls -l .claude/skills ---
+total 60
+lrwxrwxrwx 1 milosvasic milosvasic   46 Sep  7 13:28 action-prefix-system -> ../../constitution/skills/action-prefix-system
+lrwxrwxrwx 1 milosvasic milosvasic   50 Sep  7 13:28 reporting-workable-items -> ../../constitution/skills/reporting-workable-items
+lrwxrwxrwx 1 milosvasic milosvasic   39 Sep  7 13:59 skill-catalog -> ../../constitution/skills/skill-catalog
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-analyze
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-checklist
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-clarify
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-constitution
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-converge
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-implement
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-plan
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-specify
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:02 speckit-superspec-brainstorm
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:02 speckit-superspec-execute
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:02 speckit-superspec-review
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:02 speckit-superspec-status
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:02 speckit-superspec-tasks
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-tasks
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep  1 18:01 speckit-taskstoissues
+lrwxrwxrwx 1 milosvasic milosvasic   49 Sep  7 13:28 workable-item-lifecycle -> ../../constitution/skills/workable-item-lifecycle
+
+--- type census ---
+symlinks=4  real-dirs=15
+
+--- status ---
+manifest        : /home/milosvasic/Projects/helix_code/constitution/scripts/skill_activation/skill-manifest.default.yaml
+active dir      : /home/milosvasic/Projects/helix_code/.claude/skills
+session id      : claude-claude5
+pool skills     : 962
+ACTIVE skills   : 19
+render bytes    : name-only=422  name+description=3622
+approx tokens   : name-only=105  name+description=905
+
+--- budget gate ---
+CM-SKILL-SURFACE-BUDGET
+  active skills            : 19
+  render name-only         : 422 B  (~105 tok/turn)   limit 4096 B
+  render name+description  : 3622 B  (~905 tok/turn)   limit 24576 B
+  longest description      : action-prefix-system (625 B)
+  PASS

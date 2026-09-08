@@ -1,0 +1,65 @@
+{
+  "crush_main_full_skills": {
+    "n_messages": 3,
+    "n_tools": 26,
+    "request_bytes": 402133,
+    "skill_blocks_in_system_prompt": 949,
+    "system_message_bytes": 376866,
+    "tools_bytes": 25914,
+    "user_content_form": "string"
+  },
+  "crush_no_host_skills": {
+    "n_messages": 3,
+    "n_tools": 26,
+    "request_bytes": 48104,
+    "skill_blocks_in_system_prompt": 4,
+    "system_message_bytes": 22457,
+    "tools_bytes": 25914,
+    "user_content_form": "string"
+  },
+  "crush_title_small": {
+    "n_messages": 2,
+    "n_tools": 0,
+    "request_bytes": 804,
+    "skill_blocks_in_system_prompt": 0,
+    "system_message_bytes": 506,
+    "tools_bytes": 2,
+    "user_content_form": "string"
+  },
+  "opencode_default": {
+    "n_messages": 2,
+    "n_tools": 120,
+    "request_bytes": 544439,
+    "skill_blocks_in_system_prompt": 979,
+    "system_message_bytes": 384593,
+    "tools_bytes": 164965,
+    "user_content_form": "array"
+  },
+  "opencode_pure": {
+    "n_messages": 2,
+    "n_tools": 120,
+    "request_bytes": 535072,
+    "skill_blocks_in_system_prompt": 965,
+    "system_message_bytes": 379070,
+    "tools_bytes": 164965,
+    "user_content_form": "string"
+  },
+  "pi_default": {
+    "n_messages": 2,
+    "n_tools": 4,
+    "request_bytes": 362452,
+    "skill_blocks_in_system_prompt": 950,
+    "system_message_bytes": 359689,
+    "tools_bytes": 3024,
+    "user_content_form": "array"
+  },
+  "pi_no_skills": {
+    "n_messages": 2,
+    "n_tools": 4,
+    "request_bytes": 5983,
+    "skill_blocks_in_system_prompt": 0,
+    "system_message_bytes": 2800,
+    "tools_bytes": 3024,
+    "user_content_form": "array"
+  }
+}

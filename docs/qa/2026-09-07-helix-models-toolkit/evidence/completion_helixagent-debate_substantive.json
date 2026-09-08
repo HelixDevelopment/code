@@ -1,0 +1,2 @@
+{"id":"ae-528b69cf","object":"chat.completion","created":-62135596800,"model":"helixagent-ensemble","choices":[{"index":0,"message":{"role":"assistant","content":"Comprehensive debate completed with 3 rounds"},"finish_reason":""}],"usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0},"system_fingerprint":"fp_helixagent_ensemble","agentic":{"mode":"reason","stages_completed":["debate"],"agents_spawned":0,"tasks_completed":0,"total_duration_ms":0,"provenance_id":"52dda29d-53ba-42b6-941c-f5aebac93af8"}}
+__HTTP_STATUS=200 __TIME=2.318999

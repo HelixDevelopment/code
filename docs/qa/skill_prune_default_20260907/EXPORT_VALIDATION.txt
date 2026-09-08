@@ -1,0 +1,24 @@
+=== §11.4.168 export validation: content + textual + non-degenerate ===
+2026-09-07T12:28:06Z
+
+--- PDF is real + non-trivial ---
+README.pdf: PDF document, version 1.7
+extractable text bytes: 7123
+
+--- CONTENT: key sections survived the transform ---
+  Pruning (the default)                    in PDF: 1
+  not a §11.4.122 silent removal          in PDF: 1
+  Refusals are loud                        in PDF: 1
+  Opt-out                                  in PDF: 1
+  Known limitations                        in PDF: 1
+
+--- TEXTUAL: no raw markup leaked as body text ---
+  raw-markup lines leaked into PDF text: 0 (0 == clean)
+
+--- the measured before/after table survived as data, not source ---
+
+--- table rendering (corrected check: pdftotext wraps cells across lines) ---
+  <table> elements in HTML: 4
+  literal pipe-table rows leaked to PDF text: 0 (0 == rendered as tables, not source)
+  measured data present: 110:422 B (~105 tok/
+  measured data present: 119:65 B (~16 tok/turn)

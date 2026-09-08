@@ -53,3 +53,5 @@ never lost or forgotten. It does NOT by itself guarantee the work is correct —
 each request's output still crosses the same gates as any other change:
 independent review (§11.4.142 / §11.4.134), four-layer runtime-signature
 verification (§11.4.108), and the full-suite retest (§11.4.40).
+| BGQ-0001 | 2026-09-07T13:47+02:00 | in-progress | Dynamic on-demand Skill/extension activation so only skills needed at a given moment are active; token use always minimal; implemented in the constitution submodule so every project inherits it | none — subagent dispatched |
+| BGQ-0002 | 2026-09-07T15:51+02:00 | in-progress | Enumerate every operator-blocked item, blocker and show-stopper across the session and put them to the operator as interactive decisions so all can be unblocked | none — compiled and surfaced |

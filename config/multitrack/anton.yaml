@@ -1,0 +1,77 @@
+# Per-host multi-track config for helix_code on host `anton`
+# (§11.4.187 / §11.4.176 / §11.4.178 / §11.4.28(B) / §11.4.35).
+#
+# The project-agnostic engine at constitution/scripts/multitrack/ consumes THIS
+# file as DATA; ONE file per host, filename = <hostname>.yaml, committed to git.
+#
+# OPERATOR DECISION (2026-09-07, verbatim): "For this particular project, we
+# MUST HAVE only main Track 1 which is the current project root directory - as
+# is!"  So this host declares EXACTLY ONE track, and that track IS the project
+# root — no /mnt/track<N> drives, no worktrees, no feature streams. More tracks
+# are added ONLY when explicitly required, by adding entries below.
+#
+# Track 1 is a DIRECTORY track: it deliberately carries NO `drive_serial`,
+# because it is not backed by a dedicated drive. The engine treats a serial-less
+# track as a plain directory (READY when the directory exists) instead of
+# probing /proc/mounts for it (§11.4.201 — no false "unmounted" refusal).
+#
+# NOTE (§11.4.6 honest boundary): this file states only what was MEASURED on
+# this host on 2026-09-07 — hostname, machine-id, the serial of the drive
+# backing / and /home, the project root, and the `~/.claude-<alias>` config
+# directories that exist. Nothing here is inferred or invented.
+
+schema_version: 1
+
+host:
+  hostname: anton
+  machine_id: "eeac4e78aecd4313"   # first 16 of /etc/machine-id (disambiguation)
+
+# NEVER format/partition/encrypt — hard protect-guard keyed on STABLE SERIAL
+# (§11.4.111), never on a /dev/nvmeXn1 enumeration index.
+# MEASURED: `findmnt -no SOURCE /` -> /dev/nvme0n1p2; `lsblk -dno NAME,SERIAL
+# /dev/nvme0n1` -> S7U7NJ0XA03397R. This drive carries / and /home.
+protected_drives:
+  - serial: "S7U7NJ0XA03397R"
+    reason: "system drive — backs / and /home on anton; NEVER a track drive"
+# A second NVMe (serial PK3220000228) is present on this host but is NOT
+# enrolled here: this project uses exactly one directory track, and enrolling a
+# drive whose purpose has not been established would be invented data (§11.4.6).
+
+# ONE track. mount + worktree_subdir compose to the worktree, so
+#   /home/milosvasic/Projects  +  helix_code  =  /home/milosvasic/Projects/helix_code
+# i.e. Track 1 IS this project root, used as-is.
+tracks:
+  - id: track-1
+    role: main
+    branch: main
+    mount: /home/milosvasic/Projects
+    focus: "main — THE single track on this host; the project root itself, used as-is (operator decision 2026-09-07). No worktree, no dedicated drive."
+
+# helix_code is a Go server/CLI/LLM platform — it leases no physical test
+# hardware on this host, so there is no device pool and no lease policy.
+device_pool: []
+lease_policy: {}
+
+# Claude-Toolkit alias roster — NAMES ONLY, never keys/tokens (§11.4.10).
+# MEASURED: each has a `~/.claude-<name>` config directory on this host.
+# With a single track there is nothing to arbitrate between: every alias
+# resolves to track-1, which is the project root they already work in.
+aliases:
+  - name: claude1
+    kind: native
+  - name: claude2
+    kind: native
+  - name: claude3
+    kind: native
+  - name: claude4
+    kind: native
+  - name: claude5
+    kind: native
+
+# No `conductor:` is declared. The conductor key exists to keep ONE alias off a
+# worktree and on the shared checkout (§11.4.177); with a single track that IS
+# the shared checkout, the distinction is meaningless here. Naming one anyway
+# would assert a policy the operator has not stated (§11.4.6).
+
+# Per-track worktree subdir: <mount>/<worktree_subdir> == the project root.
+worktree_subdir: helix_code

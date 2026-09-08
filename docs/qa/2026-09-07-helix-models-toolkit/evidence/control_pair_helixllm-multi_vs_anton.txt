@@ -1,0 +1,7 @@
+### CONTROL PAIR captured 2026-09-07T09:43:44Z — same gateway, same second
+--- model=helixllm-multi
+{"error":{"message":"no model-serving backend is currently available to serve this request; retry shortly","type":"server_error","param":null,"code":null}}
+__HTTP_STATUS=503
+--- model=helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190
+{"id":"chatcmpl-40h6Qv1rdC7fVhTbnp4mJvnxZQt5TxlS","object":"chat.completion","created":1788774224,"model":"qwen2.5-coder-3b-instruct-q4_k_m","choices":[{"index":0,"message":{"role":"assistant","content":"HELIX-OK-7"},"finish_reason":"stop"}],"usage":{"prompt_tokens":68,"completion_tokens":7,"total_tokens":75}}
+__HTTP_STATUS=200

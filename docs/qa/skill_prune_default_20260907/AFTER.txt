@@ -1,0 +1,43 @@
+=== AFTER: active skill surface (helix_code) ===
+2026-09-07T12:21:41Z
+
+--- ls -l .claude/skills ---
+total 0
+lrwxrwxrwx 2 milosvasic milosvasic 46 Sep  7 13:28 action-prefix-system -> ../../constitution/skills/action-prefix-system
+lrwxrwxrwx 2 milosvasic milosvasic 39 Sep  7 13:59 skill-catalog -> ../../constitution/skills/skill-catalog
+lrwxrwxrwx 2 milosvasic milosvasic 49 Sep  7 13:28 workable-item-lifecycle -> ../../constitution/skills/workable-item-lifecycle
+
+--- status ---
+manifest        : /home/milosvasic/Projects/helix_code/constitution/scripts/skill_activation/skill-manifest.default.yaml
+active dir      : /home/milosvasic/Projects/helix_code/.claude/skills
+session id      : claude-claude5
+pool skills     : 977
+ACTIVE skills   : 3
+render bytes    : name-only=65  name+description=1336
+approx tokens   : name-only=16  name+description=334
+
+--- budget gate ---
+CM-SKILL-SURFACE-BUDGET
+  active skills            : 3
+  render name-only         : 65 B  (~16 tok/turn)   limit 4096 B
+  render name+description  : 1336 B  (~334 tok/turn)   limit 24576 B
+  longest description      : action-prefix-system (625 B)
+  PASS
+
+--- attic (nothing deleted: 16 demoted skills preserved) ---
+15
+speckit-analyze
+speckit-checklist
+speckit-clarify
+speckit-constitution
+speckit-converge
+speckit-implement
+speckit-plan
+speckit-specify
+speckit-superspec-brainstorm
+speckit-superspec-execute
+speckit-superspec-review
+speckit-superspec-status
+speckit-superspec-tasks
+speckit-tasks
+speckit-taskstoissues

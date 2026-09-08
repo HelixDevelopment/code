@@ -1,0 +1,2 @@
+{"id":"fb61b0de36fe490aa9ca0e13febfe963","object":"chat.completion","created":1788774001,"model":"helix-llm","choices":[{"index":0,"message":{"role":"assistant","content":"HELIX-OK-7"},"finish_reason":"stop"}],"usage":{"prompt_tokens":18,"completion_tokens":8,"total_tokens":26},"system_fingerprint":"fp_helixllm_v1"}
+__HTTP_STATUS=200 __TIME=11.295146

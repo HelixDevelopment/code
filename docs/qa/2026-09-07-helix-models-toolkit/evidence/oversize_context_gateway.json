@@ -1,0 +1,2 @@
+{"id":"chatcmpl-tmZQzAoNtjZywW1f5qJQvxo3vGdT37gg","object":"chat.completion","created":1788774418,"model":"qwen2.5-coder-3b-instruct-q4_k_m","choices":[{"index":0,"message":{"role":"assistant","content":"HELIX-OK-7"},"finish_reason":"stop"}],"usage":{"prompt_tokens":1016,"completion_tokens":7,"total_tokens":1023}}
+__HTTP_STATUS=200
