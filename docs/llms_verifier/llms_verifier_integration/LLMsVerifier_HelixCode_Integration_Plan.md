@@ -313,7 +313,7 @@ type LLMConfig struct {
 
 ```bash
 # Required
-HELIX_DATABASE_PASSWORD=helixpass
+HELIX_DATABASE_PASSWORD=CHANGE_ME_db_password
 HELIX_AUTH_JWT_SECRET=your-super-secret-jwt-key
 HELIX_REDIS_PASSWORD=redispass
 
@@ -9655,7 +9655,7 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: helix
-      POSTGRES_PASSWORD: helixpass
+      POSTGRES_PASSWORD: ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
       POSTGRES_DB: helixcode_test
     ports:
       - "5433:5432"
@@ -9772,7 +9772,7 @@ done
 # 5. Export test environment variables
 export HELIX_DATABASE_HOST=localhost
 export HELIX_DATABASE_PORT=5433
-export HELIX_DATABASE_PASSWORD=helixpass
+export HELIX_DATABASE_PASSWORD=CHANGE_ME_db_password
 export HELIX_REDIS_HOST=localhost
 export HELIX_REDIS_PORT=6380
 export HELIX_VERIFIER_URL=http://localhost:8081
@@ -19487,7 +19487,7 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: helix
-      POSTGRES_PASSWORD: helixpass
+      POSTGRES_PASSWORD: ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
       POSTGRES_DB: helixcode_test
     ports:
       - "5433:5432"

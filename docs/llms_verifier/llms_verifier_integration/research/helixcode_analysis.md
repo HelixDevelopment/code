@@ -276,7 +276,7 @@ type LLMConfig struct {
 
 ```bash
 # Required
-HELIX_DATABASE_PASSWORD=helixpass
+HELIX_DATABASE_PASSWORD=CHANGE_ME_db_password
 HELIX_AUTH_JWT_SECRET=your-super-secret-jwt-key
 HELIX_REDIS_PASSWORD=redispass
 

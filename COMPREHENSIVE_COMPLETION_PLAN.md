@@ -305,7 +305,7 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: helixcode
-      POSTGRES_PASSWORD: helixcode_test_password
+      POSTGRES_PASSWORD: ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
       POSTGRES_DB: helixcode_test
     ports:
       - "5432:5432"
@@ -490,7 +490,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://helixcode:helixcode_test_password@postgres:5432/cognee
+      - DATABASE_URL=postgresql://helixcode:${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}@postgres:5432/cognee
     depends_on:
       postgres:
         condition: service_healthy
@@ -535,7 +535,7 @@ services:
       - HELIX_DATABASE_HOST=postgres
       - HELIX_DATABASE_PORT=5432
       - HELIX_DATABASE_USER=helixcode
-      - HELIX_DATABASE_PASSWORD=helixcode_test_password
+      - HELIX_DATABASE_PASSWORD=${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
       - HELIX_DATABASE_NAME=helixcode_test
       - HELIX_REDIS_HOST=redis
       - HELIX_REDIS_PORT=6379
@@ -705,7 +705,7 @@ echo "Run tests with: make test-full"
 HELIX_DATABASE_HOST=localhost
 HELIX_DATABASE_PORT=5432
 HELIX_DATABASE_USER=helixcode
-HELIX_DATABASE_PASSWORD=helixcode_test_password
+HELIX_DATABASE_PASSWORD=CHANGE_ME_db_password
 HELIX_DATABASE_NAME=helixcode_test
 HELIX_DATABASE_ENABLED=true
 

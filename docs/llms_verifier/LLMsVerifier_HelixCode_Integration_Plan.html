@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>LLMsVerifier_HelixCode_Integration_Plan</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 
 ul.task-list[class]{list-style: none;}
@@ -19,7 +23,6 @@ width: 0.8em;
 margin: 0 0.8em 0.2em -1.6em;
 vertical-align: middle;
 }
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
 
 html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -589,7 +592,7 @@ struct 6. Validate (<code>validateConfig()</code>)</p>
 <h3 id="environment-variables-.env.example-4">5.2 Environment Variables
 (.env.example) <a href="https://raw.githubusercontent.com/HelixDevelopment/helix_code/main/.env.example%20-%20Environment%20template"><sup>4</sup></a></h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Required</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">HELIX_DATABASE_PASSWORD</span><span class="op">=</span>helixpass</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">HELIX_DATABASE_PASSWORD</span><span class="op">=</span>CHANGE_ME_db_password</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">HELIX_AUTH_JWT_SECRET</span><span class="op">=</span>your-super-secret-jwt-key</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="va">HELIX_REDIS_PASSWORD</span><span class="op">=</span>redispass</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
@@ -12145,7 +12148,7 @@ Test Dependencies</h3>
 <span id="cb210-5"><a href="#cb210-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:15-alpine</span></span>
 <span id="cb210-6"><a href="#cb210-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
 <span id="cb210-7"><a href="#cb210-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> helix</span></span>
-<span id="cb210-8"><a href="#cb210-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> helixpass</span></span>
+<span id="cb210-8"><a href="#cb210-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}</span></span>
 <span id="cb210-9"><a href="#cb210-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> helixcode_test</span></span>
 <span id="cb210-10"><a href="#cb210-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
 <span id="cb210-11"><a href="#cb210-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;5433:5432&quot;</span></span>
@@ -12278,7 +12281,7 @@ validation)</td>
 <span id="cb212-27"><a href="#cb212-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Export test environment variables</span></span>
 <span id="cb212-28"><a href="#cb212-28" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_DATABASE_HOST</span><span class="op">=</span>localhost</span>
 <span id="cb212-29"><a href="#cb212-29" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_DATABASE_PORT</span><span class="op">=</span>5433</span>
-<span id="cb212-30"><a href="#cb212-30" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_DATABASE_PASSWORD</span><span class="op">=</span>helixpass</span>
+<span id="cb212-30"><a href="#cb212-30" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_DATABASE_PASSWORD</span><span class="op">=</span>CHANGE_ME_db_password</span>
 <span id="cb212-31"><a href="#cb212-31" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_REDIS_HOST</span><span class="op">=</span>localhost</span>
 <span id="cb212-32"><a href="#cb212-32" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_REDIS_PORT</span><span class="op">=</span>6380</span>
 <span id="cb212-33"><a href="#cb212-33" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HELIX_VERIFIER_URL</span><span class="op">=</span>http://localhost:8081</span>
@@ -23047,7 +23050,7 @@ CREATE</p>
 <span id="cb369-5"><a href="#cb369-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:15-alpine</span></span>
 <span id="cb369-6"><a href="#cb369-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
 <span id="cb369-7"><a href="#cb369-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> helix</span></span>
-<span id="cb369-8"><a href="#cb369-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> helixpass</span></span>
+<span id="cb369-8"><a href="#cb369-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}</span></span>
 <span id="cb369-9"><a href="#cb369-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> helixcode_test</span></span>
 <span id="cb369-10"><a href="#cb369-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
 <span id="cb369-11"><a href="#cb369-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;5433:5432&quot;</span></span>
