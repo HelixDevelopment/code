@@ -35,8 +35,8 @@ func TestLocalRouteRemoteEndpointError_RedactsEndpointCredential(t *testing.T) {
 			// url.URL.Redacted() masked the empty password and printed the
 			// key into a 500 response body.
 			name:        "key_as_username_empty_password",
-			endpoint:    "https://sk_test_4eC39HqLyjWDarjtT1zdp7dc:@api.example.com/v1",
-			mustNotHave: []string{"sk_test_4eC39HqLyjWDarjtT1zdp7dc"},
+			endpoint:    "https://sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL:@api.example.com/v1",
+			mustNotHave: []string{"sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL"},
 			mustHave:    []string{"api.example.com"},
 		},
 		{

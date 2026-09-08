@@ -112,8 +112,8 @@ func endpointRedactionCases() []endpointRedactionCase {
 			// url.URL.Redacted(), which masks the PASSWORD ONLY and prints
 			// the username verbatim. The credential is the username.
 			name:        "key_as_username_empty_password",
-			endpoint:    "https://sk_test_4eC39HqLyjWDarjtT1zdp7dc:@api.example.com/v1",
-			mustNotHave: []string{"sk_test_4eC39HqLyjWDarjtT1zdp7dc"},
+			endpoint:    "https://sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL:@api.example.com/v1",
+			mustNotHave: []string{"sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL"},
 			mustHave:    []string{"api.example.com"},
 		},
 		{

@@ -166,8 +166,8 @@ func redactionShapes() []redactionShape {
 			// password. Password() reports ("", true), so the password-less
 			// masking branch was skipped and Redacted() printed the key.
 			name:        "key_as_username_empty_password",
-			endpoint:    "https://sk_test_4eC39HqLyjWDarjtT1zdp7dc:@127.0.0.1:1/v1",
-			mustNotHave: []string{"sk_test_4eC39HqLyjWDarjtT1zdp7dc"},
+			endpoint:    "https://sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL:@127.0.0.1:1/v1",
+			mustNotHave: []string{"sk_test_EXAMPLE_NOT_A_REAL_CREDENTIAL"},
 			mustHave:    []string{"127.0.0.1"},
 		},
 		{
