@@ -7883,7 +7883,22 @@ component removal needing explicit operator approval plus a 11.4.124
 dead-code git-history investigation. [C] ACCEPT and suppress with a
 documented rationale - cheapest, exposure genuinely unchanged since the
 package is never loaded, but the alert stays on the board as audit
-noise. WHO: Operator <strong>Severity:</strong> High</p>
+noise. WHO: Operator <strong>Superseded-Note:</strong> The
+Operator-Block-Details above are the PRE-DECISION state and are retained
+as the record of the decision point, not as current fact. The operator
+chose [A]; verification then found [A] was ALREADY MERGED at 78b2c0ac
+(<span class="citation" data-cites="modelcontextprotocol/sdk">@modelcontextprotocol/sdk</span>
+^0.5.0 -&gt; ^1.24.0, installed 1.30.0; ws 8.21.1), so all three
+advisories are out of range and npm audit reports 0 vulnerabilities,
+confirmed against a golden-bad control that reproduced all three on the
+old pins. The “~79 packages / ~3600 tracked files” objection to [A] no
+longer applies either: 0a48f8c2 untracked 104MB of node_modules. The
+sentence “is NOT closed and needs an owner decision” was true when
+written and is not true now. UNVERIFIED (11.4.6): container-layer
+runtime evidence — the tests ran the built dist/ on the host, not the
+image. STILL OPEN as hygiene, not security: ws and the SDK are unused
+dead dependencies; removing them is a separate 11.4.122 + 11.4.124 item.
+<strong>Severity:</strong> High</p>
 <p>A small companion service we wrote ourselves is packaged into a
 container and started as part of the standard deployment, and it carries
 three known security warnings in its supporting packages, two of them
