@@ -18,7 +18,15 @@ services:
       # internal/secrets) before invoking compose, so both sides always agree.
       POSTGRES_PASSWORD: ${HELIX_AUTOBOOT_PG_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
     ports:
-      - "55432:5432"
+      - "127.0.0.1:55432:5432"
+    # NAMED VOLUME (HXC-168, 2026-09-08). This service declared no volume at
+    # all, so podman created an ANONYMOUS one. Recreating the container --
+    # the only way podman can change a published port binding -- would have
+    # ORPHANED it and started empty, silently losing live data (measured:
+    # users=134, user_sessions=33). A named volume makes the container
+    # recreatable without data loss (§9.2).
+    volumes:
+      - helixcode_autoboot_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U helix -d helixcode_prod"]
       interval: 3s
@@ -29,8 +37,21 @@ services:
     container_name: helixcode-autoboot-redis
     ports:
       - "56379:6379"
+    # NAMED VOLUME (HXC-168, 2026-09-08). This service declared no volume at
+    # all, so podman created an ANONYMOUS one. Recreating the container --
+    # the only way podman can change a published port binding -- would have
+    # ORPHANED it and started empty, silently losing live data (measured:
+    # users=134, user_sessions=33). A named volume makes the container
+    # recreatable without data loss (§9.2).
+    volumes:
+      - helixcode_autoboot_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 3s
       timeout: 3s
       retries: 30
+
+# Named volumes. Declared so postgres data survives a container recreate;
+# see the HXC-168 note on the postgres service above.
+volumes:
+  helixcode_autoboot_pgdata:
