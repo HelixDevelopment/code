@@ -2740,5 +2740,48 @@ next needs that baseline. Expected outcome: the file’s origin is traced
 through project history, a decision is recorded with the evidence behind
 it, and the file is either restored and properly wired in with a test
 that exercises it, or retired in its own clearly-labelled change.</p>
+<h2 id="hxc-345-word-documents-are-produced-outside-the-export-tool-so-nothing-checks-that-they-still-contain-their-pictures">HXC-345
+— Word documents are produced outside the export tool, so nothing checks
+that they still contain their pictures</h2>
+<p><strong>Status:</strong> Queued <strong>Type:</strong> Bug
+<strong>Severity:</strong> High <strong>Created-By:</strong> Claude</p>
+<p>Our documentation is published in three forms: the plain-text source,
+a web page, and a Word document. The export tool that keeps the first
+two in step does not handle Word documents at all — those are produced
+by hand, one command at a time. Because nothing checks them, a Word
+document can silently lose content that the source still has. That
+happened on 2026-09-08: an architecture document was rebuilt to remove a
+leaked password, and the rebuild quietly dropped BOTH of its
+architecture diagrams. The file shrank from 390KB to 22KB, all the words
+survived, and every automated check stayed green, because no check looks
+inside a Word document. A reader would have opened the architecture
+guide and found no architecture picture. The diagrams were restored by
+hand once an independent reviewer spotted it. The fix is to give the
+export tool a Word-document step like the two it already has, and to
+make it compare the pictures referenced by the source against the
+pictures actually embedded in the output, so a document that loses an
+image fails the build instead of shipping quietly.</p>
+<h2 id="hxc-346-the-password-in-documentation-check-can-be-fooled-by-common-ways-of-writing-the-same-thing">HXC-346
+— The password-in-documentation check can be fooled by common ways of
+writing the same thing</h2>
+<p><strong>Status:</strong> Queued <strong>Type:</strong> Task
+<strong>Severity:</strong> Medium <strong>Created-By:</strong>
+Claude</p>
+<p>We have a check that stops a real password from being written into
+our documentation in a form someone could copy and paste. It decides by
+looking at how a line STARTS, which means it recognises the ordinary way
+of writing a setting but misses several equally common ways: a password
+passed on a command line, one written inside a configuration block in a
+different notation, one sitting in a table cell, or one embedded in a
+connection address. None of those appear anywhere in our documents
+today, so nothing is currently leaking, but a future document using any
+of them would pass unnoticed. The same start-of-line rule also wrongly
+flags ordinary prose that merely mentions a value while explaining an
+incident. Both problems disappear if the check judges WHERE the value
+sits on the line rather than how the line begins. The logic is currently
+duplicated in two places that have already drifted apart, so this work
+should also merge them into one shared piece, and it needs its own
+deliberate break-it test to prove the new rule actually catches what the
+old one missed.</p>
 </body>
 </html>
