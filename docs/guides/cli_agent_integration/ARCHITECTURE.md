@@ -2,13 +2,13 @@
 
 | Field | Value |
 |-------|-------|
-| Revision | 1 |
+| Revision | 2 |
 | Created | 2026-09-05 |
-| Last modified | 2026-09-05 |
-| Status | DRAFT — reflects reachability and capability confirmed by live probes on 2026-09-05, plus cited vendor documentation |
+| Last modified | 2026-09-07 |
+| Status | ACTIVE — arrows into HelixAgent were re-drawn on 2026-09-07 after end-to-end agent runs; revision 1 drew all three as "not probed" |
 | Status summary | Shows which of the four CLI coding agents can reach which of the four Helix LLM surfaces, where auth/TLS boundaries sit, and where the tool-calling capability actually differs. |
 | Scope | Companion to [`README.md`](README.md) and [`FAQ.md`](FAQ.md) in this same directory |
-| Authority | Every edge and label below traces to a specific probe or cited vendor doc in `docs/research/cli_agent_config_schemas/EVIDENCE.md` — this diagram makes no claim beyond what that evidence supports. |
+| Authority | Every edge and label traces to a probe or cited vendor doc in `docs/research/cli_agent_config_schemas/EVIDENCE.md`, or to an end-to-end agent run in `docs/qa/cli_agent_model_usability_20260907T113000Z/`. This diagram makes no claim beyond what that evidence supports. |
 
 ---
 
@@ -26,7 +26,7 @@
 The left column is the four CLI coding agents; the right column is the four Helix LLM surfaces. An edge means "this agent can be configured to send requests to this surface" — it does **not** mean an agent is currently configured that way on any given machine. Edge style and label carry the capability information:
 
 - **Thick solid arrow (`==>`)** — a confirmed, live-probed capability. The label says exactly what was confirmed (tool-calling present or absent).
-- **Dashed arrow (`-.->`)** — reachable in principle (same OpenAI-compatible provider mechanism applies), but the specific behavior was **not probed** in this research pass. Do not infer capability from the arrow alone; check the label.
+- **Dashed arrow (`-.->`)** — the transport is reachable, but the combination does **not** work end to end: either it was refused (the label says so) or it was never driven to a verdict (the label says UNTESTED). Do not infer capability from the arrow alone; read the label.
 - **Dashed cross-edge (`--x`)** — no path exists at all. The target is a note, not a surface, explaining the vendor-side reason.
 
 Node fill color marks the surface's auth/TLS posture (see the legend inside the diagram and [§3](#3-reading-the-boundaries) below).
@@ -59,9 +59,9 @@ graph LR
   PI ==>|"tool_calls: YES<br/>(gateway translates)"| GW
   CR ==>|"tool_calls: YES<br/>(gateway translates)"| GW
 
-  OC -.->|"reachable, not probed"| HA
-  PI -.->|"reachable, not probed"| HA
-  CR -.->|"reachable, not probed"| HA
+  OC -.->|"array content rejected 400<br/>(--pure sends strings: UNTESTED)"| HA
+  PI -.->|"BLOCKED: array content rejected 400"| HA
+  CR ==>|"WORKS end to end<br/>tool_calls: YES · ctx >= 200,046"| HA
 
   CC -.->|"UNDER VERIFICATION<br/>Anthropic /v1/messages + API key"| HC
 
@@ -94,6 +94,10 @@ graph LR
 
 ## 4. What the diagram deliberately leaves out
 
-- **HelixAgent's tool-calling behavior** is drawn as "reachable, not probed" rather than a confirmed yes/no, because this research pass did not test it. Do not read the dashed line as "it doesn't work" — it means "unconfirmed either way." See [`README.md` §2](README.md#2-the-four-helix-surfaces).
+- **HelixAgent is now measured, and it is the only surface with room for a real agent prompt** (2026-09-07, superseding revision 1's "reachable, not probed"). It emits structured `tool_calls`, and it accepted a 200,046-token prompt while correctly recalling a marker planted at the very front of it — so it neither refused nor silently truncated. `crush` drives it end to end, including real tool use. `pi` and `opencode` cannot reach it: its OpenAI adapter returns HTTP 400 on array-form `content` (`cannot unmarshal array into Go struct field OpenAIMessage.messages.content of type string`), which is the shape both send. See [`README.md` §3](README.md#3-which-agent-x-surface-combinations-actually-work).
+
+- **The Coder/Gateway boundary is not the tool-calling win it looks like.** The Gateway does translate tool calls — and it *also* silently discards array-form message content, returning `200 OK` with a fluent answer to a question the model never saw (measured: 903 prompt tokens, including the entire instruction, dropped). It is safe only for plain-string senders like `crush`. See the warning in [`README.md` §2](README.md#2-the-four-helix-surfaces).
+
+- **Both llama.cpp surfaces are capped at 32,768 tokens**, which is the model's `n_ctx_train` and cannot be raised. Every agent's baseline system prompt on this host exceeds it (`pi` 86,411, `crush` 96,564, `opencode` 134,043) because ~950 installed skills are inlined into it. That, not the arrows, is what decides usability.
 - **Whether an agent is currently configured this way on any particular machine.** This diagram shows what is *possible* given each agent's own provider mechanism and each surface's own behavior — it is not a snapshot of any one operator's live config. Verify your own machine with the commands in [`README.md` §6](README.md#6-verifying-each-agent-yourself).
 - **HelixCode's `/v1/chat/completions` shape** is mentioned in [`README.md` §2](README.md#2-the-four-helix-surfaces) but not drawn separately here, since no agent in this guide has a confirmed path to either of HelixCode's two endpoint shapes yet.

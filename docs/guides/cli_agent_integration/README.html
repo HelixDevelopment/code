@@ -7,6 +7,151 @@
   <title>README</title>
   <style>
 
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+white-space: pre-wrap;
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: 1.5em;}
 div.column{flex: auto;}
@@ -89,38 +234,14 @@ code span.va { color: #19177c; }
 code span.vs { color: #4070a0; } 
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
-  <style type="text/css">
-table {
-border-collapse: collapse;
-}
-table td,
-table th {
-border: 1px solid #cccccc;
-padding: 4px 8px;
-vertical-align: top;
-}
-
-tr.cell-status-obsolete > td {
-background-color: #E0E0E0;
-}
-
-tr.cell-status-obsolete > td:nth-child(2),
-tr.cell-status-obsolete > td:last-child {
-text-decoration: line-through;
-}
-</style>
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">README</h1>
 </header>
-<h1 id="user-guide-wiring-cli-coding-agents-to-helix">User Guide —
+<h1 id="user-guide--wiring-cli-coding-agents-to-helix">User Guide —
 Wiring CLI Coding Agents to Helix</h1>
 <table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
 <thead>
 <tr>
 <th>Field</th>
@@ -130,7 +251,7 @@ Wiring CLI Coding Agents to Helix</h1>
 <tbody>
 <tr>
 <td>Revision</td>
-<td>1</td>
+<td>2</td>
 </tr>
 <tr>
 <td>Created</td>
@@ -138,19 +259,19 @@ Wiring CLI Coding Agents to Helix</h1>
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-09-05</td>
+<td>2026-09-07</td>
 </tr>
 <tr>
 <td>Status</td>
-<td>DRAFT — describes the intended, evidence-backed wiring; confirm
-against your own run before relying on it</td>
+<td>ACTIVE — the capability matrix in §3 is backed by end-to-end runs,
+not inference</td>
 </tr>
 <tr>
 <td>Status summary</td>
 <td>Documents how <code>opencode</code>, <code>pi</code>,
-<code>crush</code>, and Claude Code point at Helix’s local LLM surfaces,
-how to verify each one yourself, and which surface to pick when
-tool-calling matters.</td>
+<code>crush</code>, and Claude Code point at Helix&#39;s local LLM surfaces,
+which agent x surface combinations actually work (measured), and which
+two are broken and why.</td>
 </tr>
 <tr>
 <td>Scope</td>
@@ -159,22 +280,26 @@ coding agents on this host</td>
 </tr>
 <tr>
 <td>Authority</td>
-<td>Facts here are either the output of live probes run 2026-09-05 (see
+<td>Facts here are either the output of live probes (2026-09-05, see
 <code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code>) or
+end-to-end agent runs (2026-09-07, see
+<code>docs/qa/cli_agent_model_usability_20260907T113000Z/</code>), or
 explicit vendor documentation, cited inline. Nothing here is asserted as
-“your current config” — verify with the commands given.</td>
+&quot;your current config&quot; — verify with the commands given.</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Anti-bluff note.</strong> This guide was written from probe
-evidence and shipped-binary/vendor-doc research captured on 2026-09-05,
-not from having watched an installer run end to end. Wherever a claim
-depends on an installer having already wired your local config, it is
-phrased as “after wiring, you should see…” — treat any mismatch between
-that and your own <code>crush models</code> /
-<code>opencode models</code> / <code>pi --list-models</code> output as
-the thing to trust, not this document.</p>
+<p><strong>Anti-bluff note (revision 2).</strong> Revision 1 was written
+from endpoint probes and vendor docs without ever driving an agent end
+to end, and two of its conclusions turned out to be wrong when that was
+finally done — it recommended the surface that silently discards your
+request, and it called the only genuinely usable surface &quot;not probed&quot;.
+Everything in §3 of this revision is the recorded result of running the
+agent itself against the endpoint and checking the answer&#39;s
+<em>content</em>, not merely that a 200 came back. Where a combination
+has not been driven end to end, it is labelled UNTESTED, never &quot;should
+work&quot;.</p>
 </blockquote>
 <hr />
 <h2 id="table-of-contents">Table of contents</h2>
@@ -183,8 +308,8 @@ the thing to trust, not this document.</p>
 where</a></li>
 <li><a href="#2-the-four-helix-surfaces">The four Helix
 surfaces</a></li>
-<li><a href="#3-choosing-a-surface-the-one-thing-that-will-surprise-you">Choosing
-a surface: the one thing that will surprise you</a></li>
+<li><a href="#3-which-agent-x-surface-combinations-actually-work">Which
+agent x surface combinations actually work</a></li>
 <li><a href="#4-per-agent-configuration">Per-agent
 configuration</a></li>
 <li><a href="#5-tls-for-the-self-signed-gateway">TLS for the self-signed
@@ -200,7 +325,7 @@ cautionary tale</a></li>
 <li><a href="#10-where-to-go-next">Where to go next</a></li>
 </ol>
 <hr />
-<h2 id="what-gets-wired-and-where">1. What gets wired, and where</h2>
+<h2 id="1-what-gets-wired-and-where">1. What gets wired, and where</h2>
 <p>Each supported CLI agent reads its own provider configuration from
 its own file, in its own format. Wiring Helix into an agent means adding
 one (or more) <strong>custom OpenAI-compatible provider entries</strong>
@@ -209,12 +334,6 @@ surface serves.</p>
 <p>There is no single shared config file — four agents, four files, four
 shapes:</p>
 <table>
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
 <thead>
 <tr>
 <th>Agent</th>
@@ -246,7 +365,7 @@ shapes:</p>
 <td><code>claude</code> (Claude Code)</td>
 <td>2.1.261</td>
 <td>—</td>
-<td>N/A for local OpenAI-compatible providers; see <a href="#44-claude-code">§4.4</a></td>
+<td>N/A for local OpenAI-compatible providers; see <a href="#44-claude-code-21261">§4.4</a></td>
 </tr>
 </tbody>
 </table>
@@ -255,25 +374,20 @@ entries already present in the files above for <code>opencode</code>,
 <code>pi</code>, and <code>crush</code>. If it has not run yet, <a href="#4-per-agent-configuration">§4</a> below shows you exactly what to
 add and how to add it by hand.</p>
 <hr />
-<h2 id="the-four-helix-surfaces">2. The four Helix surfaces</h2>
-<p>Helix exposes four distinct HTTP surfaces on this host. They are not
-interchangeable — same underlying model in two cases, different
-capability in each:</p>
+<h2 id="2-the-four-helix-surfaces">2. The four Helix surfaces</h2>
+<p>Helix exposes four distinct HTTP surfaces on this host. They are
+<strong>not</strong> interchangeable, and the differences that matter in
+practice are not the ones the model ids suggest:</p>
 <table>
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
 <thead>
 <tr>
 <th>Surface</th>
 <th>URL</th>
 <th>Auth</th>
 <th>Model id(s) served</th>
-<th>Tool-calling</th>
+<th>Usable context</th>
+<th>Structured <code>tool_calls</code></th>
+<th>Accepts array-form message content</th>
 </tr>
 </thead>
 <tbody>
@@ -282,16 +396,21 @@ capability in each:</p>
 <td><code>http://127.0.0.1:18434/v1</code></td>
 <td>none</td>
 <td><code>qwen2.5-coder-3b-instruct-q4_k_m</code></td>
-<td>❌ emits a fenced JSON blob in the message text, not a structured
-<code>tool_calls</code> field</td>
+<td><strong>32,768</strong> (<code>n_ctx</code>, =
+<code>n_ctx_train</code>; hard ceiling for this model)</td>
+<td>❌ emits a fenced JSON blob in the message text</td>
+<td>✅ yes</td>
 </tr>
 <tr>
 <td><strong>Gateway</strong> (HelixLLM)</td>
 <td><code>https://127.0.0.1:8443/v1</code></td>
 <td>none (self-signed TLS)</td>
 <td><code>helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190</code></td>
+<td><strong>32,768</strong> (same llama.cpp process behind it)</td>
 <td>✅ real <code>tool_calls</code>,
 <code>finish_reason:&quot;tool_calls&quot;</code></td>
+<td>❌ <strong>silently discards it — see the warning
+below</strong></td>
 </tr>
 <tr>
 <td><strong>HelixAgent</strong></td>
@@ -300,7 +419,9 @@ capability in each:</p>
 <td><code>helixagent-llm</code>, <code>helixagent-debate</code>,
 <code>helixagent-ensemble</code>, <code>helix-llm</code>,
 <code>helix-debate</code></td>
-<td>not probed — treat as unconfirmed until you check yourself</td>
+<td><strong>≥ 200,046 measured</strong></td>
+<td>✅ real <code>tool_calls</code> (confirmed 2026-09-07)</td>
+<td>❌ returns HTTP 400</td>
 </tr>
 <tr>
 <td><strong>HelixCode</strong></td>
@@ -308,69 +429,284 @@ capability in each:</p>
 <td><strong>API key required</strong> (401 without one)</td>
 <td><code>/v1/messages</code> (Anthropic-shaped) +
 <code>/v1/chat/completions</code></td>
-<td>—</td>
+<td>not measured</td>
+<td>not measured</td>
+<td>not measured</td>
 </tr>
 </tbody>
 </table>
-<p>All four were reached with a plain <code>curl</code> against
-<code>/v1/models</code> (or the equivalent) on 2026-09-05; see
-<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code> for the
-raw transcripts. Ports and reachability can change between hosts and
-sessions — if a <code>curl</code> to one of these fails for you, that
-surface is down or not yet started, not a documentation error.</p>
+<p>Notes on the two measured columns, because both are load-bearing:</p>
+<ul>
+<li><strong>Usable context.</strong> Coder/Gateway report
+<code>n_ctx: 32768</code> in <code>/v1/models</code>, and that is the
+model&#39;s <code>n_ctx_train</code> — the maximum this model can be given,
+not a setting that can be raised. HelixAgent publishes no context figure
+at all, so it was measured directly: a 900,312-byte request was accepted
+and answered with <code>usage.prompt_tokens = 200046</code>, and the
+answer correctly recalled a marker planted at the <strong>very
+front</strong> of that prompt — so the surface neither refused the
+request nor silently truncated it.</li>
+<li><strong>Array-form message content.</strong> Every current CLI agent
+may send a message whose <code>content</code> is a <em>list of
+parts</em> (<code>[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;…&quot;}]</code>) rather than a
+plain string. <code>pi</code> does this for every user turn;
+<code>opencode</code> does it unless <code>--pure</code> is passed;
+<code>crush</code> sends plain strings. Whether a surface understands
+that form decides whether your instruction reaches the model at
+all.</li>
+</ul>
+<blockquote>
+<h3 id="warning-the-gateway-silently-discards-array-form-content">⚠️ The
+Gateway silently discards array-form content</h3>
+<p>This is the single most dangerous behaviour on this host, because it
+produces a <strong><code>200 OK</code> with a fluent, plausible,
+completely unrelated answer</strong> instead of an error. Measured
+2026-09-07, identical request body, only the endpoint changed:</p>
+<pre><code>Coder   :18434  prompt_tokens=1480  -&gt;  &#39;HELIXOK&#39;                                  ← correct
+Gateway :8443   prompt_tokens=577   -&gt;  &#39;Yes, I can help with that. What would…&#39;   ← instruction gone</code></pre>
+<p>903 tokens — including the entire user instruction — were dropped on
+the floor, and nothing in the response says so. A smoke test that only
+checks for a non-error reply <strong>passes</strong> against this. If
+you are using the Gateway from <code>pi</code>, or from
+<code>opencode</code> without <code>--pure</code>, you are not talking
+to the model you think you are.</p>
+<p>The Gateway is safe for <code>crush</code>, which sends plain-string
+content.</p>
+</blockquote>
 <hr />
-<h2 id="choosing-a-surface-the-one-thing-that-will-surprise-you">3.
-Choosing a surface: the one thing that will surprise you</h2>
-<p><strong>Coder and Gateway serve the same underlying model.</strong>
-Point an agent at Coder (<code>:18434</code>) and its tool-calling
-requests get a chunk of JSON text pasted into the assistant’s reply —
-the agent’s tool-call parser will not recognize it, because it never
-arrives as a structured <code>tool_calls</code> field. Point the same
-agent at Gateway (<code>:8443</code>) instead, and tool-calling works,
-because the gateway performs response translation the raw llama.cpp
-server does not do on its own.</p>
-<p>In other words: <strong>which surface you point at — not just which
-model you ask for — decides whether tool-calling works.</strong> If your
-agent (or your workflow) needs tools/functions, use the
-<strong>Gateway</strong>, not the Coder surface, even though they can
-appear to offer the “same” model. If you only need plain chat completion
-with no tool use, the Coder surface is simpler (no TLS to deal with —
-see <a href="#5-tls-for-the-self-signed-gateway">§5</a>).</p>
-<p>HelixAgent (<code>:7061</code>) exposes different model ids again
-(<code>helixagent-llm</code>, <code>helixagent-debate</code>,
-<code>helixagent-ensemble</code>, plus
-<code>helix-llm</code>/<code>helix-debate</code> aliases) and was not
-probed for tool-calling behavior in this pass — do not assume it behaves
-like either Coder or Gateway until you have checked.</p>
-<p>HelixCode (<code>:8080</code>) is a different shape entirely: it
-speaks the Anthropic Messages API (<code>/v1/messages</code>) as well as
-<code>/v1/chat/completions</code>, and it requires an API key. It is
-covered separately in <a href="#44-claude-code">§4.4</a> because, of the
-four agents this guide covers, only Claude Code has a plausible path to
-it — and that path was, at the time of writing, still under verification
-by a separate work stream. Do not assume it works; check the status note
-in that section before relying on it.</p>
+<h2 id="3-which-agent-x-surface-combinations-actually-work">3. Which
+agent x surface combinations actually work</h2>
+<p>Measured end to end on 2026-09-07 — each ✅ below means the agent
+itself was run against that endpoint and the <strong>content</strong> of
+its answer was checked, not merely that a response arrived. Raw figures
+in <code>docs/qa/cli_agent_model_usability_20260907T113000Z/</code>.</p>
+<h3 id="31-what-each-agent-sends-before-you-type-anything">3.1 What each
+agent sends before you type anything</h3>
+<p>The reason most combinations fail has nothing to do with the model
+and everything to do with prompt size. On this host, <strong>~950 agent
+skills are installed under <code>~/.claude/skills</code>,
+<code>~/.config/crush/skills</code> and <code>~/.pi/agent/skills</code>,
+and each agent inlines all of them into its system prompt</strong>.
+Measured with the Coder model&#39;s own tokenizer, before a single user turn
+is added:</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Baseline prompt</th>
+<th>Of which</th>
+<th>Fits 32,768?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pi</code> (default)</td>
+<td><strong>86,411 tokens</strong></td>
+<td>950 <code>&lt;skill&gt;</code> blocks, 4 tools</td>
+<td>❌ 2.6× over</td>
+</tr>
+<tr>
+<td><code>pi --no-skills</code></td>
+<td><strong>1,480 tokens</strong></td>
+<td>0 skills, 4 tools</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>crush</code> (default)</td>
+<td><strong>96,564 tokens</strong></td>
+<td>949 <code>&lt;skill&gt;</code> blocks, 26 tools</td>
+<td>❌ 2.9× over</td>
+</tr>
+<tr>
+<td><code>crush</code>, no host skills</td>
+<td><strong>11,342 tokens</strong></td>
+<td>4 builtin skills, 26 tools</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>opencode</code> (default)</td>
+<td><strong>134,043 tokens</strong></td>
+<td>979 <code>&lt;skill&gt;</code> blocks, 120 tools (~40k tokens of
+tool schema alone)</td>
+<td>❌ 4.1× over</td>
+</tr>
+<tr>
+<td><code>opencode --pure</code></td>
+<td><strong>132,058 tokens</strong></td>
+<td>965 skills, 120 tools</td>
+<td>❌ 4.0× over</td>
+</tr>
+</tbody>
+</table>
+<p>This is why raising the Coder&#39;s <code>--ctx-size</code> from 4096 to
+32768 did not, on its own, make these agents usable: 32,768 is this
+model&#39;s absolute maximum and every agent&#39;s baseline is two to four times
+larger.</p>
+<h3 id="32-the-matrix">3.2 The matrix</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Coder <code>:18434</code></th>
+<th>Gateway <code>:8443</code></th>
+<th>HelixAgent <code>:7061</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>crush</code></strong> (default, full skills)</td>
+<td>❌ BLOCKED —
+<code>request (96565 tokens) exceeds the available context size (32768 tokens)</code></td>
+<td>❌ BLOCKED — same 32,768 ceiling</td>
+<td>✅ <strong>WORKS, including real tool use</strong></td>
+</tr>
+<tr>
+<td><strong><code>crush</code></strong> (host skills removed)</td>
+<td>✅ WORKS (11,342 tokens) — but no structured tool calls</td>
+<td>⚠️ UNTESTED end to end — crush&#39;s TLS trust of the self-signed cert
+did not complete within 110 s in this pass; <code>curl --cacert</code>
+to the same endpoint answers in 0.79 s, so this is a crush-side TLS
+issue, not a slow server</td>
+<td>✅ WORKS</td>
+</tr>
+<tr>
+<td><strong><code>pi</code></strong> (default, 950 skills)</td>
+<td>❌ BLOCKED — 86,411 &gt; 32,768</td>
+<td>❌ BLOCKED — same ceiling</td>
+<td>❌ BLOCKED — array content → HTTP 400</td>
+</tr>
+<tr>
+<td><strong><code>pi --no-skills</code></strong></td>
+<td>✅ <strong>WORKS</strong> (1,480 tokens) — chat only, tool calls
+arrive as fenced JSON text</td>
+<td>❌ BROKEN — 200 OK, instruction silently discarded (§2 warning)</td>
+<td>❌ BLOCKED — array content → HTTP 400</td>
+</tr>
+<tr>
+<td><strong><code>opencode</code></strong> (default)</td>
+<td>❌ BLOCKED — 134,043 &gt; 32,768</td>
+<td>❌ BLOCKED — ceiling <em>and</em> silent-drop</td>
+<td>❌ BLOCKED — array content → HTTP 400</td>
+</tr>
+<tr>
+<td><strong><code>opencode --pure</code></strong></td>
+<td>❌ BLOCKED — 132,058 &gt; 32,768</td>
+<td>❌ BLOCKED — same ceiling</td>
+<td>⚠️ see <a href="#34-opencode-has-no-confirmed-working-path">§3.4</a></td>
+</tr>
+<tr>
+<td><strong>Claude Code</strong></td>
+<td>N/A — cannot consume an OpenAI-compatible provider (<a href="#44-claude-code-21261">§4.4</a>)</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-the-recommendation-in-one-line">3.3 The recommendation, in
+one line</h3>
+<p><strong>Use <code>crush</code> against
+<code>helixagent/helixagent-llm</code>.</strong> It is the only
+combination on this host that works today at the operator&#39;s real skill
+load, with real tool-calling, with nothing disabled:</p>
+<pre class="console"><code>$ crush run -m helixagent/helixagent-llm &quot;Reply with exactly the word: BANANA7&quot;
+BANANA7
+
+$ crush run -m helixagent/helixagent-llm \
+    &quot;Read the file probe_marker.txt in the current directory and reply with exactly its contents, nothing else.&quot;
+I&#39;ll read the probe marker file.MARKER_FILE_CONTENT_ZQ7</code></pre>
+<p>Both runs above are against the <strong>unmodified,
+already-installed</strong> operator config — the second one drove
+crush&#39;s <code>view</code> tool through a real agentic loop. No installer
+change is needed for this; <code>install_agent_configs.sh</code> already
+registers <code>helixagent</code> for crush. What was missing was
+knowing to select it: revision 1 of this guide steered you to the
+Gateway and described HelixAgent as &quot;not probed&quot;.</p>
+<p>If you want <code>pi</code>, use <code>pi --no-skills</code> against
+<code>helixllm-coder</code>. It works, and it is genuinely limited: a 3B
+model with no structured tool-calling and no skills loaded.</p>
+<h3 id="34-opencode-has-no-confirmed-working-path">3.4
+<code>opencode</code> has no confirmed working path</h3>
+<p><code>opencode</code>&#39;s baseline prompt is 134,043 tokens — four
+times the Coder/Gateway ceiling — and <code>--pure</code> only removes
+~2,000 of them, because the weight is 979 inlined skills plus ~165 KB of
+tool schema for 120 tools, neither of which <code>--pure</code> touches.
+That rules out both llama.cpp surfaces outright.</p>
+<p>HelixAgent has the capacity (≥ 200,046 tokens measured), and
+<code>opencode --pure</code> does send plain-string content, so it is
+the one combination that could work. It was attempted twice and produced
+<strong>no verdict either way</strong>: both runs were killed by their
+own timeout (300 s and 500 s, <code>SIGTERM</code>, exit 143) with no
+output, and a request-capture proxy in front of the endpoint recorded
+<em>nothing</em> — so <code>opencode</code> never got as far as sending,
+and this is a client-side stall, not a rejection by HelixAgent (which
+answered a small request in 2.2 s while <code>opencode</code> was hung).
+<strong>Treat it as UNTESTED</strong>, and if you try it, judge it by
+whether the answer contains what you asked for, not by whether a
+response arrives.</p>
+<h3 id="35-the-one-defect-that-would-unblock-pi-and-opencode">3.5 The
+one defect that would unblock <code>pi</code> and
+<code>opencode</code></h3>
+<p>Both are blocked on HelixAgent by a single, precisely-located fault:
+HelixAgent&#39;s OpenAI adapter cannot deserialize array-form
+<code>content</code>. Reproduce it in two commands — the only difference
+is the shape of <code>content</code>:</p>
+<pre class="console"><code>$ curl -sS -X POST http://127.0.0.1:7061/v1/chat/completions -H &#39;Content-Type: application/json&#39; \
+    -d &#39;{&quot;model&quot;:&quot;helixagent-llm&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;say OK&quot;}],&quot;max_tokens&quot;:8}&#39;
+{&quot;…&quot;,&quot;content&quot;:&quot;OK! 😊 Let me know&quot;…}
+
+$ curl -sS -X POST http://127.0.0.1:7061/v1/chat/completions -H &#39;Content-Type: application/json&#39; \
+    -d &#39;{&quot;model&quot;:&quot;helixagent-llm&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;say OK&quot;}]}],&quot;max_tokens&quot;:8}&#39;
+{&quot;error&quot;:{&quot;code&quot;:400,&quot;message&quot;:&quot;Invalid request format: json: cannot unmarshal array into Go struct field OpenAIMessage.messages.content of type string&quot;,&quot;type&quot;:&quot;invalid_request&quot;}}</code></pre>
+<p>Both the Coder and the Gateway accept the second form (the Gateway
+accepts it and then discards it, which is worse). The fix lives in the
+<code>helix_agent</code> submodule&#39;s OpenAI request model, not in this
+repo&#39;s <code>scripts/</code> — it is recorded here rather than applied
+because it is a cross-repo change that needs its own tests and
+gates.</p>
+<p><strong>Fixing it is the highest-value change available</strong>: it
+would put the only long-context, tool-calling surface on this host
+within reach of <code>pi</code> and (capacity permitting)
+<code>opencode</code>, without disabling anything the operator has
+installed.</p>
 <hr />
-<h2 id="per-agent-configuration">4. Per-agent configuration</h2>
-<h3 id="opencode-1.18.29">4.1 <code>opencode</code> (1.18.29)</h3>
+<h2 id="4-per-agent-configuration">4. Per-agent configuration</h2>
+<h3 id="41-opencode-11829">4.1 <code>opencode</code> (1.18.29)</h3>
 <p>Config file: <code>~/.config/opencode/opencode.json</code>.</p>
+<blockquote>
+<p><strong>Before you wire this:</strong> <code>opencode</code> has no
+confirmed working path to any Helix surface on this host — its
+134,043-token baseline prompt exceeds both llama.cpp surfaces, and it
+sends array-form content that HelixAgent rejects unless
+<code>--pure</code> is used. See <a href="#34-opencode-has-no-confirmed-working-path">§3.4</a>. The shape
+below is correct; whether the combination <em>works</em> is <a href="#3-which-agent-x-surface-combinations-actually-work">§3</a>&#39;s
+question.</p>
+</blockquote>
 <p>Add a provider entry under <code>provider.&lt;your-id&gt;</code>,
 using the <code>@ai-sdk/openai-compatible</code> npm adapter, pointing
 <code>options.baseURL</code> at one of the surfaces from §2, and
-enumerating the model id(s) that surface serves:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;provider&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;helixgw&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;npm&quot;</span><span class="fu">:</span> <span class="st">&quot;@ai-sdk/openai-compatible&quot;</span><span class="fu">,</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;options&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;baseURL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://127.0.0.1:8443/v1&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;models&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190&quot;</span><span class="fu">:</span> <span class="fu">{}</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+enumerating the model id(s) that surface serves. HelixAgent is shown
+here because it is the only surface with room for a real agent prompt
+(<a href="#31-what-each-agent-sends-before-you-type-anything">§3.1</a>):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;provider&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;helixagent&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;npm&quot;</span><span class="fu">:</span> <span class="st">&quot;@ai-sdk/openai-compatible&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;options&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;baseURL&quot;</span><span class="fu">:</span> <span class="st">&quot;http://127.0.0.1:7061/v1&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;models&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;helixagent-llm&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;limit&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;context&quot;</span><span class="fu">:</span> <span class="dv">131072</span><span class="fu">,</span> <span class="dt">&quot;output&quot;</span><span class="fu">:</span> <span class="dv">4096</span> <span class="fu">}</span> <span class="fu">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>The <code>limit.context</code> of 131072 is a deliberately
+conservative figure: HelixAgent publishes no context value in
+<code>/v1/models</code>, and 200,046 prompt tokens were measured as
+accepted and un-truncated (<a href="#2-the-four-helix-surfaces">§2</a>).
+Do not copy 32768 here from the llama.cpp surfaces — that under-declares
+HelixAgent by about 4x and makes <code>opencode</code> compact or refuse
+work the endpoint would serve.</p>
 <p>Notes:</p>
 <ul>
 <li>Omit <code>apiKey</code> entirely for these keyless local surfaces
@@ -394,45 +730,54 @@ than one of these, know that they combine rather than one silently
 overriding the others outright — check all of them if something looks
 wrong.</li>
 </ul>
-<h3 id="pi-0.84.4">4.2 <code>pi</code> (0.84.4)</h3>
+<h3 id="42-pi-0844">4.2 <code>pi</code> (0.84.4)</h3>
 <p>Config file: <code>~/.pi/agent/models.json</code> (overridable via
 the <code>PI_CODING_AGENT_DIR</code> environment variable, which changes
-pi’s whole config directory, not just this file).</p>
+pi&#39;s whole config directory, not just this file).</p>
+<blockquote>
+<p><strong>Before you wire this:</strong> <code>pi</code> sends
+array-form content on every user turn, which HelixAgent rejects (HTTP
+400) and the Gateway silently discards. Its one working path on this
+host is the <strong>Coder</strong> surface with <code>--no-skills</code>
+(<a href="#32-the-matrix">§3.2</a>). Wiring <code>pi</code> to the
+Gateway will appear to work and will not be answering your question —
+see the warning in <a href="#2-the-four-helix-surfaces">§2</a>.</p>
+</blockquote>
 <p>Add a provider under <code>providers.&lt;your-id&gt;</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;providers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;helixgw&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;baseUrl&quot;</span><span class="fu">:</span> <span class="st">&quot;https://127.0.0.1:8443/v1&quot;</span><span class="fu">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;api&quot;</span><span class="fu">:</span> <span class="st">&quot;openai-completions&quot;</span><span class="fu">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;apiKey&quot;</span><span class="fu">:</span> <span class="st">&quot;local&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;providers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;helixllm-coder&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;baseUrl&quot;</span><span class="fu">:</span> <span class="st">&quot;http://127.0.0.1:18434/v1&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;api&quot;</span><span class="fu">:</span> <span class="st">&quot;openai-completions&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;apiKey&quot;</span><span class="fu">:</span> <span class="st">&quot;local&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>Notes:</p>
 <ul>
 <li>Unlike the other three agents, <code>pi</code> <strong>requires a
 non-empty <code>apiKey</code> value even for a keyless server</strong> —
-the field cannot be omitted. Any placeholder string
-(e.g. <code>&quot;local&quot;</code>) works; the value is not actually checked by
-these local surfaces.</li>
+the field cannot be omitted. Any placeholder string (e.g.
+<code>&quot;local&quot;</code>) works; the value is not actually checked by these
+local surfaces.</li>
 <li>No restart is required: <code>pi</code> reloads provider config when
 you run its <code>/model</code> command inside a session.</li>
 <li><code>pi</code> ships its own documentation under its installed
-package’s <code>docs/</code> directory (<code>models.md</code>,
+package&#39;s <code>docs/</code> directory (<code>models.md</code>,
 <code>custom-provider.md</code>, <code>providers.md</code>,
 <code>settings.md</code>, <code>environment-variables.md</code>) — worth
 reading directly if you need an option not shown here.</li>
 </ul>
-<h3 id="crush-0.91.2">4.3 <code>crush</code> (0.91.2)</h3>
+<h3 id="43-crush-0912">4.3 <code>crush</code> (0.91.2)</h3>
 <p>Config file: <code>~/.config/crush/crushrc</code> — this is
 <strong>Bash, not JSON</strong>. Provider registration is a command line
 inside that file, or run directly against a running
 <code>crush</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">provider</span> add helixgw <span class="at">--type</span> openai-compat <span class="at">--base-url</span> https://127.0.0.1:8443/v1 <span class="at">--api-key</span> local <span class="at">--discover-models</span> true</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">provider</span> add helixgw <span class="at">--type</span> openai-compat <span class="at">--base-url</span> https://127.0.0.1:8443/v1 <span class="at">--api-key</span> local <span class="at">--discover-models</span> true</span></code></pre></div>
 <p>Notes:</p>
 <ul>
 <li>With <code>--discover-models true</code>, <code>crush</code> queries
-the surface’s <code>/v1/models</code> endpoint itself and populates the
+the surface&#39;s <code>/v1/models</code> endpoint itself and populates the
 model list — you do not need to hand-declare model ids the way
 <code>opencode</code> and <code>pi</code> require. A bare
 <code>provider add</code> with no <code>model add</code> calls was
@@ -443,8 +788,8 @@ enough, in testing, to make the served model visible in
 against a live <code>crush</code> merges into the existing entry rather
 than duplicating it.</li>
 <li>TLS trust for the self-signed Gateway goes through the Go standard
-library’s <code>SSL_CERT_FILE</code> environment variable — there is no
-TLS-related field anywhere in <code>crush</code>’s own config schema
+library&#39;s <code>SSL_CERT_FILE</code> environment variable — there is no
+TLS-related field anywhere in <code>crush</code>&#39;s own config schema
 (<code>crush schema</code> was inspected directly; no
 <code>tls</code>/<code>insecure</code>/<code>verify</code>/<code>cert</code>/<code>proxy</code>
 key exists). See <a href="#5-tls-for-the-self-signed-gateway">§5</a>.</li>
@@ -457,34 +802,34 @@ there. Pass <code>--cwd &lt;dir&gt;</code> and/or
 the FAQ entry in <a href="FAQ.md"><code>FAQ.md</code></a> for how to
 avoid it entirely.</li>
 </ul>
-<h3 id="claude-code-2.1.261">4.4 Claude Code (2.1.261)</h3>
+<h3 id="44-claude-code-21261">4.4 Claude Code (2.1.261)</h3>
 <p><strong>Claude Code cannot accept a custom OpenAI-compatible
 provider.</strong> This is a vendor constraint, not a Helix limitation:
-Anthropic’s own documentation for the LLM Gateway Protocol lists exactly
+Anthropic&#39;s own documentation for the LLM Gateway Protocol lists exactly
 three client-selectable API formats for Claude Code — Anthropic
 Messages, Amazon Bedrock InvokeModel, and Google Agent Platform
 <code>rawPredict</code> — with no OpenAI Chat Completions option at all,
-and states explicitly that “Anthropic doesn’t endorse, maintain, or
-audit third-party gateway products, and doesn’t support routing Claude
-Code to non-Claude models through any gateway.” Claude Code’s optional
+and states explicitly that &quot;Anthropic doesn&#39;t endorse, maintain, or
+audit third-party gateway products, and doesn&#39;t support routing Claude
+Code to non-Claude models through any gateway.&quot; Claude Code&#39;s optional
 model-discovery feature also only keeps model ids that contain
 <code>claude</code> or <code>anthropic</code> (case-insensitively)
 anywhere in the string — a Helix model id would be filtered out even if
 discovery were pointed at a Helix surface.</p>
 <p>The only surface with a plausible path into Claude Code is
-<strong>HelixCode’s Anthropic-shaped <code>/v1/messages</code> endpoint
+<strong>HelixCode&#39;s Anthropic-shaped <code>/v1/messages</code> endpoint
 on <code>:8080</code></strong> (via <code>ANTHROPIC_BASE_URL</code> plus
 an API key, since <code>:8080</code> returns 401 without one).
 <strong>This path was, at the time this guide was written, still under
 verification by a separate work stream — do not assume it
-works.</strong> Check that stream’s findings (or re-run the verification
+works.</strong> Check that stream&#39;s findings (or re-run the verification
 yourself against <code>:8080</code>) before relying on Claude Code
 against Helix for anything.</p>
 <p>If you need Claude Code today, treat <code>opencode</code>,
 <code>pi</code>, or <code>crush</code> — pointed at Gateway or Coder —
 as the supported path for local Helix models.</p>
 <hr />
-<h2 id="tls-for-the-self-signed-gateway">5. TLS for the self-signed
+<h2 id="5-tls-for-the-self-signed-gateway">5. TLS for the self-signed
 gateway</h2>
 <p>The Gateway surface (<code>https://127.0.0.1:8443/v1</code>) serves a
 self-signed TLS certificate. A plain HTTPS client will refuse it by
@@ -497,7 +842,7 @@ or it fails with
 <code>SSL_CERT_FILE=&lt;path-to-cert&gt;</code> is set in its
 environment before it runs. This was confirmed directly: without it,
 <code>crush models</code> returns zero Gateway model entries (discovery
-silently fails); with it set, the Gateway’s model id appears.</li>
+silently fails); with it set, the Gateway&#39;s model id appears.</li>
 <li><code>opencode</code> and Claude Code (both Node/Bun-based)
 recognize <code>NODE_EXTRA_CA_CERTS</code> and
 <code>NODE_TLS_REJECT_UNAUTHORIZED</code> as the equivalent knobs —
@@ -506,7 +851,7 @@ full end-to-end proof against the Gateway specifically was inconclusive
 for <code>opencode</code> (the test run hit a 280-second timeout with no
 output; see
 <code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code> for the
-raw record — that is an honest “no verdict either way,” not a documented
+raw record — that is an honest &quot;no verdict either way,&quot; not a documented
 failure).</li>
 <li><code>pi</code> recognizes <code>SSL_CERT_FILE</code> in principle
 but a live end-to-end run against the Gateway also timed out (90
@@ -516,43 +861,62 @@ pass.</li>
 </ul>
 <p><strong>Practical takeaway:</strong> if you plan to use the Gateway
 surface, obtain its certificate and export <code>SSL_CERT_FILE</code>
-(or your agent’s equivalent) before launching the agent. If model
+(or your agent&#39;s equivalent) before launching the agent. If model
 discovery for the Gateway silently returns nothing, TLS trust — not the
 provider config — is the first thing to check.</p>
 <hr />
-<h2 id="verifying-each-agent-yourself">6. Verifying each agent
+<h2 id="6-verifying-each-agent-yourself">6. Verifying each agent
 yourself</h2>
 <p>Do not trust that wiring succeeded just because a file was written.
-Run the agent’s own model-listing command and grep for
-<code>helix</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># opencode</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> models <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pi</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pi</span> <span class="at">--list-models</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># crush</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> models <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Claude Code — N/A for local OpenAI-compatible surfaces (see §4.4);</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># for HelixCode&#39;s Anthropic-shaped surface, check with that stream&#39;s own</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># verification rather than this command.</span></span></code></pre></div>
-<p>A model id appearing in that output means the provider is
-<em>registered</em> — it does <strong>not</strong> by itself mean a real
-request will succeed. See <a href="#9-the-context-size-cautionary-tale">§9</a> for why registration
-and usability are two different things, and confirm with a real, small
-completion request before trusting the wiring for real work:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> run <span class="at">-q</span> <span class="st">&quot;Reply with exactly the word: HELIXOK&quot;</span></span></code></pre></div>
-<p>(An equivalent one-shot invocation exists for <code>pi</code> —
-<code>pi -p --mode json --provider &lt;id&gt; --model &lt;id&gt; --api-key local &quot;Reply with exactly the word: HELIXOK&quot;</code>
-— and for <code>opencode</code> via its non-interactive run mode.
-Consult each agent’s own <code>--help</code> for the exact current flag
-names, since these can change between releases.)</p>
+There are <strong>two</strong> separate things to check, and passing the
+first tells you nothing about the second.</p>
+<h3 id="61-is-the-provider-registered">6.1 Is the provider
+registered?</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> models <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pi</span> <span class="at">--list-models</span>   <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> models       <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> helix</span></code></pre></div>
+<p>A model id appearing here means the provider is <em>registered</em>.
+It does <strong>not</strong> mean a real request will succeed — see <a href="#3-which-agent-x-surface-combinations-actually-work">§3</a>.</p>
+<h3 id="62-does-a-real-turn-actually-work">6.2 Does a real turn actually
+work?</h3>
+<p>Ask for a distinctive token and check that you get <strong>exactly
+that token back</strong>. This is the step that catches both failure
+modes on this host: the context-size rejection (loud) and the Gateway&#39;s
+silent content drop (quiet, and invisible to any check that only asks
+&quot;did I get a reply?&quot;).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># crush — the recommended combination (§3.3)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> run <span class="at">-m</span> helixagent/helixagent-llm <span class="st">&quot;Reply with exactly the word: BANANA7&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pi — needs --no-skills to fit the Coder&#39;s 32,768-token window (§3.1)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pi</span> <span class="at">-p</span> <span class="at">--no-skills</span> <span class="at">--provider</span> helixllm-coder <span class="dt">\</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">--model</span> qwen2.5-coder-3b-instruct-q4_k_m <span class="st">&quot;Reply with exactly the word: BANANA7&quot;</span></span></code></pre></div>
+<p>Read the output, do not just check the exit code:</p>
+<ul>
+<li><code>BANANA7</code> — working.</li>
+<li><code>request (NNNNN tokens) exceeds the available context size (32768 tokens)</code>
+— the agent&#39;s prompt does not fit that surface. See <a href="#31-what-each-agent-sends-before-you-type-anything">§3.1</a>.</li>
+<li>Any other fluent-but-unrelated answer
+(<code>&quot;Yes, I can help with that…&quot;</code>) — you are almost certainly
+on the Gateway with an agent that sends array-form content, and your
+instruction was discarded. See the warning in <a href="#2-the-four-helix-surfaces">§2</a>.</li>
+<li><code>Invalid request format: json: cannot unmarshal array into Go struct field OpenAIMessage.messages.content</code>
+— HelixAgent with an agent that sends array-form content. See <a href="#35-the-one-defect-that-would-unblock-pi-and-opencode">§3.5</a>.</li>
+</ul>
+<p>To prove tool-calling end to end rather than just chat, make the
+agent <em>earn</em> the answer by reading something:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;MARKER_FILE_CONTENT_ZQ7&quot;</span> <span class="op">&gt;</span> /tmp/probe_marker.txt</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /tmp <span class="kw">&amp;&amp;</span> <span class="ex">crush</span> run <span class="at">-m</span> helixagent/helixagent-llm <span class="dt">\</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Read the file probe_marker.txt in the current directory and reply with exactly its contents, nothing else.&quot;</span></span></code></pre></div>
+<p>If the marker comes back, the model called a tool, the tool ran, and
+its result reached the model. That is the bar — a chat reply alone does
+not clear it.</p>
+<p>Claude Code is N/A for all of the above: it cannot consume a local
+OpenAI-compatible provider at all (<a href="#44-claude-code-21261">§4.4</a>).</p>
 <hr />
-<h2 id="undoing-removing-the-helix-providers">7. Undoing / removing the
-Helix providers</h2>
-<p>Because each agent’s Helix entry is just a provider block in that
-agent’s own config file, removing Helix from an agent means removing
+<h2 id="7-undoing--removing-the-helix-providers">7. Undoing / removing
+the Helix providers</h2>
+<p>Because each agent&#39;s Helix entry is just a provider block in that
+agent&#39;s own config file, removing Helix from an agent means removing
 that block and nothing else:</p>
 <ul>
 <li><strong><code>opencode</code></strong>: delete the
@@ -570,26 +934,26 @@ declared model followed by removing the provider line, then restart
 <code>crush</code>.</li>
 <li><strong>Claude Code</strong>: nothing to undo for the local
 OpenAI-compatible surfaces, since it never accepted them in the first
-place (<a href="#44-claude-code">§4.4</a>). If a separate stream wired
-<code>ANTHROPIC_BASE_URL</code> / an API key for the HelixCode surface,
-undo whatever mechanism that stream used to set those (environment
-variable, shell profile line, or settings file — check its own
-documentation).</li>
+place (<a href="#44-claude-code-21261">§4.4</a>). If a separate stream
+wired <code>ANTHROPIC_BASE_URL</code> / an API key for the HelixCode
+surface, undo whatever mechanism that stream used to set those
+(environment variable, shell profile line, or settings file — check its
+own documentation).</li>
 </ul>
 <p>None of this touches the Helix surfaces themselves (Coder, Gateway,
-HelixAgent, HelixCode keep running); it only removes an agent’s
+HelixAgent, HelixCode keep running); it only removes an agent&#39;s
 knowledge of them.</p>
 <hr />
-<h2 id="re-running-the-installer-idempotency">8. Re-running the
+<h2 id="8-re-running-the-installer-idempotency">8. Re-running the
 installer: idempotency</h2>
 <p>If an automated installer wires these providers for you, re-running
 it against an agent that already has a Helix entry should <strong>merge
 into the existing config rather than duplicate or clobber it</strong> —
 this is the expected, intended behavior for this kind of
-provider-registration step, consistent with how each agent’s own tooling
+provider-registration step, consistent with how each agent&#39;s own tooling
 behaves when you register the same provider twice by hand
 (<code>crush provider add</code> on an existing id merges; re-declaring
-a model in <code>opencode.json</code> or <code>pi</code>’s
+a model in <code>opencode.json</code> or <code>pi</code>&#39;s
 <code>models.json</code> simply overwrites that one entry, leaving
 everything else in the file untouched).</p>
 <p>Concretely, a safe re-run should leave:</p>
@@ -597,7 +961,7 @@ everything else in the file untouched).</p>
 <li>any provider entries you added yourself, for services unrelated to
 Helix, completely untouched;</li>
 <li>the Helix entries either unchanged (if nothing changed on the Helix
-side) or updated in place (e.g. a new model id, a changed port) — never
+side) or updated in place (e.g. a new model id, a changed port) — never
 appended as a second, differently-named duplicate of the same
 surface.</li>
 </ul>
@@ -606,31 +970,45 @@ trusting this paragraph: run it twice in a row and diff the config file
 (or re-run the <code>grep -i helix</code> checks from <a href="#6-verifying-each-agent-yourself">§6</a> before and after) to see
 for yourself that nothing duplicated.</p>
 <hr />
-<h2 id="the-context-size-cautionary-tale">9. The context-size cautionary
-tale</h2>
+<h2 id="9-the-context-size-cautionary-tale">9. The context-size
+cautionary tale</h2>
 <p><strong>Registering a model successfully does not mean it is
-usable.</strong> On 2026-09-05, with the Coder surface’s context window
+usable.</strong> On 2026-09-05, with the Coder surface&#39;s context window
 (<code>n_ctx</code>) set to 4096 tokens, a real <code>pi</code> request
 against it was rejected outright:</p>
 <pre><code>400: {&quot;code&quot;:400,&quot;message&quot;:&quot;request (141440 tokens) exceeds the available
 context size (4096 tokens), try increasing it&quot;,&quot;n_prompt_tokens&quot;:141440,&quot;n_ctx&quot;:4096}</code></pre>
-<p>The agent’s own system prompt alone — before any user turn is even
-added — was over 141,000 tokens once tokenized against this model,
-thirty-four times the 4096-token window. The provider was registered
-correctly, the request reached the server correctly, and the server
-replied correctly — it just could not do anything useful with an agent
-whose baseline prompt does not fit.</p>
-<p>The Coder surface’s context window has since been raised (to 32768
-tokens as of 2026-09-05), which should leave considerably more headroom,
-but the lesson generalizes: <strong>a model appearing in
+<p>The window was then raised 4096 → 32768. <strong>That did not fix
+it</strong>, and the shape of why is the lesson worth keeping:</p>
+<ul>
+<li>32,768 is this model&#39;s <code>n_ctx_train</code> — its ceiling, not a
+conservative setting. There is no larger value available for it.</li>
+<li>Every mainstream agent&#39;s <em>baseline</em> prompt on this host is
+larger than that ceiling: <code>pi</code> 86,411, <code>crush</code>
+96,564, <code>opencode</code> 134,043 tokens before a single user turn
+(<a href="#31-what-each-agent-sends-before-you-type-anything">§3.1</a>).</li>
+<li>The weight is not the agent — it is <strong>~950 skills installed
+under <code>~/.claude/skills</code> /
+<code>~/.config/crush/skills</code> /
+<code>~/.pi/agent/skills</code></strong>, which every one of these
+agents inlines into its system prompt. Remove them and <code>pi</code>
+drops to 1,480 tokens and <code>crush</code> to 11,342.</li>
+</ul>
+<p>So there were only ever two real ways out, and both are now measured
+rather than guessed: <strong>trim the prompt</strong>
+(<code>pi --no-skills</code> → works against the Coder), or <strong>use
+a surface with room</strong> (<code>crush</code> → HelixAgent, ≥ 200,046
+tokens measured → works at the full skill load, with tool use). Raising
+<code>--ctx-size</code> further was never one of them.</p>
+<p>The generalisable rule: <strong>a model appearing in
 <code>&lt;agent&gt; models</code> proves the plumbing works — it proves
-nothing about whether a real turn will fit.</strong> If an agent
-registers cleanly but every real request fails, check the context window
-of the surface you pointed it at before assuming the wiring is broken.
-See <a href="FAQ.md"><code>FAQ.md</code></a> for the specific “lists the
-model but every request fails” question.</p>
+nothing about whether a real turn will fit, and nothing about whether
+the answer you get back is an answer to <em>your</em> question.</strong>
+This host has one failure of each kind: the context rejection above,
+which is loud, and the Gateway&#39;s silent content drop (<a href="#2-the-four-helix-surfaces">§2</a>), which is not. See <a href="FAQ.md"><code>FAQ.md</code></a> for the &quot;lists the model but every
+request fails&quot; question.</p>
 <hr />
-<h2 id="where-to-go-next">10. Where to go next</h2>
+<h2 id="10-where-to-go-next">10. Where to go next</h2>
 <ul>
 <li><a href="FAQ.md"><code>FAQ.md</code></a> — targeted answers to the
 questions this wiring tends to raise.</li>

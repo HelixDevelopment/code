@@ -13,6 +13,7 @@
 #   ./setup.sh --no-systemd    # build only; skip systemd installation
 #   ./setup.sh --skip-build    # wire systemd only; assume binaries already built
 #   ./setup.sh --no-agents     # skip wiring the installed CLI agents to Helix
+#   ./setup.sh --env-only      # provision/rotate credentials only; no build, no systemd
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,6 +22,13 @@ cd "${REPO_ROOT}"
 DO_SYSTEMD=1
 DO_BUILD=1
 DO_AGENTS=1
+# --env-only runs ONLY section 5 (credential provisioning + toolkit wiring).
+# It exists because credential ROTATION is a routine operation that must not
+# require re-initialising submodules, installing system libraries, or
+# rebuilding every sub-system: those sections mutate a working tree, and an
+# operator rotating a key at speed should not have to risk them. It is also
+# what makes the provisioning path directly exercisable on its own.
+DO_ENV_ONLY=0
 START_FLAG=""
 for arg in "$@"; do
   case "$arg" in
@@ -28,7 +36,8 @@ for arg in "$@"; do
     --no-systemd) DO_SYSTEMD=0 ;;
     --skip-build) DO_BUILD=0 ;;
     --no-agents)  DO_AGENTS=0 ;;
-    -h|--help)    sed -n '2,15p' "$0"; exit 0 ;;
+    --env-only)   DO_ENV_ONLY=1; DO_BUILD=0; DO_SYSTEMD=0; DO_AGENTS=0 ;;
+    -h|--help)    sed -n '2,16p' "$0"; exit 0 ;;
     *) echo "unknown option: $arg (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -47,6 +56,7 @@ command -v git >/dev/null 2>&1 || die "git is not installed."
 command -v go  >/dev/null 2>&1 || die "go is not installed (required to build all sub-systems)."
 
 # --- 1. submodules -----------------------------------------------------------
+if [ "${DO_ENV_ONLY}" -eq 0 ]; then
 section "Initialising git submodules"
 ./scripts/init-submodules.sh
 ok "submodules ready"
@@ -74,6 +84,10 @@ case "$OSTYPE" in
     warn "unrecognised OS '$OSTYPE' — install dependencies manually"
     ;;
 esac
+else
+  section "Provisioning credentials only (--env-only)"
+  ok "skipping submodules, git hooks, system dependencies, and builds"
+fi
 
 # --- 4. build every sub-system ----------------------------------------------
 # Each sub-system owns its own Makefile; setup.sh calls into them rather than
@@ -174,6 +188,30 @@ fill_if_empty() {
   fi
 }
 
+# ensure_key_line guarantees the assignment EXISTS in .env, appending it empty
+# when it does not. It never touches a line that is already there, whatever its
+# value.
+#
+# fill_if_empty on its own only upgrades a .env that was freshly copied from
+# .env.example, because it matches `^KEY=$` — a line that has to already exist.
+# Every .env created before a new credential was introduced simply has no such
+# line, so fill_if_empty finds nothing, silently does nothing, and the operator
+# is left to add the variable by hand. That is precisely the manual step this
+# script exists to remove. Pairing ensure_key_line with fill_if_empty makes the
+# provisioning work on an EXISTING .env, not just a brand-new one.
+ensure_key_line() {
+  key="$1"
+  # `grep -q "^${key}="` and not a bare substring match: a comment mentioning
+  # the variable (this file's .env.example documents several) must not be read
+  # as the assignment being present.
+  if [ -f .env ] && ! grep -q "^${key}=" .env 2>/dev/null; then
+    # A .env that does not end in a newline would otherwise get the new
+    # assignment glued onto the tail of the last line.
+    [ -s .env ] && [ "$(tail -c 1 .env | od -An -c | tr -d ' \n')" != '\n' ] && printf '\n' >> .env
+    printf '%s=\n' "${key}" >> .env
+  fi
+}
+
 fill_placeholder() {
   key="$1"; placeholder="$2"
   if grep -q "^${key}=${placeholder}\$" .env 2>/dev/null; then
@@ -209,9 +247,68 @@ if [ -f .env ]; then
   # Shipped empty (fail-closed); generate a unique value so the facade works out
   # of the box without a shared, published default. CONST-042.
   fill_if_empty HELIX_WIRE_FACADE_API_KEYS
+  # Inbound auth credential for the HelixLLM gateway (:8443), same shape as the
+  # wire-facade key above and equally NOT an outbound provider key.
+  #
+  # This one is load-bearing for local CLI clients. helixllm-gateway.service
+  # sets HELIX_AUTH_JWT_SECRET, and per HelixLLM's own auth truth table
+  # (internal/shared/config.AuthConfig) a JWT secret with no API keys means
+  # "JWT required" — while POST /v1/auth/token, the only way to MINT a JWT,
+  # sits behind that same authenticated group. The result is a gateway with no
+  # way in: every request 401s, including the token exchange that would have
+  # issued the credential. Configuring an API key alongside the secret both
+  # re-opens the token exchange and gives clients a credential they can
+  # actually hold.
+  #
+  # It is deliberately an API key rather than the signing secret: the secret
+  # mints tokens for ANY subject, so it stays in the server process, while a
+  # key is scoped and can be rotated by editing the list here.
+  ensure_key_line HELIX_AUTH_API_KEYS
+  fill_if_empty   HELIX_AUTH_API_KEYS
   if grep -q '=CHANGE_ME' .env 2>/dev/null; then
     warn ".env still has CHANGE_ME placeholders (outbound provider API keys) — fill them in before using those providers"
   fi
+fi
+
+# Wire the local CLI clients to the credential we just provisioned.
+#
+# The Claude Toolkit reads inbound gateway keys from $CMA_KEYS_FILE (default
+# ~/api_keys.sh), which it SOURCES on every provider-alias launch. Pointing
+# that file at scripts/export_gateway_keys.sh — rather than writing the key
+# into it — is what keeps .env the single source of truth: the toolkit reads
+# the live value at launch, so rotating the key in .env and restarting the unit
+# is the whole rotation procedure, with no second copy to forget.
+#
+# Additive and idempotent. The keys file is the operator's, may hold unrelated
+# credentials, and is never rewritten or reordered here: this appends one
+# `. <path>` line if and only if that exact line is absent.
+if [ -f .env ]; then
+  keys_file="${CMA_KEYS_FILE:-$HOME/api_keys.sh}"
+  gw_export="$(pwd)/scripts/export_gateway_keys.sh"
+  gw_line=". \"${gw_export}\""
+  if [ ! -e "$keys_file" ]; then
+    # umask, not a post-hoc chmod: the file must never exist world-readable,
+    # not even for the instant between creation and the permission change.
+    ( umask 077; : > "$keys_file" )
+    ok "created ${keys_file} (mode 0600)"
+  fi
+  # -F -x: fixed string, whole line. The path contains no regex metacharacters
+  # today, but a checkout under a directory with a '+' or '.' in its name would
+  # make a pattern match unreliable, and a false "already present" here means
+  # the toolkit silently never gets the key.
+  if ! grep -qFx "$gw_line" "$keys_file" 2>/dev/null; then
+    {
+      printf '\n# HelixCode gateways: derive inbound keys from the SAME .env the\n'
+      printf '# systemd units read. Do NOT replace this with a literal key — a copy\n'
+      printf '# goes stale the moment the key is rotated and every request 401s.\n'
+      printf '%s\n' "$gw_line"
+    } >> "$keys_file"
+    chmod 0600 "$keys_file" 2>/dev/null || true
+    ok "wired ${keys_file} -> scripts/export_gateway_keys.sh"
+  else
+    ok "${keys_file} already sources scripts/export_gateway_keys.sh"
+  fi
+  unset keys_file gw_export gw_line
 fi
 
 # --- 6. systemd --------------------------------------------------------------

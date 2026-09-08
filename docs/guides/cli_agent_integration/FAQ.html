@@ -7,6 +7,151 @@
   <title>FAQ</title>
   <style>
 
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+white-space: pre-wrap;
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: 1.5em;}
 div.column{flex: auto;}
@@ -89,38 +234,14 @@ code span.va { color: #19177c; }
 code span.vs { color: #4070a0; } 
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
-  <style type="text/css">
-table {
-border-collapse: collapse;
-}
-table td,
-table th {
-border: 1px solid #cccccc;
-padding: 4px 8px;
-vertical-align: top;
-}
-
-tr.cell-status-obsolete > td {
-background-color: #E0E0E0;
-}
-
-tr.cell-status-obsolete > td:nth-child(2),
-tr.cell-status-obsolete > td:last-child {
-text-decoration: line-through;
-}
-</style>
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">FAQ</h1>
 </header>
-<h1 id="faq-cli-coding-agents-helix">FAQ — CLI Coding Agents +
+<h1 id="faq--cli-coding-agents--helix">FAQ — CLI Coding Agents +
 Helix</h1>
 <table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
 <thead>
 <tr>
 <th>Field</th>
@@ -130,7 +251,7 @@ Helix</h1>
 <tbody>
 <tr>
 <td>Revision</td>
-<td>1</td>
+<td>2</td>
 </tr>
 <tr>
 <td>Created</td>
@@ -138,17 +259,17 @@ Helix</h1>
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-09-05</td>
+<td>2026-09-07</td>
 </tr>
 <tr>
 <td>Status</td>
-<td>DRAFT — answers grounded in dated probe evidence; see the source
-citation on each answer</td>
+<td>ACTIVE — Q1, Q2, Q7 and Q8 were rewritten after end-to-end agent
+runs falsified their revision-1 answers</td>
 </tr>
 <tr>
 <td>Status summary</td>
 <td>Answers the recurring questions about wiring <code>opencode</code>,
-<code>pi</code>, <code>crush</code>, and Claude Code to Helix’s local
+<code>pi</code>, <code>crush</code>, and Claude Code to Helix&#39;s local
 LLM surfaces.</td>
 </tr>
 <tr>
@@ -158,10 +279,11 @@ directory</td>
 </tr>
 <tr>
 <td>Authority</td>
-<td>Every answer below is either sourced from a live probe run
-2026-09-05 or a cited vendor doc — see
-<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code> for the
-raw transcripts.</td>
+<td>Every answer below is sourced from a live probe (2026-09-05,
+<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code>), an
+end-to-end agent run (2026-09-07,
+<code>docs/qa/cli_agent_model_usability_20260907T113000Z/</code>), or a
+cited vendor doc.</td>
 </tr>
 </tbody>
 </table>
@@ -172,7 +294,7 @@ raw transcripts.</td>
 does my agent list the model but every request fails?</a></li>
 <li><a href="#2-why-does-tool-calling-work-in-one-place-and-not-another">Why
 does tool-calling work in one place and not another?</a></li>
-<li><a href="#3-why-isnt-claude-code-in-the-list-of-supported-agents">Why isn’t
+<li><a href="#3-why-isnt-claude-code-in-the-list-of-supported-agents">Why isn&#39;t
 Claude Code in the list of supported agents?</a></li>
 <li><a href="#4-do-i-need-an-api-key">Do I need an API key?</a></li>
 <li><a href="#5-will-wiring-helix-overwrite-my-existing-agent-config">Will
@@ -180,59 +302,85 @@ wiring Helix overwrite my existing agent config?</a></li>
 <li><a href="#6-why-does-crush-create-a-crush-folder-in-my-project">Why
 does crush create a <code>.crush</code> folder in my project?</a></li>
 <li><a href="#7-why-did-opencodepis-request-against-the-gateway-just-hang">Why
-did opencode/pi’s request against the Gateway just hang?</a></li>
+did opencode/pi&#39;s request against the Gateway just hang?</a></li>
 <li><a href="#8-which-surface-should-i-actually-use">Which surface
 should I actually use?</a></li>
 </ol>
 <hr />
-<h2 id="why-does-my-agent-list-the-model-but-every-request-fails">1. Why
-does my agent list the model but every request fails?</h2>
+<h2 id="1-why-does-my-agent-list-the-model-but-every-request-fails">1.
+Why does my agent list the model but every request fails?</h2>
 <p>Because listing a model only proves the provider config is
 syntactically correct and the surface answered a <code>/v1/models</code>
 (or equivalent) call — it says nothing about whether a real request will
-fit inside that model’s context window.</p>
+fit inside that model&#39;s context window.</p>
 <p>This happened for real on 2026-09-05: the Coder surface
 (<code>:18434</code>) was running with a 4096-token context window, and
-a genuine <code>pi</code> request — nothing exotic, just the agent’s own
+a genuine <code>pi</code> request — nothing exotic, just the agent&#39;s own
 baseline system prompt — was rejected with:</p>
 <pre><code>400: request (141440 tokens) exceeds the available context size (4096 tokens)</code></pre>
 <p>141,440 tokens of system prompt against a 4096-token window. The
 provider was registered correctly; the server was reachable and answered
 correctly; the request still could not succeed, because the window was
 far too small for any real agentic turn.</p>
-<p>The Coder surface’s context window has since been raised (to 32768
-tokens as of 2026-09-05), which should leave much more room, but the
-underlying lesson stands: <strong>if a model shows up in your agent’s
-model list yet every real turn fails, check the context window of the
-surface you pointed it at, not the provider config.</strong>
-Registration proves plumbing, not usability. See <a href="README.md#9-the-context-size-cautionary-tale"><code>README.md</code>
+<p>The Coder surface&#39;s context window was raised to 32768 on 2026-09-05.
+<strong>That did not fix it</strong>, and the reason is now measured
+rather than assumed: 32768 is this model&#39;s <code>n_ctx_train</code> —
+its ceiling — while the agents&#39; own baseline prompts on this host are
+<code>pi</code> 86,411, <code>crush</code> 96,564 and
+<code>opencode</code> 134,043 tokens, because ~950 installed skills are
+inlined into every system prompt. The two things that DO work are
+trimming the prompt (<code>pi --no-skills</code> → 1,480 tokens) or
+using a surface with room (HelixAgent, ≥ 200,046 tokens measured). See
+<a href="README.md#31-what-each-agent-sends-before-you-type-anything"><code>README.md</code>
+§3.1</a>. The underlying lesson stands: <strong>if a model shows up in
+your agent&#39;s model list yet every real turn fails, check the context
+window of the surface you pointed it at, not the provider
+config.</strong> Registration proves plumbing, not usability. See <a href="README.md#9-the-context-size-cautionary-tale"><code>README.md</code>
 §9</a>.</p>
-<h2 id="why-does-tool-calling-work-in-one-place-and-not-another">2. Why
-does tool-calling work in one place and not another?</h2>
+<h2 id="2-why-does-tool-calling-work-in-one-place-and-not-another">2.
+Why does tool-calling work in one place and not another?</h2>
 <p>Because it depends on <strong>which Helix surface</strong> you point
 at, not which model id you ask for. Coder and Gateway serve, as far as
 the model id is concerned, the same underlying model — but:</p>
 <ul>
-<li>Point an agent at <strong>Coder</strong> (<code>:18434</code>) and a
-tool-calling request gets a fenced JSON blob pasted into the assistant’s
-plain text reply. There is no structured <code>tool_calls</code> field
-in the response, so the agent’s tool-call parser never fires.</li>
-<li>Point the same agent at <strong>Gateway</strong>
+<li><p>Point an agent at <strong>Coder</strong> (<code>:18434</code>)
+and a tool-calling request gets a fenced JSON blob pasted into the
+assistant&#39;s plain text reply. There is no structured
+<code>tool_calls</code> field in the response, so the agent&#39;s tool-call
+parser never fires.</p></li>
+<li><p>Point the same agent at <strong>Gateway</strong>
 (<code>:8443</code>) instead, and the response comes back with a real
 <code>tool_calls</code> array and
 <code>finish_reason:&quot;tool_calls&quot;</code> — because the Gateway performs
 response translation that the raw llama.cpp server behind Coder does not
-do on its own.</li>
+do on its own.</p></li>
+<li><p>Point it at <strong>HelixAgent</strong> (<code>:7061</code>) and
+you also get a real structured <code>tool_calls</code> array — measured
+2026-09-07, correcting revision 1, which said this was
+unprobed.</p></li>
 </ul>
-<p>If tool-calling matters for your workflow, use the Gateway surface.
-See <a href="README.md#3-choosing-a-surface-the-one-thing-that-will-surprise-you"><code>README.md</code>
-§3</a> for the fuller explanation, and <a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> for where this
+<blockquote>
+<p><strong>Do not conclude from this that you should use the
+Gateway.</strong> The Gateway <strong>silently discards array-form
+message content</strong> — the shape <code>pi</code> sends on every turn
+and <code>opencode</code> sends unless <code>--pure</code> is passed.
+You get <code>200 OK</code> and a fluent answer to a question you did
+not ask. Measured, identical body: Coder answered <code>HELIXOK</code>
+at 1,480 prompt tokens; the Gateway answered
+<code>&quot;Yes, I can help with that…&quot;</code> at 577 — 903 tokens, including
+the whole instruction, dropped. The Gateway is safe only for
+<code>crush</code>, which sends plain strings.</p>
+</blockquote>
+<p>For tool-calling that actually works end to end today, use
+<strong><code>crush</code> against
+<code>helixagent/helixagent-llm</code></strong>. See <a href="README.md#3-which-agent-x-surface-combinations-actually-work"><code>README.md</code>
+§3</a> for the full measured matrix, and <a href="ARCHITECTURE.md"><code>ARCHITECTURE.md</code></a> for where this
 sits in the overall picture.</p>
-<h2 id="why-isnt-claude-code-in-the-list-of-supported-agents">3. Why
-isn’t Claude Code in the list of supported agents?</h2>
+<h2 id="3-why-isnt-claude-code-in-the-list-of-supported-agents">3. Why
+isn&#39;t Claude Code in the list of supported agents?</h2>
 <p>Because Claude Code has no mechanism to accept a custom
-OpenAI-compatible provider at all — this is a constraint on Anthropic’s
-side, confirmed against Claude Code’s own official documentation
+OpenAI-compatible provider at all — this is a constraint on Anthropic&#39;s
+side, confirmed against Claude Code&#39;s own official documentation
 (fetched 2026-09-05):</p>
 <ul>
 <li>The LLM Gateway Protocol documentation
@@ -242,22 +390,22 @@ Amazon Bedrock InvokeModel, and Google Agent Platform
 <code>rawPredict</code>. There is no OpenAI Chat Completions row.</li>
 <li>The LLM Gateway documentation
 (<code>https://code.claude.com/docs/en/llm-gateway</code>) states,
-verbatim: <em>“Anthropic doesn’t endorse, maintain, or audit third-party
-gateway products, and doesn’t support routing Claude Code to non-Claude
-models through any gateway.”</em></li>
-<li>Claude Code’s optional model-discovery feature also filters by name:
-it “keeps an entry when its <code>id</code> contains <code>claude</code>
+verbatim: <em>&quot;Anthropic doesn&#39;t endorse, maintain, or audit third-party
+gateway products, and doesn&#39;t support routing Claude Code to non-Claude
+models through any gateway.&quot;</em></li>
+<li>Claude Code&#39;s optional model-discovery feature also filters by name:
+it &quot;keeps an entry when its <code>id</code> contains <code>claude</code>
 or <code>anthropic</code> anywhere in the string, matched
-case-insensitively, and ignores the rest” — so even a discovery call
+case-insensitively, and ignores the rest&quot; — so even a discovery call
 against a Helix surface would silently drop every Helix model id.</li>
 </ul>
-<p>The only conceivable path in is <strong>HelixCode’s Anthropic-shaped
+<p>The only conceivable path in is <strong>HelixCode&#39;s Anthropic-shaped
 <code>/v1/messages</code> endpoint on <code>:8080</code></strong>, via
 <code>ANTHROPIC_BASE_URL</code> plus an API key. <strong>Whether that
 actually works was, at the time this FAQ was written, still under
 verification by a separate work stream — do not assume it does.</strong>
-Check that stream’s findings before relying on it.</p>
-<h2 id="do-i-need-an-api-key">4. Do I need an API key?</h2>
+Check that stream&#39;s findings before relying on it.</p>
+<h2 id="4-do-i-need-an-api-key">4. Do I need an API key?</h2>
 <p>For three of the four Helix surfaces, no:</p>
 <ul>
 <li><strong>Coder</strong> (<code>:18434</code>) — none required.</li>
@@ -278,13 +426,13 @@ without an API key; one is required.</li>
 for a keyless server</strong> — the field cannot be omitted, though its
 actual value is never checked by Coder, Gateway, or HelixAgent. Any
 placeholder string (the evidence in this guide uses
-<code>&quot;local&quot;</code>) satisfies pi’s own config validation.
+<code>&quot;local&quot;</code>) satisfies pi&#39;s own config validation.
 <code>opencode</code> and <code>crush</code> do not have this quirk —
 you can omit the key field entirely for the three keyless surfaces.</p>
-<h2 id="will-wiring-helix-overwrite-my-existing-agent-config">5. Will
+<h2 id="5-will-wiring-helix-overwrite-my-existing-agent-config">5. Will
 wiring Helix overwrite my existing agent config?</h2>
 <p>It should not, if the wiring is done the way this guide describes: a
-Helix entry is added as its own named provider block inside the agent’s
+Helix entry is added as its own named provider block inside the agent&#39;s
 existing config file, alongside whatever else is already there. Adding
 it should never touch unrelated provider entries, and re-running the
 same wiring step again should merge into the existing Helix entry rather
@@ -296,26 +444,26 @@ before is still present unchanged, and that only the intended Helix
 entry was added or updated. See <a href="README.md#8-re-running-the-installer-idempotency"><code>README.md</code>
 §8</a> for the fuller discussion, including how to test idempotency by
 running the wiring step twice.</p>
-<h2 id="why-does-crush-create-a-.crush-folder-in-my-project">6. Why does
-crush create a <code>.crush</code> folder in my project?</h2>
-<p>Because <code>crush</code>’s data directory defaults to
+<h2 id="6-why-does-crush-create-a-crush-folder-in-my-project">6. Why
+does crush create a <code>.crush</code> folder in my project?</h2>
+<p>Because <code>crush</code>&#39;s data directory defaults to
 <code>.crush</code>, resolved <strong>relative to whatever directory you
 ran it from</strong> — not a fixed location under your home directory.
 If you run <code>crush</code> from inside a project (this repository
 included) without overriding that default, it creates
 <code>.crush/</code> right there.</p>
 <p>This was observed directly: running <code>crush</code> inside this
-repo’s working tree produced a <code>helix_code/.crush/</code>
+repo&#39;s working tree produced a <code>helix_code/.crush/</code>
 directory, which had to be manually removed afterward.</p>
 <p>To avoid it, pass explicit flags rather than relying on the
 default:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">crush</span> <span class="at">--cwd</span> <span class="op">&lt;</span>some-directory<span class="op">&gt;</span> --data-dir <span class="op">&lt;</span>some-directory<span class="op">&gt;</span>/.crush ...</span></code></pre></div>
 <p>or set the equivalent environment variables
 (<code>CRUSH_GLOBAL_CONFIG</code>, <code>CRUSH_GLOBAL_DATA</code>) if
-you want to isolate <code>crush</code>’s state away from any project
+you want to isolate <code>crush</code>&#39;s state away from any project
 directory entirely.</p>
-<h2 id="why-did-opencodepis-request-against-the-gateway-just-hang">7.
-Why did opencode/pi’s request against the Gateway just hang?</h2>
+<h2 id="7-why-did-opencodepis-request-against-the-gateway-just-hang">7.
+Why did opencode/pi&#39;s request against the Gateway just hang?</h2>
 <p>During the research pass behind this guide, both cases ended in a
 timeout with no output, rather than a clear success or failure — this is
 recorded honestly as <strong>inconclusive</strong>, not as a documented
@@ -335,22 +483,31 @@ this research pass, not something this guide can currently explain —
 re-test it yourself and, if you get a clear result either way, that
 supersedes what is written here (see the note in
 <code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code>).</p>
-<h2 id="which-surface-should-i-actually-use">8. Which surface should I
+<h2 id="8-which-surface-should-i-actually-use">8. Which surface should I
 actually use?</h2>
-<p>As a starting point, based on what has been confirmed so far:</p>
+<p>Answered from end-to-end runs (2026-09-07), not from surface
+capability alone — because the surface that <em>looks</em> best on paper
+is the one that silently drops your request:</p>
 <ul>
-<li>Need <strong>tool-calling</strong> to work? Use the
-<strong>Gateway</strong> (<code>:8443</code>) — confirmed real
-<code>tool_calls</code> behavior, but requires TLS trust setup for its
-self-signed certificate.</li>
-<li>Just need <strong>plain chat completion</strong>, no tools, and want
-the simplest path (no TLS to configure)? Use the <strong>Coder</strong>
-surface (<code>:18434</code>).</li>
-<li>Working with <strong>HelixAgent</strong>-specific model ids
-(<code>helixagent-llm</code>, <code>helixagent-debate</code>,
-<code>helixagent-ensemble</code>, etc.)? Use <code>:7061</code> — but
-note its tool-calling behavior has not been probed, so verify it
-yourself before depending on it.</li>
+<li><strong>Using <code>crush</code>? Use HelixAgent
+(<code>:7061</code>).</strong>
+<code>crush run -m helixagent/helixagent-llm</code> is the only
+combination on this host proven to work at the operator&#39;s real skill
+load, with real tool use, with nothing disabled. No TLS to
+configure.</li>
+<li><strong>Using <code>pi</code>? Use the Coder (<code>:18434</code>)
+with <code>--no-skills</code>.</strong> <code>pi</code>&#39;s default
+86,411-token prompt does not fit any llama.cpp surface, and its
+array-form content is rejected by HelixAgent (400) and silently
+discarded by the Gateway. Trimmed, it works: 1,480 tokens, correct
+answer.</li>
+<li><strong>Using <code>opencode</code>?</strong> No confirmed working
+path — 134,043-token baseline exceeds both llama.cpp surfaces and
+<code>--pure</code> removes only ~2,000 of it. See <a href="README.md#34-opencode-has-no-confirmed-working-path"><code>README.md</code>
+§3.4</a>.</li>
+<li><strong>Avoid the Gateway (<code>:8443</code>) unless your agent
+sends plain-string content.</strong> It is not a safe default: see
+Q2.</li>
 <li>Using <strong>Claude Code</strong>? None of the above are reachable
 from it at all — see <a href="#3-why-isnt-claude-code-in-the-list-of-supported-agents">Q3</a>.
 The HelixCode surface (<code>:8080</code>) is the only candidate, and it

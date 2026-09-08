@@ -48,7 +48,7 @@ There is no single shared config file — four agents, four files, four shapes:
 | `opencode` | 1.18.29 | `~/.config/opencode/opencode.json` | JSON |
 | `pi` | 0.84.4 | `~/.pi/agent/models.json` | JSON |
 | `crush` | 0.91.2 | `~/.config/crush/crushrc` | Bash directives (not JSON) |
-| `claude` (Claude Code) | 2.1.261 | — | N/A for local OpenAI-compatible providers; see [§4.4](#44-claude-code) |
+| `claude` (Claude Code) | 2.1.261 | — | N/A for local OpenAI-compatible providers; see [§4.4](#44-claude-code-21261) |
 
 If an installer has run against your machine, you should find Helix entries already present in the files above for `opencode`, `pi`, and `crush`. If it has not run yet, [§4](#4-per-agent-configuration) below shows you exactly what to add and how to add it by hand.
 
@@ -144,7 +144,7 @@ agent's baseline is two to four times larger.
 | **`pi --no-skills`** | ✅ **WORKS** (1,480 tokens) — chat only, tool calls arrive as fenced JSON text | ❌ BROKEN — 200 OK, instruction silently discarded (§2 warning) | ❌ BLOCKED — array content → HTTP 400 |
 | **`opencode`** (default) | ❌ BLOCKED — 134,043 > 32,768 | ❌ BLOCKED — ceiling *and* silent-drop | ❌ BLOCKED — array content → HTTP 400 |
 | **`opencode --pure`** | ❌ BLOCKED — 132,058 > 32,768 | ❌ BLOCKED — same ceiling | ⚠️ see [§3.4](#34-opencode-has-no-confirmed-working-path) |
-| **Claude Code** | N/A — cannot consume an OpenAI-compatible provider ([§4.4](#44-claude-code)) | N/A | N/A |
+| **Claude Code** | N/A — cannot consume an OpenAI-compatible provider ([§4.4](#44-claude-code-21261)) | N/A | N/A |
 
 ### 3.3 The recommendation, in one line
 
@@ -180,10 +180,15 @@ inlined skills plus ~165 KB of tool schema for 120 tools, neither of which
 `--pure` touches. That rules out both llama.cpp surfaces outright.
 
 HelixAgent has the capacity (≥ 200,046 tokens measured), and `opencode --pure`
-does send plain-string content, so it is the one combination that could work —
-but it had not returned a verdict when this revision was written. **Treat it as
-UNTESTED**, and if you try it, judge it by whether the answer contains what you
-asked for, not by whether a response arrives.
+does send plain-string content, so it is the one combination that could work.
+It was attempted twice and produced **no verdict either way**: both runs were
+killed by their own timeout (300 s and 500 s, `SIGTERM`, exit 143) with no
+output, and a request-capture proxy in front of the endpoint recorded *nothing*
+— so `opencode` never got as far as sending, and this is a client-side stall,
+not a rejection by HelixAgent (which answered a small request in 2.2 s while
+`opencode` was hung). **Treat it as UNTESTED**, and if you try it, judge it by
+whether the answer contains what you asked for, not by whether a response
+arrives.
 
 ### 3.5 The one defect that would unblock `pi` and `opencode`
 
@@ -220,23 +225,35 @@ installed.
 
 Config file: `~/.config/opencode/opencode.json`.
 
-Add a provider entry under `provider.<your-id>`, using the `@ai-sdk/openai-compatible` npm adapter, pointing `options.baseURL` at one of the surfaces from §2, and enumerating the model id(s) that surface serves:
+> **Before you wire this:** `opencode` has no confirmed working path to any
+> Helix surface on this host — its 134,043-token baseline prompt exceeds both
+> llama.cpp surfaces, and it sends array-form content that HelixAgent rejects
+> unless `--pure` is used. See [§3.4](#34-opencode-has-no-confirmed-working-path).
+> The shape below is correct; whether the combination *works* is [§3](#3-which-agent-x-surface-combinations-actually-work)'s question.
+
+Add a provider entry under `provider.<your-id>`, using the `@ai-sdk/openai-compatible` npm adapter, pointing `options.baseURL` at one of the surfaces from §2, and enumerating the model id(s) that surface serves. HelixAgent is shown here because it is the only surface with room for a real agent prompt ([§3.1](#31-what-each-agent-sends-before-you-type-anything)):
 
 ```json
 {
   "provider": {
-    "helixgw": {
+    "helixagent": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "https://127.0.0.1:8443/v1"
+        "baseURL": "http://127.0.0.1:7061/v1"
       },
       "models": {
-        "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190": {}
+        "helixagent-llm": { "limit": { "context": 131072, "output": 4096 } }
       }
     }
   }
 }
 ```
+
+The `limit.context` of 131072 is a deliberately conservative figure: HelixAgent
+publishes no context value in `/v1/models`, and 200,046 prompt tokens were
+measured as accepted and un-truncated ([§2](#2-the-four-helix-surfaces)). Do not
+copy 32768 here from the llama.cpp surfaces — that under-declares HelixAgent by
+about 4x and makes `opencode` compact or refuse work the endpoint would serve.
 
 Notes:
 
@@ -249,13 +266,19 @@ Notes:
 
 Config file: `~/.pi/agent/models.json` (overridable via the `PI_CODING_AGENT_DIR` environment variable, which changes pi's whole config directory, not just this file).
 
+> **Before you wire this:** `pi` sends array-form content on every user turn,
+> which HelixAgent rejects (HTTP 400) and the Gateway silently discards. Its one
+> working path on this host is the **Coder** surface with `--no-skills`
+> ([§3.2](#32-the-matrix)). Wiring `pi` to the Gateway will appear to work and
+> will not be answering your question — see the warning in [§2](#2-the-four-helix-surfaces).
+
 Add a provider under `providers.<your-id>`:
 
 ```json
 {
   "providers": {
-    "helixgw": {
-      "baseUrl": "https://127.0.0.1:8443/v1",
+    "helixllm-coder": {
+      "baseUrl": "http://127.0.0.1:18434/v1",
       "api": "openai-completions",
       "apiKey": "local"
     }
@@ -365,7 +388,7 @@ If the marker comes back, the model called a tool, the tool ran, and its result
 reached the model. That is the bar — a chat reply alone does not clear it.
 
 Claude Code is N/A for all of the above: it cannot consume a local
-OpenAI-compatible provider at all ([§4.4](#44-claude-code)).
+OpenAI-compatible provider at all ([§4.4](#44-claude-code-21261)).
 
 ---
 
@@ -376,7 +399,7 @@ Because each agent's Helix entry is just a provider block in that agent's own co
 - **`opencode`**: delete the `provider.<your-id>` object from `~/.config/opencode/opencode.json` (or whichever of the merged config files it lives in — see the note in [§4.1](#41-opencode-11829)), then restart `opencode`.
 - **`pi`**: delete the `providers.<your-id>` object from `~/.pi/agent/models.json`. No restart needed.
 - **`crush`**: either delete the corresponding `provider add …` line from `crushrc`, or run `crush model remove <provider>/<id>` for each declared model followed by removing the provider line, then restart `crush`.
-- **Claude Code**: nothing to undo for the local OpenAI-compatible surfaces, since it never accepted them in the first place ([§4.4](#44-claude-code)). If a separate stream wired `ANTHROPIC_BASE_URL` / an API key for the HelixCode surface, undo whatever mechanism that stream used to set those (environment variable, shell profile line, or settings file — check its own documentation).
+- **Claude Code**: nothing to undo for the local OpenAI-compatible surfaces, since it never accepted them in the first place ([§4.4](#44-claude-code-21261)). If a separate stream wired `ANTHROPIC_BASE_URL` / an API key for the HelixCode surface, undo whatever mechanism that stream used to set those (environment variable, shell profile line, or settings file — check its own documentation).
 
 None of this touches the Helix surfaces themselves (Coder, Gateway, HelixAgent, HelixCode keep running); it only removes an agent's knowledge of them.
 

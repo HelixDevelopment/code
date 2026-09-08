@@ -65,15 +65,33 @@ Type=exec
 # a smoke test could pass against an endpoint that was in practice unusable --
 # registration proves plumbing, not usability (§11.4).
 #
-# HONEST BOUNDARY (§11.4.6) -- what this change does and does NOT establish:
-# 32768 is this model's n_ctx_train, i.e. the MAXIMUM this server can offer,
-# not a value chosen because it was measured sufficient. The 141440-token `pi`
-# request quoted above still EXCEEDS 32768 and would still be rejected. So the
-# measurement proves 4096 was insufficient; it does NOT prove 32768 makes `pi`
-# usable. Agents whose system prompt exceeds 32768 tokens need prompt trimming
-# or a longer-context model -- raising this further is not available.
-# No post-change probe has been captured; until one is, treat "usable for
-# agent X" as UNCONFIRMED rather than implied by this comment.
+# WHAT 32768 DOES AND DOES NOT BUY -- measured 2026-09-07, no longer UNCONFIRMED.
+# 32768 is this model's n_ctx_train, i.e. the MAXIMUM this server can offer, not
+# a value chosen because it was measured sufficient. It was then measured, by
+# capturing what each agent really sends and replaying it against THIS server so
+# the token count comes from llama.cpp itself:
+#
+#   pi       (default, 950 skills inlined)   86,411 tokens  -> REJECTED
+#   pi       --no-skills                      1,480 tokens  -> ACCEPTED, answers correctly
+#   crush    (default, 949 skills inlined)   96,564 tokens  -> REJECTED
+#   crush    with host skills removed        11,342 tokens  -> ACCEPTED
+#   opencode (default, 979 skills + 120 tools) 134,043 tokens -> REJECTED
+#
+# So raising 4096 -> 32768 made the endpoint usable for a TRIMMED agent prompt
+# and for nothing else. The weight is not the agents: it is the ~950 skills
+# installed under ~/.claude/skills, ~/.config/crush/skills and ~/.pi/agent/skills,
+# which every one of these agents inlines into its system prompt. Raising this
+# further is genuinely not available -- 32768 IS the ceiling for this model.
+#
+# A longer-context surface DOES exist on this host, which the previous revision
+# of this comment did not know: HelixAgent on :7061 accepted a request whose
+# usage.prompt_tokens was 200,046 and correctly recalled a marker planted at the
+# very FRONT of it (so it neither refused nor silently truncated). `crush` runs
+# against it end to end at the full skill load, with real tool use. See
+# docs/guides/cli_agent_integration/README.md §3 for the full agent x surface
+# matrix and for the two defects that keep `pi` and `opencode` off that surface.
+#
+# Evidence: docs/qa/cli_agent_model_usability_20260907T113000Z/.
 #
 # VRAM cost, measured rather than assumed (§11.4.133 target-hardware safety):
 # the 3B Q4_K_M weights occupy ~2 GB of the RTX 3060's 12288 MiB (9634 MiB free

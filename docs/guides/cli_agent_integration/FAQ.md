@@ -2,13 +2,13 @@
 
 | Field | Value |
 |-------|-------|
-| Revision | 1 |
+| Revision | 2 |
 | Created | 2026-09-05 |
-| Last modified | 2026-09-05 |
-| Status | DRAFT — answers grounded in dated probe evidence; see the source citation on each answer |
+| Last modified | 2026-09-07 |
+| Status | ACTIVE — Q1, Q2, Q7 and Q8 were rewritten after end-to-end agent runs falsified their revision-1 answers |
 | Status summary | Answers the recurring questions about wiring `opencode`, `pi`, `crush`, and Claude Code to Helix's local LLM surfaces. |
 | Scope | Companion to [`README.md`](README.md) and [`ARCHITECTURE.md`](ARCHITECTURE.md) in this same directory |
-| Authority | Every answer below is either sourced from a live probe run 2026-09-05 or a cited vendor doc — see `docs/research/cli_agent_config_schemas/EVIDENCE.md` for the raw transcripts. |
+| Authority | Every answer below is sourced from a live probe (2026-09-05, `docs/research/cli_agent_config_schemas/EVIDENCE.md`), an end-to-end agent run (2026-09-07, `docs/qa/cli_agent_model_usability_20260907T113000Z/`), or a cited vendor doc. |
 
 ---
 
@@ -37,7 +37,7 @@ This happened for real on 2026-09-05: the Coder surface (`:18434`) was running w
 
 141,440 tokens of system prompt against a 4096-token window. The provider was registered correctly; the server was reachable and answered correctly; the request still could not succeed, because the window was far too small for any real agentic turn.
 
-The Coder surface's context window has since been raised (to 32768 tokens as of 2026-09-05), which should leave much more room, but the underlying lesson stands: **if a model shows up in your agent's model list yet every real turn fails, check the context window of the surface you pointed it at, not the provider config.** Registration proves plumbing, not usability. See [`README.md` §9](README.md#9-the-context-size-cautionary-tale).
+The Coder surface's context window was raised to 32768 on 2026-09-05. **That did not fix it**, and the reason is now measured rather than assumed: 32768 is this model's `n_ctx_train` — its ceiling — while the agents' own baseline prompts on this host are `pi` 86,411, `crush` 96,564 and `opencode` 134,043 tokens, because ~950 installed skills are inlined into every system prompt. The two things that DO work are trimming the prompt (`pi --no-skills` → 1,480 tokens) or using a surface with room (HelixAgent, ≥ 200,046 tokens measured). See [`README.md` §3.1](README.md#31-what-each-agent-sends-before-you-type-anything). The underlying lesson stands: **if a model shows up in your agent's model list yet every real turn fails, check the context window of the surface you pointed it at, not the provider config.** Registration proves plumbing, not usability. See [`README.md` §9](README.md#9-the-context-size-cautionary-tale).
 
 ## 2. Why does tool-calling work in one place and not another?
 
@@ -46,7 +46,19 @@ Because it depends on **which Helix surface** you point at, not which model id y
 - Point an agent at **Coder** (`:18434`) and a tool-calling request gets a fenced JSON blob pasted into the assistant's plain text reply. There is no structured `tool_calls` field in the response, so the agent's tool-call parser never fires.
 - Point the same agent at **Gateway** (`:8443`) instead, and the response comes back with a real `tool_calls` array and `finish_reason:"tool_calls"` — because the Gateway performs response translation that the raw llama.cpp server behind Coder does not do on its own.
 
-If tool-calling matters for your workflow, use the Gateway surface. See [`README.md` §3](README.md#3-choosing-a-surface-the-one-thing-that-will-surprise-you) for the fuller explanation, and [`ARCHITECTURE.md`](ARCHITECTURE.md) for where this sits in the overall picture.
+- Point it at **HelixAgent** (`:7061`) and you also get a real structured `tool_calls` array — measured 2026-09-07, correcting revision 1, which said this was unprobed.
+
+> **Do not conclude from this that you should use the Gateway.** The Gateway
+> **silently discards array-form message content** — the shape `pi` sends on
+> every turn and `opencode` sends unless `--pure` is passed. You get `200 OK`
+> and a fluent answer to a question you did not ask. Measured, identical body:
+> Coder answered `HELIXOK` at 1,480 prompt tokens; the Gateway answered
+> `"Yes, I can help with that…"` at 577 — 903 tokens, including the whole
+> instruction, dropped. The Gateway is safe only for `crush`, which sends
+> plain strings.
+
+For tool-calling that actually works end to end today, use **`crush` against
+`helixagent/helixagent-llm`**. See [`README.md` §3](README.md#3-which-agent-x-surface-combinations-actually-work) for the full measured matrix, and [`ARCHITECTURE.md`](ARCHITECTURE.md) for where this sits in the overall picture.
 
 ## 3. Why isn't Claude Code in the list of supported agents?
 
@@ -103,11 +115,14 @@ Neither run yields a usable verdict on whether generation or TLS trust actually 
 
 ## 8. Which surface should I actually use?
 
-As a starting point, based on what has been confirmed so far:
+Answered from end-to-end runs (2026-09-07), not from surface capability alone —
+because the surface that *looks* best on paper is the one that silently drops
+your request:
 
-- Need **tool-calling** to work? Use the **Gateway** (`:8443`) — confirmed real `tool_calls` behavior, but requires TLS trust setup for its self-signed certificate.
-- Just need **plain chat completion**, no tools, and want the simplest path (no TLS to configure)? Use the **Coder** surface (`:18434`).
-- Working with **HelixAgent**-specific model ids (`helixagent-llm`, `helixagent-debate`, `helixagent-ensemble`, etc.)? Use `:7061` — but note its tool-calling behavior has not been probed, so verify it yourself before depending on it.
+- **Using `crush`? Use HelixAgent (`:7061`).** `crush run -m helixagent/helixagent-llm` is the only combination on this host proven to work at the operator's real skill load, with real tool use, with nothing disabled. No TLS to configure.
+- **Using `pi`? Use the Coder (`:18434`) with `--no-skills`.** `pi`'s default 86,411-token prompt does not fit any llama.cpp surface, and its array-form content is rejected by HelixAgent (400) and silently discarded by the Gateway. Trimmed, it works: 1,480 tokens, correct answer.
+- **Using `opencode`?** No confirmed working path — 134,043-token baseline exceeds both llama.cpp surfaces and `--pure` removes only ~2,000 of it. See [`README.md` §3.4](README.md#34-opencode-has-no-confirmed-working-path).
+- **Avoid the Gateway (`:8443`) unless your agent sends plain-string content.** It is not a safe default: see Q2.
 - Using **Claude Code**? None of the above are reachable from it at all — see [Q3](#3-why-isnt-claude-code-in-the-list-of-supported-agents). The HelixCode surface (`:8080`) is the only candidate, and it is unverified as of this writing.
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full picture of which agent can reach which surface.
