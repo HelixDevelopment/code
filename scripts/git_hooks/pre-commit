@@ -1153,6 +1153,18 @@ for f in "${staged[@]}"; do
   scan_blob="$blob"
   case "$f" in
     *.md) scan_blob=$(printf '%s' "$blob" | sed 's/`[^`]*`//g') ;;
+    # HTML EXPORTS OF THE SAME PROSE (2026-09-08, §11.4.201 carrier-vs-thing).
+    # The .md branch above strips backtick spans because an inline-code span is
+    # a QUOTE of the marker, not the marker. Rendering that same .md to .html
+    # turns every backtick span into <code>…</code>, which was NOT stripped —
+    # so §11.4.84's OWN documentation, which necessarily lists the marker
+    # literals it detects, blocked its own governance commit in five carrier
+    # exports while the identical .md text passed. Measured: CLAUDE.md 2 hits
+    # (allowed) vs CLAUDE.html 2 hits (BLOCKED), same sentence.
+    #
+    # The same guarantee the .md branch gives is preserved exactly: a marker
+    # sitting OUTSIDE a <code> span in an .html is still caught.
+    *.html) scan_blob=$(printf '%s' "$blob" | sed 's|<code>[^<]*</code>||g') ;;
   esac
   pipe_grep "$scan_blob" -qE -- 'MUTATED for paired|// always pass|# always pass|MUTATION-RESIDUE|_mutated_'
   marker_rc=$?
