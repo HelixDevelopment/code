@@ -107,6 +107,32 @@ And each pass includes the provider name, model count, and a sample response has
 | Documentation sync | Provider list complete | Check README/docs | All providers listed; no stale references |
 | Verification script | HelixLLM running | Run script | Pass/fail per provider; all pass |
 
+## Requirements *(mandatory)*
+
+### Functional Requirements
+
+- **FR-001**: Remove Heroku MCP submodule from `.gitmodules` and working tree; `git submodule update --recursive` completes with zero SSH errors and no heroku entry remains
+- **FR-002**: Implement provider-to-Toolkit bridge exposing each HelixLLM provider as a distinct Claude Toolkit entry; Toolkit queries return ≥2 distinct HelixLLM providers
+- **FR-003**: Implement Toolkit → HelixLLM routing so selecting a provider (e.g., `openai`) triggers real inference via HelixLLM, returning a genuine provider response, not a stub
+- **FR-004**: Expose model metadata (context window, capabilities) for each listed provider matching the live HelixLLM registry
+- **FR-005**: Fix `kimi`/`kimi1`/`kimi2` aliases to resolve to valid endpoints with passing health checks; eliminate the endless context-compacting loop regression
+- **FR-006**: Regenerate provider-aliases file from the live HelixLLM registry via a single command
+- **FR-007**: Persist provider registration across reboot; all providers re-registered within 30s of HelixLLM start after system reboot
+- **FR-008**: Provide a deterministic verification script that produces pass/fail per provider; all providers must pass when HelixLLM is running
+
+## Success Criteria *(mandatory)*
+
+### Measurable Outcomes
+
+- **SC-001**: `git submodule update --recursive` on a fresh clone reports zero SSH errors and `grep -r heroku .gitmodules` returns empty
+- **SC-002**: Toolkit provider enumeration lists ≥2 distinct HelixLLM providers with correct names
+- **SC-003**: Model metadata query returns context-window and capability fields matching the live HelixLLM registry for each provider
+- **SC-004**: Completion request routed to `openai` provider returns a response originating from OpenAI via HelixLLM (verified by response signature), not a stub
+- **SC-005**: Alias `kimi` (and `kimi1`, `kimi2`) resolves to a valid endpoint; health-check endpoint returns 200 OK; no context-compacting loop triggered
+- **SC-006**: Provider-aliases regeneration command completes and output file matches live registry content exactly
+- **SC-007**: After system reboot + HelixLLM start, all providers show registered status within 30s
+- **SC-008**: Verification script exits 0 with all provider checks passing; non-zero exit on any failure
+
 ## Scope
 
 ### In Scope
