@@ -1,0 +1,19 @@
+scanned=17 examined=0 self_excluded=17 markers=6 allow_patterns=0 residue=0 stale_allow=0 control=found
+ERROR: every file was excluded (self=17, allow patterns=0) — the scan examined nothing, so its empty result is not a clean result
+residue_rc=2
+RESIDUE test_mutation_residue.sh:69:sh_hits="$(grep -rnE '// *always (pass|return)|# *always (pass|return)|MUTATED for paired|_mutated_' \
+RESIDUE test_mutation_residue.sh:38:#   _mutated_            — mutated-file naming convention
+RESIDUE test_mutation_residue.sh:39:RESIDUE_RE='&& false|\|\| true \{|// *always (pass|return)|MUTATED for paired|_mutated_'
+RESIDUE test_mutation_residue.sh:69:sh_hits="$(grep -rnE '// *always (pass|return)|# *always (pass|return)|MUTATED for paired|_mutated_' \
+scanned=278 examined=270 self_excluded=0 markers=6 allow_patterns=0 residue=8 stale_allow=0 control=found
+tk_residue_rc=0
+### CORRECTION (§11.4.273(g)): the previous toolkit residue rc=0 was the rc of `tail`,
+### not of residue_scan.sh — a pipeline overwrote it. Redone below without a pipeline.
+
+### §11.4.84 residue over ONLY the files this dispatch authored
+scanned=3 examined=3 self_excluded=0 markers=6 allow_patterns=0 residue=0 stale_allow=0 control=found
+residue_rc=0
+
+### and the same question asked a second, independent way (census_query)
+CENSUS residue_authored: matches=0 files=0 positive=1/1 negative=0/1 [OK]
+rc=0

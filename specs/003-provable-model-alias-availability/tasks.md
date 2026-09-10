@@ -86,10 +86,50 @@ so. This table exists so that constraint is visible before someone dispatches th
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 [P] Land the §11.4.274 mutation harness at `CN/scripts/mutation/` with docs, tests and control needles; its acceptance test is reproducing a measured outcome from this session (toolkit D5e must report FAIL, unmutated must report 58/0), not a synthetic one
-- [ ] T002 [P] Land the census helper at `CN/scripts/census/` enforcing §11.4.273 — every query takes a positive and a negative needle and REFUSES to emit a result if the positive is not found
-- [ ] T003 [P] Land the bounded completion waiter at `CN/scripts/wait/` reporting which outcome it exited on, so a timeout can never read as success
-- [ ] T004 Wire T001–T003 into `TK/scripts/tests/run-all.sh` discovery and document them in `CN/docs/` per §11.4.18
+- [x] T001 [P] Land the §11.4.274 mutation harness at `CN/scripts/mutation/` with docs, tests and control needles; its acceptance test is reproducing a measured outcome from this session (toolkit D5e must report FAIL, unmutated must report 58/0), not a synthetic one
+- [x] T002 [P] Land the census helper at `CN/scripts/census/` enforcing §11.4.273 — every query takes a positive and a negative needle and REFUSES to emit a result if the positive is not found
+- [x] T003 [P] Land the bounded completion waiter at `CN/scripts/wait/` reporting which outcome it exited on, so a timeout can never read as success
+- [x] T004 Wire T001–T003 into `TK/scripts/tests/run-all.sh` discovery and document them in `CN/docs/` per §11.4.18
+
+> **Phase 1 closure note (2026-09-08, evidence `docs/qa/spec003_phase1_ground_truth_20260908T202407Z/`).**
+> **Path deviation, deliberate, needs the reviewer's eye.** T001–T003 name three
+> sibling directories (`CN/scripts/{mutation,census,wait}/`). All three tools live
+> in ONE directory, `CN/scripts/mechanical/`, because the mutation harness and the
+> waiter were already landed there under a shared exit-code vocabulary and a shared
+> `lib/mech_common.sh`. Splitting them across three roots would have forked that
+> library; §11.4.227 says extend rather than duplicate, so `census_query.sh` joined
+> the existing home instead. Every consumer reaches them by reference (§11.4.177),
+> so no path is hardcoded anywhere and the directory name is not load-bearing.
+>
+> - **T001** — harness pre-existed; what was missing was the non-synthetic acceptance,
+>   now measured: BASELINE `0 failed / 58 passed [OK]`, D5e `23 failed / 35 passed
+>   [OK] EXPECTED-FAIL`, source-tree fingerprint unchanged on both
+>   (`t001_baseline.txt`, `t001_d5e_mutation.txt`).
+> - **T002** — the genuine gap. `residue_scan.sh` and `anchor_census.sh` carried a
+>   POSITIVE needle only, so the too-broad half of §11.4.273 had no mechanical guard
+>   anywhere. `census_query.sh` is new: both needles mandatory and repeatable, result
+>   refused on either failure, out-of-scope control distinguished from a blind one.
+>   TDD: RED `27 failed / 4 passed` → GREEN `31 passed / 0 failed`. Two paired §1.1
+>   mutations OBSERVED turning it red (`8 failed` and `3 failed`) — not asserted,
+>   observed (`t002_RED.txt`, `t002_GREEN.txt`, `t002_paired_mutations.txt`).
+> - **T003** — pre-existed; verified in both directions rather than assumed: satisfied
+>   → `SATISFIED`/exit 0, expired → `TIMEOUT`/exit 3, live pid → TIMEOUT not
+>   "gone" (`t003_await_condition_verify.txt`).
+> - **T004** — `TK/scripts/tests/test_mechanical_tools_acceptance.sh` is auto-discovered
+>   (72 files now; positive control listed, fabricated control absent) and degrades to
+>   a named SKIP when no constitution checkout is reachable. Docs: new §11.4.18
+>   companion `CN/docs/scripts/mechanical_tools.md` with `.html/.docx/.pdf` siblings,
+>   export-validated per §11.4.168-lite; `CN/scripts/mechanical/README.md` bumped to
+>   Rev 2. **T004 spans two repositories and therefore needs TWO commits**, per this
+>   file's own no-task-spans-two-repos rule.
+> - Full mechanical suite after the change: `212 passed, 0 failed`, identical across
+>   two consecutive runs (§11.4.50). §11.4.10 credential audit of evidence and new
+>   source: 0 matches with the instrument proven in both directions — and its FIRST
+>   run correctly REFUSED, because the negative needle chosen was genuinely present
+>   in the RED log. That refusal is preserved in `credential_audit.txt`.
+>
+> **NOT DONE, and not claimed:** nothing in Phase 2. `T005` is the diagnosis gate and
+> is untouched; no US1 repair may be designed until it returns a cause.
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 

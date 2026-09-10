@@ -1,0 +1,17 @@
+### artifact-layer + ownership evidence
+date_utc=2026-09-08T20:32:32Z
+
+-- live :7061 listener ownership (§11.4.174) --
+pid=2636290  cwd=/home/milosvasic/Projects/helix_code/submodules/helix_agent
+exe=/home/milosvasic/Projects/helix_code/submodules/helix_agent/bin/helixagent
+started=Mon Sep  7 14:47:10 2026   => positively OURS
+
+-- deployed binary predates the fix (§11.4.108 artifact layer, control-needled) --
+bin/helixagent size=69003440 mtime_utc=2026-09-07T12:47:08Z
+POSITIVE CONTROL 'Multi-turn request - routing to provider chain' = 1
+TARGET           'Explicit passthrough requested'                 = 0
+NEGATIVE CONTROL fabricated needle                                = 0
+
+CONCLUSION: the deployed binary does NOT contain the HXC-350 fix, so the one
+failing package test (TestDebateModelsReturnPromptDependentContent), which
+drives that live binary, cannot be affected by this uncommitted change.

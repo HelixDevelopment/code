@@ -1,0 +1,113 @@
+### §11.4.115 RED baseline — RED_MODE=1 against the MUTATED (defect-carrying) artifact
+### Expectation: PASS. The RED asserts the regression IS present, so it must
+### hold on the broken artifact. This is what proves the reproduction is real
+### rather than a synthetic failure written to agree with the fix.
+
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks
+    hxc348_delegation_sentinel_test.go:194: RED_MODE: the regressed artifact refuses the sentinel, so there is no stream to inspect
+--- SKIP: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel
+    hxc348_delegation_sentinel_test.go:219: RED_MODE: the regressed artifact refuses the sentinel, so there is no response to inspect
+--- SKIP: TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel (0.00s)
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama
+--- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama (0.00s)
+=== RUN   TestHXC348Sentinel_SpacePaddedSentinelIsRejectedAtValidation
+--- PASS: TestHXC348Sentinel_SpacePaddedSentinelIsRejectedAtValidation (0.00s)
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz
+--- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/HelixLLM/internal/gateway	0.029s
+=== RUN   TestHXC348Sentinel_IsDelegationSentinel
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("auto") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("AUTO") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("Auto") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("default") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("DEFAULT") = false, want true — this value delegates the choice and names no model to be missing
+--- FAIL: TestHXC348Sentinel_IsDelegationSentinel (0.00s)
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=
+    hxc348_delegation_sentinel_test.go:83: the empty model was already exempt before the regression
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=auto
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=AUTO
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=Auto
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=default
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=DEFAULT
+--- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack (0.00s)
+    --- SKIP: TestHXC348Sentinel_Route_SentinelStillFallsBack/model= (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=default (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/definitely-not-a-real-model-zzz
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/automatic
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/default-model
+--- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/definitely-not-a-real-model-zzz (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/automatic (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/default-model (0.00s)
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/brain	0.018s
+FAIL
+go test exit=1

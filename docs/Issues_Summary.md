@@ -8,11 +8,11 @@ Open workable items (current_location = Issues), regenerated from the SQLite sin
 |---|---|---|
 | Bug | In progress | 2 |
 | Bug | Operator-blocked | 1 |
-| Bug | Queued | 104 |
+| Bug | Queued | 108 |
 | Bug | Ready for testing | 4 |
 | Bug | Reopened | 1 |
 | Task | Queued | 20 |
-| **TOTAL** | | **132** |
+| **TOTAL** | | **136** |
 
 ## Items
 
@@ -150,3 +150,7 @@ Open workable items (current_location = Issues), regenerated from the SQLite sin
 | HXC-345 | Bug | Queued | High | Word documents are produced outside the export tool, so nothing checks that they still contain their pictures |
 | HXC-346 | Task | Queued | Medium | The password-in-documentation check can be fooled by common ways of writing the same thing |
 | HXC-347 | Bug | Queued | Medium | One of our agent instruction manuals has fallen 36 rules behind the others |
+| HXC-348 | Bug | Queued | Critical | Our model gateway answers confidently for models it does not have, instead of saying it does not have them |
+| HXC-349 | Bug | Queued | High | Tool descriptions sent to HelixAgent are accepted and then silently discarded before the model sees them |
+| HXC-350 | Bug | Queued | High | Debate and ensemble routes rewrite the user's message into a topic to write about, and report the wrong model |
+| HXC-351 | Bug | Queued | High | Reported token usage on the debate routes is the same fixed number no matter how long the reply is |

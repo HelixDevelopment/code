@@ -1,0 +1,11 @@
+docs/COMPLETE_SECURITY_GUIDE.md
+docs/DEPLOYMENT_GUIDE.html
+docs/DEPLOYMENT_GUIDE.md
+docs/improvements/04_main_plan_step_02/kimi_agent_helix_cli_integration_blueprint/porting_openhands.md
+docs/improvements/06_phase_1_evidence.html
+helix_code/internal/config/secret_placeholder_test.go
+helix_code/internal/server/wire_facade_auth_test.go
+helix_code/internal/server/wire_facade_live_e2e_test.go
+helix_code/internal/server/wire_facade_test.go
+helix_code/internal/server/ws_auth_test.go
+specs/002-adaptive-local-model-serving/progress.yml

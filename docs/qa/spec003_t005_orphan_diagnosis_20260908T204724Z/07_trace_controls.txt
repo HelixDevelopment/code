@@ -1,0 +1,32 @@
+=== 07: trace-instrument corrections + controls — UTC 2026-09-08T20:54:35Z ===
+INSTRUMENT ERROR 2 (§11.4.273(c)): the trace printed T005_RESOLVED_COUNT=22 while
+T005_RESOLVED_ARG_RAW lists 23 ids. Cause: the id list is emitted WITHOUT a trailing
+newline, so 'wc -l' counted 22 line terminators. It also concatenated the last id
+with the first candidate line. The RAW argument line is authoritative, not the count.
+
+--- authoritative count, from the RAW arg (word count, not line count) ---
+23
+
+--- CONTROL: does the trace's resolved set match what the driver printed? ---
+MATCH — the set the function received IS the set the sync-shaped jq produced.
+
+--- POSITIVE CONTROL that the trace sees candidates the OUTPUT filters out ---
+helixllm-anton-...f6771589d190 is IN_RESOLVED=no yet is NOT in the orphan output,
+because the export-ownership escape skips it. If the trace could not see, this
+asymmetry could not appear.
+1
+in_trace_rc=0
+0
+in_output_rc=1 (1 = correctly absent from orphan output)
+
+--- NEGATIVE CONTROL: a fabricated candidate id must not appear in the trace ---
+0
+negative_rc=1 (1 = correctly absent)
+
+--- candidate tally from the trace ---
+candidates_total=52
+candidates_in_resolved=23
+candidates_not_resolved=30
+not_resolved_AND_has_env=21
+not_resolved_AND_no_env=9
+orphans_emitted=29

@@ -1,0 +1,121 @@
+=== 06: INSTRUMENTED RUN — the resolved set recorded from INSIDE cma_find_orphans
+UTC 2026-09-08T20:54:07Z. Real keys file. CMA_T005_TRACE=/tmp/claude-1000/-home-milosvasic-Projects-helix-code/d16d2eb1-de59-4512-9cfb-fe148422826c/scratchpad/t005_trace.txt
+driver_rc=0
+--- stdout ---
+RECORDS_TOTAL=25
+RECORDS_RESOLVED=23
+RESOLVED_IDS=[chutes1 chutes2 chutes3 chutes4 chutes5 helixagent helixagent-native helixllm-gateway hyper1 hyper2 hyper3 hyper4 hyper5 opencode-go1 opencode-go2 opencode-go3 opencode-go4 opencode-go5 opencode-zen1 opencode-zen2 opencode-zen3 opencode-zen4 opencode-zen5]
+=== cma_find_orphans output ===
+chutes
+deepseek
+fireworks-ai
+helixcoder
+huggingface
+hyper
+inference
+kc-for-coding
+kc-for-coding2
+kilo
+novita-ai
+nvidia
+nvidia2
+nvidia3
+nvidia4
+opencode
+openrouter
+openrouter2
+openrouter3
+openrouter4
+openrouter5
+poe
+sarvam
+siliconflow
+tencent-tokenhub
+upstage
+xiaomi
+zai
+zai-coding-plan
+
+--- OBSERVER-EFFECT CHECK: instrumented stdout vs uninstrumented stdout ---
+IDENTICAL — the trace changed no output.
+diff_rc_captured_immediately=0
+
+=== the trace file, verbatim ===
+T005_TRACE_AT=2026-09-08T20:54:08Z
+T005_RESOLVED_ARG_RAW=[chutes1 chutes2 chutes3 chutes4 chutes5 helixagent helixagent-native helixllm-gateway hyper1 hyper2 hyper3 hyper4 hyper5 opencode-go1 opencode-go2 opencode-go3 opencode-go4 opencode-go5 opencode-zen1 opencode-zen2 opencode-zen3 opencode-zen4 opencode-zen5]
+T005_RESOLVED_COUNT=22
+T005_RESOLVED_ID=chutes1
+T005_RESOLVED_ID=chutes2
+T005_RESOLVED_ID=chutes3
+T005_RESOLVED_ID=chutes4
+T005_RESOLVED_ID=chutes5
+T005_RESOLVED_ID=helixagent
+T005_RESOLVED_ID=helixagent-native
+T005_RESOLVED_ID=helixllm-gateway
+T005_RESOLVED_ID=hyper1
+T005_RESOLVED_ID=hyper2
+T005_RESOLVED_ID=hyper3
+T005_RESOLVED_ID=hyper4
+T005_RESOLVED_ID=hyper5
+T005_RESOLVED_ID=opencode-go1
+T005_RESOLVED_ID=opencode-go2
+T005_RESOLVED_ID=opencode-go3
+T005_RESOLVED_ID=opencode-go4
+T005_RESOLVED_ID=opencode-go5
+T005_RESOLVED_ID=opencode-zen1
+T005_RESOLVED_ID=opencode-zen2
+T005_RESOLVED_ID=opencode-zen3
+T005_RESOLVED_ID=opencode-zen4
+T005_RESOLVED_ID=opencode-zen5T005_CANDIDATE=chutes IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=chutes1 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=chutes2 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=chutes3 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=chutes4 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=chutes5 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=deepseek IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=fireworks-ai IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=helixagent IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=helixagent-native IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=helixcoder IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=helixllm-gateway IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=huggingface IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=hyper IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=hyper1 IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=hyper2 IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=hyper3 IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=hyper4 IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=hyper5 IN_RESOLVED=yes HAS_ENV=yes
+T005_CANDIDATE=inference IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=kc-for-coding IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=kc-for-coding2 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=kilo IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=novita-ai IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=nvidia IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=nvidia2 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=nvidia3 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=nvidia4 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=opencode IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=opencode-go1 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-go2 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-go3 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-go4 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-go5 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-zen1 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-zen2 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-zen3 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-zen4 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=opencode-zen5 IN_RESOLVED=yes HAS_ENV=no
+T005_CANDIDATE=openrouter IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=openrouter2 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=openrouter3 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=openrouter4 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=openrouter5 IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=poe IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=sarvam IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=siliconflow IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=tencent-tokenhub IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=upstage IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=xiaomi IN_RESOLVED=no HAS_ENV=no
+T005_CANDIDATE=zai IN_RESOLVED=no HAS_ENV=yes
+T005_CANDIDATE=zai-coding-plan IN_RESOLVED=no HAS_ENV=yes

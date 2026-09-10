@@ -1,0 +1,5 @@
+### §1.1 pair closed — mutation REVERTED on scratch, tests GREEN again
+ok  	github.com/HelixDevelopment/HelixLLM/internal/gateway	0.041s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/brain	0.025s
+go test exit=0
+residual mutation markers in scratch: internal/brain/delegation_sentinel.go:0

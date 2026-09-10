@@ -1,0 +1,46 @@
+# RED (§11.4.115) — defect reproduced on the PRE-FIX body from git HEAD
+pre-fix body: sha256=f2d9871df4240ce41924ac063fea36cdf16fd258a8cc06368771f01415c32192  lines=1888
+cmd: RED_MODE=1 CMA_PROVIDERS_BIN=<pre-fix> bash scripts/tests/test_sync_failing_layer_attribution.sh
+
+
+  • the decision region extracts from the real claude-providers.sh
+    [PASS] extracted region contains both the verifier call and the status write
+
+  • the extracted region is a region, not the whole script
+    [PASS] region is 10 lines
+
+  • A tool-calling unsupported — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for toolprov (failed)
+
+  • A tool-calling unsupported — RED: the reason is discarded and the layer collapses to 'existence'
+    [PASS] defect reproduced: evidence said 'chat probe passed but the model made no tool cal...' but layer=existence
+
+  • B sentinel missing (bluff) — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for sentprov (failed)
+
+  • B sentinel missing (bluff) — RED: the reason is discarded and the layer collapses to 'existence'
+    [PASS] defect reproduced: evidence said 'chat probe 200 but VERIFY_OK sentinel missing at...' but layer=existence
+
+  • C context inadequate — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for ctxprov (failed)
+
+  • C context inadequate — RED: the reason is discarded and the layer collapses to 'existence'
+    [PASS] defect reproduced: evidence said 'context-inadequate: the model context window is ...' but layer=existence
+
+  • D ccr self-route — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for routeprov (failed)
+
+  • D ccr self-route — RED: the reason is discarded and the layer collapses to 'existence'
+    [PASS] defect reproduced: evidence said 'base_url (https://x/v1) is the ccr gateway itsel...' but layer=existence
+
+  • E existence (control) — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for existprov (failed)
+
+  • E existence (control) — RED: the reason is discarded and the layer collapses to 'existence'
+    [PASS] defect reproduced: evidence said 'LLMsVerifier did not confirm (see its output)...' but layer=existence
+
+  • F absent reason — honest 'unknown', not a fabricated cause
+    [PASS] defect reproduced: no evidence at all, yet layer=existence
+
+✓ 13 passed, 0 failed
+EXIT=0

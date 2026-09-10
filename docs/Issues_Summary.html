@@ -75,7 +75,7 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <tr>
 <td>Bug</td>
 <td>Queued</td>
-<td>104</td>
+<td>108</td>
 </tr>
 <tr>
 <td>Bug</td>
@@ -95,7 +95,7 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <tr>
 <td><strong>TOTAL</strong></td>
 <td></td>
-<td><strong>132</strong></td>
+<td><strong>136</strong></td>
 </tr>
 </tbody>
 </table>
@@ -4608,6 +4608,38 @@ writing the same thing</td>
 <td>Medium</td>
 <td>One of our agent instruction manuals has fallen 36 rules behind the
 others</td>
+</tr>
+<tr>
+<td>HXC-348</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Critical</td>
+<td>Our model gateway answers confidently for models it does not have,
+instead of saying it does not have them</td>
+</tr>
+<tr>
+<td>HXC-349</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Tool descriptions sent to HelixAgent are accepted and then silently
+discarded before the model sees them</td>
+</tr>
+<tr>
+<td>HXC-350</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Debate and ensemble routes rewrite the user’s message into a topic
+to write about, and report the wrong model</td>
+</tr>
+<tr>
+<td>HXC-351</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Reported token usage on the debate routes is the same fixed number
+no matter how long the reply is</td>
 </tr>
 </tbody>
 </table>

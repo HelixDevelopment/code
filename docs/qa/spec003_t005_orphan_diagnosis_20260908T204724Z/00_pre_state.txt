@@ -1,0 +1,32 @@
+=== T005 pre-state fingerprint (UTC 2026-09-08T20:49:27Z) ===
+--- host ---
+ 22:49:27 up 3 days,  8:59,  3 users,  load average: 13.57, 21.23, 25.53
+               total        used        free      shared  buff/cache   available
+Mem:           30974       24147        1091        7462       13618        6827
+--- toolkit HEAD ---
+af4ebae fix(providers): verdict age, transport-selected Kimi wire, twin pairing — six review rounds
+--- sha256 of the file T005 will instrument ---
+7b224789b882f0d8b2a185ef1a374d6e7614772c6b1435a2da723ec44a4e559c  scripts/claude-providers.sh
+--- mtime ---
+2026-09-08 19:29:42.250879155 +0200 scripts/claude-providers.sh
+--- pre-existing uncommitted changes (NOT mine) ---
+ M scripts/claude-providers.sh
+ M scripts/model_verify.py
+ M scripts/providers-verify.sh
+ M scripts/tests/proof/93-helixagent-pins-survive-live-sync.txt
+ M scripts/tests/proof/94-dynamic-account-dispatch.txt
+ M scripts/tests/proof/94-helixllm-facade-model-reality.txt
+ M scripts/tests/proof/95-add-account-tmux-notice.txt
+ M scripts/tests/proof/96-free-tier-multi-sync.txt
+ M scripts/tests/proof/97-helixllm-model-export.txt
+ M scripts/tests/proof/98-kimi-wire-and-status-freshness.txt
+ M scripts/tests/test_providers.sh
+?? scripts/tests/test_failing_layer_attribution.sh
+?? scripts/tests/test_mechanical_tools_acceptance.sh
+?? scripts/tests/test_model_verify_tls.sh
+--- diffstat of claude-providers.sh before my change ---
+ scripts/claude-providers.sh | 72 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 12 deletions(-)
+--- the two resolved_ids computations, verbatim (sync=2349, prune=2974) ---
+  resolved_ids="$(jq -r '[.[] | select(.status=="resolved") | .provider_id] | unique | join(" ")' <<<"$records")"
+  resolved_ids="$(jq -r '[.[] | select(.status=="resolved") | .provider_id] | unique | join(" ")' <<<"$records")"

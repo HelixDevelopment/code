@@ -1,0 +1,17 @@
+=== 02: present_key_vars — the NAMES fed to the resolver as --keys (UTC 2026-09-08T20:50:12Z) ===
+NOTE (§11.4.10): variable NAMES only. No value is read, printed or hashed here.
+--- keys file ---
+CMA_KEYS_FILE default = $HOME/api_keys.sh
+-rw------- 1 milosvasic milosvasic 1521 Sep  8 18:55 /home/milosvasic/api_keys.sh
+--- literal assignment lines in the keys file (NAMES only, values stripped) ---
+CMA_PROVIDER_CA_CERT
+HELIXAGENT_GATEWAY_KEY
+literal_assignment_name_count=2
+
+--- present_key_vars(), driven through the REAL sourced function ---
+present_key_vars_rc=0
+--- stderr (if any) ---
+--- names returned ---
+CMA_PROVIDER_CA_CERT
+HELIXAGENT_GATEWAY_KEY
+present_key_vars_count=2

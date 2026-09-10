@@ -1,0 +1,111 @@
+== census_query.sh (§11.4.273 control-needled census) ==
+
+  • the tool exists and is executable
+    [FAIL] census_query.sh missing or not executable
+           expected at /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+
+  • a query with both controls satisfied emits its result and exits 0
+    [FAIL] exit code
+           want=0 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/happy --pattern shared_marker --positive alpha_token --negative zzz_fabricated_needle --label happy out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] verdict line is emitted
+           'CENSUS happy:' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] counts all three planted matches
+           'matches=3' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • an ABSENT positive needle REFUSES the result and exits CANNOT_RUN (2)
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/blindpos --pattern shared_marker --positive needle_that_is_not_there --negative zzz_fabricated_needle --label blindpos out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [PASS] result is REFUSED, not merely annotated: 'matches=' absent
+    [FAIL] names which control failed
+           'POSITIVE CONTROL' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • a FOUND negative needle REFUSES the result and exits CANNOT_RUN (2)
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/broad --pattern shared_marker --positive alpha_token --negative beta_token --label broad out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [PASS] result is REFUSED: 'matches=' absent
+    [FAIL] names which control failed
+           'NEGATIVE CONTROL' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • a genuine zero is REPORTABLE — 'found nothing' is not 'could not look'
+    [FAIL] exit code
+           want=0 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/zero --pattern pattern_matching_nothing_at_all --positive alpha_token --negative zzz_fabricated_needle --label zero out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] an honest zero is emitted, not refused
+           'matches=0' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • BOTH controls are mandatory — omitting either is CANNOT_RUN (2)
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/args --pattern shared_marker --positive alpha_token --label nopos out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] refusal names the missing flag
+           '--negative' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/args --pattern shared_marker --negative zzz_nope --label noneg out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] refusal names the missing flag
+           '--positive' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • controls are REPEATABLE and ALL must hold (§11.4.273(f))
+    [FAIL] exit code
+           want=0 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/set --pattern shared_marker --positive alpha_token --positive beta_token --negative zzz_one --negative zzz_two --label setok out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] all-members-present case still reports
+           'matches=3' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/set --pattern shared_marker --positive alpha_token --positive needle_that_is_not_there --negative zzz_one --label setbad out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [PASS] one absent member REFUSES the whole result: 'matches=' absent
+    [FAIL] names the member that failed
+           'needle_that_is_not_there' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • an OUT-OF-SCOPE positive control is distinguished from a blind instrument
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/scope --pattern shared_marker --include src/* --positive docs_only_needle --negative zzz_fabricated_needle --label scope out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] distinguishes out-of-scope from unseeable
+           'OUT OF SCOPE' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • --expect-count mismatch is a FINDING (1), not a pass and not an error
+    [FAIL] exit code
+           want=1 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/expect --pattern shared_marker --positive alpha_token --negative zzz_fabricated_needle --expect-count 99 --label expectbad out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] the measured count is still reported
+           'matches=3' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] exit code
+           want=0 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/expect --pattern shared_marker --positive alpha_token --negative zzz_fabricated_needle --expect-count 3 --label expectok out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+  • a missing tree is CANNOT_RUN (2), never an empty result
+    [FAIL] exit code
+           want=2 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/no_such_tree_here --pattern x --positive a --negative b --label missing out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [PASS] no count from a tree that is not there: 'matches=' absent
+
+  • the verdict line records that BOTH controls were actually checked
+    [FAIL] exit code
+           want=0 got=127 cmd=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh --tree /tmp/mech-census-test.WBRqsC/audit --pattern shared_marker --positive alpha_token --negative zzz_fabricated_needle --label audit out=/home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] positive control count is published
+           'positive=1/1' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+    [FAIL] negative control count is published
+           'negative=0/1' not in: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/lib/assert.sh: line 49: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh: No such file or directory
+
+27 failed, 4 passed
+Failures:
+  - the tool exists and is executable :: census_query.sh missing or not executable
+  - a query with both controls satisfied emits its result and exits 0 :: exit code
+  - a query with both controls satisfied emits its result and exits 0 :: verdict line is emitted
+  - a query with both controls satisfied emits its result and exits 0 :: counts all three planted matches
+  - an ABSENT positive needle REFUSES the result and exits CANNOT_RUN (2) :: exit code
+  - an ABSENT positive needle REFUSES the result and exits CANNOT_RUN (2) :: names which control failed
+  - a FOUND negative needle REFUSES the result and exits CANNOT_RUN (2) :: exit code
+  - a FOUND negative needle REFUSES the result and exits CANNOT_RUN (2) :: names which control failed
+  - a genuine zero is REPORTABLE — 'found nothing' is not 'could not look' :: exit code
+  - a genuine zero is REPORTABLE — 'found nothing' is not 'could not look' :: an honest zero is emitted, not refused
+  - BOTH controls are mandatory — omitting either is CANNOT_RUN (2) :: exit code
+  - BOTH controls are mandatory — omitting either is CANNOT_RUN (2) :: refusal names the missing flag
+  - BOTH controls are mandatory — omitting either is CANNOT_RUN (2) :: exit code
+  - BOTH controls are mandatory — omitting either is CANNOT_RUN (2) :: refusal names the missing flag
+  - controls are REPEATABLE and ALL must hold (§11.4.273(f)) :: exit code
+  - controls are REPEATABLE and ALL must hold (§11.4.273(f)) :: all-members-present case still reports
+  - controls are REPEATABLE and ALL must hold (§11.4.273(f)) :: exit code
+  - controls are REPEATABLE and ALL must hold (§11.4.273(f)) :: names the member that failed
+  - an OUT-OF-SCOPE positive control is distinguished from a blind instrument :: exit code
+  - an OUT-OF-SCOPE positive control is distinguished from a blind instrument :: distinguishes out-of-scope from unseeable
+  - --expect-count mismatch is a FINDING (1), not a pass and not an error :: exit code
+  - --expect-count mismatch is a FINDING (1), not a pass and not an error :: the measured count is still reported
+  - --expect-count mismatch is a FINDING (1), not a pass and not an error :: exit code
+  - a missing tree is CANNOT_RUN (2), never an empty result :: exit code
+  - the verdict line records that BOTH controls were actually checked :: exit code
+  - the verdict line records that BOTH controls were actually checked :: positive control count is published
+  - the verdict line records that BOTH controls were actually checked :: negative control count is published

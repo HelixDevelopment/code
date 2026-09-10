@@ -1,0 +1,33 @@
+=== 11: the operator-visible surface — 'claude-providers list-all' — UTC 2026-09-08T20:56:18Z ===
+Read-only: _list_rows iterates *.env and reads the status cache. No network, no write.
+ALIAS          PROVIDER         STATUS          CHECKED  LAYER        STRONG_MODEL            
+deepseek       deepseek         orphaned        8h       orphan       deepseek-v4-flash       
+helixagent     helixagent       failed          8h       existence    helixagent-llm          
+helixagent-native helixagent-native verified        8h       -            helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190
+helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190 helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190 stale:verified  1d       -            helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190
+helixllm-gateway helixllm-gateway verified        8h       -            helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190
+huggingface    huggingface      orphaned        8h       orphan       Qwen/Qwen3-Coder-480B-A35B-Instruct
+hyper1         hyper1           failed          8h       existence    deepseek-v4-pro         
+hyper2         hyper2           failed          8h       existence    glm-5.2                 
+hyper3         hyper3           failed          8h       existence    kimi-k2.7-code          
+hyper4         hyper4           failed          8h       existence    qwen3.7-max             
+hyper5         hyper5           failed          8h       existence    glm-5.1                 
+hyper          hyper            orphaned        8h       orphan       deepseek-v4-pro         
+kc-for-coding2 kc-for-coding2   orphaned        8h       orphan       k3-256k                 
+kc-for-coding  kc-for-coding    orphaned        8h       orphan       kimi-for-coding         
+kilo           kilo             orphaned        8h       orphan       nvidia/nemotron-3-super-120b-a12b:free
+nvidia2        nvidia2          orphaned        8h       orphan       nvidia/nemotron-3.5-lightning-30b-a3b
+nvidia3        nvidia3          orphaned        8h       orphan       minimaxai/minimax-m3    
+nvidia4        nvidia4          orphaned        8h       orphan       poolside/laguna-xs-2.1  
+nvidia         nvidia           orphaned        8h       orphan       nvidia/nemotron-3-nano-omni-30b-a3b-reasoning
+opencode-zen   opencode         orphaned        8h       orphan       nemotron-3.5-lightning-free
+openrouter2    openrouter2      orphaned        8h       orphan       dots-studio/dots-3-note-preview:free
+openrouter3    openrouter3      orphaned        8h       orphan       inclusionai/ling-3.0-flash-fin:free
+openrouter4    openrouter4      orphaned        8h       orphan       nvidia/nemotron-3-super-120b-a12b:free
+openrouter5    openrouter5      orphaned        8h       orphan       minimax/minimax-m2.7:free
+openrouter     openrouter       orphaned        8h       orphan       minimax/minimax-m3:free 
+poe            poe              orphaned        8h       orphan       google/gemma-4-31b      
+sarvam         sarvam           orphaned        8h       orphan       sarvam-105b             
+zai-coding-plan zai-coding-plan  orphaned        8h       orphan       glm-5.2                 
+zai            zai              orphaned        8h       orphan       glm-4.7-flash           
+list_all_rc=0

@@ -1,0 +1,5 @@
+=== end-to-end nonce probe through the HelixLLM gateway (nonce=120308) ===
+  requested model: helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190
+  answered as:     qwen2.5-coder-3b-instruct-q4_k_m
+  nonce echoed:    1
+  reply:           120308

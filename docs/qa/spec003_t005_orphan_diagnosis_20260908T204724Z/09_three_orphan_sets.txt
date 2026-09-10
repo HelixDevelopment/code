@@ -1,0 +1,51 @@
+=== 09: the three orphan sets side by side — UTC 2026-09-08T20:55:31Z ===
+A = STORED in status.json (what list-all prints today)          : 28
+B = LIVE cma_find_orphans, real keys file                       : 29
+C = LIVE cma_find_orphans, probe keys file naming the 12 keyvars: 19
+
+--- A vs B: is the STORED verdict stale? (sort -u on both sides; string sort, not numeric) ---
+in A only (stored but live says not-orphan) :
+in B only (live says orphan, not stored)    :
+    helixcoder
+in both                                     : 28
+
+--- CONTROL for that comm (§11.4.273: comm on mis-sorted input silently lies) ---
+both inputs LC_ALL-sorted ascending? stored:yes real:yes
+positive control — 'deepseek' must appear in BOTH files:
+  stored:1 real:1
+negative control — 't005-absent-id' must appear in NEITHER:
+  stored:0 real:0
+
+--- B vs C: which ids STOP being orphans once the 12 key names are in the keys file ---
+    RESCUED: deepseek
+    RESCUED: huggingface
+    RESCUED: hyper
+    RESCUED: kilo
+    RESCUED: nvidia
+    RESCUED: opencode
+    RESCUED: openrouter
+    RESCUED: poe
+    RESCUED: sarvam
+    RESCUED: zai-coding-plan
+rescued_count=10
+
+--- still orphaned even WITH the key names present ---
+    STILL: chutes               env=no  (status-only leftover)
+    STILL: fireworks-ai         env=no  (status-only leftover)
+    STILL: helixcoder           env=no  (status-only leftover)
+    STILL: inference            env=no  (status-only leftover)
+    STILL: kc-for-coding        env=yes keyvar=ApiKey_Kimi
+    STILL: kc-for-coding2       env=yes keyvar=ApiKey_Kimi
+    STILL: novita-ai            env=no  (status-only leftover)
+    STILL: nvidia2              env=yes keyvar=NVIDIA_API_KEY
+    STILL: nvidia3              env=yes keyvar=NVIDIA_API_KEY
+    STILL: nvidia4              env=yes keyvar=NVIDIA_API_KEY
+    STILL: openrouter2          env=yes keyvar=OPENROUTER_API_KEY
+    STILL: openrouter3          env=yes keyvar=OPENROUTER_API_KEY
+    STILL: openrouter4          env=yes keyvar=OPENROUTER_API_KEY
+    STILL: openrouter5          env=yes keyvar=OPENROUTER_API_KEY
+    STILL: siliconflow          env=no  (status-only leftover)
+    STILL: tencent-tokenhub     env=no  (status-only leftover)
+    STILL: upstage              env=no  (status-only leftover)
+    STILL: xiaomi               env=no  (status-only leftover)
+    STILL: zai                  env=yes keyvar=ZHIPU_API_KEY

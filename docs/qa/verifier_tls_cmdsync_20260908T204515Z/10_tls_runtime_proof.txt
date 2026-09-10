@@ -1,0 +1,20 @@
+# TLS: CMA_PROVIDER_CA_CERT end-to-end, credential-redacted (§11.4.10)
+## on-disk cert
+subject=CN=helixllm
+notBefore=Apr 12 12:34:52 2026 GMT
+notAfter=Apr  9 12:34:52 2036 GMT
+sha256 Fingerprint=C4:7B:D9:DF:BE:32:D6:E1:0B:1D:77:55:28:8C:31:B1:46:6D:03:CA:C0:E2:CF:1C:B5:44:FB:EF:25:BE:C3:CF
+## live endpoint cert (127.0.0.1:8443)
+sha256 Fingerprint=C4:7B:D9:DF:BE:32:D6:E1:0B:1D:77:55:28:8C:31:B1:46:6D:03:CA:C0:E2:CF:1C:B5:44:FB:EF:25:BE:C3:CF
+## A) no --cacert  -> expect TLS failure
+http=000
+curl_exit=60
+## B) --cacert, no key -> expect handshake OK, 401 at auth layer
+http=401
+curl_exit=0
+## C) --cacert + key from export_gateway_keys.sh -> expect 200
+HELIXLLM_GATEWAY_KEY set=yes len=48 sha256_12=2043b6fbe3b7  [VALUE NEVER PRINTED]
+CMA_PROVIDER_CA_CERT=/home/milosvasic/Projects/helix_code/submodules/helix_llm/certs/cert.pem
+http=200 curl_exit=0
+## models served
+helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190

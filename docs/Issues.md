@@ -897,3 +897,39 @@ We have a check that stops a real password from being written into our documenta
 **Created-By:** Claude
 
 We keep the same rulebook in several parallel files, one per AI coding tool we use, so whichever tool a person picks reads the same rules. Five of those files are kept in step with each other. A sixth, CRUSH.md, is listed as a peer in our own instructions but has been left out of recent updates: it currently carries rules up to number 238 while the others carry up to 274. That is thirty-six rules a person using that particular tool would never see, including several about not trusting a measurement before checking the measuring instrument, and about not removing things without asking first. Nobody noticed because nothing compares the files against each other. The work is to bring that file up to date with the same thirty-six entries the others already have, and then to add a check that compares the highest rule number across all the parallel files so the next omission is caught the day it happens rather than months later.
+
+## HXC-348 — Our model gateway answers confidently for models it does not have, instead of saying it does not have them
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** Critical
+**Created-By:** Claude
+
+When a program asks our HelixLLM gateway to use a particular AI model, the gateway is supposed to either use that model or refuse. Measured on 2026-09-08, it does neither: it accepts the request, quietly substitutes whatever model it happens to have loaded, and returns a normal success response. A request for a model name that does not exist anywhere — a deliberately invented one — came back successful, and so did requests naming well-known models from other companies entirely. The reply even carries the substituted model's name, which is the only reason anyone noticed. This matters because every place we advertise a model is now a promise the system cannot keep: a caller believes it is talking to the model it asked for, gets a plausible answer, and has no error to alert it. A wrong answer that looks right is harder to catch than an outright failure. The gateway already rejects malformed requests, bad credentials and unsafe names, so the checking machinery exists — only the check for whether a requested model actually exists is missing, and the request then falls through to a default. The gateway's own source comments predict this exact outcome and call it a silent misroute. The fix is for the gateway to refuse a request naming a model it cannot resolve, rather than substituting one, and to keep the fallback only for callers that expressed no preference at all.
+
+## HXC-349 — Tool descriptions sent to HelixAgent are accepted and then silently discarded before the model sees them
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Coding assistants work by telling a model which tools it may call. Our HelixAgent service accepts those tool descriptions, returns a normal success response, and never passes them to the model at all. Measured on 2026-09-08: the same message sent with and without an eight-kilobyte block of tool descriptions produced an identical input-size count, proving the block was dropped rather than merely unused. Asking the service to REQUIRE a tool call returns ordinary prose and a success code, which the industry specification it claims to implement forbids. The upper layer of our own code handles tools correctly and is commented as critical for AI coding assistants; the loss happens one layer below, where the structure used to talk to the backend has no field for tools, so they are dropped in translation. The service is honest about the capability elsewhere — it advertises only streaming — but the request path accepts the input anyway, which is what makes it look supported. Until this is fixed, the two working HelixAgent chat models cannot be used as coding-assistant providers, because tool calling is a hard requirement. Note the fix is only known to be necessary, not yet known to be sufficient: whether the backend behind this layer supports tools at all has not been established.
+
+## HXC-350 — Debate and ensemble routes rewrite the user's message into a topic to write about, and report the wrong model
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Three of the five HelixAgent routes do not answer the message they are given. Measured on 2026-09-08: asked to reply with one specific word, each instead produced a multi-thousand-character essay on a subject it invented from that word. The cause is architectural rather than a fault: those routes take the last thing the user said, treat it as a debate TOPIC, and run an internal multi-agent discussion about it. A route built that way structurally cannot follow a direct instruction, so it is unsuitable as a general assistant provider and should be presented as something else, not repaired into obedience. Two further problems appear in the same replies. All three routes report a single fixed model name regardless of which one was requested, so a caller cannot tell which route answered. And the accounting is wrong: the reported creation time is the year-one placeholder a program produces when a real timestamp was never set, and the reported output size is nine units for a reply of nearly ten thousand characters. Anything relying on those numbers for cost, auditing or capacity planning is being given fiction.
+
+## HXC-351 — Reported token usage on the debate routes is the same fixed number no matter how long the reply is
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Every reply from the three HelixAgent debate routes reports exactly the same usage figures, regardless of what was actually produced. Measured on 2026-09-08 across four replies of roughly 8160, 9465, 6093 and 308 characters: all four reported an identical input, output and total count, and the output figure was nine for replies thousands of characters long. Whatever those numbers are, they are not measurements of those replies. This matters beyond tidiness because usage figures are what anything downstream uses to work out cost, to stay inside a budget, to plan capacity, or to audit what was spent — and all of those are currently being given fiction that looks like data. The same responses also carry a creation time of year one, which is the placeholder a program produces when a real timestamp was never recorded, so the two faults may share a cause in whatever assembles the response. Worth checking whether the constant figure appears on other routes too, since nothing so far establishes that it is limited to the debate paths.

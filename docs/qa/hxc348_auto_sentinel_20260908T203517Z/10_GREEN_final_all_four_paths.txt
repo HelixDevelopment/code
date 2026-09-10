@@ -1,0 +1,168 @@
+### GREEN — all four serving paths, both refusal sites, live tree
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks
+--- PASS: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel
+--- PASS: TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel (0.00s)
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama
+--- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama (0.00s)
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_Messages_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/auto
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/AUTO
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/Auto
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/default
+=== RUN   TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/DEFAULT
+--- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured (0.00s)
+    --- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/auto (0.00s)
+    --- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/default (0.00s)
+    --- PASS: TestHXC348Sentinel_MessagesStreaming_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Messages_UnservedNamesStayRefused
+=== RUN   TestHXC348Sentinel_Messages_UnservedNamesStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_Messages_UnservedNamesStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_Messages_UnservedNamesStayRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_Messages_UnservedNamesStayRefused/default-model
+--- PASS: TestHXC348Sentinel_Messages_UnservedNamesStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_UnservedNamesStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_UnservedNamesStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_UnservedNamesStayRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_Messages_UnservedNamesStayRefused/default-model (0.00s)
+=== RUN   TestHXC348Sentinel_SpacePaddedSentinelIsRejectedAtValidation
+--- PASS: TestHXC348Sentinel_SpacePaddedSentinelIsRejectedAtValidation (0.00s)
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz
+--- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz (0.00s)
+=== RUN   TestHXC348_ChatCompletions_UnknownModelIsRefused
+--- PASS: TestHXC348_ChatCompletions_UnknownModelIsRefused (0.00s)
+=== RUN   TestHXC348_ChatCompletionsStreaming_UnknownModelIsRefused
+--- PASS: TestHXC348_ChatCompletionsStreaming_UnknownModelIsRefused (0.00s)
+=== RUN   TestHXC348_Completions_UnknownModelIsRefused
+--- PASS: TestHXC348_Completions_UnknownModelIsRefused (0.00s)
+=== RUN   TestHXC348_ChatCompletions_ForeignVendorModelIsRefused
+=== RUN   TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/gpt-4o
+=== RUN   TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/claude-opus-4
+=== RUN   TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/llama3.3:70b
+--- PASS: TestHXC348_ChatCompletions_ForeignVendorModelIsRefused (0.00s)
+    --- PASS: TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348_ChatCompletions_ForeignVendorModelIsRefused/llama3.3:70b (0.00s)
+=== RUN   TestHXC348_ChatCompletions_EmptyModelStillFallsBack
+--- PASS: TestHXC348_ChatCompletions_EmptyModelStillFallsBack (0.00s)
+=== RUN   TestHXC348_Completions_EmptyModelStillFallsBack
+--- PASS: TestHXC348_Completions_EmptyModelStillFallsBack (0.00s)
+=== RUN   TestHXC348_ChatCompletions_ServedModelStillRoutes
+--- PASS: TestHXC348_ChatCompletions_ServedModelStillRoutes (0.00s)
+=== RUN   TestHXC348_ChatCompletions_ServedModelOnDownBackendStays503
+--- PASS: TestHXC348_ChatCompletions_ServedModelOnDownBackendStays503 (0.00s)
+=== RUN   TestHXC348_ChatCompletionsStreaming_ServedModelStillRoutes
+--- PASS: TestHXC348_ChatCompletionsStreaming_ServedModelStillRoutes (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/HelixLLM/internal/gateway	0.037s
+=== RUN   TestHXC348Sentinel_IsDelegationSentinel
+--- PASS: TestHXC348Sentinel_IsDelegationSentinel (0.00s)
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=auto
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=AUTO
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=Auto
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=default
+=== RUN   TestHXC348Sentinel_Route_SentinelStillFallsBack/model=DEFAULT
+--- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model= (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=AUTO (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=Auto (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=default (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/definitely-not-a-real-model-zzz
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/automatic
+=== RUN   TestHXC348Sentinel_Route_UnservedNamesStayRefused/default-model
+--- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/definitely-not-a-real-model-zzz (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/automatic (0.00s)
+    --- PASS: TestHXC348Sentinel_Route_UnservedNamesStayRefused/default-model (0.00s)
+=== RUN   TestHXC348_Route_UnknownModelIsRefused
+--- PASS: TestHXC348_Route_UnknownModelIsRefused (0.00s)
+=== RUN   TestHXC348_Route_EmptyModelStillFallsBack
+--- PASS: TestHXC348_Route_EmptyModelStillFallsBack (0.00s)
+=== RUN   TestHXC348_Route_KnownModelOnDownProviderIsNotNotFound
+--- PASS: TestHXC348_Route_KnownModelOnDownProviderIsNotNotFound (0.00s)
+=== RUN   TestHXC348_Route_ServedModelStillRoutes
+--- PASS: TestHXC348_Route_ServedModelStillRoutes (0.00s)
+=== RUN   TestHXC348_Route_NoProvidersAvailableIsNotNotFound
+--- PASS: TestHXC348_Route_NoProvidersAvailableIsNotNotFound (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/HelixLLM/internal/brain	0.022s
+go test exit=0

@@ -1,0 +1,11 @@
+### T003 VERIFY — POSITIVE: condition already true must report SATISFIED, exit 0
+AWAIT pos: SATISFIED after 0s (polls=1)
+exit=0
+
+### T003 VERIFY — NEGATIVE: condition never true must report TIMEOUT, exit 3 (never 0)
+AWAIT neg: TIMEOUT after 3s (polls=4) — condition never held
+exit=3
+
+### T003 VERIFY — pid-gone on a live pid (self) must TIMEOUT, not claim gone
+AWAIT pidlive: TIMEOUT after 2s (polls=3) — condition never held
+exit=3

@@ -1,0 +1,3 @@
+providers-verify[helixllm-gateway]: WRONG-SERVICE WARNING: asked https://127.0.0.1:8443/v1/chat/completions for model 'helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190' and it answered as 'qwen2.5-coder-3b-instruct-q4_k_m'. The endpoint is serving a DIFFERENT model than the one requested, which is what a raw backend does when it ignores the model name and serves whatever it has loaded. Verify this base_url points at the service that actually serves 'helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190' — a plausible 200 from the wrong backend is harder to notice than an error from the right one.
+verified
+providers-verify[helixllm-gateway]: chat + tool-calling probes passed at https://127.0.0.1:8443/v1/chat/completions

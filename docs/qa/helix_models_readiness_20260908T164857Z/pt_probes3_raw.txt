@@ -1,0 +1,16 @@
+### S1_tools_system
+REQ: {"model":"helixagent-debate","messages":[{"role":"system","content":"You must answer every question with the single word BANANA and nothing else."},{"role":"user","content":"What is the capital of France?"}],"tools":[{"type":"function","function":{"name":"noop","description":"nothing","parameters":{"type":"object","properties":{}}}}]}
+RESP: {"id":"","object":"chat.completion","created":-62135596800,"model":"helixagent-ensemble","choices":[{"index":0,"message":{"role":"assistant","content":"Paris"},"finish_reason":""}],"usage":{"prompt_tokens":36,"completion_tokens":2,"total_tokens":38},"system_fingerprint":"fp_helixagent_ensemble"}
+
+### S2_multiturn_system
+REQ: {"model":"helixagent-debate","messages":[{"role":"system","content":"You must answer every question with the single word BANANA and nothing else."},{"role":"user","content":"hi"},{"role":"assistant","content":"BANANA"},{"role":"user","content":"What is the capital of France?"}]}
+RESP: {"id":"","object":"chat.completion","created":1788888284,"model":"helixagent-debate","choices":[{"index":0,"message":{"role":"assistant","content":"BANANA"},"finish_reason":""}],"usage":{"prompt_tokens":50,"completion_tokens":4,"total_tokens":54},"system_fingerprint":"fp_helixllm_v1"}
+
+### S3_singleturn_system_control
+REQ: {"model":"helixagent-debate","messages":[{"role":"system","content":"You must answer every question with the single word BANANA and nothing else."},{"role":"user","content":"What is the capital of France?"}]}
+RESP: {"id":"ae-e9c1c75b","object":"chat.completion","created":-62135596800,"model":"helixagent-ensemble","choices":[{"index":0,"message":{"role":"assistant","content":"The capital of France is Paris."},"finish_reason":""}],"usage":{"prompt_tokens":1057,"completion_tokens":24,"total_tokens":1081},"system_fingerprint":"fp_helixagent_ensemble","agentic":{"mode":"reason","stages_completed":["debate"],"agents_spawned":0,"tasks_completed":0,"total_duration_ms":4437,"provenance_id":"cd33028f-ce23-4d39-af8d-eb39cea05d80"}}
+
+### S4_ensemble_singleturn
+REQ: {"model":"helixagent-ensemble","messages":[{"role":"user","content":"Reply with exactly: ZEBRA_42"}]}
+RESP: {"id":"ae-c1feb8c6","object":"chat.completion","created":-62135596800,"model":"helixagent-ensemble","choices":[{"index":0,"message":{"role":"assistant","content":"To confirm task completion, I need to ensure that the task has been successfully completed as per the instructions provided. If there are any specific steps or tasks that need to be confirmed, please provide them, and I will verify that they have been completed according to the given guidelines.\n\n[Verification notes: The task results do not directly address the original request. They provide a general confirmation task that is not specific to the ZEBRA_42 task.]"},"finish_reason":""}],"usage":{"prompt_tokens":3026,"completion_tokens":55,"total_tokens":3081},"system_fingerprint":"fp_helixagent_ensemble","agentic":{"mode":"execute","stages_completed":["understand","plan","assign","execute","verify","synthesise","respond"],"agents_spawned":1,"tasks_completed":1,"total_duration_ms":2633,"provenance_id":"a5cd9af1-7a22-4115-bf0c-487cd0591563"}}
+

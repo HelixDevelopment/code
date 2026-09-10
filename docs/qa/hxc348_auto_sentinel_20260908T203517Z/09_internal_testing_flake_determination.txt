@@ -1,0 +1,11 @@
+### Determining whether internal/testing/TestBaselineDiscardsConnectionWarmup
+### is load-sensitive (host was running the full suite) or caused by this change.
+### Host load at start:
+ 22:45:26 up 3 days,  8:55,  3 users,  load average: 19.52, 27.97, 28.28
+
+--- standalone run 1 ---
+ok  	github.com/HelixDevelopment/HelixLLM/internal/testing	0.922s
+--- standalone run 2 ---
+ok  	github.com/HelixDevelopment/HelixLLM/internal/testing	0.921s
+--- standalone run 3 ---
+ok  	github.com/HelixDevelopment/HelixLLM/internal/testing	0.931s

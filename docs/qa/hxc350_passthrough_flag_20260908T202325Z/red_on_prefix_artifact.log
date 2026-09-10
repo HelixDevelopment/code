@@ -1,0 +1,21 @@
+### HXC-350 — RED_MODE=1 against the PRE-FIX (mutated) artifact
+### Mutation: the 14-line passthrough dispatch block deleted from
+###   internal/handlers/openai_compatible.go (struct field retained, so the
+###   JSON still parses and the flag is simply IGNORED = the historical defect).
+### EXPECTATION: PASS — the defect reproduces (§11.4.115 RED-on-broken-artifact).
+### date_utc=2026-09-08T20:26:17Z
+###
+🧪 Running tests...
+⚠️  Infrastructure not available - running unit tests only
+   Run './bin/helixagent' first for proper container orchestration
+
+=== RUN   TestPassthroughFlag_SingleUserMessage
+time="2026-09-08T22:27:15+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:27:15+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:27:15+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:27:15+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-08T22:27:15+02:00" level=error msg="[CODE PATH] orchestratorIntegration is NIL - using OLD ensemble service (NOT using new debate system!)"
+--- PASS: TestPassthroughFlag_SingleUserMessage (0.00s)
+PASS
+ok  	dev.helix.agent/internal/handlers	0.023s
+RED_ON_PREFIX_EXIT=0

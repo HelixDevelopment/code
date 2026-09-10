@@ -1,0 +1,267 @@
+package handlers
+
+// HXC-350 — explicit pass-through flag on the debate/ensemble routes.
+//
+// §11.4.115 RED-baseline-on-the-broken-artifact + polarity switch.
+//
+// OPERATOR DECISION (2026-09-08): pass-through ALREADY happens by accident on
+// two undocumented paths, so callers will otherwise come to depend on a quirk.
+// Make it DELIBERATE and documented — an explicit request flag — while keeping
+// DEBATE as the default for the three debate/ensemble model aliases.
+//
+// MEASURED on the pre-fix artifact (in-process, this harness):
+//
+//	A) single user message, no flag  -> "model":"helixagent-ensemble"  (debate/ensemble route)
+//	B) single user message, WITH flag-> "model":"helixagent-ensemble"  (FLAG IGNORED = the defect)
+//	C) multi-turn (2 user msgs)      -> "model":"helixagent-debate"    (accidental pass-through)
+//	D) tools present                 -> "model":"helixagent-ensemble"  (direct provider, wrong label)
+//
+// THE FALSIFYING PROPERTY (two independent legs, both user-visible response bytes):
+//
+//  1. CONTENT — the provider must receive the user's instruction VERBATIM. The
+//     stub below behaves like an obedient LLM: it answers with the marker ONLY
+//     when the literal instruction reaches it unmodified; any injected preamble
+//     (the real debate route wraps the topic at debate_service.go:1706-1708)
+//     makes it answer differently. The oracle is therefore NOT the code under
+//     test agreeing with itself (§11.4.245): the stub's answer is a function of
+//     what the handler actually forwarded.
+//  2. ENVELOPE — the pass-through route reports the REQUESTED model and the
+//     provider's own fingerprint; the debate/ensemble route hardcodes
+//     "helixagent-ensemble" (openai_compatible.go:3959).
+//
+// POLARITY SWITCH (one source, two roles) — uses the package-shared redMode()
+// from id_uniqueness_test.go:
+//
+//	RED_MODE=1     — reproduce-and-assert-the-defect-is-PRESENT (passes pre-fix).
+//	RED_MODE unset — the standing GREEN regression guard (passes post-fix).
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"dev.helix.agent/internal/models"
+	"dev.helix.agent/internal/services"
+)
+
+const (
+	hxc350Marker      = "ZEBRA_42"
+	hxc350Instruction = "Reply with exactly: " + hxc350Marker
+	// hxc350NotVerbatim is what the stub answers when the instruction did NOT
+	// arrive verbatim — i.e. something rewrote or wrapped the user's message.
+	hxc350NotVerbatim = "NOT_VERBATIM"
+	// ensembleModelLabel is the hardcoded label the debate/ensemble route emits.
+	hxc350EnsembleLabel = "helixagent-ensemble"
+	hxc350RequestModel  = "helixagent-debate"
+)
+
+// hxc350Capture records what the provider was actually handed.
+type hxc350Capture struct {
+	mu       sync.Mutex
+	calls    int
+	lastMsgs []models.Message
+	lastTool int
+}
+
+func (c *hxc350Capture) record(req *models.LLMRequest) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.calls++
+	c.lastMsgs = append([]models.Message(nil), req.Messages...)
+	c.lastTool = len(req.Tools)
+}
+
+func (c *hxc350Capture) snapshot() (calls int, msgs []models.Message, tools int) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.calls, append([]models.Message(nil), c.lastMsgs...), c.lastTool
+}
+
+func hxc350LastUserContent(msgs []models.Message) string {
+	for i := len(msgs) - 1; i >= 0; i-- {
+		if msgs[i].Role == "user" {
+			return msgs[i].Content
+		}
+	}
+	return ""
+}
+
+// newHXC350Handler builds a UnifiedHandler backed by a single registered
+// provider under the primary chain name, so BOTH candidate routes have a real
+// provider to reach. The stub obeys only a verbatim instruction.
+func newHXC350Handler(t *testing.T) (*UnifiedHandler, *hxc350Capture) {
+	t.Helper()
+	cap := &hxc350Capture{}
+	reg := services.NewProviderRegistryWithoutAutoDiscovery(nil, nil)
+	stub := &MockLLMProvider{
+		name: PrimaryProviderName,
+		completeFunc: func(ctx context.Context, req *models.LLMRequest) (*models.LLMResponse, error) {
+			cap.record(req)
+			content := hxc350NotVerbatim
+			if hxc350LastUserContent(req.Messages) == hxc350Instruction {
+				content = hxc350Marker
+			}
+			return &models.LLMResponse{
+				ID:           "hxc350-resp",
+				Content:      content,
+				ProviderName: PrimaryProviderName,
+				TokensUsed:   5,
+				FinishReason: "stop",
+				CreatedAt:    time.Now(),
+			}, nil
+		},
+	}
+	require.NoError(t, reg.RegisterProvider(PrimaryProviderName, stub))
+	return NewUnifiedHandler(reg, nil), cap
+}
+
+func hxc350Post(t *testing.T, h *UnifiedHandler, body map[string]any) (int, map[string]any) {
+	t.Helper()
+	raw, err := json.Marshal(body)
+	require.NoError(t, err)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest("POST", "/v1/chat/completions", bytes.NewReader(raw))
+	c.Request.Header.Set("Content-Type", "application/json")
+	h.ChatCompletions(c)
+	var out map[string]any
+	require.NoError(t, json.Unmarshal(w.Body.Bytes(), &out), "response body: %s", w.Body.String())
+	return w.Code, out
+}
+
+func hxc350Content(t *testing.T, resp map[string]any) string {
+	t.Helper()
+	choices, ok := resp["choices"].([]any)
+	require.True(t, ok && len(choices) > 0, "no choices in response: %v", resp)
+	msg, ok := choices[0].(map[string]any)["message"].(map[string]any)
+	require.True(t, ok, "no message in first choice: %v", choices[0])
+	content, _ := msg["content"].(string)
+	return content
+}
+
+func hxc350SingleUserBody(extra map[string]any) map[string]any {
+	body := map[string]any{
+		"model":    hxc350RequestModel,
+		"messages": []map[string]string{{"role": "user", "content": hxc350Instruction}},
+	}
+	for k, v := range extra {
+		body[k] = v
+	}
+	return body
+}
+
+// TestPassthroughFlag_SingleUserMessage is the §11.4.115 polarity test.
+func TestPassthroughFlag_SingleUserMessage(t *testing.T) {
+	h, cap := newHXC350Handler(t)
+
+	code, resp := hxc350Post(t, h, hxc350SingleUserBody(map[string]any{"passthrough": true}))
+	require.Equal(t, http.StatusOK, code)
+
+	calls, msgs, _ := cap.snapshot()
+	content := hxc350Content(t, resp)
+	model, _ := resp["model"].(string)
+
+	if redMode() {
+		// RED: the flag is IGNORED — the request still routes to the
+		// debate/ensemble path, which stamps the hardcoded ensemble label.
+		assert.Equal(t, hxc350EnsembleLabel, model,
+			"RED expects the pre-fix defect: passthrough flag ignored, ensemble label emitted")
+		return
+	}
+
+	// GREEN regression guard — the defect is ABSENT.
+	// Leg 1: the provider received the user's instruction VERBATIM and the
+	// handler returned its answer unmodified.
+	assert.Equal(t, hxc350Marker, content,
+		"passthrough must return the literal instruction's answer, not a debate essay")
+	assert.Equal(t, hxc350Instruction, hxc350LastUserContent(msgs),
+		"the provider must be handed the user's message verbatim (no injected preamble)")
+	assert.GreaterOrEqual(t, calls, 1, "a provider must actually have been called")
+	// Leg 2: envelope reports the REQUESTED model, not the hardcoded ensemble label.
+	assert.Equal(t, hxc350RequestModel, model,
+		"passthrough must report the requested model, not %q", hxc350EnsembleLabel)
+	// Real timestamp, not a zero clock.
+	created, _ := resp["created"].(float64)
+	assert.Greater(t, created, float64(1_600_000_000), "created must be a real unix timestamp")
+}
+
+// TestPassthroughFlag_DefaultStillDebates is the load-bearing REGRESSION:
+// a change that silently turns debate into pass-through for everyone is a
+// worse defect than the one being fixed. Polarity-independent invariant.
+func TestPassthroughFlag_DefaultStillDebates(t *testing.T) {
+	h, _ := newHXC350Handler(t)
+
+	code, resp := hxc350Post(t, h, hxc350SingleUserBody(nil)) // NO flag
+	require.Equal(t, http.StatusOK, code)
+
+	model, _ := resp["model"].(string)
+	assert.Equal(t, hxc350EnsembleLabel, model,
+		"DEFAULT (no flag) must STILL route to the debate/ensemble path")
+}
+
+// TestPassthroughFlag_ExplicitFalseStillDebates — an explicit false is the default.
+func TestPassthroughFlag_ExplicitFalseStillDebates(t *testing.T) {
+	h, _ := newHXC350Handler(t)
+
+	code, resp := hxc350Post(t, h, hxc350SingleUserBody(map[string]any{"passthrough": false}))
+	require.Equal(t, http.StatusOK, code)
+
+	model, _ := resp["model"].(string)
+	assert.Equal(t, hxc350EnsembleLabel, model,
+		"passthrough:false must behave exactly like the default (debate)")
+}
+
+// TestPassthroughFlag_MultiTurnBypassPreserved — the pre-existing accidental
+// bypass (drainage Finding #19) must keep working, flag or no flag.
+func TestPassthroughFlag_MultiTurnBypassPreserved(t *testing.T) {
+	h, cap := newHXC350Handler(t)
+
+	code, resp := hxc350Post(t, h, map[string]any{
+		"model": hxc350RequestModel,
+		"messages": []map[string]string{
+			{"role": "user", "content": "first turn"},
+			{"role": "assistant", "content": "ok"},
+			{"role": "user", "content": hxc350Instruction},
+		},
+	})
+	require.Equal(t, http.StatusOK, code)
+
+	model, _ := resp["model"].(string)
+	assert.Equal(t, hxc350RequestModel, model,
+		"multi-turn bypass must still route to the provider chain")
+	assert.Equal(t, hxc350Marker, hxc350Content(t, resp),
+		"multi-turn bypass must still be verbatim")
+	_, msgs, _ := cap.snapshot()
+	assert.Len(t, msgs, 3, "multi-turn bypass must forward the FULL conversation")
+}
+
+// TestPassthroughFlag_ToolsBypassPreserved — the pre-existing tools bypass
+// (openai_compatible.go:2679) must keep reaching a provider with tools attached.
+func TestPassthroughFlag_ToolsBypassPreserved(t *testing.T) {
+	h, cap := newHXC350Handler(t)
+
+	code, _ := hxc350Post(t, h, hxc350SingleUserBody(map[string]any{
+		"tools": []map[string]any{{
+			"type": "function",
+			"function": map[string]any{
+				"name":        "get_time",
+				"description": "returns the time",
+				"parameters":  map[string]any{"type": "object"},
+			},
+		}},
+	}))
+	require.Equal(t, http.StatusOK, code)
+
+	calls, _, tools := cap.snapshot()
+	assert.GreaterOrEqual(t, calls, 1, "tools bypass must reach a provider")
+	assert.Equal(t, 1, tools, "tools bypass must forward the tools array to the provider")
+}

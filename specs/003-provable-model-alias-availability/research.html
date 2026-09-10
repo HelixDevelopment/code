@@ -314,5 +314,185 @@ from a non-interactive shell) and is the immediate next step.</p>
 the RECORDS. None of it establishes whether any of these 20 aliases
 would work if invoked; that is the end-to-end question T005 gates and it
 remains open.</p>
+<h2 id="helixagent-helixllm-production-readiness-measured-2026-09-08-live-probes">HelixAgent
++ HelixLLM production-readiness — measured 2026-09-08 (live probes)</h2>
+<p>Direct answer to “are both fully ready for production use with Claude
+Toolkit”: <strong>no, and the reasons are now known rather than
+suspected.</strong> Five aliases exist; two are recorded
+<code>failed</code>, and BOTH recorded reasons turned out to be
+wrong.</p>
+<h3 id="the-recorded-diagnosis-was-false-in-both-directions">The
+recorded diagnosis was false in both directions</h3>
+<p><code>status.json</code> records <code>failing_layer=existence</code>
+for <code>helixagent</code> and <code>helixcoder</code>. That field is
+HARDCODED at <code>claude-providers.sh:2409</code> —
+<code>cma_status_write &quot;$pid&quot; failed &quot;$model&quot; existence</code> runs on
+ANY verification failure, whatever actually failed. It is not a
+measurement. Acting on it sends an investigation looking for a missing
+model that is not missing.</p>
+<p>Measured instead:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>alias</th>
+<th>endpoint</th>
+<th>recorded</th>
+<th>actually</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>helixagent</code></td>
+<td><code>:7061</code></td>
+<td>failed / existence</td>
+<td>model EXISTS and answers correctly; real reason is <strong>tool
+calling unsupported</strong></td>
+</tr>
+<tr>
+<td><code>helixcoder</code></td>
+<td>—</td>
+<td>failed / existence</td>
+<td>has <strong>no <code>.env</code> at all</strong> — a status row with
+no config</td>
+</tr>
+<tr>
+<td><code>helixagent-native</code></td>
+<td><code>:8443</code></td>
+<td>verified</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>helixllm-gateway</code></td>
+<td><code>:8443</code></td>
+<td>verified</td>
+<td>verifiable ONLY once a CA cert is configured; otherwise both
+verifiers fail</td>
+</tr>
+<tr>
+<td><code>helixllm-anton-…-f6771589d190</code></td>
+<td><code>:8443</code></td>
+<td>verified</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><code>helixagent-llm</code> was proven working end to end: asked to
+echo a nonce, it replied with exactly the nonce. A model that works
+while its record says <code>existence</code> failed is the inverse of
+the usual bluff — a working capability presented as broken — and is a
+defect of the same class.</p>
+<h3 id="helixagent-five-models-two-distinct-failure-classes">HelixAgent:
+five models, two distinct failure classes</h3>
+<p>Verifier output, all five models at <code>:7061</code> (which needs
+no auth):</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>model</th>
+<th>verified</th>
+<th>reason</th>
+<th>latency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>helixagent-llm</code></td>
+<td>false</td>
+<td>tool calling unsupported (required by Claude Code)</td>
+<td>3.3s</td>
+</tr>
+<tr>
+<td><code>helix-llm</code></td>
+<td>false</td>
+<td>tool calling unsupported (required by Claude Code)</td>
+<td>3.3s</td>
+</tr>
+<tr>
+<td><code>helixagent-debate</code></td>
+<td>false</td>
+<td>sentinel <code>VERIFY_OK</code> missing from response</td>
+<td>31s</td>
+</tr>
+<tr>
+<td><code>helix-debate</code></td>
+<td>false</td>
+<td>sentinel <code>VERIFY_OK</code> missing from response</td>
+<td>53s</td>
+</tr>
+<tr>
+<td><code>helixagent-ensemble</code></td>
+<td>false</td>
+<td>sentinel <code>VERIFY_OK</code> missing from response</td>
+<td>33s</td>
+</tr>
+</tbody>
+</table>
+<p>The two <code>-llm</code> models serve plain chat correctly and lack
+only tool calling, which Claude Code requires. The three debate/ensemble
+routes answer procedurally at 30-53s without following the instruction —
+the FR-021 correct-versus-merely-well-formed class, observed live: asked
+to echo a nonce, <code>helixagent-debate</code> replied <em>“The request
+is incomplete. To understand the request, I would need more
+context…”</em>.</p>
+<h3 id="helixllm-works-but-nothing-could-verify-it">HelixLLM: works, but
+nothing could verify it</h3>
+<p>The gateway serves ONE model over TLS with a
+<strong>self-signed</strong> certificate (CN=helixllm). Consequences,
+all measured:</p>
+<ul>
+<li>The Python verifier (<code>model_verify.py</code>) fails with
+<code>CERTIFICATE_VERIFY_FAILED</code>. It has <strong>zero</strong> TLS
+handling — <code>grep -cE &#39;CA_CERT|ssl|verify=|cafile|SSLContext&#39;</code>
+returns 0.</li>
+<li>The shell verifier returns <code>unverified</code> with
+<code>HTTP 000 — TLS</code>, which
+<code>providers-verify.sh:62-75</code> documents as indistinguishable
+from “nothing is listening”: a live endpoint reads as dead.</li>
+<li>Neither could produce the <code>verified</code> status the file
+records, so that status was not reproducible at measurement time.</li>
+</ul>
+<p>The cert is on disk at
+<code>submodules/helix_llm/certs/cert.pem</code> with an SHA-256
+fingerprint IDENTICAL to the one the live endpoint presents. Exporting
+<code>CMA_PROVIDER_CA_CERT</code> to it flips the shell verifier to
+<strong><code>verified</code> — “chat + tool-calling probes
+passed”</strong>, and <code>curl --cacert</code> reaches the endpoint
+with no <code>-k</code>. There is deliberately no default for that
+variable (CONST-045: a certificate path is a host property), so it must
+be configured, not coded.</p>
+<h3 id="one-anomaly-that-outranks-the-rest">One anomaly that outranks
+the rest</h3>
+<p>With the CA configured, the verifier passes but emits a
+<strong>WRONG-SERVICE WARNING</strong>: asked for
+<code>helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190</code>,
+the endpoint answers
+<code>&quot;model&quot;: &quot;qwen2.5-coder-3b-instruct-q4_k_m&quot;</code>. Confirmed
+independently in the nonce probe — correct answer, different id.</p>
+<p>If the gateway ignores the requested model name and serves whatever
+is loaded, then an alias’s model pin is not load-bearing and every alias
+pointing there is making a claim it cannot keep. Note the id it answers
+with is EXACTLY the one <code>helixcoder</code> names. Under
+investigation; the decisive test is whether a request naming a
+non-existent model errors or is answered anyway.</p>
+<h3 id="honest-boundary-11.4.6">Honest boundary (§11.4.6)</h3>
+<p>Everything above is a property of the ENDPOINTS and the RECORDS. It
+does not establish that any alias works through Claude Code itself — the
+wire is proven, the client integration is not. And one instrument fault
+was found in my own shell rather than the product: an inherited
+<code>HELIXLLM_GATEWAY_KEY</code> (23 chars) returned HTTP 401 while the
+key file’s value (48 chars) returns 200. A stale environment reads
+exactly like a rejected credential.</p>
 </body>
 </html>

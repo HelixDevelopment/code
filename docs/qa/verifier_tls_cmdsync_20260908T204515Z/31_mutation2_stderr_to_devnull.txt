@@ -1,0 +1,56 @@
+
+  • the decision region extracts from the real claude-providers.sh
+    [PASS] extracted region contains both the verifier call and the status write
+
+  • the extracted region is a region, not the whole script
+    [PASS] region is 13 lines
+
+  • the fixed body declares the reason locals outside the region
+    [PASS] cmd_sync declares _vreason/_vreason_f before the verify block
+
+  • A tool-calling unsupported — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for toolprov (failed)
+
+  • A tool-calling unsupported — GREEN: the layer is derived from the verifier's own reason
+    [FAIL] failing_layer for toolprov
+           want=tool_calling got=unknown
+
+  • B sentinel missing (bluff) — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for sentprov (failed)
+
+  • B sentinel missing (bluff) — GREEN: the layer is derived from the verifier's own reason
+    [FAIL] failing_layer for sentprov
+           want=sentinel got=unknown
+
+  • C context inadequate — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for ctxprov (failed)
+
+  • C context inadequate — GREEN: the layer is derived from the verifier's own reason
+    [FAIL] failing_layer for ctxprov
+           want=context got=unknown
+
+  • D ccr self-route — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for routeprov (failed)
+
+  • D ccr self-route — GREEN: the layer is derived from the verifier's own reason
+    [FAIL] failing_layer for routeprov
+           want=route got=unknown
+
+  • E existence (control) — the provider is still disabled (guard: the fix must not stop failing)
+    [PASS] status for existprov (failed)
+
+  • E existence (control) — GREEN: the layer is derived from the verifier's own reason
+    [FAIL] failing_layer for existprov
+           want=existence got=unknown
+
+  • F absent reason — honest 'unknown', not a fabricated cause
+    [PASS] failing_layer with no reason emitted (unknown)
+
+✗ 5 failed, 9 passed
+
+Failures:
+  - A tool-calling unsupported — GREEN: the layer is derived from the verifier's own reason :: failing_layer for toolprov
+  - B sentinel missing (bluff) — GREEN: the layer is derived from the verifier's own reason :: failing_layer for sentprov
+  - C context inadequate — GREEN: the layer is derived from the verifier's own reason :: failing_layer for ctxprov
+  - D ccr self-route — GREEN: the layer is derived from the verifier's own reason :: failing_layer for routeprov
+  - E existence (control) — GREEN: the layer is derived from the verifier's own reason :: failing_layer for existprov

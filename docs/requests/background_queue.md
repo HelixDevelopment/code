@@ -56,3 +56,18 @@ verification (§11.4.108), and the full-suite retest (§11.4.40).
 | BGQ-0001 | 2026-09-07T13:47+02:00 | in-progress | Dynamic on-demand Skill/extension activation so only skills needed at a given moment are active; token use always minimal; implemented in the constitution submodule so every project inherits it | none — subagent dispatched |
 | BGQ-0002 | 2026-09-07T15:51+02:00 | in-progress | Enumerate every operator-blocked item, blocker and show-stopper across the session and put them to the operator as interactive decisions so all can be unblocked | none — compiled and surfaced |
 | BGQ-0003 | 2026-09-08T14:12+02:00 | done | Delegate long mechanical work to properly written bash scripts / small Go utilities instead of burning tokens on it; scan every project regularly and refactor to extract such work; encode as a mandatory constitutional rule so all projects do it; full documentation, user guides, manuals, and tests producing deterministic machine evidence | DONE — §11.4.274 minted and published to all 6 constitution upstreams; `constitution/scripts/mechanical/` landed at 1f67272 (15 files, 181 assertions, 6 suites). Acceptance was reproducing a MEASURED session outcome, not a synthetic one: `MUTATION D5e: EXPECTED-FAIL got 23 failed / 35 passed [OK]`. Five instrument defects were found and fixed while building it, two of them only on first real use against a 1.8 GB repository. |
+| BGQ-0004 | 2026-09-08T15:47+02:00 | in-progress | Enumerate every operator-blocked item, blocker and show-stopper across the session and the tracked sources, and put them to the operator as interactive decisions with options so all can be unblocked | none — compiled from evidence and surfaced |
+
+## BGQ-0005 — Sweep every operator-blocked item and blocker, and put them to the operator as options
+
+| Field | Value |
+|---|---|
+| Received | 2026-09-08T17:16Z (19:16 CEST) |
+| Status | in-progress |
+| Blocker | none — executable now |
+| Prefix | BACKGROUND :: CRITICAL |
+
+Operator asked for a complete sweep of operator-blocked items, blockers and
+show-stoppers, surfaced as interactive questions with options so every one can
+be decided and unblocked. Terminal when the operator has answered and each
+answer is recorded against its item.

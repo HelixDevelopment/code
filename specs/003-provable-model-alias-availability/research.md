@@ -146,3 +146,94 @@ non-interactive shell) and is the immediate next step.
 **Honest boundary.** Everything above is a property of the RECORDS. None of it
 establishes whether any of these 20 aliases would work if invoked; that is the
 end-to-end question T005 gates and it remains open.
+
+## HelixAgent + HelixLLM production-readiness — measured 2026-09-08 (live probes)
+
+Direct answer to "are both fully ready for production use with Claude Toolkit":
+**no, and the reasons are now known rather than suspected.** Five aliases exist;
+two are recorded `failed`, and BOTH recorded reasons turned out to be wrong.
+
+### The recorded diagnosis was false in both directions
+
+`status.json` records `failing_layer=existence` for `helixagent` and
+`helixcoder`. That field is HARDCODED at `claude-providers.sh:2409` —
+`cma_status_write "$pid" failed "$model" existence` runs on ANY verification
+failure, whatever actually failed. It is not a measurement. Acting on it sends
+an investigation looking for a missing model that is not missing.
+
+Measured instead:
+
+| alias | endpoint | recorded | actually |
+|---|---|---|---|
+| `helixagent` | `:7061` | failed / existence | model EXISTS and answers correctly; real reason is **tool calling unsupported** |
+| `helixcoder` | — | failed / existence | has **no `.env` at all** — a status row with no config |
+| `helixagent-native` | `:8443` | verified | — |
+| `helixllm-gateway` | `:8443` | verified | verifiable ONLY once a CA cert is configured; otherwise both verifiers fail |
+| `helixllm-anton-…-f6771589d190` | `:8443` | verified | — |
+
+`helixagent-llm` was proven working end to end: asked to echo a nonce, it
+replied with exactly the nonce. A model that works while its record says
+`existence` failed is the inverse of the usual bluff — a working capability
+presented as broken — and is a defect of the same class.
+
+### HelixAgent: five models, two distinct failure classes
+
+Verifier output, all five models at `:7061` (which needs no auth):
+
+| model | verified | reason | latency |
+|---|---|---|---|
+| `helixagent-llm` | false | tool calling unsupported (required by Claude Code) | 3.3s |
+| `helix-llm` | false | tool calling unsupported (required by Claude Code) | 3.3s |
+| `helixagent-debate` | false | sentinel `VERIFY_OK` missing from response | 31s |
+| `helix-debate` | false | sentinel `VERIFY_OK` missing from response | 53s |
+| `helixagent-ensemble` | false | sentinel `VERIFY_OK` missing from response | 33s |
+
+The two `-llm` models serve plain chat correctly and lack only tool calling,
+which Claude Code requires. The three debate/ensemble routes answer
+procedurally at 30-53s without following the instruction — the FR-021
+correct-versus-merely-well-formed class, observed live: asked to echo a nonce,
+`helixagent-debate` replied *"The request is incomplete. To understand the
+request, I would need more context…"*.
+
+### HelixLLM: works, but nothing could verify it
+
+The gateway serves ONE model over TLS with a **self-signed** certificate
+(CN=helixllm). Consequences, all measured:
+
+- The Python verifier (`model_verify.py`) fails with
+  `CERTIFICATE_VERIFY_FAILED`. It has **zero** TLS handling —
+  `grep -cE 'CA_CERT|ssl|verify=|cafile|SSLContext'` returns 0.
+- The shell verifier returns `unverified` with `HTTP 000 — TLS`, which
+  `providers-verify.sh:62-75` documents as indistinguishable from "nothing is
+  listening": a live endpoint reads as dead.
+- Neither could produce the `verified` status the file records, so that status
+  was not reproducible at measurement time.
+
+The cert is on disk at `submodules/helix_llm/certs/cert.pem` with an SHA-256
+fingerprint IDENTICAL to the one the live endpoint presents. Exporting
+`CMA_PROVIDER_CA_CERT` to it flips the shell verifier to **`verified` — "chat +
+tool-calling probes passed"**, and `curl --cacert` reaches the endpoint with no
+`-k`. There is deliberately no default for that variable (CONST-045: a
+certificate path is a host property), so it must be configured, not coded.
+
+### One anomaly that outranks the rest
+
+With the CA configured, the verifier passes but emits a **WRONG-SERVICE
+WARNING**: asked for `helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190`,
+the endpoint answers `"model": "qwen2.5-coder-3b-instruct-q4_k_m"`. Confirmed
+independently in the nonce probe — correct answer, different id.
+
+If the gateway ignores the requested model name and serves whatever is loaded,
+then an alias's model pin is not load-bearing and every alias pointing there is
+making a claim it cannot keep. Note the id it answers with is EXACTLY the one
+`helixcoder` names. Under investigation; the decisive test is whether a request
+naming a non-existent model errors or is answered anyway.
+
+### Honest boundary (§11.4.6)
+
+Everything above is a property of the ENDPOINTS and the RECORDS. It does not
+establish that any alias works through Claude Code itself — the wire is proven,
+the client integration is not. And one instrument fault was found in my own
+shell rather than the product: an inherited `HELIXLLM_GATEWAY_KEY` (23 chars)
+returned HTTP 401 while the key file's value (48 chars) returns 200. A stale
+environment reads exactly like a rejected credential.

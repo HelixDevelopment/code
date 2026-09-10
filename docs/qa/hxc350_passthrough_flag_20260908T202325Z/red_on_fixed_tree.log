@@ -1,0 +1,36 @@
+### HXC-350 — RED_MODE=1 against the FIXED tree
+### EXPECTATION: FAIL. RED_MODE=1 asserts the defect is PRESENT; on the fixed
+### artifact it cannot reproduce, and per the test header that non-reproduction
+### is itself the finding that the fix took (§11.4.115).
+### date_utc=2026-09-08T20:24:40Z
+###
+🧪 Running tests...
+⚠️  Infrastructure not available - running unit tests only
+   Run './bin/helixagent' first for proper container orchestration
+
+=== RUN   TestPassthroughFlag_SingleUserMessage
+time="2026-09-08T22:25:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:25:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:25:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:25:53+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-08T22:25:53+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+    passthrough_flag_red_test.go:176: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:176
+        	Error:      	Not equal: 
+        	            	expected: "helixagent-ensemble"
+        	            	actual  : "helixagent-debate"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-helixagent-ensemble
+        	            	+helixagent-debate
+        	Test:       	TestPassthroughFlag_SingleUserMessage
+        	Messages:   	RED expects the pre-fix defect: passthrough flag ignored, ensemble label emitted
+--- FAIL: TestPassthroughFlag_SingleUserMessage (0.02s)
+FAIL
+FAIL	dev.helix.agent/internal/handlers	0.103s
+FAIL
+make: *** [Makefile:280: test] Error 1
+MAKE_EXIT=2
