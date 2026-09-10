@@ -2,14 +2,14 @@
   "version": "1.0.4.dev0",
   "integration_state_schema": 1,
   "installed_integrations": [
-    "kimi"
+    "opencode"
   ],
   "integration_settings": {
-    "kimi": {
+    "opencode": {
       "script": "sh",
-      "invoke_separator": "-"
+      "invoke_separator": "."
     }
   },
-  "integration": "kimi",
-  "default_integration": "kimi"
+  "integration": "opencode",
+  "default_integration": "opencode"
 }
