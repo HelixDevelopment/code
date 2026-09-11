@@ -1,0 +1,28 @@
+[Unit]
+Description=HelixLLM Provider Registration
+Documentation=https://github.com/HelixDevelopment/HelixCode
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/local/bin/helix config regenerate-aliases --output .helix/model-aliases.yaml
+ExecStartPost=/usr/local/bin/helix start --background
+TimeoutStartSec=30
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=50%
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/home/%u/.helix /home/%u/.config/helixcode /var/lib/helixcode
+
+[Install]
+WantedBy=default.target
