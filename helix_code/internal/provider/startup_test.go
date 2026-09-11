@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"os"
 	"testing"
 	"time"
 )
@@ -13,27 +15,27 @@ type MockProviderBridge struct {
 	err       error
 }
 
-func (m *MockProviderBridge) ListProviders() ([]ProviderEntry, error) {
+func (m *MockProviderBridge) ListProviders(ctx context.Context) ([]ProviderEntry, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
 	return m.providers, nil
 }
 
-func (m *MockProviderBridge) GetProviderByType(providerType string) (*ProviderEntry, error) {
+func (m *MockProviderBridge) GetProviderByType(ctx context.Context, providerType string) (*ProviderEntry, error) {
 	for _, p := range m.providers {
-		if p.Type == providerType {
+		if string(p.Type) == providerType {
 			return &p, nil
 		}
 	}
-	return nil, ErrProviderNotFound
+	return nil, errors.New("provider not found")
 }
 
-func (m *MockProviderBridge) GetAllModels() ([]ModelSummary, error) {
+func (m *MockProviderBridge) GetAllModels(ctx context.Context) ([]ModelSummary, error) {
 	return nil, nil
 }
 
-func (m *MockProviderBridge) HealthCheck() (map[string]bool, error) {
+func (m *MockProviderBridge) HealthCheck(ctx context.Context) (map[string]bool, error) {
 	if m.err != nil {
 		return nil, m.err
 	}

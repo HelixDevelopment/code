@@ -15,11 +15,12 @@ import (
 )
 
 // ProviderBridgeInterface defines the interface for provider enumeration and management.
+// All methods accept context.Context for timeout/cancellation control.
 type ProviderBridgeInterface interface {
-	ListProviders() ([]ProviderEntry, error)
-	GetProviderByType(providerType string) (*ProviderEntry, error)
-	GetAllModels() ([]ModelSummary, error)
-	HealthCheck() (map[string]bool, error)
+	ListProviders(ctx context.Context) ([]ProviderEntry, error)
+	GetProviderByType(ctx context.Context, providerType string) (*ProviderEntry, error)
+	GetAllModels(ctx context.Context) ([]ModelSummary, error)
+	HealthCheck(ctx context.Context) (map[string]bool, error)
 }
 
 // ProviderRegistration handles provider registration on startup.
@@ -47,7 +48,7 @@ func (pr *ProviderRegistration) RegisterAllProviders(ctx context.Context) (int, 
 	ctx, cancel := context.WithTimeout(ctx, pr.timeout)
 	defer cancel()
 
-	providers, err := pr.bridge.ListProviders()
+	providers, err := pr.bridge.ListProviders(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to list providers: %w", err)
 	}
@@ -58,7 +59,7 @@ func (pr *ProviderRegistration) RegisterAllProviders(ctx context.Context) (int, 
 	}
 
 	// Verify health of each provider
-	health, err := pr.bridge.HealthCheck()
+	health, err := pr.bridge.HealthCheck(ctx)
 	if err != nil {
 		log.Printf("Health check failed: %v", err)
 	}

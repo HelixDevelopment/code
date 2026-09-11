@@ -8,13 +8,13 @@ A distributed, AI-powered software development platform with multi-platform supp
 
 - **Multi-Platform Support**: Desktop, mobile, terminal, and specialized OS clients
 - **Distributed Computing**: Worker nodes for parallel task execution
-- **AI Integration**: LLM-powered code generation and reasoning with multiple free providers
-- **Free AI Models**: Access to XAI (Grok), OpenRouter, GitHub Copilot, and Qwen without API keys
+- **AI Integration**: LLM-powered code generation and reasoning with 15+ providers
+- **Free AI Models**: Access to XAI (Grok), OpenRouter, GitHub Copilot, Qwen, and more
 - **Cognee.ai Memory Integration**: Advanced memory management with knowledge graphs, semantic search, and real-time processing
 - **Real-time Collaboration**: MCP protocol for tool execution
 - **Authentication & Security**: JWT-based auth with session management
 - **Task Management**: Checkpoint-based work preservation
-- **Notification System**: Multi-channel notifications (Slack, Email, Discord)
+- **Notification System**: Multi-channel notifications (Slack, Email, Discord, Telegram, Yandex Messenger, Max)
 
 ## Quick Start
 
@@ -81,51 +81,59 @@ make dev
 
 ### AI Providers
 
-HelixCode supports multiple AI providers with a focus on free and accessible models, plus enterprise-grade premium providers with advanced features:
+HelixCode supports **15+ AI providers** through a unified provider interface with a cloud gate (W2c-1) for local-first adaptive serving. All providers are configured via `config/config.yaml` under `llm.providers` or the CLI wizard.
 
-#### Free Providers (No API Key Required)
-- **XAI (Grok)**: `grok-3-fast-beta`, `grok-3-mini-fast-beta`, `grok-3-beta` - Fast and capable models
-- **OpenRouter**: `openai/gpt-oss-20b:free`, `meta-llama/llama-3.2-3b-instruct:free` - Free models from various providers
-- **GitHub Copilot**: `gpt-4o`, `claude-3.5-sonnet`, `claude-3.7-sonnet`, `o1`, `gemini-2.0-flash` - Free with GitHub subscription
-- **Qwen**: OAuth2 authentication available, 2,000 requests/day free tier
+#### Cloud Providers (Direct API Access)
 
-#### Premium Providers (Advanced Features)
+| Provider | Type | Key Env Var | Models | Notable Features |
+|----------|------|-------------|--------|------------------|
+| **Anthropic** | Cloud | `ANTHROPIC_API_KEY` | Claude 4 Sonnet/Opus, 3.7 Sonnet, 3.5 Sonnet/Haiku, 3 Opus/Sonnet/Haiku | Extended thinking, prompt caching (90% cost reduction), tool caching, vision, streaming |
+| **Google Gemini** | Cloud | `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Gemini 2.5 Pro/Flash, 2.0 Flash, 1.5 Pro/Flash | 2M token context (2.5 Pro/1.5 Pro), multimodal, function calling, flash models |
+| **OpenAI** | Cloud | `OPENAI_API_KEY` | GPT-4.1, GPT-4.5 Preview, GPT-4o, o1/o3 (reasoning), o4-mini | 1M+ context (GPT-4.1), function calling, vision, reasoning models |
+| **XAI (Grok)** | Cloud | `XAI_API_KEY` | Grok 3 Fast/Mini/Beta | Fast reasoning, free tier available |
+| **Groq** | Cloud | `GROQ_API_KEY` | Llama 3.1/3.3, Mixtral, Gemma | Ultra-fast inference, free tier |
+| **Mistral** | Cloud | `MISTRAL_API_KEY` | Mistral Large/Small, Codestral | Code-optimized models, function calling |
+| **DeepSeek** | Cloud | `DEEPSEEK_API_KEY` | DeepSeek-V3, DeepSeek-R1 (reasoning) | Strong reasoning, code generation |
+| **OpenRouter** | Cloud | `OPENROUTER_API_KEY` | 300+ models from all providers | Unified access, free models available |
+| **Cohere** | Cloud | `COHERE_API_KEY` | Command R/R+, Aya | Multilingual, RAG-optimized |
+| **GitHub Copilot** | Cloud | `GITHUB_TOKEN` | GPT-4o, Claude 3.5/3.7 Sonnet, o1, Gemini 2.0 Flash | Free with GitHub subscription |
+| **Azure OpenAI** | Cloud | `AZURE_OPENAI_API_KEY` | GPT-4o, GPT-4, o1 | Enterprise Azure integration |
+| **AWS Bedrock** | Cloud | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Claude, Llama, Titan, Jurassic | AWS-native, multiple model families |
+| **GCP Vertex AI** | Cloud | `GOOGLE_APPLICATION_CREDENTIALS` | Gemini, PaLM, Codey | GCP-native, enterprise features |
+| **Qwen** | Cloud | `QWEN_API_KEY` / OAuth2 | Qwen 2.5/3/Max/Plus/Turbo | Chinese-optimized, 2K free req/day |
+| **Replicate** | Cloud | `REPLICATE_API_TOKEN` | 1000+ open models | Pay-per-second, model hosting |
 
-##### **Anthropic Claude** ⭐ NEW
-The most powerful coding assistant with industry-leading reasoning capabilities:
-- **Models**: Claude 4 Sonnet/Opus, Claude 3.7 Sonnet, Claude 3.5 Sonnet/Haiku, Claude 3 Opus/Sonnet/Haiku
-- **Context Windows**: 200K tokens (all models)
-- **Max Output**: Up to 50K tokens (Claude 4/3.7)
-- **Advanced Features**:
-  - 🧠 **Extended Thinking**: Automatic reasoning mode for complex problems
-  - 💾 **Prompt Caching**: Up to 90% cost reduction on repeated contexts
-  - 🛠️ **Tool Caching**: Cache tool definitions for multi-turn conversations
-  - 👁️ **Vision Support**: Analyze images and diagrams
-  - ⚡ **Streaming**: Real-time token-by-token responses
+#### Local Providers (No Cloud Gate, Run Locally)
 
-##### **Google Gemini** ⭐ NEW
-Google's most capable AI models with massive context windows:
-- **Models**: Gemini 2.5 Pro/Flash, Gemini 2.0 Flash, Gemini 1.5 Pro/Flash
-- **Context Windows**: Up to 2M tokens (Gemini 2.5 Pro, 1.5 Pro)
-- **Max Output**: 8K tokens
-- **Advanced Features**:
-  - 📚 **Massive Context**: Handle entire codebases (2M tokens = ~1.5M words)
-  - 🎨 **Multimodal**: Text, images, and code understanding
-  - 🚀 **Flash Models**: Ultra-fast responses with 1M token context
-  - 🔧 **Function Calling**: Native tool integration
-  - 🛡️ **Safety Controls**: Configurable content filtering
+| Provider | Type | Requirements | Models | Notable Features |
+|----------|------|--------------|--------|------------------|
+| **Ollama** | Local | Ollama service | Any GGUF model | Easy model management, local-only |
+| **Llama.cpp** | Local | llama.cpp binary | GGUF models | Direct llama.cpp, hardware acceleration |
+| **vLLM** | Local | vLLM server | Any HF model | High-throughput serving, PagedAttention |
+| **LocalAI** | Local | LocalAI server | OpenAI-compatible | Drop-in OpenAI replacement |
+| **FastChat** | Local | FastChat server | Vicuna, LLaMA | Conversation templates |
+| **LM Studio** | Local | LM Studio app | GGUF models | GUI + local server |
+| **Jan** | Local | Jan app | GGUF models | Desktop app with API |
+| **GPT4All** | Local | GPT4All app | Quantized models | Consumer-friendly |
+| **TabbyAPI** | Local | TabbyAPI server | exllama models | ExLLaMAv2 wrapper |
+| **MLX** | Local | Apple Silicon | MLX-format models | Apple Silicon native |
+| **Mistral.rs** | Local | mistral.rs binary | Any HF model | Rust implementation, fast |
+| **KoboldAI** | Local | KoboldAI server | Story/writing models | Storytelling-focused |
+| **Xiaomi MiMo** | Local/Cloud | MiMo API key | MiMo v2.5 Pro/Omni/Flash | 1M context, multimodal, tool calling |
 
-##### **OpenAI**
-Industry-standard models with broad ecosystem support:
-- **Models**: GPT-4.1, GPT-4.5 Preview, GPT-4o, O1/O3 (reasoning), O4 Mini
-- **Context Windows**: Up to 1M+ tokens (GPT-4.1)
-- **Max Output**: Variable by model
-- **Features**: Function calling, vision support, reasoning models
+#### Special Providers
+- **HelixAgent** — Embedded agent provider for multi-agent workflows
+- **Cerebras** — Wafer-scale inference for Llama models
+- **Together AI** — Optimized open-model serving
+- **HuggingFace** — Inference endpoints for HF models
 
-##### **Local Models**
-- **Ollama**: Run any GGUF model locally
-- **Llama.cpp**: Direct llama.cpp integration
-- **Privacy**: 100% offline, no data leaves your machine
+### Provider Selection Strategy
+
+HelixCode uses an intelligent model selection system (`internal/llm/model_manager.go`):
+- **Performance-based**: Selects fastest/lowest-latency model
+- **Capability-aware**: Matches model capabilities to task requirements
+- **Fallback chains**: Automatic failover on errors
+- **Health monitoring**: Real-time provider health checks
 
 ### Applications
 
@@ -133,7 +141,7 @@ Industry-standard models with broad ecosystem support:
 - **Terminal UI**: Terminal-based interface (tview)
 - **Aurora OS**: Specialized Aurora OS client
 - **Harmony OS**: Specialized Harmony OS client
-- **Mobile**: Cross-platform mobile applications
+- **Mobile**: Cross-platform mobile applications (gomobile)
 
 ## Configuration
 
@@ -145,7 +153,41 @@ Key configuration areas:
 - Redis configuration
 - Authentication settings
 - Worker management
-- LLM provider settings (XAI, OpenRouter, Copilot, Qwen OAuth2)
+- LLM provider settings (all 15+ providers)
+
+### LLM Provider Configuration Example
+
+```yaml
+llm:
+  default_provider: "local"
+  max_tokens: 4096
+  temperature: 0.7
+  timeout: 30
+  max_retries: 3
+  providers:
+    anthropic:
+      type: "anthropic"
+      endpoint: "https://api.anthropic.com"
+      enabled: true
+      parameters:
+        api_key: "${ANTHROPIC_API_KEY}"
+        streaming_support: true
+    gemini:
+      type: "gemini"
+      endpoint: "https://generativelanguage.googleapis.com"
+      enabled: true
+      parameters:
+        api_key: "${GEMINI_API_KEY}"
+    ollama:
+      type: "ollama"
+      endpoint: "http://localhost:11434"
+      enabled: true
+    # ... more providers
+  selection:
+    strategy: "performance"
+    fallback_enabled: true
+    health_check_interval: 30
+```
 
 ### Getting Started with Free AI
 
@@ -165,6 +207,9 @@ helixcode llm provider set copilot
 
 # Use Qwen with OAuth2 (interactive setup)
 helixcode llm auth qwen
+
+# Use local Ollama
+helixcode llm provider set ollama
 ```
 
 #### Environment Variables for All Providers
@@ -179,6 +224,12 @@ export OPENROUTER_API_KEY="sk-or-your-key"
 
 # XAI (optional, for higher rate limits)
 export XAI_API_KEY="xai-your-key"
+
+# Groq (free tier)
+export GROQ_API_KEY="gsk_your-key"
+
+# Mistral (free tier)
+export MISTRAL_API_KEY="your-mistral-key"
 ```
 
 **Premium Providers:**
@@ -193,38 +244,22 @@ export GOOGLE_API_KEY="your-google-key"
 
 # OpenAI
 export OPENAI_API_KEY="sk-your-openai-key"
-```
 
-#### Quick Setup for New Providers
+# DeepSeek
+export DEEPSEEK_API_KEY="your-deepseek-key"
 
-**Anthropic Claude** (with Extended Thinking & Prompt Caching):
-```bash
-# Set API key
-export ANTHROPIC_API_KEY="sk-ant-your-key-here"
+# Cohere
+export COHERE_API_KEY="your-cohere-key"
 
-# Use Claude 4 Sonnet (most powerful)
-helixcode llm provider set anthropic --model claude-4-sonnet
+# Azure OpenAI
+export AZURE_OPENAI_API_KEY="your-azure-key"
 
-# Or use Claude 3.5 Sonnet (best for coding)
-helixcode llm provider set anthropic --model claude-3-5-sonnet-latest
+# AWS Bedrock
+export AWS_ACCESS_KEY_ID="your-access-key"
+export AWS_SECRET_ACCESS_KEY="your-secret-key"
 
-# Generate code with extended thinking
-helixcode generate "Think carefully: design a distributed cache system"
-```
-
-**Google Gemini** (with 2M token context):
-```bash
-# Set API key
-export GEMINI_API_KEY="your-gemini-key"
-
-# Use Gemini 2.5 Pro (2M context)
-helixcode llm provider set gemini --model gemini-2.5-pro
-
-# Or use Gemini 2.5 Flash (fast with 1M context)
-helixcode llm provider set gemini --model gemini-2.5-flash
-
-# Process entire codebase
-helixcode analyze --full-context --model gemini-2.5-pro
+# Qwen
+export QWEN_API_KEY="your-qwen-key"
 ```
 
 ## API Documentation
@@ -251,6 +286,14 @@ helixcode analyze --full-context --model gemini-2.5-pro
 - `POST /api/workers` - Register worker
 - `GET /api/workers/{id}` - Get worker details
 - `DELETE /api/workers/{id}` - Remove worker
+
+### LLM Provider Management
+
+- `GET /api/v1/llm/providers` - List all configured providers with status
+- `POST /api/v1/llm/providers` - Add/configure provider
+- `GET /api/v1/llm/models` - List available models across providers
+- `POST /api/v1/llm/generate` - Generate completion
+- `POST /api/v1/llm/chat` - Chat completion with history
 
 ## Development
 
@@ -375,10 +418,11 @@ Access Grafana at `http://localhost:3000` (default credentials: admin/admin)
 ## Security
 
 - JWT-based authentication
-- Password hashing with bcrypt
+- Password hashing with bcrypt + argon2
 - SSH key-based worker authentication
 - Environment variable configuration
 - No secrets in code or config files
+- Cloud gate (W2c-1) prevents accidental cloud provider usage
 
 ## Contributing
 
@@ -394,11 +438,9 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ## Documentation
 
-- [TUI Capabilities Guide](docs/CAPABILITIES.md) — streaming, MCP tools, LSP
-  diagnostics, skills, plugins, the agentic read-only tool loop, the Helix Agent
-  ensemble (visible members + per-member model via LLMsVerifier), environment
-  providers, and the HelixAgent full-capacity provider, each with a real trigger
-  and example prompt.
+- [TUI Capabilities Guide](docs/CAPABILITIES.md) — streaming, MCP tools, LSP diagnostics, skills, plugins, the agentic read-only tool loop, the Helix Agent ensemble (visible members + per-member model via LLMsVerifier), environment providers, and the HelixAgent full-capacity provider, each with a real trigger and example prompt.
+- [Zero-Bluff User Manual](docs/user_manual/ZERO_BLUFF_USER_MANUAL.md) — Complete user guide
+- [Provider Aliases Guide](submodules/claude-toolkit/docs/Provider_Aliases_User_Guide.md) — claude-providers tool documentation
 
 ## Support
 

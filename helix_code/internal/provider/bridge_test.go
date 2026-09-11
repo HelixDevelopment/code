@@ -41,13 +41,14 @@ func TestProviderBridge_ListProviders(t *testing.T) {
 }
 
 // TestProviderBridge_GetProviderByType tests getting a specific provider by type
+// TestProviderBridge_GetProviderByType tests getting a specific provider by type
 func TestProviderBridge_GetProviderByType(t *testing.T) {
 	ctx := context.Background()
 	modelManager := llm.NewModelManager()
 	bridge := NewProviderBridge(modelManager)
 
 	// Test with a known provider type
-	_, err := bridge.GetProviderByType(ctx, llm.ProviderTypeOpenAI)
+	_, err := bridge.GetProviderByType(ctx, string(llm.ProviderTypeOpenAI))
 	// Should not panic, may return "not found" error if not registered
 	if err != nil {
 		t.Logf("Expected error for unregistered provider: %v", err)
@@ -114,16 +115,12 @@ func TestProviderBridge_HealthCheck(t *testing.T) {
 
 	t.Logf("Health status for %d providers", len(health))
 
-	for providerType, h := range health {
-		if h == nil {
-			t.Errorf("Nil health for provider %s", providerType)
+	for providerTypeStr, h := range health {
+		if !h {
+			t.Logf("Provider %s: unhealthy", providerTypeStr)
 			continue
 		}
-		if h.Status == "" {
-			t.Errorf("Empty health status for provider %s", providerType)
-		}
-		t.Logf("Provider %s: %s (models: %d, errors: %d)",
-			providerType, h.Status, h.ModelCount, h.ErrorCount)
+		t.Logf("Provider %s: healthy", providerTypeStr)
 	}
 }
 
@@ -296,10 +293,10 @@ func TestProviderBridge_MultipleCalls(t *testing.T) {
 
 // TestProviderBridge_SetModelManager tests updating the model manager
 func TestProviderBridge_SetModelManager(t *testing.T) {
+	ctx := context.Background()
 	bridge := NewProviderBridge(nil)
 
 	// Should not panic with nil model manager
-	ctx := context.Background()
 	_, err := bridge.ListProvidersDirect(ctx)
 	if err == nil {
 		t.Errorf("Expected error with nil model manager")

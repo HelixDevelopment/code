@@ -153,7 +153,7 @@ func (r *Router) GetAvailableProviders(ctx context.Context) ([]ProviderEntry, er
 
 // GetProviderMetadata returns metadata for a specific provider
 func (r *Router) GetProviderMetadata(ctx context.Context, providerType llm.ProviderType) (*ProviderEntry, error) {
-	return r.bridge.GetProviderByType(ctx, providerType)
+	return r.bridge.GetProviderByType(ctx, string(providerType))
 }
 
 // GetAllModelsMetadata returns metadata for all models across all providers
@@ -173,7 +173,27 @@ func (r *Router) GetProviderCapabilities(ctx context.Context) (map[llm.ProviderT
 
 // HealthCheck performs health checks on all providers
 func (r *Router) HealthCheck(ctx context.Context) (map[llm.ProviderType]*llm.ProviderHealth, error) {
-	return r.bridge.HealthCheck(ctx)
+	healthMap, err := r.bridge.HealthCheck(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	
+	// Convert map[string]bool to map[llm.ProviderType]*llm.ProviderHealth
+	result := make(map[llm.ProviderType]*llm.ProviderHealth)
+	for providerTypeStr, healthy := range healthMap {
+		providerType := llm.ProviderType(providerTypeStr)
+		health := &llm.ProviderHealth{}
+		if healthy {
+			health.Status = "healthy"
+		} else {
+			health.Status = "unhealthy"
+		}
+		result[providerType] = health
+	}
+	return result, nil
 }
 
 // SetModelManager updates the router's model manager

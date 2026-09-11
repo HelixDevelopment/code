@@ -157,7 +157,7 @@ func (s *MetadataService) GetProviderMetadata(ctx context.Context, providerType 
 		return nil, fmt.Errorf("model manager not initialized")
 	}
 
-	entry, err := s.bridge.GetProviderByType(ctx, providerType)
+	entry, err := s.bridge.GetProviderByType(ctx, string(providerType))
 	if err != nil {
 		return nil, err
 	}

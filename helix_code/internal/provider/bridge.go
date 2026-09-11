@@ -72,7 +72,7 @@ func (b *ProviderBridge) ListProviders(ctx context.Context) ([]ProviderEntry, er
 }
 
 // GetProviderByType returns a specific provider by its type
-func (b *ProviderBridge) GetProviderByType(ctx context.Context, providerType llm.ProviderType) (*ProviderEntry, error) {
+func (b *ProviderBridge) GetProviderByType(ctx context.Context, providerType string) (*ProviderEntry, error) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 
@@ -82,7 +82,7 @@ func (b *ProviderBridge) GetProviderByType(ctx context.Context, providerType llm
 
 	providers := b.getProvidersFromManager()
 	for _, p := range providers {
-		if p.GetType() == providerType {
+		if string(p.GetType()) == providerType {
 			entry := b.buildProviderEntry(ctx, p)
 			return &entry, nil
 		}
@@ -153,7 +153,7 @@ func (b *ProviderBridge) GetProviderCapabilities(ctx context.Context) (map[llm.P
 }
 
 // HealthCheck performs health checks on all providers
-func (b *ProviderBridge) HealthCheck(ctx context.Context) (map[llm.ProviderType]*llm.ProviderHealth, error) {
+func (b *ProviderBridge) HealthCheck(ctx context.Context) (map[string]bool, error) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 
@@ -161,7 +161,12 @@ func (b *ProviderBridge) HealthCheck(ctx context.Context) (map[llm.ProviderType]
 		return nil, fmt.Errorf("model manager not initialized")
 	}
 
-	return b.modelManager.HealthCheck(ctx), nil
+	healthMap := b.modelManager.HealthCheck(ctx)
+	result := make(map[string]bool)
+	for providerType, health := range healthMap {
+		result[string(providerType)] = health != nil && health.Status == "healthy"
+	}
+	return result, nil
 }
 
 // MarshalJSON implements custom JSON marshaling for ProviderEntry
