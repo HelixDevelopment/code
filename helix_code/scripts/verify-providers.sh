@@ -289,9 +289,9 @@ check_as7_documentation_sync() {
         fi
     fi
     
-    # Check for stale Heroku references in docs
-    if grep -r -i "heroku" "$HELIX_CODE_DIR/docs/" 2>/dev/null | grep -v ".pdf"; then
-        log_fail "Heroku references found in documentation"
+    # Check for stale Heroku references in docs (excluding qa/evidence which documents the removal)
+    if grep -r -i "heroku" "$HELIX_CODE_DIR/docs/" 2>/dev/null | grep -v ".pdf" | grep -v "docs/qa/"; then
+        log_fail "Heroku references found in documentation (excluding qa/ evidence)"
         issues=$((issues + 1))
     fi
     
