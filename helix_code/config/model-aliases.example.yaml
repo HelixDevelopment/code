@@ -154,6 +154,31 @@ aliases:
     description: Grok (xAI's model)
     tags: [xai, grok]
 
+  # Moonshot Kimi Models
+  - alias: kimi
+    target_model: moonshot-v1-8k
+    provider: kimi
+    description: Kimi (Moonshot) default model
+    tags: [moonshot, kimi, chinese, international]
+
+  - alias: kimi1
+    target_model: moonshot-v1-8k
+    provider: kimi
+    description: Kimi v1 8k context
+    tags: [moonshot, kimi, 8k, chinese]
+
+  - alias: kimi2
+    target_model: moonshot-v1-32k
+    provider: kimi
+    description: Kimi v1 32k context
+    tags: [moonshot, kimi, 32k, chinese, large-context]
+
+  - alias: kimi-128k
+    target_model: moonshot-v1-128k
+    provider: kimi
+    description: Kimi v1 128k context
+    tags: [moonshot, kimi, 128k, chinese, large-context]
+
   # Generic/Use-Case Based Aliases
   - alias: fast
     target_model: gpt-3.5-turbo
