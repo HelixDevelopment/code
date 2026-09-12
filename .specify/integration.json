@@ -2,14 +2,14 @@
   "version": "1.0.4.dev0",
   "integration_state_schema": 1,
   "installed_integrations": [
-    "pi"
+    "kilocode"
   ],
   "integration_settings": {
-    "pi": {
+    "kilocode": {
       "script": "sh",
       "invoke_separator": "."
     }
   },
-  "integration": "pi",
-  "default_integration": "pi"
+  "integration": "kilocode",
+  "default_integration": "kilocode"
 }
