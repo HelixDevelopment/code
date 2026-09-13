@@ -1,1 +1,1 @@
-../../.specify/extensions/superspec/.specify-dev/agent-commands/kilocode/speckit.superspec.brainstorm.md
+../../.opencode/commands/speckit.superspec.brainstorm.md

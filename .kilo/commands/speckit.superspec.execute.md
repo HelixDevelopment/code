@@ -1,1 +1,1 @@
-../../.specify/extensions/superspec/.specify-dev/agent-commands/kilocode/speckit.superspec.execute.md
+../../.opencode/commands/speckit.superspec.execute.md
