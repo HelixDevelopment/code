@@ -1,0 +1,16 @@
+# HelixCode constitution-MCP manifest (HXC-159 T-P1.05).
+# Schema: one row per MCP server, three TAB-separated fields, no header line:
+#   name<TAB>fragment<TAB>owner
+#   name      key under .mcp.json "mcpServers"; ^[a-z0-9][a-z0-9_-]*$ (lowercase)
+#   fragment  constitution-relative path to the JSON fragment holding the exact
+#             server object under .mcpServers.<name> (resolved against
+#             $HELIX_MCP_CONSTITUTION_DIR, default <root>/constitution).
+#             Flat fragments (no .mcpServers wrapper) are REFUSED — fail closed.
+#   owner     registrar allowed to write this name: only `constitution` here.
+# Blank lines and `#`-comment lines are ignored. Rows are applied in
+# byte-sorted name order so output is independent of file order (determinism).
+# Only the 2 constitution-owned names below are writable by this registrar.
+# Third-party servers (codegraph, open-design, …) are UNMANAGED: never written,
+# never removed, preserved byte-identically.
+media-validator	mcp/media-validator-mcp.json	constitution
+scheduled-work	mcp/scheduled-work-mcp.json	constitution
