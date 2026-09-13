@@ -1,0 +1,17 @@
+# HelixCode constitution-skill manifest (T-P1.04).
+# Schema: one row per skill, three TAB-separated fields, no header:
+#   name<TAB>source<TAB>owner
+#   name    directory basename under .claude/skills/ (lowercase [a-z0-9][a-z0-9_-]*)
+#   source  repo-relative directory containing the exact-case SKILL.md
+#   owner   registrar allowed to write this name: only `constitution` here.
+# Reserved prefixes (enforced by scripts/register_skills.sh, never by comment):
+#   speckit-* is owned by SpecKit; this registrar refuses any such row.
+#   Only the 8 names below with owner=constitution are writable by this registrar.
+action-prefix-system	constitution/skills/action-prefix-system	constitution
+media-validator	constitution/skills/media-validator	constitution
+multitrack	constitution/skills/multitrack	constitution
+reporting-workable-items	constitution/skills/reporting-workable-items	constitution
+scheduled-work-queue	constitution/skills/scheduled-work-queue	constitution
+session-sync	constitution/skills/session-sync	constitution
+skill-catalog	constitution/skills/skill-catalog	constitution
+workable-item-lifecycle	constitution/skills/workable-item-lifecycle	constitution
