@@ -1,0 +1,167 @@
+# Execution state — spec 006 (Revision 2, inventory-grounded)
+# Updated by /speckit.superspec.execute. Source of truth for resumption.
+
+feature: specs/006-exhaustive-hardware-aware-model-management
+branch: feature/006-hardware-aware-model-management
+workstreams:
+  helix_llm:  /home/milosvasic/Projects/helix_code_ws_006/helix_llm
+  helix_agent: /home/milosvasic/Projects/helix_code_ws_006/helix_agent
+  claude-toolkit: /home/milosvasic/Projects/helix_code_ws_006/claude-toolkit
+
+phase: 2   # WS-A core deltas done; WS-B started
+status: in_progress
+
+# Reproducibility: work-streams need sibling symlinks for `replace ../X`
+# (helix_llm 36, helix_agent 42). See workstreams.md.
+symlinks_required: true
+
+completed:
+  - { task: T000,  what: catalogue-first inventory,     evidence: research.md }
+  - { task: T000b, what: plan.md Revision 2,            evidence: plan.md }
+  - { task: T001,  what: decisions D-A..D-D resolved,   evidence: research.md §6 }
+  - { task: T002,  what: data-model.md,                 evidence: file }
+  - { task: T003,  what: contracts JSON schemas,        evidence: contracts/ (3 schemas json.load OK) }
+  - { task: T004,  what: quickstart.md,                 evidence: file }
+  - { task: T006,  what: 13-type test-dir scaffold,     evidence: work-streams }
+  - { task: T014,  what: capability Cache,              evidence: helix_llm 7c8fa13, 5 tests + mutation }
+  - { task: T015,  what: cache unit tests,              evidence: cache_test.go }
+  - { task: T023,  what: naming reference resolver,     evidence: helix_llm 046d49d, 15 tests + mutation }
+  - { task: T024,  what: reference grammar tests,       evidence: reference_test.go }
+  - { task: T027,  what: parser mutation,               evidence: FAIL then restored }
+  - { task: T029a, what: brain DisplayName,             evidence: helix_llm 6aeef9a, 5 tests + mutation }
+  - { task: T029,  what: CLI --list-models,             evidence: helix_llm ba58d59, 2 tests + mutation }
+  - { task: T033,  what: discovery deregistration,      evidence: helix_llm 361a09c, 5 tests + mutation }
+  - { task: T036,  what: deregistration mutation (unit),evidence: FAIL then restored }
+  - { task: T045,  what: helixllm provider pooled transport, evidence: helix_agent 3f33980a, 2 tests + mutation; PARTIAL (pool.Do deferred to T050) }
+  - { task: T046,  what: health-gated dial,             evidence: "SATISFIED BY REUSE: provider_registry.go:1729 builds helixllm + :938 wraps every provider in circuitBreakerProvider (:924 config-gated); 38 test funcs across 5 files, fresh-run ok. No new code (§11.4.74)." }
+  - { task: T048,  what: route resilience (retry),       evidence: "helix_agent efa5e003. Retry wired into Complete + GetModels via internal/llm.RetryableHTTPClient; streams not retried. 3 tests + mutation. Measured finding: hypothesised body-loss on retry REFUTED on Go 1.26 (GetBody replays)." }
+  - { task: T051-T056, what: WS-B resilience suite,      evidence: "helix_agent 60cb7bce. Stress 200/200 p95~845us; chaos connection-drop; 32x5 concurrency; race; goroutine census. FOUND A REAL BUG: RetryableHTTPClient retries sent ContentLength=57 with an EMPTY body (Clone copies the drained reader); fixed by rewinding via GetBody + fail-closed refusal when GetBody is nil. Mutation reproduces the original symptom." }
+  - { task: T025-T026, what: collision + property/fuzz,   evidence: "helix_llm 9073b16. Adopt conflict/idempotency tests. FUZZ FOUND A REAL GAP: ParseReference accepted control chars (0/\\x01) that the identity contract rejects; fixed + corpus seed. 1.1M/947k execs clean; mutation catches it." }
+  - { task: T034-T035, what: discovery endpoint integration + churn, evidence: "helix_llm 7b8678f. Real attestation endpoint: Discover->Available->Deregister->withheld->Reregister. 100x churn. mutation catches it; discovery -race clean." }
+  - { task: T040-T041, what: benchmarks + injection security, evidence: "helix_llm a8f3744. ParseReference 88ns/0 allocs, Derive 2.8us, Register+Resolve 7.3us. Security: derived identifiers stay in [A-Za-z0-9_-] for 12 hostile names; mutation produced a real \\$(rm -rf /) injection and the test caught it." }
+  - { task: T042-T043, what: WS-A challenge bank,        evidence: "helix_llm 6aa8604. Bank authored + validated through the REAL loader (TestRegressionBanksLoad); malformed-assertion mutation makes the loader reject it. Live execution pending WS-D." }
+
+not_applicable:
+  - { task: T038, reason: "D-D resolved to reuse YAML+in-memory; no durable store" }
+  - { task: T039, reason: "no store to test" }
+  - { task: T049, reason: "D-A resolved to reuse transports; no grpc_health_v1" }
+
+void:   # Revision-1 tasks targeting non-existent or duplicate surfaces
+  - new helix_llm/internal/hardware | duplicates capability
+  - new helix_llm/internal/registry | duplicates catalogue + brain/models
+  - new helix_llm/internal/lifecycle  | package already exists
+  - CGO llama.cpp/colibri wrappers     | providers are HTTP/process
+  - helix_agent/internal/{connection,debate} | absent; logic lives elsewhere
+  - claude-toolkit/internal/*.go        | repo has no root Go module
+
+next:
+  - "WS-C Issue 1 next: fix the 2 ca-suite hermeticity failures (ambient SSL_CERT_FILE/NODE_EXTRA_CA_CERTS) to reach 12/12, then author the RED truncation test, then implement atomic write+lock in scripts/lib.sh"
+  - T046 (helix_agent health-gated dial) -- DONE by reuse
+  - WS-A leftovers: T016, T044/T057/T058 review layers
+  - WS-C: T059-T096 (5 Claude-Toolkit fixes; Issue 1 forensics done, fix pending)
+  - WS-D: T097-T111 (live CLI; requires real models/hardware)
+  - WS-E: T112-T119 (release; requires gh/glab tags)
+
+ws_c:
+  issue1_ca_bundle:
+    status: "FIXED at code level with discriminating RED->GREEN + paired mutation; live-reported failure NOT reproduced"
+    forensics: "claude-toolkit 92d6520 — scripts/debugging/issue1_ca_bundle.md"
+    root_cause: "non-atomic 'cat > ca-bundle.pem' (scripts/lib.sh) truncating the LIVE file read by the running router via SSL_CERT_FILE"
+    commits:
+      hermeticity: "aae3246 — suite 2 failed/10 passed -> 12/12 (ambient CMA_PROVIDER_CA_CERT leak)"
+      red: "282f154 — [FAIL] rewritten IN PLACE (inode unchanged), 1 failed/12 passed"
+      fix: "3e9a3f8 — temp file + umask 077 + chmod 600 + rename; [PASS] inode 101631->101639; 13/13; mutation FAILs; neighbours 50/0 and 17/0"
+    residual_gap: "the ORIGINAL live symptom (a real router + self-signed gateway) was not reproduced; the fix is proven against the structural cause, not that environment"
+  issue2_session_resume:
+    status: "INVESTIGATED — path already guarded; NO fix authored (no reproduced defect)"
+    forensics: "claude-toolkit 1398bfb — scripts/debugging/issue2_session_resume.md"
+    finding: "claude-session.sh:166-173 already guards the exact hard failure ('No conversation found with session ID'); cma_existing_session_id returns empty rather than injecting --resume with a never-created UUID"
+    measured_baseline: "test_session_flags 18/0, test_session 62/0, test_sessions 30/0 = 110 green on unchanged code"
+    hypotheses_unconfirmed: ["project-slug mismatch (resume from a different root)", "session file below CMA_SESSION_DEAD_BYTES treated as dead", "CLAUDE_CONFIG_DIR scope (session under another alias)", "JSONL pruned/rotated"]
+    next_step: "reproduce via `claude-session.sh existing-id` from the same and a different project root; check the JSONL size vs CMA_SESSION_DEAD_BYTES"
+  issue3_request_size:
+    status: "INVESTIGATED — Go half already implemented AND tested; raising the 32MB ceiling is the WRONG fix; NO fix authored"
+    forensics: "claude-toolkit 41483c7 — scripts/debugging/issue3_request_size.md"
+    measured_baseline: "trunk router ./internal/gateway: TestOversizedRequestBodyIsRejectedNotOOM PASS, TestNormalSizedRequestBodyStillAccepted PASS, TestOpenAIFacadeLargeRequestForwardsBodyUnchanged PASS"
+    finding: "the ceiling is deliberate OOM protection; the wrapper's knobs govern the CONTEXT WINDOW, not the serialized request size"
+    workstream_blocker: "submodules/claude-code-router is UNINITIALIZED in the work-stream (0 entries) though present in trunk (18) — any router change requires initializing it first"
+    next_step: "measure the real serialized request size on a long live session before choosing a strategy (lower window / pre-send byte estimate / clearer 413 message); do NOT raise the ceiling without addressing OOM"
+  issue4_pi_alias:
+    status: "GATE is by design AND a REAL DEFECT FOUND+FIXED: PI_ALIASES was never initialized"
+    forensics: "claude-toolkit 6178600 — scripts/debugging/issue4_pi_alias.md"
+    finding: "the reported refusal is VERBATIM the gate's output (lib.sh:4139-4157); only 'verified' launches unless --force; bypassing it is not a fix"
+    real_defect:
+      symptom: "claude-providers.sh:2799 'PI_ALIASES: unbound variable' under set -u aborted helixllm-export --apply"
+      cause: "the Pi twin evaluates (( PI_ALIASES )) but only SET it from --pi-aliases/--no-pi-aliases; its Kimi twin has ': \"${KIMI_ALIASES:=1}\"', the Pi twin was added without a default"
+      trajectory: "25 failed/80 passed -> 1 failed/104 passed (fix e78835d) -> 105 passed/0 failed (test hermeticity fa9bf43)"
+      mutation: "PI_ALIASES left unset -> 24 failed/81 passed; reverted, no residue"
+      regression_sweep: "ccr 13/0, facade 21/0, failure-attribution 50/0, mechanical 17/0, session 62/0, sessions 30/0"
+    hypothesis_unconfirmed: "whether a router-transport provider can EVER reach 'verified' (would make the gate a permanent dead end) — still requires a live `claude-providers verify helixllm-gateway`"
+    next_step: "run `claude-providers verify helixllm-gateway`; read status.json status + failing_layer"
+  issue5_gateway_endpoint:
+    status: "NOT STARTED"
+  full_suite_sweep_20260912:
+    method: "scripts/tests/run-all.sh (47 suites completed before the 1500s cap)"
+    initial_result: "5 of 47 suites had failures (12 tests)"
+    resolution:
+      kimi_alias_file: "FIXED f30f34b — ambient CA leak (3rd instance; class closed centrally in 9d04fac via make_sandbox)"
+      ccr_conformance: "FIXED by initializing nested submodules/claude-code-router in the work-stream (19 entries) -> 10/0"
+      ccr_build_go_toolchain_pin: "FIXED by the same router init -> 53/0"
+      constitution_verify: "ENVIRONMENTAL — worktree lacks the full submodule set; not a product defect"
+      failing_layer_attribution: "FIXED abc904f + RECONCILED 3bcec3b — the file protocol is authoritative, the legacy reason matcher is the fallback (§11.4.120); suite1 22/0 AND suite2 14/0 simultaneously (the fix first REGRESSED suite2 14/0 -> 5 failed; bisected against the trunk and reconciled, not reverted)"
+      providers_semantic_visibility: "FIXED by initializing nested submodules/LLMsVerifier -> 427/0 (was 3 failed; the driver builds from that submodule and even prints the remedy)"
+      full_suite_final: "73 files: 70 passed, 3 failed -> after the fixes above, only test_constitution.sh remains (environmental: worktree lacks the full submodule set)"
+    new_defect:
+      id: "failing_layer-attribution"
+      contract: "providers-verify.sh:70-84 publishes the layer via CMA_VERIFY_LAYER_FILE in a CLOSED vocabulary {existence, tool_call, context, attribution, llmsverifier, preconditions, \"\"} — so 'tool_call' is correct and 'tool_calling' is off-vocabulary"
+      d1: "cmd_verify (claude-providers.sh:2976-2977) writes the literal 'existence' and never sets CMA_VERIFY_LAYER_FILE; only cmd_sync was ever wired"
+      d2: "cma_verify_failing_layer re-derives the layer from stderr PROSE (off-vocabulary, and disagrees with the verifier's own declaration)"
+      red: "test_failing_layer_attribution.sh — 5 failed / 39 passed on unchanged code, want/got captured"
+      fix_plan: "set CMA_VERIFY_LAYER_FILE at every verify call site; read the token; use 'unknown' when absent (never 'existence'); then delete the obsolete helper; paired mutation = write 'existence' again and watch L4/L8 fail"
+    next: "apply the failing_layer fix as one reviewed change; resume the sweep past 1500s to cover the remaining suites"
+  full_suite_milestone_20260913:
+    result: "ALL GREEN — 73 test files, 73 passed, 0 failed (run-all.sh, post-reconciliation)"
+    trajectory: "one suite alone was 25 failed/80 passed on main; the earlier full run was 70/73 files"
+    fixes_that_got_it_there:
+      - "PI_ALIASES initializer (e78835d) — helixllm-export --apply aborted on 'unbound variable'"
+      - "failing_layer file protocol + legacy reason fallback (abc904f, 3bcec3b) — reconciled after the first fix regressed a passing suite"
+      - "ambient-CA hermeticity, class closed centrally in make_sandbox (9d04fac)"
+      - "nested submodules initialized: claude-code-router, LLMsVerifier"
+  repo_hygiene_observation:
+    id: "§11.4.53"
+    what: "scripts/tests/proof/ tracks 188 GENERATED test-run artifacts; running the suite modifies them and dirties the tree"
+    action_taken: "reverted the two touched files rather than committing churn; NOT gitignored or deleted, because the project may intend them as a versioned evidence corpus (§11.4.122/§11.4.124 — investigate before removing)"
+    recommendation: "decide deliberately: treat proof/ as a committed evidence corpus (accept churn) OR gitignore it with a §11.4.77 regeneration mechanism"
+
+blocked:
+  - { layer: WS-C live reproduction, reason: "requires the running Claude Toolkit + claude-code-router" }
+  - { layer: WS-D live CLI,          reason: "requires real model provisioning on real hardware" }
+  - { layer: WS-E release,           reason: "requires gh/glab and an operator-approved release" }
+  - { task: T047 HTTP/3 fallback,     reason: "contract change: NewHTTP3Client transport is not *http.Transport; 6 pre-existing tests assert that type. Needs operator decision + live HTTP/3 validation (D-A resolved to reuse existing transports)." }
+
+verify_commands:
+  - "cd $WS/helix_llm && go build ./... && go test -race ./internal/naming/ ./internal/capability/ ./internal/brain/ ./internal/discovery/ ./cmd/helixllm/"
+  - "cd $WS/helix_agent && go build ./... && go test ./internal/llm/providers/helixllm/"
+
+review:
+  method: "two INDEPENDENT reviewer agents (§11.4.142 producer != verifier), one per work-stream, over the diffs; both returned NO-GO"
+  helix_llm:
+    fixed: [H1, H2, H3, M1, M2, L1, L2, L7, "plus two test-side defects (future-stamping fixture, unguarded vacuity)"]
+    commits: ["d6ed98f", "6a59f08"]
+    open:
+      - { id: M3, what: "ParseReference/Resolve/Registry.DisplayName/NewCache have ZERO production callers", why: "the resolver and cache are not yet wired into a request path", status: "recorded — wiring is a later work-stream, not silently dropped" }
+      - { id: M4, what: "Tracker.deregistered/states maps are unbounded", why: "keys are arbitrary endpoint strings, never evicted", status: "recorded — bound it or document the finite endpoint set" }
+      - { id: L3, what: "list-models treats a 200 with absent/empty data as success (prints nothing)", why: "'broken server' is indistinguishable from 'no models'", status: "recorded — require object==list or an explicit empty signal" }
+  helix_agent:
+    fixed: [F1, F2, F3, F4, F5, F7, "F6 documented in code"]
+    commits: ["903a58f8"]
+    open:
+      - { id: F8, what: "goroutine-leak test tolerance (+10) and no retry-driven leak case", why: "a small/sub-linear leak could pass; upper bounds now asserted on chaos attempts", status: "partially addressed; add a retry-path leak case" }
+      - { id: F9, what: "PRE-EXISTING: CompleteStream closes resp.Body before reading it, so error messages always show an empty body", why: "not introduced by this feature; outside the diff", status: "recorded as a discovered pre-existing defect for a separate fix" }
+
+review_note: >
+  Both reviewers also ran -race and short fuzzing themselves and found no
+  CRITICAL runtime/data-loss/security defect in the production code; every
+  blocking finding was an UNPROVEN GUARANTEE (a test that would pass with the
+  guarded behaviour broken). That is the reviewed transcript of this session's
+  most useful signal: green tests were not the same as proven behaviour.

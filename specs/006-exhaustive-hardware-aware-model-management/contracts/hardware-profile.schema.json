@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://helix.dev/schemas/006/hardware-profile.schema.json",
+  "title": "HardwareProfileCache",
+  "description": "Delta payload for the in-memory hardware-profile cache (A1). In-memory only (D-D); not persisted.",
+  "type": "object",
+  "required": ["profile", "measured_at", "source"],
+  "additionalProperties": false,
+  "properties": {
+    "profile": {
+      "type": "object",
+      "description": "A validated HostCapabilityProfile (helix_llm/internal/capability). Fields are illustrative of the reused entity; the Go struct is authoritative.",
+      "required": ["cpu", "memory"],
+      "properties": {
+        "cpu": {
+          "type": "object",
+          "properties": {
+            "architecture": { "type": "string" },
+            "physical_cores": { "type": "integer", "minimum": 0 },
+            "logical_cores": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "properties": {
+            "total_bytes": { "type": "integer", "minimum": 0 },
+            "available_bytes": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "accelerators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vendor": { "type": "string" },
+              "identity": { "type": "string" },
+              "memory_total_bytes": { "type": "integer", "minimum": 0 },
+              "memory_available_bytes": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "storage": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "free_bytes": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "measured_at": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "enum": ["local", "remote"] },
+    "endpoint_id": { "type": "string" }
+  }
+}
