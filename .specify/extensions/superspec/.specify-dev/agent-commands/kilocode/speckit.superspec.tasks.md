@@ -1,12 +1,7 @@
----
-name: speckit-superspec-tasks
-description: 'Spec-kit workflow command: speckit-superspec-tasks'
-compatibility: Requires spec-kit project structure with .specify/ directory
-metadata:
-  author: github-spec-kit
-  source: superspec:commands/tasks.md
----
 
+
+<!-- Extension: superspec -->
+<!-- Config: .specify/extensions/superspec/ -->
 # speckit.superspec.tasks
 
 Generate a phased task breakdown using writing-plans skills.

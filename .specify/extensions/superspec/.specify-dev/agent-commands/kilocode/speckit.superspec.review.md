@@ -1,12 +1,7 @@
----
-name: speckit-superspec-review
-description: 'Spec-kit workflow command: speckit-superspec-review'
-compatibility: Requires spec-kit project structure with .specify/ directory
-metadata:
-  author: github-spec-kit
-  source: superspec:commands/review.md
----
 
+
+<!-- Extension: superspec -->
+<!-- Config: .specify/extensions/superspec/ -->
 # speckit.superspec.review
 
 Run code review against spec requirements using review skills.

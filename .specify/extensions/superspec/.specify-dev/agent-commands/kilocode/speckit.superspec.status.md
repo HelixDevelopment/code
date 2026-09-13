@@ -1,12 +1,7 @@
----
-name: speckit-superspec-status
-description: 'Spec-kit workflow command: speckit-superspec-status'
-compatibility: Requires spec-kit project structure with .specify/ directory
-metadata:
-  author: github-spec-kit
-  source: superspec:commands/status.md
----
 
+
+<!-- Extension: superspec -->
+<!-- Config: .specify/extensions/superspec/ -->
 # speckit.superspec.status
 
 Show current project progress, feature status, and superpowers detection results.
