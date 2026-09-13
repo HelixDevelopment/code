@@ -1,0 +1,7 @@
+# Forbidden registrations (HXC-159 T-P1.07): names that MUST NOT appear in any
+# registrar manifest (scripts/skills_manifest.tsv, scripts/mcp_manifest.tsv),
+# because wiring them would fork the §11.4.93/§11.4.95 SQLite single source of
+# truth. Schema: name<TAB>reason<TAB>allowed-target.
+# Only one row today. Rows are removed only by re-pointing the command at the
+# DB (then its allowed-target becomes the DB) — never by silent deletion.
+speckit-taskstoissues	pushes tasks to GitHub Issues, forking the workable-items SQLite SSoT	workable-items-DB

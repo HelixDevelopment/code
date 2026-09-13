@@ -3,6 +3,11 @@ description: Convert existing tasks into actionable, dependency-ordered GitHub i
 tools: ['github/github-mcp-server/list_issues', 'github/github-mcp-server/issue_write']
 ---
 
+> **SSoT WARNING (HXC-159 T-P1.07):** pushing tasks to GitHub Issues FORKS the
+> §11.4.93/§11.4.95 SQLite single source of truth (`docs/workable_items.db`).
+> Prefer `workable-items add` (DB-first). Use this command only when a GitHub
+> mirror is explicitly required, and reconcile back to the DB afterwards.
+
 ## User Input
 
 ```text
