@@ -4,8 +4,10 @@
 **Spec**: [`spec.md`](spec.md) · **Plan**: [`plan.md`](plan.md)
 **Revision**: 2 · **Last modified**: 2026-09-02 · **Author**: `(T1/main - claude1 - opus - xhigh)`
 
-**Status**: PLAN ONLY — no task below has been started. `T-P1.06` is the sole
-exception and is marked `[x]` with its disclosure.
+**Status**: IN EXECUTION since 2026-09-13. Phase P0 COMPLETE
+(T-P0.01→facts.json, T-P0.02→no competitor/D-3 stands, T-P0.03→replace-key fix +
+CM-UNIQUE-MODULE-PATHS, T-P0.04→D1=A D2=A D3=A, T-P0.05→live verifier response).
+`T-P1.06` was already `[x]` before execution.
 
 ---
 
@@ -59,7 +61,7 @@ flipped to `0`, becomes the standing regression guard (§11.4.135).
 **Why first**: three unknowns here could each invalidate a later phase's design. They
 are cheap to close and expensive to discover late.
 
-### - [ ] T-P0.01 Re-derive environment facts from the artifact, not the description
+### - [x] T-P0.01 Re-derive environment facts from the artifact, not the description
 
 **Scope**: Re-measure every environment claim HXC-159 makes, record contradictions
 explicitly. Does **not** edit the work item's description (shared SSoT, concurrent
@@ -79,7 +81,7 @@ against the item's stated facts.
 - T-P0.01.4 Raise a tracked item for each contradiction, citing the probe output.
 - T-P0.01.5 Re-run at the start of every subsequent phase — facts decay.
 
-### - [ ] T-P0.02 [P] Survey HelixAgent's unsurveyed trees for competing abstractions
+### - [x] T-P0.02 [P] Survey HelixAgent's unsurveyed trees for competing abstractions
 
 **Scope**: `submodules/helix_agent/Toolkit/` (own module, ~50 Go files), the ~693 files
 under `MCP/`, and the 21 `mcp-servers/` directories. Read-only.
@@ -95,7 +97,7 @@ under `MCP/`, and the 21 `mcp-servers/` directories. Read-only.
 - T-P0.02.4 If a competing abstraction exists, re-open `spec.md` D-3 explicitly rather
   than silently routing around it.
 
-### - [ ] T-P0.03 Resolve the duplicate module path and the mis-wired `skill_registry`
+### - [x] T-P0.03 Resolve the duplicate module path and the mis-wired `skill_registry`
 
 **Scope**: root and inner modules both declare `dev.helix.code`; and
 `submodules/skill_registry` is replaced-but-never-required, with a module path
@@ -117,7 +119,7 @@ and a gate collecting every `module` line in the repo reports zero duplicates.
 - T-P0.03.5 Author gate `CM-UNIQUE-MODULE-PATHS` + paired mutation (reintroduce a
   duplicate → FAIL).
 
-### - [ ] T-P0.04 [P] Assemble the operator decision packet
+### - [x] T-P0.04 [P] Assemble the operator decision packet
 
 **Scope**: three decisions this plan deliberately refuses to take unilaterally.
 Produces a question set, not an answer.
@@ -137,7 +139,7 @@ options per decision and the consequence of each stated (§11.4.66 / §11.4.101)
 - T-P0.04.4 Block **only** these three items on the answer; every other task proceeds
   (§11.4.101 — a block parks a work unit, never the loop).
 
-### - [ ] T-P0.05 [P] Settle CONST-040 Skills/Plugins capability sourcing
+### - [x] T-P0.05 [P] Settle CONST-040 Skills/Plugins capability sourcing
 
 **Scope**: CONST-040 requires Skills and Plugins capability flags to come from the
 verifier `VerificationResult`. Only `CapabilityScore float64` was found in the verifier
@@ -163,7 +165,7 @@ either way is not.
 **Why here**: every item is a **live defect today**, independent of HelixSkills. Fixing
 them first means P4's first failure is a real one rather than a known one.
 
-### - [ ] T-P1.01 Normalise `SKILL.md` filename case upstream
+### - [x] T-P1.01 Normalise `SKILL.md` filename case upstream
 
 **Scope**: `git mv` each lowercase `skill.md` → `SKILL.md` in `constitution/skills/`,
 updating every reference in the **same** commit (§11.4.29 reference integrity).
@@ -180,7 +182,7 @@ fake a pass.
 - T-P1.01.4 Flip `RED_MODE=0`; register as a standing guard (§11.4.135).
 - T-P1.01.5 Gate `CM-SKILL-MANIFEST-COMPLETE` + paired mutation (delete a `SKILL.md` → FAIL).
 
-### - [ ] T-P1.02 Author the missing `multitrack/SKILL.md`
+### - [x] T-P1.02 Author the missing `multitrack/SKILL.md`
 
 **Scope**: `multitrack` has a `register.sh` but no manifest — it is **wired, not dead**,
 so §11.4.124 forbids deleting it. Author the manifest; do not remove the skill.
@@ -195,7 +197,7 @@ so §11.4.124 forbids deleting it. Author the manifest; do not remove the skill.
 - T-P1.02.3 Write the body from the §11.4.187 multitrack anchor — never invented.
 - T-P1.02.4 Export the four formats per §11.4.65.
 
-### - [ ] T-P1.03 [P] Symlink hygiene
+### - [x] T-P1.03 [P] Symlink hygiene
 
 **Scope**: `skills/media-validator` → `/Volumes/T7/Projects/…` — a **macOS** path
 resolved on a **Linux** host, tracked and broken. Replace with a repo-relative link, or
@@ -212,7 +214,7 @@ delete it and register `constitution/skills/` as a source instead (preferred).
 - T-P1.03.4 Gate `CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS` + paired mutation (recreate the
   `/Volumes/T7/…` link → FAIL).
 
-### - [ ] T-P1.04 Author `scripts/register_skills.sh` with install-time collision detection
+### - [x] T-P1.04 Author `scripts/register_skills.sh` with install-time collision detection
 
 **Scope**: the manifest-driven, idempotent, prefix-scoped registrar §11.4.164 already
 calls **and which does not exist**. Includes the **original-work** collision detector.
@@ -246,7 +248,7 @@ having changed nothing.
 - T-P1.04.8 Gate `CM-SKILL-NAMESPACE-DISJOINT` + paired mutation (plant a colliding
   entry → FAIL) + install-order determinism test (both orders → byte-identical).
 
-### - [ ] T-P1.05 Author `scripts/register_mcp.sh`
+### - [x] T-P1.05 Author `scripts/register_mcp.sh`
 
 **Scope**: the second registrar §11.4.164 calls. Manifest-driven, idempotent.
 **Test types**: unit, integration, full-automation.
@@ -294,7 +296,7 @@ the heading stripped and 0 once restored.
 > placeholder was **live** — read by every `/speckit-plan` Constitution Check run,
 > including this feature's own.
 
-### - [ ] T-P1.07 [P] Un-fork the workable-items SSoT
+### - [x] T-P1.07 [P] Un-fork the workable-items SSoT
 
 **Scope**: `speckit-taskstoissues` pushes tasks to GitHub Issues, forking the
 §11.4.93/§11.4.95 SQLite single source of truth. Exclude it from the manifest, or
@@ -311,7 +313,7 @@ actually reads.
 - T-P1.07.3 Gate `CM-WORKABLE-ITEMS-SSOT-UNFORKED` + paired mutation (re-register it
   unmodified → FAIL).
 
-### - [ ] T-P1.08 Schema converters with round-trip tests
+### - [x] T-P1.08 Schema converters with round-trip tests
 
 **Scope**: three mutually-unreadable dialects — HelixCode
 (`triggers`/`variables`/`requires_isolation`, name from filename), HelixAgent

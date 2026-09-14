@@ -1,0 +1,20 @@
+feature: 001-helixskills-incorporation
+branch: main
+started: 2026-09-13
+current_phase: P0-complete
+gates:
+  T-P0.01: PASS  # qa-results/hxc159/env_facts/probe1/facts.json
+  T-P0.02: PASS  # no competing abstraction; D-3 stands
+  T-P0.03: PASS  # decision recorded; replace-key fixed; CM-UNIQUE-MODULE-PATHS + mutation
+  T-P0.04: PASS  # packet + operator answers D1=A D2=A D3=A
+  T-P0.05: PASS  # qa-results/hxc159/const040/probe1/verifier_response.json; premise stale, schema HAS booleans
+operator_decisions: {D1: A-approve-extraction, D2: A-skills-model, D3: A-track-claude-skills}
+next: P1 hygiene & registrars (T-P1.01..T-P1.05, T-P1.07, T-P1.08; T-P1.06 already done)
+p1_complete_20260914:
+  T-P1.03: {commit: 487dd97b, gate: CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS}
+  T-P1.04: {commit: f8fc0789, gate: CM-SKILL-NAMESPACE-DISJOINT}
+  T-P1.05: {commit: 38449fee, gate: CM-MCP-ENTRIES-GENERATED}
+  T-P1.07: committed (gate CM-WORKABLE-ITEMS-SSOT-UNFORKED; re-point-at-DB deferred)
+  T-P1.08: committed (1190/1190 round-trips; TOML leg blocked on P3)
+  preexisting_fail: "root `go test ./...` setup-FAIL in cli_agents/plandex vendored eval assets (third-party, untouched, out of scope)"
+next: P2 shadowing benchmark (T-P2.01..T-P2.05)

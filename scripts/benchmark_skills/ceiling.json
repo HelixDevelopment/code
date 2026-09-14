@@ -1,0 +1,9 @@
+{
+  "rule": "knee=smallest N with pass_rate<=base-0.10 OR mis-selections>=25% of tasks; ceiling=largest sampled N below knee; flat iff spread<0.05",
+  "base_pass_rate": 0.8333,
+  "verdict": "FLAT",
+  "ceiling": 20,
+  "knee": null,
+  "knee_why": null,
+  "margin": "no knee observed (spread 0.000 < 0.05); ceiling is provisional at the largest tested N=20 \u2014 an honest finding per T-P2.03.3, not a buried one."
+}
