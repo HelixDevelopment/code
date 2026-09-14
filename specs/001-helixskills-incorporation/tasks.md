@@ -550,7 +550,7 @@ per-entry per-item status — not only the new one.
 R-01's mitigation is explicit: **no incorporation phase may be scheduled before this
 phase exists.**
 
-### - [ ] T-P4.01 `pkg/skills` pure-data loader skeleton
+### - [x] T-P4.01 `pkg/skills` pure-data loader skeleton
 
 **Scope**: a dependency-free Go package in the **upstream** repo's `pkg/` — the
 consumable artefact. Pure data: no Go `plugin`, no CGO, no GUI.
@@ -567,7 +567,7 @@ package's own dependency graph is **empty of third-party modules**.
 - T-P4.01.4 Gate `CM-CONSUMER-VERSION-PARITY` + paired mutation (bump one consumer's
   `require` only → FAIL).
 
-### - [ ] T-P4.02 Typed source registry with fail-closed collision handling
+### - [x] T-P4.02 Typed source registry with fail-closed collision handling
 
 **Scope**: `sources:` manifest — name, root, dialect, precedence, trust tier. Enumerate
 all registered sources into one namespace; **refuse to start** on a name collision.
@@ -585,7 +585,7 @@ the union count equals the sum of per-source counts (**no silent drops**) — to
 - T-P4.02.5 Register corpus 2 **in place** — it is a plain tracked tree inside
   HelixAgent; reference it, never copy it.
 
-### - [ ] T-P4.03 Namespacing (`<source>.<name>`)
+### - [x] T-P4.03 Namespacing (`<source>.<name>`)
 
 **Scope**: qualify every skill so growth in one source can never retroactively shadow
 another.
@@ -599,7 +599,7 @@ same-named skills from different sources coexist without collision.
 - T-P4.03.2 Prove coexistence with a two-source same-name fixture.
 - T-P4.03.3 Assert the canonical `name`-matches-directory rule still holds within a source.
 
-### - [ ] T-P4.04 Allowlist activation with the calibrated ceiling
+### - [x] T-P4.04 Allowlist activation with the calibrated ceiling
 
 **Scope**: **default active set is empty**. Registration is an explicit allowlist; a
 directory walk MUST NOT imply activation.
@@ -615,7 +615,7 @@ directory walk MUST NOT imply activation.
 - T-P4.04.4 Wire the T-P2.04 similarity gate into load.
 - T-P4.04.5 Keep corpus 2 `vendored`-tier and **unactivated** pending T-P0.04.1.
 
-### - [ ] T-P4.05 Capability declaration and fail-closed refusal
+### - [x] T-P4.05 Capability declaration and fail-closed refusal
 
 **Scope**: each skill declares filesystem / network / shell needs; the loader
 **refuses** an undeclared capability rather than warning.
@@ -632,7 +632,7 @@ is refused at load, and the refusal appears in the audit record.
 - T-P4.05.5 Gate `CM-SKILL-CAPABILITY-DECLARED` + paired mutation (remove a declaration,
   keep the use → FAIL).
 
-### - [ ] T-P4.06 [P] Headless-by-construction gate
+### - [x] T-P4.06 [P] Headless-by-construction gate
 
 **Scope**: the loader is a data/registry component and must not import Fyne or any
 GL-linked package. The host lacks X11/GL headers — turn the constraint into a gate.
@@ -646,7 +646,7 @@ itself is the proof).
 - T-P4.06.1 Gate `CM-SKILLS-LOADER-HEADLESS` + paired mutation (add a Fyne import → FAIL).
 - T-P4.06.2 Run the full suite headless and capture it.
 
-### - [ ] T-P4.07 Full §11.4.169 matrix on the loader
+### - [x] T-P4.07 Full §11.4.169 matrix on the loader
 
 **Scope**: all 13 types land here, on the one component that can actually fail in those
 ways (§8 of the plan).

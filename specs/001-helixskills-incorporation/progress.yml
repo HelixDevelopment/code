@@ -25,3 +25,10 @@ p3_complete_20260914:
   mirror_note: upstreams/ recipes reference helix_skills mirror names (live mirrors, github current, gitlab/gitverse stale at 315b56c, gitflic unverified) — pushes to mirrors deferred to final push phase with per-remote ff checks
   update_none_limitation: recorded (init vs update); upstream follow-up open
 next: P4 loader (pkg/skills upstream + P5/P6 wiring); T-P4.02.5 corpus-in-place; T-P3.05.4 constitution-path injection is P4 input
+p4_complete_20260914:
+  upstream_commits: [86de0cf, 19db427, 24a38cb, 8421364, ee76715, d48f9dd, 3673920]
+  review_fix: deterministic reverse tool lookup (31/169 split fixed, 200/200 guard)
+  upstream_main: 7cce3c2-pushed
+  loader: pkg/skills stdlib-only; Activate allowlist-only; ceiling 20; Jaccard 0.0256; NFR 500ms
+  matrix: 13/13 rows, race clean, ledger complete
+next: P5 HelixCode wiring (T-P5.01..05) + P6 HelixAgent wiring (T-P6.01..05)
