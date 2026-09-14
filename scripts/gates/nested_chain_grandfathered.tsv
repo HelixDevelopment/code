@@ -1,0 +1,16 @@
+# Pre-existing nested owned-org chains (full census 2026-09-14, HXC-159 T-P3.05).
+# Grandfathered: the gate FAILs on any nested materialized chain NOT listed
+# here. Removing a row requires disabling the chain (update=none + deinit),
+# never silent deletion of the row. Ratchet: rows only shrink.
+constitution/submodules/token_optimizer	pre-existing nested copy, tracked for future disable
+constitution/submodules/session_orchestrator	pre-existing nested copy, tracked for future disable
+constitution/submodules/continuum	pre-existing nested copy, tracked for future disable
+constitution/submodules/anti_bluff	pre-existing nested copy, tracked for future disable
+constitution/submodules/helix_perf_cache	pre-existing nested copy, tracked for future disable
+constitution/submodules/design-toolkit	pre-existing nested copy, tracked for future disable
+constitution/submodules/docs_chain	pre-existing nested copy, tracked for future disable
+submodules/claude-toolkit/submodules/LLMsVerifier	pre-existing nested copy, tracked for future disable
+submodules/claude-toolkit/submodules/containers	pre-existing nested copy, tracked for future disable
+submodules/claude-toolkit/submodules/challenges	pre-existing nested copy, tracked for future disable
+submodules/claude-toolkit/submodules/claude-code-router	pre-existing nested copy, tracked for future disable
+submodules/claude-toolkit/constitution	pre-existing nested copy, tracked for future disable

@@ -524,3 +524,9 @@
 [submodule "dependencies/colibri"]
 	path = dependencies/colibri
 	url = git@github.com:JustVugg/colibri.git
+[submodule "submodules/skills"]
+	path = submodules/skills
+	url = git@github.com:HelixDevelopment/skills.git
+	branch = main
+[submodule "submodules/skills/constitution"]
+	update = none
