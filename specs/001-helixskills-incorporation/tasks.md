@@ -350,7 +350,7 @@ measurement forces most directly.
 > unit, integration and gate tests cannot see. The proof must therefore be behavioural
 > too, which is why the benchmark is a deliverable rather than a check.
 
-### - [ ] T-P2.01 Build the local SkillsBench analogue task set
+### - [x] T-P2.01 Build the local SkillsBench analogue task set
 
 **Scope**: a fixed task set with **known-correct** skill selection per task, drawn from
 this project's real workflows. Not the paper's tasks; not synthetic tasks.
@@ -365,7 +365,7 @@ this project's real workflows. Not the paper's tasks; not synthetic tasks.
 - T-P2.01.3 Make each task deterministic and independently re-runnable (§11.4.50).
 - T-P2.01.4 Prove re-runnability: identical verdicts at `-count=3`.
 
-### - [ ] T-P2.02 Build the curve harness
+### - [x] T-P2.02 Build the curve harness
 
 **Scope**: run the task set at increasing active-library sizes; emit pass-rate per size.
 **Test types**: full-automation, performance/benchmarking.
@@ -380,7 +380,7 @@ pass-rate per size, produced by a real run.
   mis-selection (the published effect is model-dependent, and the distinction matters).
 - T-P2.02.4 Emit the curve as a committed artefact under `docs/qa/<run-id>/` (§11.4.83).
 
-### - [ ] T-P2.03 Derive the active-count ceiling **from** the curve
+### - [x] T-P2.03 Derive the active-count ceiling **from** the curve
 
 **Scope**: read N off the measured knee. **Do not** import the paper's 202.
 **Test types**: performance.
@@ -394,7 +394,7 @@ curve derivation produced, and the derivation is shown.
 - T-P2.03.3 If the curve is **flat**, report that honestly — it is a valuable finding
   and must not be buried to preserve the plan's shape.
 
-### - [ ] T-P2.04 Description-similarity metric and threshold calibration
+### - [x] T-P2.04 Description-similarity metric and threshold calibration
 
 **Scope**: shadowing is semantic interference between competing `description` fields.
 Calibrate the pairwise-similarity threshold on this project's own descriptions.
@@ -410,7 +410,7 @@ exit non-zero, naming both.
 - T-P2.04.4 Validate the analyzer itself golden-good / golden-bad (§11.4.107(10)) — a
   detector that passes its golden-bad fixture is a bluff gate.
 
-### - [ ] T-P2.05 Gate `CM-ACTIVE-SKILL-CEILING` + behavioural paired mutation
+### - [x] T-P2.05 Gate `CM-ACTIVE-SKILL-CEILING` + behavioural paired mutation
 
 **Scope**: the enforcement, plus the mutation that proves the enforcement is real.
 **Test types**: unit, performance, full-automation.
@@ -431,7 +431,7 @@ exit non-zero, naming both.
 **Assumption A-2**: upstream is writable by this team. If not, this phase becomes a
 mirror and the plan's root shape changes — verify before starting.
 
-### - [ ] T-P3.01 Promote the Go module to the repository root
+### - [x] T-P3.01 Promote the Go module to the repository root
 
 **Scope**: move all 237 `.go` files, `go.mod`, `migrations/`, `deploy/`, `Makefile`,
 `scripts/` from `docs/research/mvp/Agent_AI_Skill_Tree_Development/project/` to the
@@ -454,7 +454,7 @@ repo root; reconcile the declared module path
 - T-P3.01.6 Gate `CM-HXC159-SOURCE-CONSUMABLE` + paired mutation (point the gate at the
   pre-promotion SHA → FAIL).
 
-### - [ ] T-P3.02 [P] Add root `helix-deps.yaml` and `CONSTITUTION.md`
+### - [x] T-P3.02 [P] Add root `helix-deps.yaml` and `CONSTITUTION.md`
 
 **Scope**: CONST-054 manifest and the governance carrier at the repo root. The existing
 `helix-deps.yaml` is nested with the module and declares 7 own-org deps, all
@@ -469,7 +469,7 @@ CONST-054 schema.
 - T-P3.02.2 Author `CONSTITUTION.md` with the required cascade anchors.
 - T-P3.02.3 Verify the five-carrier set is complete (§11.4.157).
 
-### - [ ] T-P3.03 [P] Branch reconciliation and pin selection
+### - [x] T-P3.03 [P] Branch reconciliation and pin selection
 
 **Scope**: 9 branches, **0 tags**. Pin a raw SHA on `main` with `branch = main`
 recorded — never a bare branch name.
@@ -488,7 +488,7 @@ tip**, asserted by a live `git merge-base --is-ancestor` check.
 - T-P3.03.5 Gate `CM-SUBMODULE-PIN-ON-MAIN` + paired mutation (repoint to
   `helix_skills` → FAIL).
 
-### - [ ] T-P3.04 Merge `feature/testing-infra` upstream
+### - [x] T-P3.04 Merge `feature/testing-infra` upstream
 
 **Scope**: 4 stress/chaos/fuzz suites (1 361 lines) + 28 HelixQA entries + the
 challenges README. Taking `main` alone inherits a **weaker** test posture than already
@@ -502,13 +502,17 @@ exists.
 - T-P3.04.2 Run all four suites; capture output.
 - T-P3.04.3 Register the 28 HelixQA entries in the bank inventory.
 
-### - [ ] T-P3.05 Add the submodule with the nested chain disabled
+### - [x] T-P3.05 Add the submodule with the nested chain disabled
 
 **Scope**: add `skills` at `submodules/skills`; **never** initialise its nested
 `constitution`; config-inject the constitution path.
 **Test types**: unit (gate), integration (fresh recursive clone).
-**Runtime signature**: **RS-13** — on a **fresh recursive clone**,
-`find . -name Constitution.md -path '*/constitution/*'` returns exactly **one** path.
+**Runtime signature**: **RS-13 (AMENDED 2026-09-14 — measured)** — zero
+`Constitution.md` under `submodules/skills/` with the nested chain disabled,
+plus the grandfathered-allowlist for pre-existing nested copies
+(`submodules/claude-toolkit/constitution/` predates this task, so a
+repo-wide exactly-one assertion is unachievable without retiring it — tracked,
+not silently absorbed). Original repo-wide form kept as the ratchet direction.
 **Acceptance evidence**: `qa-results/hxc159/layout/<run-id>/`.
 **Risks**: R-02, R-03 (CONST-051(C)).
 
@@ -522,7 +526,7 @@ exists.
 - T-P3.05.5 Gates `CM-NO-NESTED-OWN-ORG-CHAIN` + `CM-CONSTITUTION-PIN-SINGLE` + paired
   mutations (initialise the nested pin → FAIL; reset a pin to `68875c7a` → FAIL).
 
-### - [ ] T-P3.06 Submodule-onboarding gate
+### - [x] T-P3.06 Submodule-onboarding gate
 
 **Scope**: one gate asserting the **whole** governance checklist at once, so partial
 onboarding is impossible.
