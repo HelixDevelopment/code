@@ -1327,7 +1327,22 @@ layer report, and never claims 8/8 while a layer is absent.
 - T-B2.03.2 Drop or re-point any check that depends on L5.
 - T-B2.03.3 Paired mutation: uninstall L4 → the validator MUST report it, not pass.
 
-### - [ ] T-B2.04 [P] Read the six unread Bridge documents
+### - [x] T-B2.04 [P] Read the six unread Bridge documents
+
+**Evidence**: `qa-results/hxc159/bridge_docs_delta/20260922T200326Z/delta.md`
+(full heading-tree survey of all six + targeted reads of every load-bearing
+section + an explicit corpus-wide grep for `install_speckit_superpowers_bridge`
+and `validate_bridge.sh` returning zero hits). **Headline finding: all six
+documents describe a FUTURE, aspirational "nano-task engine" + a custom
+`helix-nano-bridge` extension + an unlanded `§11.4.NNB` constitution-anchor
+proposal — none of it names or constrains the two scripts T-B2.02/T-B2.03
+actually produced, and nothing invalidates that work.** Two notable findings
+recorded for B3 (non-blocking): (1) the proposed `§11.4.NNB` anchor's stage-6
+pipeline text still assumes an L5 execution tier this project has proven does
+not exist; (2) SECURITY.md §4.3 carries an unremoved cross-project
+("ATMOSphere project mandate") reference that does not belong to HelixCode.
+Full delta list (MUST-INCORPORATE-NOW: none; NOTE-FOR-LATER: 4 items) in the
+evidence file.
 
 **Scope**: NANO_TASK_ENGINE, EXTENSION_DEVELOPMENT, TDD_INTEGRATION,
 CONSTITUTION_INTEGRATION, SECURITY, APPENDIX — none read during Phase 1.
