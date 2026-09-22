@@ -71,6 +71,99 @@ func (s *Skill) TriggerPatterns() []string {
 	return out
 }
 
+// SkillOptions holds the fields needed to construct a *Skill without a
+// filesystem round-trip. It is the input to NewSkill (T-P5.01, HXC-159 Phase
+// P5) — the exported construction seam for callers outside this package (an
+// external skill source such as the T-P5.05 external tier, a converter, an
+// in-memory fixture) that need to build a *Skill and register it via
+// SkillRegistry.Add without ever writing a SKILL.md to disk first.
+//
+// Field semantics deliberately mirror skillFrontmatter / parseSkillFile so a
+// Skill built via NewSkill is indistinguishable, at every exported method,
+// from one loaded from a file:
+//   - Variables defaults to a non-nil empty map when nil (parseSkillFile's
+//     zero-value initialisation).
+//   - TriggerPatterns are compiled the same way parseSkillFile compiles
+//     meta.Triggers: an invalid regex is silently skipped from the compiled
+//     set (never a construction error) while the raw pattern string is
+//     preserved for introspection via Skill.TriggerPatterns.
+//   - Body is trimmed of leading/trailing whitespace exactly as
+//     parseSkillFile trims the post-frontmatter body.
+type SkillOptions struct {
+	// Name is the skill's registry key. Required — see NewSkill's validation.
+	Name string
+	// Description is the human-readable summary parsed from frontmatter on
+	// disk-loaded skills; here it is supplied directly.
+	Description string
+	// Body is the raw (unrendered) skill body, the frontmatter-delimiter-free
+	// text a disk-loaded skill carries after its closing "---".
+	Body string
+	// Variables are the skill's default substitution variables. Nil is
+	// treated as empty (never a construction error).
+	Variables map[string]string
+	// TriggerPatterns are raw regex strings compiled the same way disk-loaded
+	// trigger patterns are; an entry that fails to compile is silently
+	// dropped from matching but preserved for introspection.
+	TriggerPatterns []string
+	// RequiresIsolation mirrors skillFrontmatter's requires_isolation field.
+	RequiresIsolation bool
+	// SourcePath is an opaque provenance string (SourcePath()). Disk-loaded
+	// skills carry a real filesystem path or a "builtin:" prefix; an
+	// in-memory skill should carry whatever identifies its true origin (e.g.
+	// an external-tier directory entry) so diagnostics remain honest about
+	// where the skill actually came from — never a filesystem path that does
+	// not exist.
+	SourcePath string
+}
+
+// NewSkill constructs a *Skill entirely in memory from opts — no filesystem
+// round-trip. It is the exported counterpart to the unexported
+// parseSkillFile: parseSkillFile builds a Skill FROM raw on-disk frontmatter
+// text; NewSkill builds one from already-structured fields, for callers that
+// have (or produce) that structure without ever having written a SKILL.md.
+//
+// NewSkill constructs THROUGH validation rather than widening the type's
+// invariants: it enforces the one invariant every disk-loaded skill already
+// satisfies unconditionally (a non-empty Name — parseSkillFile has no code
+// path that produces an empty one, since the name always comes from a
+// filename or directory basename), and it otherwise reproduces
+// parseSkillFile's exact field semantics (see SkillOptions) so a
+// NewSkill-built Skill cannot be distinguished, by any exported method or by
+// SkillRegistry/SkillDispatcher behaviour, from one loaded from disk.
+// Skill's fields themselves remain unexported; this function is the only
+// production entry point (besides parseSkillFile) that can populate them.
+func NewSkill(opts SkillOptions) (*Skill, error) {
+	if opts.Name == "" {
+		return nil, fmt.Errorf("commands: NewSkill: name must not be empty")
+	}
+
+	vars := opts.Variables
+	if vars == nil {
+		vars = map[string]string{}
+	}
+
+	s := &Skill{
+		name:              opts.Name,
+		description:       opts.Description,
+		body:              strings.TrimSpace(opts.Body),
+		variables:         vars,
+		triggerPatterns:   append([]string(nil), opts.TriggerPatterns...),
+		requiresIsolation: opts.RequiresIsolation,
+		sourcePath:        opts.SourcePath,
+	}
+	for _, p := range opts.TriggerPatterns {
+		re, err := regexp.Compile(p)
+		if err != nil {
+			// Matches parseSkillFile: an invalid pattern is silently skipped
+			// from the compiled set. The raw string survives in
+			// s.triggerPatterns for introspection via TriggerPatterns().
+			continue
+		}
+		s.triggers = append(s.triggers, re)
+	}
+	return s, nil
+}
+
 // parseSkillFile parses raw .md content into a Skill. Frontmatter is required
 // for skills (it carries the trigger patterns). Bad regex patterns are
 // silently dropped from the compiled triggers list; the raw patterns are
