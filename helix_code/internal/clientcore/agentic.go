@@ -139,8 +139,16 @@ type Skills struct {
 func LoadSkillsAndPlugins(pluginsDir string) *Skills {
 	s := &Skills{}
 
-	userSkillsDir := filepath.Join(os.Getenv("HOME"), ".helix", "skills")
-	if skReg, skDisp, skErr := agent.LoadSkillsAndDispatcher([]string{userSkillsDir, ".helix/skills"}); skErr != nil {
+	// T-P5.03 + T-P5.05 (HXC-159 Phase P5): scan the full ordered skills-dir
+	// tier — agent.AllSkillsDirs returns [legacy ~/.helix/skills, canonical
+	// os.UserConfigDir()/helixcode/skills, external .claude/skills,
+	// projectDir], project last so it overrides on collision. Before T-P5.03
+	// clientcore scanned ONLY ~/.helix/skills (a skill installed via the
+	// CLI's convention was invisible here); before T-P5.05 an
+	// externally-provisioned skill (e.g. via scripts/register_skills.sh) was
+	// invisible everywhere. See docs/guides/skills_directory_migration.md.
+	skillDirs := agent.AllSkillsDirs(".helix/skills")
+	if skReg, skDisp, skErr := agent.LoadSkillsAndDispatcher(skillDirs); skErr != nil {
 		log.Printf("⚠️  clientcore: skills unavailable (%v); chat continues without skill triggers", skErr)
 	} else {
 		s.Registry = skReg

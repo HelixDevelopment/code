@@ -369,10 +369,16 @@ func (tui *TerminalUI) Initialize() error {
 	// Load skills + plugins ONCE at startup. Both degrade gracefully: a load
 	// error or a missing directory yields a nil dispatcher / loader and
 	// sendChatMessage simply skips the corresponding step. Skills are scanned
-	// from the user skills dir (~/.helix/skills) then the project dir
-	// (.helix/skills); the project dir comes last so it overrides on collision.
-	userSkillsDir := filepath.Join(os.Getenv("HOME"), ".helix", "skills")
-	if skReg, skDisp, skErr := agent.LoadSkillsAndDispatcher([]string{userSkillsDir, ".helix/skills"}); skErr != nil {
+	// from the full ordered tier — agent.AllSkillsDirs returns [legacy
+	// ~/.helix/skills, canonical os.UserConfigDir()/helixcode/skills, external
+	// .claude/skills, projectDir] — project dir (.helix/skills) last so it
+	// overrides on collision. (T-P5.03 + T-P5.05, HXC-159 Phase P5: before
+	// T-P5.03 the TUI scanned ONLY ~/.helix/skills, so a skill installed via
+	// the CLI's convention was invisible here; before T-P5.05 an
+	// externally-provisioned skill was invisible everywhere. See
+	// docs/guides/skills_directory_migration.md.)
+	skillDirs := agent.AllSkillsDirs(".helix/skills")
+	if skReg, skDisp, skErr := agent.LoadSkillsAndDispatcher(skillDirs); skErr != nil {
 		log.Printf("⚠️  TUI: skills unavailable (%v); chat continues without skill triggers", skErr)
 	} else {
 		tui.skillRegistry = skReg

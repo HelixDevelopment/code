@@ -1056,11 +1056,29 @@ func (c *CLI) buildSubsystems(ctx context.Context) error {
 
 	// F10: agent-invoked Skills.
 	skillProjectDir := filepath.Join(".", ".helix", "skills")
-	var skillUserDir string
-	if userCfg, err := os.UserConfigDir(); err == nil {
-		skillUserDir = filepath.Join(userCfg, "helixcode", "skills")
-	}
+	skillUserDir, _ := agent.CanonicalUserSkillsDir()
 	skillReg := commands.NewSkillRegistry()
+	// T-P5.03 + T-P5.05 (HXC-159 Phase P5): load the legacy user-skills
+	// directory (~/.helix/skills, the TUI/desktop's pre-unification
+	// convention) and the external tier (agent.ExternalSkillsDir(),
+	// conventionally .claude/skills — skills provisioned by something other
+	// than a front-end's own project/user directory, e.g.
+	// scripts/register_skills.sh) FIRST, as lower-precedence compatibility
+	// tiers, so a skill installed there remains visible from the CLI too.
+	// The combined (skillProjectDir, skillUserDir) pass below runs LAST and
+	// its `Add` calls override same-named entries these passes register,
+	// reproducing [legacy, canonical, external, project] precedence — see
+	// agent.AllSkillsDirs's doc comment and
+	// docs/guides/skills_directory_migration.md.
+	for _, extraDir := range []string{agent.LegacyUserSkillsDir(), agent.ExternalSkillsDir()} {
+		if extraDir == "" {
+			continue
+		}
+		extraLoader := commands.NewSkillLoader(skillReg, extraDir, "")
+		if extraErr := extraLoader.Load(); extraErr != nil {
+			log.Printf("skills: extra tier %q load failed: %v", extraDir, extraErr)
+		}
+	}
 	skillLoader := commands.NewSkillLoader(skillReg, skillProjectDir, skillUserDir)
 	if loadErr := skillLoader.Load(); loadErr != nil {
 		log.Printf("skills: load failed: %v", loadErr)
@@ -3330,11 +3348,25 @@ func main() {
 	// so that Cobra handles its own flag parsing (same pattern as "commands").
 	if len(os.Args) >= 2 && os.Args[1] == "skills" {
 		projDir := filepath.Join(".", ".helix", "skills")
-		var userDir string
-		if userCfg, err := os.UserConfigDir(); err == nil {
-			userDir = filepath.Join(userCfg, "helixcode", "skills")
-		}
+		userDir, _ := agent.CanonicalUserSkillsDir()
 		skillReg := commands.NewSkillRegistry()
+		// T-P5.03 + T-P5.05 (HXC-159 Phase P5): see the matching comment in
+		// buildSubsystems (called via ensureSubsystems) above — the legacy
+		// user directory and the
+		// external tier (agent.ExternalSkillsDir(), e.g. .claude/skills) are
+		// loaded first as lower-precedence compatibility tiers so
+		// `helixcode skills list` sees a skill installed under the
+		// TUI/desktop's pre-unification convention, or provisioned
+		// externally (e.g. scripts/register_skills.sh), too.
+		for _, extraDir := range []string{agent.LegacyUserSkillsDir(), agent.ExternalSkillsDir()} {
+			if extraDir == "" {
+				continue
+			}
+			extraLoader := commands.NewSkillLoader(skillReg, extraDir, "")
+			if extraErr := extraLoader.Load(); extraErr != nil {
+				log.Printf("skills dispatcher: extra tier %q load failed: %v", extraDir, extraErr)
+			}
+		}
 		loader := commands.NewSkillLoader(skillReg, projDir, userDir)
 		if err := loader.Load(); err != nil {
 			log.Printf("skills dispatcher: load failed: %v", err)
