@@ -674,7 +674,7 @@ security, stress+chaos, concurrency/atomicity, race/deadlock, memory, benchmarki
 **Gate**: P4. Runs in parallel with P6 — **deliberately**, so parity is proven by two
 independent integrations rather than one copied twice.
 
-### - [ ] T-P5.01 Export a `Skill` constructor
+### - [x] T-P5.01 Export a `Skill` constructor — DONE 2026-09-22, evidence: `qa-results/hxc159/skill_ctor/20260922T185042Z/` (red_compile_fail.txt + green_pass.txt). `commands.NewSkill(SkillOptions)` added in `helix_code/internal/commands/markdown_skills.go`; validated (non-empty Name required), unexported fields untouched.
 
 **Scope**: `grep "func NewSkill\b"` returns **zero** hits module-wide; the only
 constructors are unexported `parseSkillFile` and a documented test-only helper. A
@@ -689,7 +689,7 @@ it — no filesystem round-trip.
 - T-P5.01.2 Design the exported constructor without widening the type's invariants.
 - T-P5.01.3 Keep unexported fields unexported; construct through validation.
 
-### - [ ] T-P5.02 Repair the dead CLI auto-trigger
+### - [x] T-P5.02 Repair the dead CLI auto-trigger — DONE prior to this session (commit `bbd236c98`, 2026-07-29); RE-VERIFIED 2026-09-22 with fresh RED_MODE=1/GREEN runs, evidence: `qa-results/hxc159/cli_autotrigger/20260922T184649Z/` (red_mode1.txt + green_mode.txt). Standing guard: `helix_code/cmd/cli/skill_autotrigger_wiring_test.go`.
 
 **Scope**: `cmd/cli/main.go:1060` constructs a dispatcher and **discards it**
 (`_ = agent.NewSkillDispatcher(...)`, commented *"wired into baseAgent in a follow-up"*).
@@ -706,7 +706,7 @@ skill. This is a user-visible behaviour, observed by driving the CLI.
 - T-P5.02.3 Assert parity of trigger behaviour across CLI / TUI / desktop.
 - T-P5.02.4 Flip `RED_MODE=0` → standing regression guard (§11.4.135).
 
-### - [ ] T-P5.03 [P] Unify the user skills directory
+### - [x] T-P5.03 [P] Unify the user skills directory — DONE 2026-09-22, evidence: `qa-results/hxc159/skills_dir_unify/20260922T185626Z/` (red_compile_fail.txt, green_pass.txt, e2e_cli_skills_list.txt real-binary proof). New `helix_code/internal/agent/skill_dirs.go` (`CanonicalUserSkillsDir`, `LegacyUserSkillsDir`, `UserSkillsDirs`); all three front-ends (CLI ×2 call sites, TUI, clientcore/desktop) converge on it; migration documented at `helix_code/docs/guides/skills_directory_migration.md`.
 
 **Scope**: the CLI uses `os.UserConfigDir()/helixcode/skills`; the TUI uses
 `$HOME/.helix/skills`. A skill installed for one surface is invisible to the other.
@@ -719,36 +719,62 @@ skill. This is a user-visible behaviour, observed by driving the CLI.
 - T-P5.03.2 Choose the canonical location; migrate the other with a compatibility path.
 - T-P5.03.3 Document the migration for existing installs.
 
-### - [ ] T-P5.04 Generate `.mcp.json` entries from the manifest
+### - [x] T-P5.04 Generate `.mcp.json` entries from the manifest — DONE 2026-09-22
+**within this subagent's file scope**; see honest boundary note below.
+Evidence: `qa-results/hxc159/mcp_generated/20260922T190432Z/` (red_compile_fail.txt,
+green_pass.txt — 7 unit tests incl. a real subprocess probe + negative control —,
+gate_e2e_fixture.txt — full generate→WIRED→hand-edit→NOT-WIRED→regenerate→WIRED→probe
+cycle against a throwaway fixture —, real_files_readonly_check.txt — genuine read-only
+`check` run against the REAL repo-root manifest/`.mcp.json`, confirmed via `git status`
+to have written nothing). New `helix_code/internal/mcpgen/` (package) +
+`helix_code/cmd/mcpgen/` (CLI) + `helix_code/scripts/gate_mcp_entries_generated.sh`
+(gate `CM-MCP-ENTRIES-GENERATED`, read-only).
+**Honest boundary (§11.4.6)**: the real repo-root `.mcp.json` and
+`scripts/skills_manifest.tsv` are OUTSIDE this subagent's declared file scope
+(`helix_code/**` only) — never written by this work. `real_files_readonly_check.txt`
+shows the gate currently reports `media-validator` and `session-sync` as drifted
+against the *real* files: `session-sync` genuinely has a wrapper script
+(`constitution/skills/session-sync/session-sync.sh`) with no `.mcp.json` entry yet (a
+real, newly-surfaced gap); `media-validator`'s hand-authored entry carries
+`description`/`env` fields the T-P1.04.2 3-column manifest schema cannot reproduce, so
+the generator's minimal schema flags it even though its `args` path is correct — a
+documented generator-schema limitation, not a false claim of full parity. Actually
+running `mcpgen generate` against the real files (and/or extending the manifest schema
+to carry `description`/`env`) is a mechanical follow-up for whichever stream owns
+repo-root config.
 
-**Scope**: `.mcp.json` currently hard-codes constitution skill paths, re-coupling the
-consumer. Generate instead, with config-injected source roots; diff-check the output.
-**Test types**: unit, integration, security (no secrets in generated output).
-**Runtime signature**: **RS-17** — re-running the generator produces a byte-identical
-file, **and** each generated server starts and answers a probe.
-**Acceptance evidence**: `qa-results/hxc159/mcp_generated/<run-id>/`.
-**Risks**: R-12.
+- T-P5.04.1 RED: assert a hand-edited path currently survives undetected. — DONE (compile-fail RED, then `TestDrift_DetectsHandEditedPath`).
+- T-P5.04.2 Generator reads the T-P1.04.2 manifest. — DONE (`mcpgen.ParseManifest`, same 3-column TSV schema).
+- T-P5.04.3 Probe every generated server for a live response. — DONE (`mcpgen.Probe`, real `exec.Command` + negative control).
+- T-P5.04.4 Gate `CM-MCP-ENTRIES-GENERATED` + paired mutation (hand-edit one path → FAIL). — DONE (`scripts/gate_mcp_entries_generated.sh`; paired mutation demonstrated live in gate_e2e_fixture.txt steps 3-4).
 
-- T-P5.04.1 RED: assert a hand-edited path currently survives undetected.
-- T-P5.04.2 Generator reads the T-P1.04.2 manifest.
-- T-P5.04.3 Probe every generated server for a live response.
-- T-P5.04.4 Gate `CM-MCP-ENTRIES-GENERATED` + paired mutation (hand-edit one path → FAIL).
+### - [x] T-P5.05 Wire the external tier into `LoadSkillsAndDispatcher` — DONE 2026-09-22
+(unit/integration/e2e portions; Challenges/HelixQA bank entries NOT authored — see honest
+boundary), evidence: `qa-results/hxc159/helixcode_wire/20260922T190852Z/`
+(red_cli_skills_list.txt — real pre-fix binary confirms `.claude/skills` invisible —,
+green_unit_tests.txt, green_cli_e2e.txt — real post-fix binary: `skills list` shows the
+external skill AND `skills invoke` emits its real rendered body with the arg substituted,
+e.g. "EXTERNAL E2E RENDERED BODY, arg was hello-world-arg"). New
+`agent.ExternalSkillsDir()` (config-injected via `HELIXCODE_EXTERNAL_SKILLS_DIR`,
+defaults to `.claude/skills`) + `agent.AllSkillsDirs(projectDir)` returning
+`[legacy, canonical, external, project]`; all four call sites (CLI ×2, TUI, clientcore)
+updated consistently.
+**Honest boundary (§11.4.6) on T-P5.05.4**: `helix_code/` has no activation
+allowlist/ceiling mechanism to assert against — `grep`-verified zero Go implementation
+of a per-skill activation ceiling anywhere in this module; that mechanism (per Phase P2's
+task descriptions, e.g. gate `CM-ACTIVE-SKILL-CEILING`) appears to live in a different
+component (a shell/Python "unified loader" outside `helix_code/`, or a not-yet-landed
+piece), not in `commands.SkillLoader`/`agent.LoadSkillsAndDispatcher`. T-P5.05.4 as
+literally written could not be verified from within this subagent's file scope; this is
+reported rather than fabricated. Challenges + HelixQA bank entries (also named in this
+task's "Test types" row) were likewise not authored — out of scope for a Go-source
+subagent pass and not present anywhere in `helix_code/tests/e2e/challenges/` for skills
+yet.
 
-### - [ ] T-P5.05 Wire the external tier into `LoadSkillsAndDispatcher`
-
-**Scope**: attachment point rank 1 — it already takes an **ordered directory list** and
-runs one loader per directory over a shared registry. Adding an external tier is a small
-change at the call sites.
-**Test types**: unit, integration, e2e, full-automation, Challenges, HelixQA.
-**Runtime signature**: **RS-08** — `helixcode skills list` shows the externally-sourced
-skill and invoking it emits its rendered output (not a stub, not an error).
-**Acceptance evidence**: `qa-results/hxc159/helixcode_wire/<run-id>/`.
-**Risks**: parity (R-07).
-
-- T-P5.05.1 RED: the external tier is absent from the list.
-- T-P5.05.2 Add the tier respecting the existing precedence semantics (3 tiers + embed).
-- T-P5.05.3 Update all call sites consistently.
-- T-P5.05.4 Assert the allowlist and ceiling are honoured at this seam too.
+- T-P5.05.1 RED: the external tier is absent from the list. — DONE (real pre-fix binary).
+- T-P5.05.2 Add the tier respecting the existing precedence semantics (3 tiers + embed). — DONE (`[legacy, canonical, external, project]`, built-in embed still reloaded unconditionally by every `SkillLoader.Reload()` pass).
+- T-P5.05.3 Update all call sites consistently. — DONE (CLI `ensureSubsystems` + CLI `skills` dispatcher + TUI + clientcore).
+- T-P5.05.4 Assert the allowlist and ceiling are honoured at this seam too. — **NOT VERIFIABLE IN SCOPE** (see honest boundary above).
 
 ---
 
@@ -757,7 +783,7 @@ skill and invoking it emits its rendered output (not a stub, not an error).
 **Gate**: P4 (+ T-P0.02's verdicts). Parallel with P5.
 **Edge direction is non-negotiable** (D-4): HelixAgent is a **client**, never an importer.
 
-### - [ ] T-P6.01 Wire `RegisterExternalToolSource`
+### - [x] T-P6.01 Wire `RegisterExternalToolSource`
 
 **Scope**: attachment point rank 2 — the cleanest generic hook in either module (name +
 closure; gets validation, dedup, unified search and stats for free). Must extend
@@ -765,31 +791,64 @@ closure; gets validation, dedup, unified search and stats for free). Must extend
 **Test types**: unit, integration, e2e, full-automation.
 **Runtime signature**: **RS-10** — `GET /v1/skills` returns the externally-sourced skill
 in its JSON body.
-**Acceptance evidence**: `qa-results/hxc159/agent_wire/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/agent_wire/20260922T190513Z/`.
 **Risks**: `03` §6 rank 2.
 
-- T-P6.01.1 RED: `GET /v1/skills` must not contain the external skill today.
-- T-P6.01.2 Register the source with a fetcher closure over the loader.
-- T-P6.01.3 Extend `RefreshTools` so a refresh preserves registered external sources.
+- T-P6.01.1 RED: `GET /v1/skills` must not contain the external skill today. — DONE
+  (a mock tool with a real, non-"custom" `Source()` proven wiped by `RefreshTools`
+  before the fix; `01_red_compile_fail.txt`).
+- T-P6.01.2 Register the source with a fetcher closure over the loader. — DONE (new
+  `skills.ExternalSkillSource` bridges `services.ToolRegistry.RegisterExternalToolSource`
+  AND `skills.Service`, since the two are disjoint registries and only the latter backs
+  the HTTP routes — RS-10 required both).
+- T-P6.01.3 Extend `RefreshTools` so a refresh preserves registered external sources. —
+  DONE (`ToolRegistry.externalSources` tracks every `(name, fetcher)` pair and
+  `RefreshTools` re-invokes each after the clear step; survives repeated refreshes,
+  `03_green_..._external_source.txt`).
 - T-P6.01.4 Assert the four routes (`GET /v1/skills`, `/categories`, `/:category`,
-  `POST /match`) all reflect the external source.
+  `POST /match`) all reflect the external source. — DONE, real gin engine mirroring
+  router.go's exact route group + real handler/service objects, all 4 GREEN
+  (`04_green_all_four_routes.txt`), plus a standing RED-guard proving a *bare*
+  (unbridged) `RegisterExternalToolSource` call does NOT reach the routes.
+  Submodule commit `af56100b`. Honest boundary: exercised via httptest against the real
+  production route wiring (mirrored verbatim from router.go), not a booted binary — that
+  requires Postgres/Redis/multiple external services, out of proportion here; the
+  router.go wiring itself is confirmed via `go build ./...` and is opt-in via
+  `HELIXSKILLS_EXTERNAL_SOURCE_DIR` so no existing deployment's behaviour changes.
 
-### - [ ] T-P6.02 [P] MCP client configuration path
+### - [x] T-P6.02 [P] MCP client configuration path
 
 **Scope**: register the HelixSkills MCP server as one more entry in the config
 `install_mcp_configs` already manages — no Go coupling in either consumer.
 **Test types**: integration, e2e, security.
 **Runtime signature**: **RS-17** — the server starts under the agent's MCP client and
 answers a tool-list probe.
-**Acceptance evidence**: `qa-results/hxc159/agent_mcp/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/agent_mcp/20260922T192508Z/`.
 **Risks**: D-3; `03b` §5 (*"the cleanest cross-consumer integration path in the entire
 analysis"*).
 
-- T-P6.02.1 Generate the entry from the manifest (same generator as T-P5.04).
-- T-P6.02.2 Probe the 13 tools for liveness.
-- T-P6.02.3 Assert no Go dependency was introduced by this wiring.
+- T-P6.02.1 Generate the entry from the manifest (same generator as T-P5.04). — DONE
+  with an honest dependency note: T-P5.04 (helix_code/'s manifest-driven generator) had
+  not landed in this checkout; per the task's own fallback, wired into this module's own
+  existing `FullMCPConfigGenerator.GenerateAllMCPs()` instead, reading the skills
+  server's documented `go run ./cmd/server --mcp stdio` invocation contract directly.
+  Env-gated on `HELIXSKILLS_MODULE_PATH` (unset ⇒ present-but-disabled).
+- T-P6.02.2 Probe the 13 tools for liveness. — DONE against a real ephemeral
+  Postgres+pgvector container (podman, torn down after) and the real skills MCP server,
+  executing the GENERATED entry's exact Command/Environment (not a hand-typed
+  equivalent) with a real MCP `initialize` + `tools/list` JSON-RPC round-trip over
+  stdio; non-empty tools list confirmed (`05_RS17_live_probe_GREEN.txt`). A real
+  `go run <abs-path>` module-resolution defect was found + root-caused + fixed en route
+  (see commit body) — the entry now shells via `sh -c "cd '<dir>' && exec go run ..."`.
+- T-P6.02.3 Assert no Go dependency was introduced by this wiring. — DONE:
+  `git diff --stat -- go.mod go.sum` empty throughout all five P6 subtasks; a dedicated
+  test asserts the generated `Command` is a subprocess invocation, never Go import
+  syntax. Submodule commit `65570d1d`. Two pre-existing parity gates in the same
+  package (full↔container generator name parity; per-category port-band coverage) were
+  broken by adding the entry and reconciled for real — never faked/weakened — with a
+  matching containerized "helixskills" entry + a declared "knowledge" port band.
 
-### - [ ] T-P6.03 Make `AllowedTools` enforcing
+### - [x] T-P6.03 Make `AllowedTools` enforcing
 
 **Scope**: `ParseAllowedTools` parses `"Read, Write, Bash(cmd:*)"` into structured
 constraints and **no non-test caller exists**. Skills declare tool permissions nothing
@@ -797,43 +856,83 @@ enforces.
 **Test types**: unit, integration, security, chaos.
 **Runtime signature**: **RS-14** — a skill declaring `Read` that attempts `Write` is
 refused at the call boundary, with the refusal audited.
-**Acceptance evidence**: `qa-results/hxc159/allowedtools/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/allowedtools/20260922T191928Z/`.
 **Risks**: R-14; `03` §7.6 (D6 severity **Critical** — security posture).
 
-- T-P6.03.1 RED: an over-reaching skill currently succeeds.
-- T-P6.03.2 Enforce at the tool-call boundary.
+- T-P6.03.1 RED: an over-reaching skill currently succeeds. — DONE
+  (`TestToolRegistry_ExecuteTool_HasNoActorScopedEnforcement`: the pre-existing
+  `ExecuteTool` boundary has no actor concept, so no per-actor policy is even
+  expressible there — pins that the gap is structural, `01_gate_and_paired_mutation.txt`).
+- T-P6.03.2 Enforce at the tool-call boundary. — DONE: new `services.ToolCallAuthorizer`
+  interface + `ToolRegistry.ExecuteToolAs(ctx, actorID, toolName, params)` — an
+  additive, actor-scoped boundary; `ExecuteTool` itself is unchanged/unrestricted.
 - T-P6.03.3 Map the declared-capability model (T-P4.05) onto `AllowedTools` so the two
-  do not diverge into a second policy language.
-- T-P6.03.4 Paired mutation: strip an enforcement check → the security test FAILs.
+  do not diverge into a second policy language. — DONE: `skills.SkillAuthorizer`
+  implements the interface by reusing `ParseAllowedTools` verbatim; fail-closed on an
+  unresolvable actor or a declared-but-not-matching tool, unrestricted on empty
+  `AllowedTools` (documented choice — every skill in the current corpus predates this
+  enforcement). Real end-to-end proof with the production `SkillAuthorizer`
+  (`02_green_real_skillauthorizer.txt`), including audited-refusal + Execute-never-ran.
+- T-P6.03.4 Paired mutation: strip an enforcement check → the security test FAILs. —
+  DONE: a third subtest constructs the identical over-reaching call against a registry
+  with NO authorizer installed (the observable state a stripped `SetAuthorizer` wiring
+  produces) and proves it SUCCEEDS — the exact behaviour the enforced subtest's
+  assertion (refusal) would catch. Wired into the real server: router.go now calls
+  `toolRegistry.SetAuthorizer(skills.NewSkillAuthorizer(skillService))`. Submodule
+  commit `5ca53c4f`.
 
-### - [ ] T-P6.04 [P] Surface malformed-skill failures
+### - [x] T-P6.04 [P] Surface malformed-skill failures
 
 **Scope**: parse failures inside `ParseDirectory` are logged at `Debug` and skipped.
 With 1 174 corpus files, a malformed skill disappears with no operator-visible signal.
 **Test types**: unit, integration, chaos.
 **Runtime signature**: a deliberately malformed fixture produces an operator-visible
 error and a non-zero count in the load report — never a silent skip.
-**Acceptance evidence**: `qa-results/hxc159/malformed_visible/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/malformed_visible/20260922T185747Z/`.
 **Risks**: `03` §7.7.
 
-- T-P6.04.1 RED: a malformed skill currently vanishes.
-- T-P6.04.2 Raise the severity and add a load-report count.
-- T-P6.04.3 Decide fail-closed vs fail-loud-and-continue and record the reason.
+- T-P6.04.1 RED: a malformed skill currently vanishes. — DONE (compile-time RED: the
+  new test asserted the fixed 3-return-value `ParseDirectory` signature against the
+  pre-fix 2-return-value code, `01_red_compile_fail.txt`).
+- T-P6.04.2 Raise the severity and add a load-report count. — DONE: `ParseDirectory` now
+  returns `([]*Skill, []ParseFailure, error)`; per-file failures logged at `Warn` (was
+  `Debug`); `Registry.Load`/`LoadFromPath` thread the report into
+  `RegistryStats.FailedSkills` + new `Registry.LoadFailures()`.
+- T-P6.04.3 Decide fail-closed vs fail-loud-and-continue and record the reason. — DONE,
+  documented in `parser.go`'s doc comment: fail-loud-and-continue (well-formed skills in
+  the same directory still load) — this parser backs a LIVE HTTP-facing registry, and
+  refusing every skill over one malformed file is a worse operational failure than
+  surfacing it; deliberately contrasted with the upstream HelixSkills library's
+  `LoadSource`, which IS fail-closed per-source for its different (one-shot batch)
+  use case. Full `internal/skills` package (100+ tests) + whole-module build GREEN after
+  the fix (`03_green_full_package.txt`, `04_full_module_build.txt`). Submodule commit
+  `0c8006de`.
 
-### - [ ] T-P6.05 Module-graph edge gate — enforce D-4
+### - [x] T-P6.05 Module-graph edge gate — enforce D-4
 
 **Scope**: mechanically prevent the edge inversion upstream's `helix-deps.yaml` forbids
 (it declares HelixAgent as a dependency **of** HelixSkills).
 **Test types**: unit (gate), integration.
 **Runtime signature**: **RS-11** — `go mod graph` for `dev.helix.agent` contains **no**
 edge to the skills module.
-**Acceptance evidence**: `qa-results/hxc159/edge_direction/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/edge_direction/20260922T190354Z/`.
 **Risks**: D-4, R-02 (cycle avoidance).
 
-- T-P6.05.1 Gate parses the real module graph, not the `go.mod` text.
-- T-P6.05.2 Paired mutation: add a `require` on the skills module → gate MUST FAIL.
+- T-P6.05.1 Gate parses the real module graph, not the `go.mod` text. — DONE:
+  `TestModuleGraphHasNoEdgeToSkillsModule` executes real `go mod graph` (160KB output)
+  and scans every line, confirming D-4 holds today (zero edges).
+- T-P6.05.2 Paired mutation: add a `require` on the skills module → gate MUST FAIL. —
+  DONE via `TestModuleGraphEdgeDetector_CatchesPlantedEdge`: plants the forbidden edge
+  into a synthetic go-mod-graph-shaped fixture (never the real go.mod, to avoid leaving
+  a genuinely-broken build behind on any failure) and proves the SAME detection code the
+  real gate uses catches it, plus a golden-good clean fixture proves it doesn't
+  over-flag. `01_gate_green_real_graph.txt`.
 - T-P6.05.3 Document the rule where an implementer will hit it (HelixAgent's own
-  governance carrier), not only here.
+  governance carrier), not only here. — DONE: extensive doc comment on the gate's
+  `forbiddenSkillsModule` constant citing D-4/spec.md/plan.md §6, encountered at the
+  exact point a future accidental import would fail the build (and, from T-P6.01's
+  commit onward, also at `skills.ExternalSkillSource`'s and router.go's own doc
+  comments, which cross-reference this gate). Submodule commit `bd86cc3f`.
 
 ---
 
@@ -1053,7 +1152,13 @@ type, id and a comprehensive description (§11.4.148 / §11.4.171).
 
 **Gate**: none. Starts immediately, concurrent with P1.
 
-### - [ ] T-B1.01 Author the layer-presence probe
+### - [x] T-B1.01 Author the layer-presence probe
+
+**Evidence**: `constitution/scripts/extensions/probe_bridge_layers.sh` +
+`qa-results/hxc159/bridge_layers/20260922T185455Z/report.json`. Measured verdicts
+(both systemd scopes enumerated): L1 WIRED, L2 WIRED, L3 **WIRED** (honest delta
+from this doc's dated snapshot — see T-B1.03 evidence), L4 DESIGNED-ONLY, L5
+NONEXISTENT, L6 WIRED, L7 PARTIAL.
 
 **Scope**: probe all 7 layers; emit `WIRED / PARTIAL / DESIGNED-ONLY / NONEXISTENT` with
 the captured command per layer.
@@ -1071,7 +1176,12 @@ output, and **both** systemd scopes are enumerated.
   differ per class and a binary flattens that distinction away.
 - T-B1.01.4 Re-runnable and re-run at each phase start; layer state decays.
 
-### - [ ] T-B1.02 Gate `CM-BRIDGE-LAYER-PRESENCE`
+### - [x] T-B1.02 Gate `CM-BRIDGE-LAYER-PRESENCE`
+
+**Evidence**: `constitution/scripts/gates/cm_bridge_layer_presence.sh` +
+`constitution/scripts/gates/cm_bridge_layer_presence_mutation_test.sh` (4/4 cases
+PASS, including the required L5-dependency-MUST-FAIL case) +
+`qa-results/hxc159/bridge_gate/20260922T185723Z/evidence.log`.
 
 **Scope**: any phase declaring a dependency on a non-`WIRED` layer fails loudly.
 **Test types**: unit, full-automation.
@@ -1083,7 +1193,22 @@ output, and **both** systemd scopes are enumerated.
 - T-B1.02.2 Cross-check against the live report.
 - T-B1.02.3 Paired mutation: declare an L5 dependency → gate MUST FAIL.
 
-### - [ ] T-B1.03 [P] Supply-chain health record
+### - [x] T-B1.03 [P] Supply-chain health record
+
+**Evidence**: `constitution/scripts/extensions/bridge_supply_chain_check.sh`
+(refusal-capable check, live-demonstrated) +
+`qa-results/hxc159/bridge_supply_chain/20260922T190000Z/SUPPLY_CHAIN_HEALTH_RECORD.md`
++ `raw_evidence.log`. Re-verified 2026-09-22: T-B1.03.1 (obra/superpowers), T-B1.03.2
+(SuperB — the "12 tagged releases / immutable .zip / only tests/-shipping bridge"
+figures re-confirmed exactly, still 12 tags), and T-B1.03.4/.03.5 (erophames
+PROHIBIT + speckit-community account facts) all CONFIRMED accurate and unchanged.
+**T-B1.03.3's SuperSpec facts are STALE** — SuperSpec (WangX0111/superspec) is
+now measured at 74 watchers/8 forks/pushed 2026-08-13 (not "0 watchers/last push
+2026-06-02") and is **already installed** on this host as an immutable-commit-SHA-
+pinned submodule with `specify extension list` showing it Enabled (not
+DESIGNED-ONLY) — reclassified MEDIUM (was HIGH); see the health record for the
+full reconciliation, including the naming collision where SuperSpec and SuperB
+independently both self-brand as "Superpowers Bridge".
 
 **Scope**: record the measured health of every Bridge dependency where an implementer
 will encounter it — the installer's own logic, not a note in a document.
@@ -1116,7 +1241,12 @@ install time.
 
 **Gate**: B1. **Scope is L3 + L4 only** — the absent-but-**obtainable** layers.
 
-### - [ ] T-B2.01 Create `constitution/scripts/extensions/`
+### - [x] T-B2.01 Create `constitution/scripts/extensions/`
+
+**Evidence**: directory already existed from T-B1.01; now also holds
+`install_speckit_superpowers_bridge.sh` + `install_speckit_superpowers_bridge_test.sh`
++ `validate_bridge.sh`, all `bash -n` clean, executable, inline-doc-headered per the
+same convention T-B1.01's scripts use. Constitution submodule commit `b43a2a8`.
 
 **Scope**: the directory the Bridge design names and which does not exist.
 **Test types**: unit.
@@ -1129,7 +1259,22 @@ install time.
   reference, never copied — a copy diverges silently).
 - T-B2.01.2 Follow the §11.4.18 script-documentation mandate.
 
-### - [ ] T-B2.02 Author `install_speckit_superpowers_bridge.sh`
+### - [x] T-B2.02 Author `install_speckit_superpowers_bridge.sh`
+
+**Evidence**: `constitution/scripts/extensions/install_speckit_superpowers_bridge.sh`
+(constitution commit `b43a2a8`) + `qa-results/hxc159/bridge_install/<run-id>/`.
+L3 (SuperSpec) idempotent detect-and-validate-pin (already WIRED on this host);
+L4 (SuperB) refused by default (HIGH risk, needs an explicit `--superb-from` +
+`--superb-vetted-by` §11.4.66 record); no L5 step; `erophames/superpowers-mcp`
+structurally unreachable; `obra/superpowers` reconciled, never double-installed.
+RS-19 confirmed live: `specify extension list` non-empty after every run.
+Paired test suite `install_speckit_superpowers_bridge_test.sh` 8/8 PASS (4 unit +
+1 integration against the real repo root + 1 full-automation idempotent-double-run
++ 2 chaos: SIGKILL-interrupted L4 install leaves detectable partial state, re-run
+cleans it and completes). Two independent real SIGKILL interruptions of the
+script's actual default (read-mostly) code path on this host also captured
+(`qa-results/hxc159/bridge_install_t_b202_manual_evidence/chaos_*`), confirming
+byte-identical repo/`.specify/extensions.yml` state before/after.
 
 **Scope**: install L3 and L4 **only**. Idempotent over an already-initialised L2.
 **Test types**: unit, integration, full-automation, chaos (interrupted install).
@@ -1149,7 +1294,26 @@ and names the pinned version.
 - T-B2.02.5 Refuse `erophames/superpowers-mcp` unconditionally (T-B1.03.4).
 - T-B2.02.6 Contain **no** L5 step — a step that can never succeed is a defect, not a TODO.
 
-### - [ ] T-B2.03 Author `validate_bridge.sh`
+### - [x] T-B2.03 Author `validate_bridge.sh`
+
+**Evidence**: `constitution/scripts/extensions/validate_bridge.sh` (constitution
+commit `b43a2a8`) + `qa-results/hxc159/bridge_validate/<run-id>/`. Re-derived the
+8-check list verbatim from `implementation/README.md` "Step 4" (the corpus's own
+`ALL 8/8 CHECKS PASSED` transcript). **Correction to this task's own stale
+assumption**: on the FRESH measurement checks 5 (superspec status) and 7 (Helix
+LLM Gateway reachable) now PASS — not fail — because L3 and L6 were independently
+re-measured WIRED by T-B1.01's fresh probe (spec.md's original snapshot predates
+that). Check 1 (SuperBridge MCP health) dropped to `N/A` per T-B2.03.2 (L5 is a
+proven structural impossibility, §11.4.112 — never reported FAIL). Checks 6
+(superb) and 8 (llama.cpp RPC) correctly FAIL (L4 not installed pending vetting;
+L7 rpc-server not yet built, tracked separately). Real result on this host:
+5/7 evaluable checks PASS, bridge NOT fully ready — reported honestly, never 8/8.
+Paired mutation (T-B2.03.3) run live: injecting a synthetic report claiming
+L4=WIRED does NOT flip check 6 to PASS, because check 6 requires genuine
+installed-state evidence from `.specify/extensions.yml`'s `installed:` list
+rather than trusting `specify extension info <id>` alone (which resolves for any
+catalog-known id regardless of install state — a false-positive trap discovered
+and fixed during this task via exactly this mutation-testing discipline).
 
 **Scope**: the design advertises *"ALL 8/8 CHECKS PASSED — bridge ready"*. On this host
 it would fail at least checks 1, 5, 6, 7 and 8. The validator must report honestly.
