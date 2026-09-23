@@ -1,0 +1,37 @@
+    zz_probe_review_test.go:64: RV-N1 direct: err=<nil> total=3 flatRegistered=0 pk0Body="body pk"
+    zz_probe_review_test.go:75: RV-N1 via LoadSkillsAndDispatcher: err=<nil> total=11 flatRegistered=0 rogueTriggerMatched=false out=""
+--- PASS: TestRV_N1_FlatFiles (0.01s)
+    zz_probe_review_test.go:95: RV-N2 direct: err=<nil> top(loser)=false deep(winner)=true deepBody="DEEP BODY {{ARG1}} src=external:/home/milosvasic/.cache/hxc159-n1n2-review/tmp/TestRV_N2_Nested382859896/001/lib/x/aaa-deep/SKILL.md" other=true all=[aaa-deep<external:/home/milosvasic/.cache/hxc159-n1n2-review/tmp/TestRV_N2_Nested382859896/001/lib/x/aaa-deep/SKILL.md> zzz-other<external:/home/milosvasic/.cache/hxc159-n1n2-review/tmp/TestRV_N2_Nested382859896/001/zzz-other/SKILL.md>]
+    zz_probe_review_test.go:102: RV-N2 via LSAD: err=<nil> top=false deep=true deepTriggerMatched=true out="DEEP BODY "
+--- PASS: TestRV_N2_Nested (0.00s)
+    zz_probe_review_test.go:127: RV-FID action-prefix-system src=external:/home/milosvasic/Projects/helix_code/.claude/skills/action-prefix-system/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=false
+    zz_probe_review_test.go:131:    got  triggers=["\"(?i)^what does the (?P<action>[A-Za-z][A-Za-z0-9_]*) (?:action )?prefix (?:do|mean)\\\\b.*$\"" "\"(?i)^(?:what|how).*\\\\baction[- ]prefix(?:es)?\\\\b.*$\"" "\"(?i)^how do i (?:add|register) (?:a )?new (?:action|directive)\\\\b.*$\""]
+    zz_probe_review_test.go:132:    want triggers=["(?i)^what does the (?P<action>[A-Za-z][A-Za-z0-9_]*) (?:action )?prefix (?:do|mean)\\b.*$" "(?i)^(?:what|how).*\\baction[- ]prefix(?:es)?\\b.*$" "(?i)^how do i (?:add|register) (?:a )?new (?:action|directive)\\b.*$"]
+    zz_probe_review_test.go:127: RV-FID media-validator src=external:/home/milosvasic/Projects/helix_code/.claude/skills/media-validator/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=false
+    zz_probe_review_test.go:131:    got  triggers=["\"(?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\\\\b.*?(?P<path>\\\\S+\\\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\\\s*$\"" "\"(?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\\\\b.*?(?P<path>\\\\S+\\\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\\\s*$\""]
+    zz_probe_review_test.go:132:    want triggers=["(?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\\b.*?(?P<path>\\S+\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\s*$" "(?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\\b.*?(?P<path>\\S+\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\s*$"]
+    zz_probe_review_test.go:127: RV-FID multitrack src=external:/home/milosvasic/Projects/helix_code/.claude/skills/multitrack/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=false
+    zz_probe_review_test.go:131:    got  triggers=["\"(?i)^(?:how do i |how to )?(?:start|create|spin up|set up|begin)\\\\b.*\\\\bmultitrack\\\\b.*$\"" "\"(?i)^.*\\\\bmultitrack\\\\b.*\\\\b(?:work ?stream|track|branch|worktree)s?\\\\b.*$\""]
+    zz_probe_review_test.go:132:    want triggers=["(?i)^(?:how do i |how to )?(?:start|create|spin up|set up|begin)\\b.*\\bmultitrack\\b.*$" "(?i)^.*\\bmultitrack\\b.*\\b(?:work ?stream|track|branch|worktree)s?\\b.*$"]
+    zz_probe_review_test.go:127: RV-FID scheduled-work-queue src=external:/home/milosvasic/Projects/helix_code/.claude/skills/scheduled-work-queue/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=false
+    zz_probe_review_test.go:131:    got  triggers=["\"(?i)^remind me to (?P<task>.+)$\"" "\"(?i)^(?:schedule|queue|defer) (?:this |that )?(?:work |task )?(?:to |for )?(?P<task>.+)$\""]
+    zz_probe_review_test.go:132:    want triggers=["(?i)^remind me to (?P<task>.+)$" "(?i)^(?:schedule|queue|defer) (?:this |that )?(?:work |task )?(?:to |for )?(?P<task>.+)$"]
+    zz_probe_review_test.go:127: RV-FID skill-catalog src=external:/home/milosvasic/Projects/helix_code/.claude/skills/skill-catalog/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=true
+    zz_probe_review_test.go:127: RV-FID speckit-analyze src=external:/home/milosvasic/Projects/helix_code/.claude/skills/speckit-analyze/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=true
+    zz_probe_review_test.go:127: RV-FID workable-item-lifecycle src=external:/home/milosvasic/Projects/helix_code/.claude/skills/workable-item-lifecycle/SKILL.md descEq=true bodyEq=true isoEq=true triggersEq=false
+    zz_probe_review_test.go:131:    got  triggers=["\"(?i)^how do i (?:properly )?(?:close|reopen|start|finish|block|obsolete)\\\\b.*\\\\b(?:workable )?item\\\\b.*$\"" "\"(?i)^(?:what|which) (?:status|type)\\\\b.*\\\\b(?:workable )?items?\\\\b.*$\"" "\"(?i)^(?:close|reopen|mark)\\\\b.*\\\\bworkable item\\\\b.*$\""]
+    zz_probe_review_test.go:132:    want triggers=["(?i)^how do i (?:properly )?(?:close|reopen|start|finish|block|obsolete)\\b.*\\b(?:workable )?item\\b.*$" "(?i)^(?:what|which) (?:status|type)\\b.*\\b(?:workable )?items?\\b.*$" "(?i)^(?:close|reopen|mark)\\b.*\\bworkable item\\b.*$"]
+--- PASS: TestRV_Fidelity_RealCorpus (0.00s)
+    zz_probe_review_test.go:156: RV-DISP action-prefix-system src=external:/home/milosvasic/Projects/helix_code/.claude/skills/action-prefix-system/SKILL.md triggers=["\"(?i)^what does the (?P<action>[A-Za-z][A-Za-z0-9_]*) (?:action )?prefix (?:do|mean)\\\\b.*$\"" "\"(?i)^(?:what|how).*\\\\baction[- ]prefix(?:es)?\\\\b.*$\"" "\"(?i)^how do i (?:add|register) (?:a )?new (?:action|directive)\\\\b.*$\""]
+    zz_probe_review_test.go:156: RV-DISP media-validator src=external:/home/milosvasic/Projects/helix_code/.claude/skills/media-validator/SKILL.md triggers=["\"(?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\\\\b.*?(?P<path>\\\\S+\\\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\\\s*$\"" "\"(?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\\\\b.*?(?P<path>\\\\S+\\\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\\\s*$\""]
+    zz_probe_review_test.go:156: RV-DISP multitrack src=external:/home/milosvasic/Projects/helix_code/.claude/skills/multitrack/SKILL.md triggers=["\"(?i)^(?:how do i |how to )?(?:start|create|spin up|set up|begin)\\\\b.*\\\\bmultitrack\\\\b.*$\"" "\"(?i)^.*\\\\bmultitrack\\\\b.*\\\\b(?:work ?stream|track|branch|worktree)s?\\\\b.*$\""]
+    zz_probe_review_test.go:156: RV-DISP skill-catalog src=external:/home/milosvasic/Projects/helix_code/.claude/skills/skill-catalog/SKILL.md triggers=[]
+    zz_probe_review_test.go:156: RV-DISP conventional-commit src=builtin:conventional-commit/SKILL.md triggers=["(?i)^commit message for (?P<summary>.+)$" "(?i)^write a (?:conventional )?commit(?: message)? for (?P<summary>.+)$"]
+    zz_probe_review_test.go:161: RV-DISP prompt="how do i add a new directive" matched=false
+    zz_probe_review_test.go:161: RV-DISP prompt="what does the BACKGROUND prefix do" matched=false
+--- PASS: TestRV_Dispatch_RealCorpus (0.00s)
+    zz_probe_review_test.go:179: RV-E externalOnly: err=<nil> builtins=8 solo=true
+    zz_probe_review_test.go:194: RV-F err=<nil> media-validator="MY OVERRIDE" multitrack="FLAT MT" builtinsRemaining=6
+    zz_probe_review_test.go:201: RV-G rootManifest: err=<nil> registered=[005<external:/home/milosvasic/.cache/hxc159-n1n2-review/tmp/TestRV_Builtins3851801116/005/./SKILL.md> child<external:/home/milosvasic/.cache/hxc159-n1n2-review/tmp/TestRV_Builtins3851801116/005/child/SKILL.md>] tierBase=005
+--- PASS: TestRV_Builtins (0.00s)
+ok  	dev.helix.code/internal/agent	0.043s

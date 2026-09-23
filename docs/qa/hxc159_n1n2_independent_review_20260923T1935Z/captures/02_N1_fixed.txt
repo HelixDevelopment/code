@@ -1,0 +1,5 @@
+    zz_probe_review_test.go:64: RV-N1 direct: err=<nil> total=3 flatRegistered=0 pk0Body="body pk"
+    zz_probe_review_test.go:84: RV-N1 CONTROL (plain commands.SkillLoader over same dir): flatRecognised=31
+    zz_probe_review_test.go:92: RV-N1 spelling-variant (dir+"/", pre-existing class): flatRegistered=31
+    zz_probe_review_test.go:93: RV-N1 via LoadSkillsAndDispatcher: err=<nil> total=11 flatRegistered=0 rogueTriggerMatched=false out=""
+ok  	dev.helix.code/internal/agent	0.040s

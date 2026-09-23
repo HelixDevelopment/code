@@ -1,0 +1,42 @@
+=== m1 ({"Replace":{"/home/milosvasic/.cache/hxc159-n1n2-review/fixed/helix_code/internal/agent/skill_external_policy.go":"/home/milosvasic/.cache/hxc159-n1n2-review/mut/m1_policy.go"}})
+--- FAIL: TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded (0.00s)
+--- FAIL: TestLoadExternalTierIntoRegistry_FlatMdFilesNeverBypassPolicyCeiling (0.01s)
+--- FAIL: TestLoadExternalTierIntoRegistry_NestedSkillThatWinsSimilarityBecomesLoadable (0.00s)
+--- FAIL: TestLoadSkillsAndDispatcher_ExcludedExternalSkillSharingBuiltinNameNeverDeletesBuiltin (0.00s)
+--- FAIL: TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/agent	8.934s
+FAIL
+=== m2 ({"Replace":{"/home/milosvasic/.cache/hxc159-n1n2-review/fixed/helix_code/internal/agent/skill_activation.go":"/home/milosvasic/.cache/hxc159-n1n2-review/mut/m2_act.go"}})
+--- FAIL: TestLoadSkillsAndDispatcher_EarlierDirOverrideOfBuiltinSurvivesLaterDirLoad (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/agent	8.948s
+FAIL
+=== m3 ({"Replace":{"/home/milosvasic/.cache/hxc159-n1n2-review/fixed/helix_code/internal/agent/skill_activation.go":"/home/milosvasic/.cache/hxc159-n1n2-review/mut/m3_act.go"}})
+--- FAIL: TestLoadSkillsAndDispatcher_ExcludedExternalSkillSharingBuiltinNameNeverDeletesBuiltin (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/agent	8.902s
+FAIL
+=== m4 ({"Replace":{"/home/milosvasic/.cache/hxc159-n1n2-review/fixed/helix_code/internal/agent/skill_external_policy.go":"/home/milosvasic/.cache/hxc159-n1n2-review/mut/m4_policy.go"}})
+ok  	dev.helix.code/internal/agent	8.991s
+=== diffs
+313,315c313,316
+< 	for _, s := range skills {
+< 		reg.Add(s)
+< 	}
+---
+> 	_ = skills
+> 	ld := commands.NewSkillLoader(reg, dir, "")
+> 	ld.SkipBuiltins(true)
+> 	if e := ld.Load(); e != nil { return e }
+92d91
+< 		loader.SkipBuiltins(true)
+47c47,48
+< 	if err := builtinLoader.Load(); err != nil {
+---
+> 	_ = builtinLoader
+> 	if err := error(nil); err != nil {
+335c335
+< 		if prior, ok := seen[s.Dir]; ok {
+---
+> 		if prior, ok := seen[s.Dir]; ok && false {

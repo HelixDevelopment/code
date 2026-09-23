@@ -1,0 +1,6 @@
+    zz_probe_iso_test.go:22: RV-ISO value="true"               registered=true err=<nil> gotIsolation=true yamlv3Isolation=true(refErr=<nil>)
+    zz_probe_iso_test.go:22: RV-ISO value="True"               registered=true err=<nil> gotIsolation=false yamlv3Isolation=true(refErr=<nil>)
+    zz_probe_iso_test.go:22: RV-ISO value="TRUE"               registered=true err=<nil> gotIsolation=false yamlv3Isolation=true(refErr=<nil>)
+    zz_probe_iso_test.go:22: RV-ISO value="\"true\""           registered=true err=<nil> gotIsolation=true yamlv3Isolation=false(refErr=skill iso: parse frontmatter: yaml: unmarshal errors:
+    zz_probe_iso_test.go:22: RV-ISO value="true # sandbox me"  registered=true err=<nil> gotIsolation=false yamlv3Isolation=true(refErr=<nil>)
+ok  	dev.helix.code/internal/agent	0.022s

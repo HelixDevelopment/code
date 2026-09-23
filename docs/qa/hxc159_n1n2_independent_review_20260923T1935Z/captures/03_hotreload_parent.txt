@@ -1,0 +1,3 @@
+    zz_probe_reload_test.go:27: RV-RELOAD before delete: body="PROJECT OVERRIDE" loaderLoaded=8
+    zz_probe_reload_test.go:35: RV-RELOAD after delete+Reload: present=true src="builtin:conventional-commit/SKILL.md" loaderLoaded=8
+ok  	dev.helix.code/internal/agent	0.025s

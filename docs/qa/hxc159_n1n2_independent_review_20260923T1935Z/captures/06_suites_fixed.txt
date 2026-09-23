@@ -1,0 +1,5 @@
+ok  	dev.helix.code/internal/agent	9.022s
+ok  	dev.helix.code/internal/commands	1.636s
+ok  	dev.helix.code/internal/clientcore	0.041s
+ok  	dev.helix.code/internal/skillconformance	0.032s
+ok  	dev.helix.code/cmd/cli	7.383s
