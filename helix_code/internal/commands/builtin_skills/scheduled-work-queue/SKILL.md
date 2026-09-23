@@ -1,44 +1,74 @@
 ---
-description: Record deferred or background work on the scheduled-work queue and verify its real outcome before reporting it done
+name: scheduled-work-queue
+description: Teaches an agent to record background/deferred work via the scheduled-work MCP server and — before ever reporting it done — to verify uncertain, blocked, or overdue items against real captured evidence. Use when dispatching background work, when a REMINDER fires and unconfirmed work must be re-checked, or before an autonomous loop declares its queue empty.
+version: 1.0.0
+# --- HXC-159 F-13 superset fields (HelixCode builtin_skills REPL loader) ---
+# Optional fields consumed ONLY by helix_code's internal regex-triggered REPL
+# completion-prompt loader (markdown_skills.go). Other Agent-Skills-format
+# consumers ignore unknown YAML keys. Carried forward verbatim from the
+# pre-superset builtin_skills copy — never invented (§11.4.6).
 triggers:
   - "(?i)^remind me to (?P<task>.+)$"
   - "(?i)^(?:schedule|queue|defer) (?:this |that )?(?:work |task )?(?:to |for )?(?P<task>.+)$"
 requires_isolation: false
 ---
 
-You are recording deferred work on the scheduled-work queue for a HelixCode user.
+# Scheduled-Work Queue Skill
 
-Work to record: `{{ARG.task}}`
+## Purpose
+Teaches an agent to use the **scheduled-work** MCP server to record background /
+deferred work and — crucially — to **verify uncertain, blocked, or overdue work
+before reporting it done**. This is the teeth behind the `REMINDER` / `BACKGROUND`
+action-prefix (§11.4.140): when a REMINDER fires, the agent queries the queue for
+work whose real outcome is not yet confirmed and re-checks it, instead of guessing
+that it finished (§11.4.6 no-guessing, §11.4.108 verify-before-report).
 
-The purpose of the queue is not merely to remember work — it is to stop
-unverified work being reported as finished. Apply this discipline:
+## When to use
+- The operator dispatches background/deferred work ("do X later", "remind me to Y").
+- A REMINDER arrives and the agent must decide what still needs confirming.
+- Before an autonomous loop declares its queue empty (§11.4.87 / §11.4.126) — first
+  confirm no item is still `blocked` / `uncertain` / `overdue`.
 
-1. RECORD THE WORK with enough detail that a later session, with none of the
-   present context, can pick it up: what must happen, what "done" looks like,
-   and what evidence would prove it.
+## MCP tools (server name: `scheduled-work`)
+- `create_work_item {title, description?, status?, due_at?, tags?, source?, notes?}`
+  — record a work item. `status` ∈ `scheduled|in-progress|blocked|uncertain|done|cancelled`
+  (default `scheduled`); `due_at` is RFC3339.
+- `list_work_items {status?}` — list items (optional effective-status filter,
+  incl. derived `overdue`).
+- `get_work_item {id}` — one item by id.
+- `update_work_item_status {id, status, notes?}` — move an item along.
+- `mark_work_item_done {id, notes?}` — close it. **Only call AFTER you have
+  verified the real outcome** — put the captured evidence in `notes`.
+- `list_overdue_work {}` — open items past their due time.
+- `list_needs_verification {}` — open items (`blocked` / `uncertain` / `overdue`)
+  a REMINDER MUST confirm before reporting done.
 
-2. RECORD HOW ITS OUTCOME WILL BE CHECKED. An entry whose completion cannot be
-   verified later is a note, not a queue item.
+## Recommended flow
+1. **Record**: on dispatching background work, `create_work_item` with a clear
+   title + `status:"in-progress"` (or `blocked` / `uncertain` if the outcome is
+   not yet known).
+2. **On REMINDER**: call `list_needs_verification`. For each returned item,
+   re-check the real system state (run the probe / read the sink / re-run the
+   test), gather captured evidence.
+3. **Confirm-before-done**: only when the evidence shows the work genuinely
+   succeeded, `mark_work_item_done` with the evidence path in `notes`. If it did
+   NOT succeed, `update_work_item_status` back to `in-progress` / `blocked` and
+   keep working (§11.4.94 zero-idle).
+4. **Never** mark done on assumption — an item left `uncertain` is the honest
+   state (§11.4.6).
 
-3. WHEN THE ITEM COMES BACK AROUND, RE-CHECK IT RATHER THAN ASSUMING. The
-   entire value of the queue is that work whose real outcome is uncertain,
-   blocked or overdue gets verified before anyone calls it done. Never report a
-   queued item as complete because it was dispatched, because time passed, or
-   because nothing appeared to go wrong. Absence of an error is not evidence of
-   success.
+## Setup
+The MCP server is the `scheduled-work-engine` Go binary. Build it once:
+```bash
+bash plugins/scheduled-work/build.sh   # or: cd scripts/scheduled-work-engine && go build -o bin/scheduled-work ./cmd/scheduled-work
+```
+Registration: `mcp/scheduled-work-mcp.json` (project-scoped) or the Claude Code
+plugin `plugins/scheduled-work/`.
 
-4. DISTINGUISH THE THREE STATES HONESTLY:
-   - done, with the checked evidence named;
-   - still outstanding;
-   - blocked, naming exactly what it is blocked on.
-   Never collapse "unverified" into "done".
-
-5. A BLOCKED ITEM PARKS ITSELF, NOT THE WHOLE QUEUE. Keep making progress on
-   everything that is not blocked.
-
-If a background task reported an exit status, remember that the status describes
-the wrapper that ran the work, not the work itself — confirm the actual artifact
-or state change the task was supposed to produce.
-
-The queue is served by the scheduled-work component; the full contract is
-documented in `constitution/skills/scheduled-work-queue/skill.md`.
+## Cross-references
+- constitution/Constitution.md §11.4.6 (no-guessing)
+- constitution/Constitution.md §11.4.108 (verify-before-report / runtime-signature)
+- constitution/Constitution.md §11.4.140 (action-prefix — REMINDER/BACKGROUND)
+- constitution/Constitution.md §11.4.28 (decoupled, project-agnostic submodule)
+- constitution/Constitution.md §11.4.116 (agent sync channel — sibling discipline)
+- scripts/scheduled-work-engine/README.md (full engine docs + REST/MCP/ACP surfaces)

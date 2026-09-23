@@ -1,43 +1,125 @@
 ---
-description: Sync session transcripts, memories, settings and handoff documents between this machine and the same project on a remote host
+name: session-sync
+description: Syncs Claude Code project data — memories, session transcripts, settings, agent definitions, remember-logs, and handoff documents — between the same project on a remote workstation and the local machine over SSH, so local work can resume exactly where a remote session left off. Use when starting on a new machine, switching workstations, or aligning multi-track session state (§11.4.187).
+version: 1.0.0
+# --- HXC-159 F-13 superset fields (HelixCode builtin_skills REPL loader) ---
+# Optional fields consumed ONLY by helix_code's internal regex-triggered REPL
+# completion-prompt loader (markdown_skills.go). Other Agent-Skills-format
+# consumers ignore unknown YAML keys. Carried forward verbatim from the
+# pre-superset builtin_skills copy — never invented (§11.4.6).
 triggers:
   - "(?i)^(?:sync|pull|push) (?:my |the )?sessions?\\b.*\\b(?:remote|host|machine|laptop|workstation)\\b.*$"
   - "(?i)^(?:sync|pull|push) (?:my |the )?(?:session|memories|transcripts|handoff)\\b.*\\bfrom\\b.*$"
 requires_isolation: false
 ---
 
-You are helping a HelixCode user sync session state with the same project on
-another machine.
+# Session Sync Skill — Bidirectional Claude Code Session Import/Export via SSH
 
-Session sync moves the project's agent-side state — memories, session
-transcripts, settings, agent definitions and handoff documents — between a
-remote host and this one. It supports pull (remote to local), push (local to
-remote) and bidirectional sync.
+**Revision:** 1
+**Last modified:** 2026-07-13T00:00:00Z
+**Status:** active
 
-Before running anything, establish these facts rather than assuming them:
+## Purpose
 
-1. DIRECTION. Pull, push, or bidirectional. Never guess: pushing when the user
-   meant pull can overwrite newer local state.
+Syncs ALL Claude Code project data — memories, session transcripts, settings,
+agent definitions, remember-logs, and handoff documents — between the SAME
+project on a REMOTE host and the local machine. Supports pull (remote→local),
+push (local→remote), and bidirectional sync.
 
-2. THE REMOTE. Which host, which user, and the path to the SAME project there.
-   Sync is defined between two checkouts of one project; it is not a general
-   file copy.
+After running, the local project can CONTINUE work EXACTLY where the remote
+session left off — same memories, same session history, same settings. This is
+the bridge between multi-track workstations (§11.4.187).
 
-3. WHAT IS IN SCOPE. Session transcripts and memories are the point. Anything
-   holding credentials is not: never sync secrets, tokens, key material or
-   `.env` files between machines as part of this operation.
+## When to use
 
-4. CONFLICTS ARE SURFACED, NOT SILENTLY MERGED. When both sides changed, report
-   the divergence and let the user decide. Silently picking a winner destroys
-   whichever side lost.
+- **Starting work on a new machine** — pull all session state from the primary
+  workstation so you resume exactly where you left off.
+- **Switching between workstations** — push your session state back before
+  leaving, pull when you arrive.
+- **After a remote session completes major work** — pull the updated memories
+  and handoff docs so the local project knows the latest state.
+- **Before/after a rebuild cycle** — sync session state to keep all tracks
+  aligned.
 
-5. THE OPERATION MUST BE REVERSIBLE. Confirm a backup or a dry run before any
-   step that overwrites existing local state, and prefer showing what WOULD
-   change first.
+## How to invoke
 
-Report afterwards what actually transferred — which files, in which direction —
-rather than reporting success generically. If the remote was unreachable, say
-so; an unreachable remote is not a completed sync.
+This skill provides the `session-sync.sh` script at:
+`constitution/skills/session-sync/session-sync.sh`
 
-The sync implementation and its full contract live at
-`constitution/skills/session-sync/` alongside the executable helper.
+```bash
+# Pull everything from remote workstation (DEFAULT):
+bash constitution/skills/session-sync/session-sync.sh user@host /path/to/project
+
+# Push local state to remote:
+bash constitution/skills/session-sync/session-sync.sh --push user@host /path/to/project
+
+# Bidirectional two-way sync:
+bash constitution/skills/session-sync/session-sync.sh --bidirectional user@host /path/to/project
+
+# Quick mode (recent sessions only, faster):
+bash constitution/skills/session-sync/session-sync.sh --quick user@host /path/to/project
+
+# Preview without copying:
+bash constitution/skills/session-sync/session-sync.sh --dry-run user@host /path/to/project
+```
+
+## What it syncs
+
+| Data | Description |
+|------|------------|
+| **Memories** | Project-specific memory files (`.md` with frontmatter) |
+| **Session JSONL** | Full Claude Code session transcripts |
+| **Session dirs** | Per-session working directories |
+| **Settings** | `.claude/settings.json` + `settings.local.json` |
+| **Agents** | `.claude/agents/` — custom agent definitions |
+| **Remember logs** | `.remember/` — session handoff + daily logs |
+| **Handoff docs** | `docs/SESSION_RESUME.md` + `docs/CONTINUATION.md` |
+| **Provider config** | Global `CLAUDE.md`, `history.jsonl`, `settings.json` |
+
+## Options
+
+| Option | Effect |
+|--------|--------|
+| `--pull` | Pull from remote to local (DEFAULT) |
+| `--push` | Push from local to remote |
+| `--bidirectional` | Pull first, then push (full two-way) |
+| `--quick` | Only recent sessions + memories (faster) |
+| `--recent N` | Number of recent sessions in quick mode (default: 3) |
+| `--dry-run` | Preview without copying |
+| `--skip-confirm` | Skip push confirmation prompts |
+| `--no-sessions` | Skip session JSONL transcripts |
+| `--no-session-dirs` | Skip session directories |
+
+## Cross-references
+
+- constitution/Constitution.md §11.4.187 — multi-track ruler orchestration
+- constitution/Constitution.md §11.4.176 — multi-track work-division
+- constitution/Constitution.md §11.4.131 — standing session-resumption file
+- constitution/Constitution.md §12.10 — CONTINUATION.md maintenance
+- constitution/scripts/multitrack/ — multi-track tooling
+- constitution/scripts/post_update_hook.sh — auto-registration hook (§11.4.164)
+
+## Dependencies
+
+- `ssh` — key-based access to remote host
+- `rsync` — efficient file transfer
+- bash 4+
+
+## How it works
+
+1. Derives Claude Code project slugs from both paths (same algorithm Claude uses:
+   absolute path with `/` replaced by `-`)
+2. Validates SSH connectivity + remote project existence
+3. Executes 7 sync phases: memories → sessions → session-dirs → settings+agents →
+   remember-logs → handoff-docs → provider-config
+4. Prints summary with OK/Failed/Skipped counts
+5. Exit 0 = all synced, 1 = partial errors, 2 = blocked
+
+The slug algorithm ensures the correct Claude Code project directory is found
+regardless of mount point differences between hosts.
+
+## Registration
+
+This skill is auto-registered by `constitution/scripts/post_update_hook.sh`
+(§11.4.164). On every constitution pull, the hook detects new/changed skills
+and symlinks them into the consuming project's `skills/` directory.

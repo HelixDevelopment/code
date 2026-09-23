@@ -1,45 +1,46 @@
 ---
-description: Set up or reason about parallel multitrack work streams, their branches, isolation and identity labels
+name: Multitrack
+description: Automatic multi-track ruler orchestration per §11.4.187 — one conductor session spawning, driving, resuming, monitoring and controlling per-track headless workers with per-subscription auth, rate-limit rebind and crash-resilient supervision. Use when working with parallel development tracks, per-track headless workers, or the multitrack orchestrator, supervisor and bootstrap.
+version: 1.0.0
+# --- HXC-159 F-13 superset fields (HelixCode builtin_skills REPL loader) ---
+# Optional fields consumed ONLY by helix_code's internal regex-triggered REPL
+# completion-prompt loader (markdown_skills.go). Other Agent-Skills-format
+# consumers ignore unknown YAML keys. Carried forward verbatim from the
+# pre-superset builtin_skills copy — never invented (§11.4.6).
 triggers:
   - "(?i)^(?:how do i |how to )?(?:start|create|spin up|set up|begin)\\b.*\\bmultitrack\\b.*$"
   - "(?i)^.*\\bmultitrack\\b.*\\b(?:work ?stream|track|branch|worktree)s?\\b.*$"
 requires_isolation: false
 ---
 
-You are helping a HelixCode user run parallel multitrack work streams.
+# Multitrack
 
-Multitrack development runs several isolated checkouts at once, each on its own
-branch, so independent work proceeds in parallel without the streams colliding.
-Apply these invariants:
+Automatic multi-track ruler orchestration (§11.4.187): a universal, automatic,
+out-of-the-box, inherited-by-reference engine. One conductor session spawns,
+drives, resumes, monitors and controls per-track headless workers
+(`claude -p --output-format stream-json`, session id taken from the `init`
+event, success read from `result.is_error` — never the exit code), with
+per-subscription authentication, rate-limit (429) rebind and fallback, and a
+crash-resilient self-supervisor over durable state. Bootstrap is idempotent
+and auto-invoked on every constitution pull through the §11.4.164 seam.
 
-1. ISOLATION BY CONSTRUCTION. Each track is its own checkout with its OWN
-   repository metadata directory, not a shared one. A shared metadata directory
-   is a single point of failure: one stale lock stalls every track at once, and
-   one corrupted object store loses all of them. Where disk space is the
-   constraint, use a copy-on-write or reflink clone so extents are shared on
-   disk while each track keeps its own independent metadata.
+The consuming project supplies only per-host data:
+`config/multitrack/<hostname>.yaml`. The conductor stays home; tracks execute
+in their own checkouts.
 
-2. ONE FEATURE, ONE BRANCH NAME. A feature or logical group of work items maps
-   to exactly ONE canonical branch name, used identically in the main
-   repository and every submodule it touches. Never mint a second name for work
-   that already has one, and never let a submodule's branch name drift from the
-   main repository's.
+## Registration
 
-3. TRACK-QUALIFIED IDENTITY. Never identify a track by the bare directory
-   basename. Two checkouts that share a basename collapse into the same session
-   name, lock path and log directory, and then cross-wire. Every session name,
-   lock path, log directory and resource claim carries the track-qualified key.
+`register.sh <project-root>` (defaults to `$PWD`) is the §11.4.164
+auto-install trigger — it carries no wiring logic of its own and delegates
+entirely to `scripts/multitrack/multitrack_bootstrap.sh`, whose six
+idempotent steps are: install the cwd-hook symlink, check the CLI alias
+availability, validate the per-host config (fatal only here — host data is
+never invented), seed the orchestrator (`reconcile` + `status`), run the
+read-only drive-preparation probe, and leave the opt-in supervisor watchdog
+off by default.
 
-4. EXCLUSIVE RESOURCES HAVE ONE OWNER. When tracks share a device, sink or any
-   single-access resource, exactly one track drives it at a time; the others
-   observe read-only. Concurrent drivers produce cross-contaminated results
-   that cannot be trusted.
+## Activation ceiling and similarity
 
-5. MERGE THE TRUNK IN OFTEN. Merge the canonical trunk INTO each long-lived
-   branch regularly rather than only at the end, so the eventual integration
-   stays small. Merge, never rebase, so no commit is lost.
-
-Tell the user which of these applies to their situation and what to do next. If
-you do not know this project's actual track layout, say so and ask rather than
-assuming a number of tracks or a directory scheme. The orchestration scripts and
-the full contract live under `constitution/scripts/multitrack/`.
+Active-track count and worker fan-out are bounded by the host's measured
+budgets (§12.6 / §12.12); a second concurrent heavy build on one host is
+never scheduled (§11.4.96 UNSAFE catalogue).

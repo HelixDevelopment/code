@@ -26,19 +26,23 @@ import (
 // The SKILL.md content under builtin_skills/ is a COPY, not a symlink
 // (//go:embed cannot follow a link outside the module tree). 7 of these 8
 // entries share a directory name with a constitution/skills/<name>/ entry
-// but are NOT copies of it — investigated under HXC-159 T-P9.01 finding
-// F-13 (2026-09-23): the constitution side is a Claude-Code-native Agent
-// Skill doc; the builtin side is a HelixCode-internal regex-triggered
-// REPL completion-prompt template (`description`/`triggers`/
-// `requires_isolation` frontmatter this loader itself parses — see
-// skillFrontmatter below). Running scripts/generate_builtin_skills.sh in
-// its regenerate mode overwrites the builtin format with the constitution
-// one and PROVABLY breaks TestGovernanceSkills_RegisteredAndInvocable (the
-// regex triggers this loader's auto-trigger matcher depends on are lost) —
-// do NOT run it in regenerate mode without first reconciling the two
-// formats. `scripts/generate_builtin_skills.sh --check` is safe and
-// reports drift for visibility only (§11.4.77 regeneration-mechanism
-// declaration, detection-only pending that reconciliation).
+// and ARE GENERATED FROM IT (HXC-159 T-P9.01 finding F-13, resolved
+// 2026-09-23 via Option C — a superset frontmatter schema): the
+// constitution side is the canonical Claude-Code-native Agent Skill doc
+// (`name`/`description`/`version`), extended with two OPTIONAL fields
+// (`triggers`/`requires_isolation`) this loader itself parses (see
+// skillFrontmatter below) but that Claude Code's own native skill
+// discovery, and every other Agent-Skills-format consumer, simply ignores
+// (unknown YAML keys are dropped, not rejected). constitution/skills/ is
+// therefore the single source of truth for BOTH facets: Claude Code's own
+// semantic-description-driven discovery AND this loader's REPL
+// regex-trigger auto-completion. Running `scripts/generate_builtin_skills.sh`
+// (no flags) copies each constitution-sourced skill's SKILL.md verbatim
+// into builtin_skills/ and is now SAFE — TestGovernanceSkills_RegisteredAndInvocable
+// stays green because the source frontmatter carries the same `triggers:`
+// this loader's auto-trigger matcher depends on. `--check` (also wired via
+// `go:generate` below, and via TestBuiltinSkills_NoDrift as an always-on
+// regression guard) reports drift without mutating anything.
 // `conventional-commit` has no constitution/skills/ counterpart at all and
 // is HelixCode's own built-in skill unconditionally.
 //

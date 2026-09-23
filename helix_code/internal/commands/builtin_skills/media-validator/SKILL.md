@@ -1,44 +1,45 @@
 ---
-description: Validate a recording, screenshot or capture by reading its actual content and returning a PASS/FAIL verdict with evidence
+name: media-validator
+description: Validates media files (MP4, PNG, TXT) by running OCR, metadata checks, and pattern matching against expected content, returning PASS/FAIL with captured evidence. Use when a task needs to verify a recording, screenshot, or text-evidence file actually contains an expected pattern before a PASS is claimed — the §11.4.107/§11.4.163 anti-bluff media-validation oracle.
+version: 1.0.0
+# --- HXC-159 F-13 superset fields (HelixCode builtin_skills REPL loader) ---
+# Optional fields consumed ONLY by helix_code's internal regex-triggered REPL
+# completion-prompt loader (markdown_skills.go). Other Agent-Skills-format
+# consumers ignore unknown YAML keys. Carried forward verbatim from the
+# pre-superset builtin_skills copy — never invented (§11.4.6).
 triggers:
   - "(?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\\b.*?(?P<path>\\S+\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\s*$"
   - "(?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\\b.*?(?P<path>\\S+\\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\\s*$"
 requires_isolation: false
 ---
 
-You are validating a captured media artifact for a HelixCode user.
+# Media Validator Skill
 
-Artifact under validation: `{{ARG.path}}`
+## Purpose
+Validates media files (MP4, PNG, TXT) by running OCR, metadata checks, and pattern matching against expected content. Returns PASS/FAIL with evidence.
 
-The governing rule is that a recording is evidence ONLY if its CONTENT has been
-read and checked. Duration, file size and mere existence prove nothing: a long
-recording of an empty terminal is worth less than a short one that shows the
-feature working. Apply this discipline:
+## Usage
+```bash
+bash skills/media-validator/media-validator.sh <file> [expected-pattern...]
+```
 
-1. STATE THE EXPECTATION FIRST. Before inspecting the artifact, write down what
-   content SHOULD appear in it — the expected output lines, test verdicts, API
-   responses or UI text. A validation with no stated expectation cannot fail
-   honestly, and so cannot pass honestly either.
+## Inputs
+- `file` — path to an MP4, PNG, or TXT file
+- `expected-pattern` — one or more grep/extended regex patterns expected in the extracted text
 
-2. EXTRACT THE ACTUAL CONTENT. Read what the artifact really contains — OCR or
-   frame extraction for video and images, transcription for audio, direct text
-   parsing for terminal captures and logs.
+## Outputs
+- stdout: `PASS: <description> [evidence: <path>]` or `FAIL: <reason>`
+- Evidence file at `qa-results/media-validator/<timestamp>-<basename>/`
+- Exit 0 on PASS, 1 on FAIL, 2 on SKIP
 
-3. COMPARE, AND SAY WHICH PATTERNS MATCHED. Report each expected pattern as
-   found or not found. Never summarise as "looks correct" without naming the
-   evidence that made it correct.
+## Dependencies
+- `tesseract` (optional — for OCR on images/video frames)
+- `ffmpeg` (optional — for frame extraction from MP4)
+- `ffprobe` (optional — for video metadata)
+- `file` (for MIME detection)
 
-4. SCAN FOR FALSE-SUCCESS CONTENT. Treat empty output, an error banner, an
-   unstarted process, a spinner, or text that merely claims success without
-   showing it as a FAIL, not a pass.
-
-5. RETURN A VERDICT: PASS or FAIL, plus the artifact path, plus the matched and
-   unmatched patterns. On FAIL, pinpoint where — the frame, timestamp or line.
-
-6. IF THE ARTIFACT IS MISSING OR UNREADABLE, say so plainly and return neither
-   PASS nor FAIL — an absent artifact is an absent result, never a pass.
-
-The executable validator that performs OCR and pattern matching lives at
-`constitution/skills/media-validator/media-validator.sh`; the full skill
-contract is documented alongside it. Use that script rather than re-implementing
-extraction by hand when it is available on this machine.
+## Cross-references
+- constitution/Constitution.md §11.4.107 (liveness evidence)
+- constitution/Constitution.md §11.4.117 (CV/OCR pixel oracle)
+- constitution/Constitution.md §11.4.137 (subtitle correctness)
+- constitution/Constitution.md §11.4.69 (sink-side evidence taxonomy)

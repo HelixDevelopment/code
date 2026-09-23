@@ -10,46 +10,39 @@
 #   finding F-13 reported these 7 entries as byte-for-byte "drifted" from
 #   constitution/skills/, contradicting "source is authoritative".
 #
-# ── HONEST BOUNDARY (§11.4.6) — investigated 2026-09-23, F-13 root cause ────
-#   Running this script's --check confirms the 7 entries genuinely differ
-#   from constitution/skills/ — but the CONTENT-LEVEL investigation (diffing
-#   frontmatter AND body, not just file bytes) shows this is NOT accidental
-#   copy-paste drift of the SAME artifact. The two sides are two
-#   STRUCTURALLY DIFFERENT artifact types that happen to share a directory
-#   name and a governance theme:
-#     - constitution/skills/<name>/SKILL.md — the canonical Claude-Code-
-#       native Agent Skill: `name`/`description`/`version` frontmatter, full
-#       reference-documentation body, consumed by Claude Code's own
-#       semantic-description-driven skill discovery.
-#     - internal/commands/builtin_skills/<name>/SKILL.md — a HelixCode-
-#       INTERNAL prompt TEMPLATE for its own regex-triggered in-app REPL
-#       completion feature: `description`/`triggers` (explicit regexes)/
-#       `requires_isolation` frontmatter, a short `{{ARG.x}}`-templated
-#       instruction body, consumed by markdown_skills.go's OWN loader and
-#       auto-trigger matcher — a different HelixCode product surface
-#       entirely, not a copy of the constitution doc.
-#   PROVEN (not guessed): running this script's real (non --check) mode once
-#   and re-running `go test ./internal/commands/...` broke
-#   TestGovernanceSkills_RegisteredAndInvocable for all 7 skills ("declares
-#   no triggers, so auto-trigger can never fire" / "must carry a
-#   description") — overwriting builtin_skills/*/SKILL.md with the
-#   constitution-native format silently DESTROYS the regex-trigger
-#   completion feature these tests exist to protect. That run was reverted
-#   (`git checkout --`); it was never committed.
+# ── HONEST BOUNDARY (§11.4.6) — resolved 2026-09-23, F-13 Option C ─────────
+#   The 2026-09-23 investigation (docs/qa/hxc159_f13_builtin_skills_investigation_18ea70e5_20260923T064844Z/)
+#   proved the two sides were STRUCTURALLY DIFFERENT artifact types: the
+#   constitution side carried only `name`/`description`/`version`
+#   (Claude-Code-native Agent Skill), the builtin side additionally needed
+#   `triggers` (explicit regexes) + `requires_isolation` for
+#   markdown_skills.go's own regex-triggered REPL auto-trigger matcher —
+#   running this script's regenerate mode against that source PROVABLY
+#   broke TestGovernanceSkills_RegisteredAndInvocable (all 7 skills lost
+#   their triggers).
 #
-#   CONCLUSION: full byte-identical generation, as this script's earlier
-#   header claimed, is NOT SAFE to apply as-is — it is a real capability
-#   loss (§11.4.122), not a sync fix. This script remains as REAL, TESTED
-#   drift-DETECTION tooling (`--check`, wired per §11.4.77) so future
-#   divergence is at minimum VISIBLE and tracked rather than silently
-#   invisible; its regenerate mode is preserved for the day the two formats
-#   are reconciled (e.g. if markdown_skills.go's loader is redesigned to
-#   consume Claude-Code-native frontmatter, or if this internal mechanism is
-#   retired in favour of the pkg/skills external tier once that work lands),
-#   but it MUST NOT be run in regenerate mode against the live tree without
-#   that reconciliation — doing so reintroduces the exact capability
-#   regression proven above. Tracked as a §11.4.197 follow-up requiring an
-#   explicit architectural decision, not executed unilaterally here.
+#   RESOLVED same day via the follow-up architectural-options packet
+#   (docs/research/hxc159_f13_architectural_options_20260923.md, Option C —
+#   superset schema): constitution/skills/<name>/SKILL.md's frontmatter now
+#   OPTIONALLY carries `triggers:` and `requires_isolation:` alongside the
+#   native `name`/`description`/`version` fields. YAML ignores unknown keys
+#   in either direction, so ONE file now genuinely serves BOTH consumers —
+#   Claude Code's own semantic-description-driven discovery (reads
+#   name/description/version, ignores triggers/requires_isolation) AND this
+#   loader's regex-trigger REPL auto-completion (reads description/
+#   triggers/requires_isolation, ignores name/version). constitution/skills/
+#   is therefore the SOLE source of truth; builtin_skills/ is a pure,
+#   verified-safe GENERATED copy. Regenerating (no flags) is now safe and
+#   GREEN-tested (TestGovernanceSkills_RegisteredAndInvocable AND the
+#   dedicated drift-regression guard TestBuiltinSkills_NoDrift both pass
+#   post-regeneration). The `triggers`/`requires_isolation` fields for the
+#   7 migrated skills were carried forward VERBATIM from their pre-superset
+#   builtin_skills copies — never invented (§11.4.6) — so REPL trigger-
+#   phrase matching behaviour is byte-identical to before; only the
+#   `description` + body content changed (now sourced from the richer,
+#   kept-current constitution documentation instead of a separately-
+#   maintained short REPL template), which is the intended fix for the
+#   staleness risk the original F-13 investigation flagged.
 #
 # ── Usage ────────────────────────────────────────────────────────────────────
 #   bash helix_code/scripts/generate_builtin_skills.sh [--check]
