@@ -251,3 +251,90 @@ func TestLoadSkillsAndDispatcher_ExternalTierUnderCeilingStillWorks(t *testing.T
 		t.Fatal("a policy-compliant external-tier skill must still load end-to-end")
 	}
 }
+
+// writeExternalSkillNamed writes dir/<dirName>/SKILL.md whose front-matter
+// `name:` is frontMatterName — deliberately DIFFERENT from dirName — so a
+// test can reproduce the real constitution/skills corpus shape (e.g. the
+// directory `reporting-workable-items` carries `name: Reporting Workable
+// Items`). writeExternalSkillWithDescription always writes name == dirName,
+// which is exactly the fixture coincidence that let HXC-159 T-P9.01 F-21
+// slip past TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded.
+func writeExternalSkillNamed(t *testing.T, dir, dirName, frontMatterName, description string) {
+	t.Helper()
+	skillDir := filepath.Join(dir, dirName)
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := fmt.Sprintf("---\nname: %s\ndescription: %s\n---\nBody for %s.\n", frontMatterName, description, dirName)
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName
+// is the HXC-159 T-P9.01 round-4 finding F-21 reproduction (2026-09-23):
+// pkg/skills' DialectHelixCode Qualified() identity is the front-matter
+// `name:` when present, while commands.SkillRegistry keys every packaged
+// skill by its DIRECTORY basename. The F-17 call-site prune keyed
+// reg.Remove on the front-matter name, so an excluded skill whose `name:`
+// differs from its directory name (4 of the 9 real corpus skills, incl. the
+// genuinely-excluded `reporting-workable-items` / `Reporting Workable
+// Items`) stayed silently registered and invocable while the log said
+// "excluded" — reproduced on the real binary in
+// qa-results/hxc159/review/20260923T_review4/22_RED_prune_name_mismatch_real_cli.txt.
+//
+// RED on the pre-fix code: zz-beta (name "Zeta Beta Title") is present.
+// GREEN post-fix: every policy-excluded skill is pruned under the identity
+// the registry actually uses, regardless of what its front-matter says,
+// including the registrar's symlinked-directory shape (`zz-link`).
+func TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName(t *testing.T) {
+	dir := t.TempDir()
+	const clique = "reconcile ledger balance entries nightly batch"
+	writeExternalSkillNamed(t, dir, "zz-alpha", "Zeta Alpha Title", clique)
+	writeExternalSkillNamed(t, dir, "zz-beta", "Zeta Beta Title", clique)
+	writeExternalSkillNamed(t, dir, "zz-gamma", "zz-gamma", clique) // name == dir control
+	writeExternalSkillNamed(t, dir, "zz-delta", "zz-delta", "compress seismic waveform telemetry for archival storage")
+
+	// The registrar's real output shape (scripts/register_skills.sh, F-03):
+	// a symlinked directory whose target carries a title-cased name.
+	target := filepath.Join(t.TempDir(), "linked-target")
+	writeExternalSkillNamed(t, filepath.Dir(target), filepath.Base(target), "Linked Title", clique)
+	if err := os.Symlink(target, filepath.Join(dir, "zz-link")); err != nil {
+		t.Fatal(err)
+	}
+
+	reg := commands.NewSkillRegistry()
+	if err := LoadExternalTierIntoRegistry(reg, dir); err != nil {
+		t.Fatalf("LoadExternalTierIntoRegistry returned an unexpected error: %v", err)
+	}
+	// Sorted Qualified() order: external.Linked Title, external.Zeta Alpha
+	// Title, external.Zeta Beta Title, external.zz-delta, external.zz-gamma
+	// -> Linked Title admitted first; Zeta Alpha, Zeta Beta, zz-gamma all
+	// conflict with it (score 1.0); zz-delta is unrelated and admits.
+	if _, ok := reg.Get("zz-link"); !ok {
+		t.Fatal("zz-link (the tie-break winner, symlinked dir) must be registered under its directory identity")
+	}
+	if _, ok := reg.Get("zz-delta"); !ok {
+		t.Fatal("zz-delta (unrelated, non-conflicting) must be registered")
+	}
+	for _, excluded := range []string{"zz-alpha", "zz-beta", "zz-gamma"} {
+		if s, ok := reg.Get(excluded); ok {
+			t.Fatalf("F-21: %q was EXCLUDED by the similarity gate but is still registered (source %q) — "+
+				"the prune keyed on the front-matter name, not the directory identity the registry uses",
+				excluded, s.SourcePath())
+		}
+	}
+	// Of the fixture's own skills, exactly the admitted pair may remain.
+	// (commands.SkillLoader.Load also registers the embedded builtin tier
+	// on every load, so the registry legitimately holds more than the
+	// fixture's names — only the zz-* set is this test's subject.)
+	var fixtureNames []string
+	for _, s := range reg.List() {
+		if len(s.Name()) >= 3 && s.Name()[:3] == "zz-" {
+			fixtureNames = append(fixtureNames, s.Name())
+		}
+	}
+	if len(fixtureNames) != 2 {
+		t.Fatalf("expected exactly 2 fixture skills registered (zz-link, zz-delta), got %d: %v", len(fixtureNames), fixtureNames)
+	}
+}

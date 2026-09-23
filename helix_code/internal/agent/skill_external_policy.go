@@ -115,11 +115,35 @@ func PolicyGateExternalTier(dir string) (active []skillslib.Skill, exclusions []
 // contract always uses externalTierTrust; this parameterisation is not
 // itself part of the public seam.
 func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (active []skillslib.Skill, exclusions []skillslib.SimilarityExclusion, refusal error, err error) {
+	active, exclusions, _, refusal, err = policyGateExternalTierDetailed(dir, trust)
+	return active, exclusions, refusal, err
+}
+
+// policyGateExternalTierDetailed is policyGateExternalTierWithTrust plus the
+// one extra fact LoadExternalTierIntoRegistry needs to ACT on an exclusion:
+// excludedDirs[i] is the DIRECTORY basename of exclusions[i]'s skill —
+// pkg/skills' Skill.Dir, resolved from the loaded set by Qualified()
+// identity.
+//
+// HXC-159 T-P9.01 round-4 finding F-21 (2026-09-23): the two identity
+// schemes differ. pkg/skills' DialectHelixCode Qualified() is
+// "external.<front-matter name>" whenever the manifest carries `name:`
+// (only falling back to the directory when it does not, loader.go), while
+// commands.SkillRegistry keys every packaged skill by its DIRECTORY
+// basename (markdown_skills.go: "name = subdir name"). On the real
+// constitution/skills corpus 4 of 9 manifests carry a title-cased `name:`
+// (`reporting-workable-items` -> "Reporting Workable Items"), so a prune
+// keyed on the front-matter name was a silent no-op for exactly those
+// skills — reproduced on the real binary and in
+// TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName.
+// Resolving the directory HERE, from the same loaded set the verdict was
+// computed over, is the only place both identities are known at once.
+func policyGateExternalTierDetailed(dir string, trust skillslib.TrustTier) (active []skillslib.Skill, exclusions []skillslib.SimilarityExclusion, excludedDirs []string, refusal error, err error) {
 	if dir == "" {
-		return nil, nil, nil, nil
+		return nil, nil, nil, nil, nil
 	}
 	if _, statErr := os.Stat(dir); statErr != nil {
-		return nil, nil, nil, nil
+		return nil, nil, nil, nil, nil
 	}
 
 	reg := skillslib.NewRegistry()
@@ -131,21 +155,23 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 		Trust:      trust,
 	}
 	if regErr := reg.RegisterSource(src); regErr != nil {
-		return nil, nil, nil, fmt.Errorf("external skill tier %q: register source: %w", dir, regErr)
+		return nil, nil, nil, nil, fmt.Errorf("external skill tier %q: register source: %w", dir, regErr)
 	}
 	loaded, loadErr := reg.Load()
 	if loadErr != nil {
-		return nil, nil, nil, fmt.Errorf("external skill tier %q: load: %w", dir, loadErr)
+		return nil, nil, nil, nil, fmt.Errorf("external skill tier %q: load: %w", dir, loadErr)
 	}
 	if len(loaded) == 0 {
-		return nil, nil, nil, nil
+		return nil, nil, nil, nil, nil
 	}
 
 	reg.SetSandboxReady(os.Getenv(externalTierSandboxReadyEnvVar) == "true")
 
 	allow := make([]string, 0, len(loaded))
+	dirByQualified := make(map[string]string, len(loaded))
 	for _, s := range loaded {
 		allow = append(allow, s.Qualified())
+		dirByQualified[s.Qualified()] = s.Dir
 	}
 	activated, excl, actErr := reg.Activate(allow, 0)
 	if actErr != nil {
@@ -156,9 +182,21 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 		// can log/skip rather than treating it as an infrastructure fault.
 		// (SimilarityConflictError no longer exists per F-17: a similarity
 		// conflict is reported via excl below, never actErr.)
-		return nil, nil, actErr, nil
+		return nil, nil, nil, actErr, nil
 	}
-	return activated, excl, nil, nil
+	excludedDirs = make([]string, 0, len(excl))
+	for _, ex := range excl {
+		d, ok := dirByQualified[ex.Excluded]
+		if !ok || d == "" {
+			// Every exclusion names a member of the allowlist we just built
+			// from `loaded`, so this cannot happen unless pkg/skills changes
+			// its identity contract — fail closed rather than prune the
+			// wrong (or no) skill (§11.4.6, §11.4.201).
+			return nil, nil, nil, nil, fmt.Errorf("external skill tier %q: exclusion %q resolves to no loaded skill directory", dir, ex.Excluded)
+		}
+		excludedDirs = append(excludedDirs, d)
+	}
+	return activated, excl, excludedDirs, nil, nil
 }
 
 // LoadExternalTierIntoRegistry is the SINGLE production seam every front-end
@@ -185,15 +223,20 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 // SUBSET of everything dir contains. commands.SkillLoader has no
 // directory-scoped filtered-load primitive of its own (Reload() walks and
 // registers the WHOLE directory unconditionally, T1.6), so after the
-// unconditional load this function PRUNES every policy-excluded name back
+// unconditional load this function PRUNES every policy-excluded skill back
 // out of reg via SkillRegistry.Remove — a confusable, policy-refused skill
 // is never left silently registered just because it shares a directory
 // with an admitted one.
+//
+// The prune is keyed on the skill's DIRECTORY basename (the identity
+// commands.SkillRegistry uses), NOT on pkg/skills' Qualified() front-matter
+// name — see policyGateExternalTierDetailed / round-4 finding F-21 for why
+// the two differ on the real corpus.
 func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error {
 	if dir == "" {
 		return nil
 	}
-	active, exclusions, refusal, err := PolicyGateExternalTier(dir)
+	active, exclusions, excludedDirs, refusal, err := policyGateExternalTierDetailed(dir, externalTierTrust)
 	if err != nil {
 		return fmt.Errorf("skill activation: external tier policy gate %q: %w", dir, err)
 	}
@@ -208,22 +251,9 @@ func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error
 	if loadErr := loader.Load(); loadErr != nil {
 		return fmt.Errorf("skill activation: load %q: %w", dir, loadErr)
 	}
-	for _, ex := range exclusions {
+	for i, ex := range exclusions {
 		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
-		reg.Remove(externalTierBareName(ex.Excluded))
+		reg.Remove(excludedDirs[i])
 	}
 	return nil
-}
-
-// externalTierBareName strips the fixed "external." source qualifier
-// policyGateExternalTierWithTrust always registers its source under,
-// turning a pkg/skills Qualified() identity (e.g. "external.reporting-
-// workable-items") back into the bare skill name commands.SkillRegistry
-// keys its entries by (e.g. "reporting-workable-items").
-func externalTierBareName(qualified string) string {
-	const prefix = "external."
-	if len(qualified) > len(prefix) && qualified[:len(prefix)] == prefix {
-		return qualified[len(prefix):]
-	}
-	return qualified
 }
