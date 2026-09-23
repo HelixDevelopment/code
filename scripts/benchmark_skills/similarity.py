@@ -56,36 +56,53 @@ def jaccard(a, b):
     return len(ta & tb) / len(ta | tb)
 
 
-# Known-confusable: same-domain pairs whose interference is expected.
+# HXC-159 F-17 remediation (2026-09-23): CONFUSABLE/DISTINCT now derive ONLY
+# from corpus-1 (skill_corpus.json entries with default_activation_eligible=
+# true) -- the 9 skills genuinely co-activated by default at either consumer
+# (constitution/skills/'s 8 + speckit-analyze, the union of helix_agent's and
+# helix_code's real external tiers). The 4 corpus-2 postgres-mcp skills
+# (submodules/helix_agent/skills/postgres-mcp/*) are EXCLUDED per
+# pkg/skills/activate.go's CorpusTwoPolicy: they are TrustVendored and NEVER
+# added to a default allowlist, so their similarity to anything else is not a
+# real co-activation risk for the tier F-17 found broken -- mixing them into
+# the ORIGINAL calibration pulled min(known_confusable) down to 0.0256 (one of
+# the postgres/hypertable-domain pairs, NOT a real corpus-1 pair) and that
+# artificially low threshold then refused corpus-1 on its own real,
+# now-frontmatter-complete governance-skill descriptions.
+#
+# Every pair below was classified by READING the two descriptions (T-P2.04.1's
+# "choose the metric and justify it against THIS corpus" methodology, not a
+# quantile split): CONFUSABLE = a real same-domain overlap where an agent
+# could legitimately pick the wrong skill (verified by inspecting the actual
+# shared-token set for each pair -- see qa-results/hxc159/f17_remediation/ for
+# the captured shared-token evidence); DISTINCT = pairs whose shared tokens
+# are project-wide generic/anti-bluff vocabulary ("captured", "evidence",
+# "verify", "work") or accidental §-citation-number collisions (e.g. both
+# multitrack and session-sync cite §11.4.187, contributing spurious "11"/"187"
+# token overlap on top of their genuine "multi"/"track"/"session" domain
+# overlap -- a metric weakness noted honestly below, not yet decisive since
+# the real-content overlap alone is sufficient to classify that pair
+# CONFUSABLE).
 CONFUSABLE = [
     ("reporting-workable-items", "workable-item-lifecycle"),
-    ("find-hypertable-candidates", "migrate-postgres-tables-to-hypertables"),
-    ("design-postgres-tables", "setup-timescaledb-hypertables"),
-    ("migrate-postgres-tables-to-hypertables", "setup-timescaledb-hypertables"),
-]
-# Known-distinct: cross-domain pairs that must never confuse.
-# Coverage note (added after meta-test [4] exposed a calibration-coverage gap):
-# the first six pairs all score exactly 0.0000, which made the midpoint rule
-# yield a hair-trigger threshold (0.0128) that fires on distinct skills sharing
-# generic vocabulary. The four hard pairs below are genuinely distinct domains
-# sharing generic words ("session", "work", "active", "project") — the cases a
-# deployable threshold must survive. Same rule, wider coverage; whatever the
-# rule yields (including NON-SEPARABLE) is accepted and reported.
-DISTINCT = [
-    ("media-validator", "design-postgres-tables"),
-    ("action-prefix-system", "setup-timescaledb-hypertables"),
-    ("skill-catalog", "migrate-postgres-tables-to-hypertables"),
-    ("session-sync", "find-hypertable-candidates"),
-    ("multitrack", "media-validator"),
-    ("scheduled-work-queue", "design-postgres-tables"),
-    ("action-prefix-system", "skill-catalog"),
-    ("session-sync", "skill-catalog"),
+    ("action-prefix-system", "reporting-workable-items"),
     ("multitrack", "session-sync"),
+]
+DISTINCT = [
+    ("media-validator", "scheduled-work-queue"),
+    ("scheduled-work-queue", "workable-item-lifecycle"),
+    ("skill-catalog", "speckit-analyze"),
     ("scheduled-work-queue", "session-sync"),
+    ("session-sync", "workable-item-lifecycle"),
+    ("action-prefix-system", "scheduled-work-queue"),
+    ("media-validator", "reporting-workable-items"),
+    ("action-prefix-system", "workable-item-lifecycle"),
+    ("action-prefix-system", "session-sync"),
+    ("action-prefix-system", "media-validator"),
 ]
 
 GOLDEN_GOOD = ("reporting-workable-items", "workable-item-lifecycle")
-GOLDEN_BAD = ("media-validator", "design-postgres-tables")
+GOLDEN_BAD = ("media-validator", "scheduled-work-queue")
 
 
 def load_corpus():

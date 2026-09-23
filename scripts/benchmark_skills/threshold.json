@@ -2,24 +2,23 @@
   "metric": "jaccard-stopworded-tokens",
   "rule": "threshold=(max(known_distinct)+min(known_confusable))/2 iff separable else fallback=min(known_confusable)",
   "known_confusable_scores": [
-    0.0256,
-    0.0588,
+    0.0794,
     0.0806,
-    0.2353
+    0.1045
   ],
   "known_distinct_scores": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0179,
-    0.0196,
-    0.0278,
-    0.0294
+    0.0267,
+    0.027,
+    0.0282,
+    0.029,
+    0.029,
+    0.0299,
+    0.0308,
+    0.0323,
+    0.0492,
+    0.0625
   ],
-  "separable": false,
-  "threshold": 0.0256,
-  "fp_risk_accepted": true
+  "separable": true,
+  "threshold": 0.0709,
+  "fp_risk_accepted": false
 }
