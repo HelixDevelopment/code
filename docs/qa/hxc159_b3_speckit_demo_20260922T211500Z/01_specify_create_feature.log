@@ -1,0 +1,3 @@
+# To persist: export SPECIFY_FEATURE=007-hello-bridge-marker
+#              export SPECIFY_FEATURE_DIRECTORY=/tmp/claude-1000/-home-milosvasic-Projects-helix-code/fb7c6cd1-c5a5-4a74-a0e5-3c6c2562c4d8/scratchpad/speckit-demo-worktree/specs/007-hello-bridge-marker
+{"BRANCH_NAME":"007-hello-bridge-marker","SPEC_FILE":"/tmp/claude-1000/-home-milosvasic-Projects-helix-code/fb7c6cd1-c5a5-4a74-a0e5-3c6c2562c4d8/scratchpad/speckit-demo-worktree/specs/007-hello-bridge-marker/spec.md","FEATURE_NUM":"007"}

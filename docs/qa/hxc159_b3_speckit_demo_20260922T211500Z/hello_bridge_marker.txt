@@ -1,0 +1,1 @@
+Written by a dispatched Claude Code subagent under /speckit-specify -> /speckit-plan -> /speckit-tasks -> /speckit-implement. No MCP server (SuperBridge MCP / L5) was used at any step of this flow.
