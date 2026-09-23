@@ -1,0 +1,20 @@
+=== RUN   TestLoadExternalTierIntoRegistry_DuplicateLeafDirNameAcrossDepthsFailsClosed
+--- PASS: TestLoadExternalTierIntoRegistry_DuplicateLeafDirNameAcrossDepthsFailsClosed (0.00s)
+PASS
+ok  	dev.helix.code/internal/agent	0.024s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/i18n	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/profiles	0.011s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/subagent	5.578s [no tests to run]
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/task	0.010s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/types	0.024s [no tests to run]

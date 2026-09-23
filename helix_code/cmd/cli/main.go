@@ -1055,59 +1055,28 @@ func (c *CLI) buildSubsystems(ctx context.Context) error {
 	}
 
 	// F10: agent-invoked Skills.
+	//
+	// HXC-159 T-P9.01 round-5 findings NEW-2/NEW-4 remediation
+	// (2026-09-23): this call site used to hand-roll its OWN
+	// [external, legacy, canonical+project] load sequence — independently
+	// of, and in a DIFFERENT order than, agent.LoadSkillsAndDispatcher's
+	// own (the external tier was loaded BEFORE the built-in tier even
+	// existed in the registry, the reverse of every other front-end's
+	// order — NEW-2), using a commands.SkillLoader.SkipBuiltins(true) flag
+	// that, once set, ALSO silently disabled built-in re-registration on
+	// every SUBSEQUENT Reload of that same instance — including every
+	// future watcher-triggered or `/skills reload`-triggered one (NEW-4).
+	// This call site now goes through the SAME single canonical sequence
+	// (agent.LoadSkillsAndDispatcherWithLoader) every other front-end
+	// uses, over the SAME ordered directory list
+	// (agent.AllSkillsDirs, [legacy, canonical, external, project]) — see
+	// that function's doc comment for the full remediation.
 	skillProjectDir := filepath.Join(".", ".helix", "skills")
-	skillUserDir, _ := agent.CanonicalUserSkillsDir()
-	skillReg := commands.NewSkillRegistry()
-	// T-P5.03 + T-P5.05 (HXC-159 Phase P5): load the legacy user-skills
-	// directory (~/.helix/skills, the TUI/desktop's pre-unification
-	// convention) and the external tier (agent.ExternalSkillsDir(),
-	// conventionally .claude/skills — skills provisioned by something other
-	// than a front-end's own project/user directory, e.g.
-	// scripts/register_skills.sh) FIRST, as lower-precedence compatibility
-	// tiers, so a skill installed there remains visible from the CLI too.
-	// The combined (skillProjectDir, skillUserDir) pass below runs LAST and
-	// its `Add` calls override same-named entries these passes register,
-	// reproducing [legacy, canonical, external, project] precedence — see
-	// agent.AllSkillsDirs's doc comment and
-	// docs/guides/skills_directory_migration.md.
-	// HXC-159 T-P9.01/F-01: the legacy-user tier is this consumer's OWN
-	// authored/installed content and loads unconditionally; the external
-	// tier (agent.ExternalSkillsDir()) is populated by something else
-	// (scripts/register_skills.sh or any other installer) and MUST cross
-	// agent.LoadExternalTierIntoRegistry's shared pkg/skills policy gate
-	// (allowlist + activation ceiling + description-similarity + C5
-	// sandbox precondition) — this call site previously loaded it via the
-	// same unconditional commands.NewSkillLoader path as every other
-	// directory, silently implying activation for whatever the external
-	// tier happened to contain (measured live: an over-ceiling synthetic
-	// external tier was fully activated through THIS exact code path with
-	// zero refusal before this fix).
-	if extraErr := agent.LoadExternalTierIntoRegistry(skillReg, agent.ExternalSkillsDir()); extraErr != nil {
-		log.Printf("skills: extra tier %q load failed: %v", agent.ExternalSkillsDir(), extraErr)
-	}
-	if legacyDir := agent.LegacyUserSkillsDir(); legacyDir != "" {
-		extraLoader := commands.NewSkillLoader(skillReg, legacyDir, "")
-		if extraErr := extraLoader.Load(); extraErr != nil {
-			log.Printf("skills: extra tier %q load failed: %v", legacyDir, extraErr)
-		}
-	}
-	skillLoader := commands.NewSkillLoader(skillReg, skillProjectDir, skillUserDir)
-	// HXC-159 T-P9.01 round-4 investigation (2026-09-23, N2 pass): this is
-	// the SECOND independently constructed commands.SkillLoader feeding
-	// skillReg in this sequence (the legacy-dir load above is the first).
-	// commands.SkillLoader.Reload() unconditionally re-Adds the WHOLE
-	// embedded built-in tier on every call, so without SkipBuiltins this
-	// second instance would silently REVERT any builtin-named-skill
-	// override the legacy-dir load just registered — see
-	// commands.SkillLoader.SkipBuiltins's doc comment for the full
-	// mechanism and agent.LoadSkillsAndDispatcher for the generalised fix
-	// this call site mirrors by hand (it does not go through
-	// LoadSkillsAndDispatcher itself).
-	skillLoader.SkipBuiltins(true)
-	if loadErr := skillLoader.Load(); loadErr != nil {
+	skillReg, skillLoader, skillDispatcher, loadErr := agent.LoadSkillsAndDispatcherWithLoader(agent.AllSkillsDirs(skillProjectDir))
+	if loadErr != nil {
 		log.Printf("skills: load failed: %v", loadErr)
 	}
-	skillWatcher, swErr := commands.NewSkillsWatcher(skillLoader, []string{skillProjectDir, skillUserDir})
+	skillWatcher, swErr := commands.NewSkillsWatcher(skillLoader, agent.AllSkillsDirs(skillProjectDir))
 	if swErr != nil {
 		log.Printf("skills: watcher init failed: %v", swErr)
 	} else {
@@ -1120,7 +1089,7 @@ func (c *CLI) buildSubsystems(ctx context.Context) error {
 	// the CLI even though the registry, loader and watcher above all worked.
 	// The wiring mirrors the terminal-UI front-end, which has routed input
 	// through a dispatcher this way since F10 landed.
-	c.skillDispatcher = agent.NewSkillDispatcher(skillReg, nil)
+	c.skillDispatcher = skillDispatcher
 	if regErr := cmdRegistry.Register(commands.NewSkillsCommand(skillLoader, skillReg)); regErr != nil {
 		log.Printf("skills: register slash failed: %v", regErr)
 	}
@@ -3370,43 +3339,19 @@ func main() {
 
 	// Dispatcher: intercept the "skills" subcommand group before flag.Parse()
 	// so that Cobra handles its own flag parsing (same pattern as "commands").
+	//
+	// HXC-159 T-P9.01 round-5 findings NEW-2/NEW-4 remediation
+	// (2026-09-23): see the matching comment in buildSubsystems above — this
+	// dispatcher used to hand-roll its OWN, independently-drifting
+	// [external, legacy, canonical+project] sequence; it now goes through
+	// the SAME single canonical sequence
+	// (agent.LoadSkillsAndDispatcherWithLoader) over the SAME ordered
+	// directory list (agent.AllSkillsDirs).
 	if len(os.Args) >= 2 && os.Args[1] == "skills" {
 		projDir := filepath.Join(".", ".helix", "skills")
-		userDir, _ := agent.CanonicalUserSkillsDir()
-		skillReg := commands.NewSkillRegistry()
-		// T-P5.03 + T-P5.05 (HXC-159 Phase P5): see the matching comment in
-		// buildSubsystems (called via ensureSubsystems) above — the legacy
-		// user directory and the
-		// external tier (agent.ExternalSkillsDir(), e.g. .claude/skills) are
-		// loaded first as lower-precedence compatibility tiers so
-		// `helixcode skills list` sees a skill installed under the
-		// TUI/desktop's pre-unification convention, or provisioned
-		// externally (e.g. scripts/register_skills.sh), too.
-		// HXC-159 T-P9.01/F-01: same fix as buildSubsystems above — the
-		// external tier MUST cross agent.LoadExternalTierIntoRegistry's
-		// shared pkg/skills policy gate, never the raw unconditional
-		// commands.NewSkillLoader this dispatcher used before (this was
-		// the exact code path `helixcode skills list`/`skills invoke` run
-		// through, so it was directly, live, end-to-end unrefused).
-		if extraErr := agent.LoadExternalTierIntoRegistry(skillReg, agent.ExternalSkillsDir()); extraErr != nil {
-			log.Printf("skills dispatcher: extra tier %q load failed: %v", agent.ExternalSkillsDir(), extraErr)
-		}
-		if legacyDir := agent.LegacyUserSkillsDir(); legacyDir != "" {
-			extraLoader := commands.NewSkillLoader(skillReg, legacyDir, "")
-			if extraErr := extraLoader.Load(); extraErr != nil {
-				log.Printf("skills dispatcher: extra tier %q load failed: %v", legacyDir, extraErr)
-			}
-		}
-		loader := commands.NewSkillLoader(skillReg, projDir, userDir)
-		// HXC-159 T-P9.01 round-4 investigation (2026-09-23, N2 pass): same
-		// builtin-shadow-reversion fix as buildSubsystems above — this is
-		// the SECOND independently constructed commands.SkillLoader feeding
-		// skillReg in this sequence (the legacy-dir load above is the
-		// first), so it must not re-touch builtin names the legacy-dir load
-		// already overrode.
-		loader.SkipBuiltins(true)
-		if err := loader.Load(); err != nil {
-			log.Printf("skills dispatcher: load failed: %v", err)
+		skillReg, loader, _, loadErr := agent.LoadSkillsAndDispatcherWithLoader(agent.AllSkillsDirs(projDir))
+		if loadErr != nil {
+			log.Printf("skills dispatcher: load failed: %v", loadErr)
 		}
 		cmd := newSkillsCmd(skillsCmdDeps{Loader: loader, Registry: skillReg})
 		cmd.SetArgs(os.Args[2:])

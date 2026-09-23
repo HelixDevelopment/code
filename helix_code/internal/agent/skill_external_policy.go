@@ -1,9 +1,12 @@
 package agent
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"dev.helix.code/internal/commands"
@@ -291,24 +294,9 @@ func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error
 	if dir == "" {
 		return nil
 	}
-	active, exclusions, _, refusal, err := policyGateExternalTierDetailed(dir, externalTierTrust)
+	skills, err := externalTierSkills(dir)
 	if err != nil {
-		return fmt.Errorf("skill activation: external tier policy gate %q: %w", dir, err)
-	}
-	if refusal != nil {
-		log.Printf("⚠️  skill activation: external tier %q refused by policy: %v", dir, refusal)
-		return nil
-	}
-	warnAboutFlatSkillFiles(dir)
-	for _, ex := range exclusions {
-		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
-	}
-	if len(active) == 0 {
-		return nil
-	}
-	skills, dupErr := skillsFromPolicySet(dir, active)
-	if dupErr != nil {
-		return dupErr
+		return err
 	}
 	for _, s := range skills {
 		reg.Add(s)
@@ -316,10 +304,108 @@ func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error
 	return nil
 }
 
+// externalTierExtraTier adapts the external skills tier to
+// commands.ExtraTier so it can be folded into a commands.SkillLoader's
+// Reload sequence at a caller-declared position (HXC-159 T-P9.01 round-5
+// NEW-2/NEW-4 remediation, 2026-09-23) — see
+// skill_activation.go's loadSkillLoader for where it is wired in. It shares
+// externalTierSkills with LoadExternalTierIntoRegistry's own direct,
+// one-shot call form so there is exactly ONE implementation of "what does
+// the external tier currently admit," never two that can drift apart the
+// way N1/N2 originally did.
+type externalTierExtraTier struct {
+	dir string
+}
+
+// Load implements commands.ExtraTier.
+func (e externalTierExtraTier) Load() (map[string]*commands.Skill, error) {
+	return externalTierSkills(e.dir)
+}
+
+// externalTierSkills computes the SAME policy-admitted-and-converted skill
+// set LoadExternalTierIntoRegistry adds to a registry directly, keyed by
+// registry identity (Skill.Name()), but RETURNS it instead of mutating a
+// caller's registry — the shared implementation both
+// LoadExternalTierIntoRegistry (the pre-existing direct one-shot
+// registration; unchanged observable contract since the N1/N2 fix) and
+// externalTierExtraTier (the commands.ExtraTier Reload-integration hook)
+// build on.
+//
+// A whole-tier policy refusal (ceiling exceeded, C5 sandbox precondition)
+// is logged and reported as an EMPTY map, never an error — matching
+// LoadExternalTierIntoRegistry's pre-existing "refused tier admits
+// nothing, does not fail the caller" contract. A genuine infrastructure
+// error (malformed front-matter, an unreadable file, a duplicate qualified
+// identity, a Dir collision within the admitted set, a manifest hash
+// mismatch — see skillsFromPolicySet) is returned as err.
+func externalTierSkills(dir string) (map[string]*commands.Skill, error) {
+	active, exclusions, _, refusal, err := policyGateExternalTierDetailed(dir, externalTierTrust)
+	if err != nil {
+		return nil, fmt.Errorf("skill activation: external tier policy gate %q: %w", dir, err)
+	}
+	if refusal != nil {
+		log.Printf("⚠️  skill activation: external tier %q refused by policy: %v", dir, refusal)
+		return map[string]*commands.Skill{}, nil
+	}
+	warnAboutFlatSkillFiles(dir)
+	for _, ex := range exclusions {
+		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
+	}
+	if len(active) == 0 {
+		return map[string]*commands.Skill{}, nil
+	}
+	built, dupErr := skillsFromPolicySet(dir, active)
+	if dupErr != nil {
+		return nil, dupErr
+	}
+	out := make(map[string]*commands.Skill, len(built))
+	for _, s := range built {
+		out[s.Name()] = s
+	}
+	return out, nil
+}
+
 // skillsFromPolicySet converts pkg/skills' policy-admitted set into
 // *commands.Skill values, keyed by directory identity, failing closed on a
 // Dir collision within the admitted set rather than silently letting one
 // clobber another in the caller's registry.
+//
+// HXC-159 T-P9.01 round-5 findings NEW-1/NEW-5 remediation (2026-09-23):
+// this used to convert pkg/skills' ALREADY-PARSED XHelixCode struct fields
+// directly into a *commands.Skill via commands.NewSkill — a construction
+// shortcut that bypassed the production YAML parser every OTHER tier
+// (built-in, legacy, canonical, project) already uses. pkg/skills' own
+// front-matter reader (submodules/skills/pkg/skills/frontmatter.go) is
+// DELIBERATELY a minimal, stdlib-only scanner — R-25 forbids a YAML
+// dependency in that project-not-aware, dialect-agnostic library — and it
+// has two divergences from a real YAML parser that this consumer's
+// dialect actively exercises:
+//   - list items (frontmatter.go's `triggers:` parsing) are never passed
+//     through unquote(): a double-quoted trigger pattern such as
+//     `"(?i)^zap (?P<what>\w+) now$"` is stored VERBATIM, quote characters
+//     and all, with its `\\w+` escape NEVER unescaped to `\w+` — so the
+//     compiled regex requires literal `"` characters around the match and
+//     a literal backslash before `w`, and never matches real input
+//     (NEW-1; measured on the real corpus: 5 of 7 admitted external-tier
+//     skills' triggers broken this way).
+//   - `requires_isolation` is read via an exact, case-sensitive string
+//     comparison against the literal `"true"`
+//     (`scalars["requires_isolation"] == "true"`), so `True`, `TRUE`, or
+//     `true # comment` all silently parse to false where a real YAML
+//     1.1 boolean reader recognises every one of them (NEW-5).
+//
+// The fix (the independent reviewer's own recommended direction): the
+// policy-admitted set (`active`, unchanged — pkg/skills remains the SOLE
+// determinant of WHICH skills get registered) still drives WHAT gets
+// registered, but each admitted skill is now built by (1) re-reading its
+// OWN manifest file directly from disk, (2) verifying its SHA-256 against
+// the Hash pkg/skills computed when it evaluated/admitted the skill
+// (refusing on mismatch — a free provenance/tamper-detection check as a
+// side benefit: if the file changed on disk between evaluation and this
+// conversion, admitting it here would be registering a manifest the
+// policy engine never actually evaluated), and (3) parsing it with
+// commands.ParseSkillFile — the SAME production yaml.v3-based parser every
+// other tier already goes through.
 func skillsFromPolicySet(dir string, active []skillslib.Skill) ([]*commands.Skill, error) {
 	seen := make(map[string]skillslib.Skill, len(active))
 	out := make([]*commands.Skill, 0, len(active))
@@ -340,31 +426,37 @@ func skillsFromPolicySet(dir string, active []skillslib.Skill) ([]*commands.Skil
 		}
 		seen[s.Dir] = s
 
-		var vars map[string]string
-		var triggers []string
-		var requiresIsolation bool
-		if s.XHelixCode != nil {
-			vars = s.XHelixCode.Variables
-			triggers = s.XHelixCode.Triggers
-			requiresIsolation = s.XHelixCode.RequiresIsolation
+		// s.RelPath is the source-root-relative directory of the manifest
+		// (pkg/skills' Skill.RelPath doc comment) — e.g. "skills/codex/
+		// skill-creator", or "." when the manifest sits directly at dir's
+		// own root (filepath.Join collapses "." harmlessly). This is the
+		// SAME path pkg/skills itself read SKILL.md from (loader.go's
+		// loadDir), so re-reading it here re-reads the IDENTICAL file the
+		// policy engine evaluated.
+		manifestPath := filepath.Join(dir, s.RelPath, externalTierSkillManifestName)
+		raw, readErr := os.ReadFile(manifestPath)
+		if readErr != nil {
+			return nil, fmt.Errorf("skill activation: external tier %q: re-read admitted skill %q manifest %q: %w",
+				dir, s.Qualified(), manifestPath, readErr)
 		}
-		sourcePath := s.RelPath
-		if sourcePath == "" {
-			sourcePath = s.Dir
+		sum := sha256.Sum256(raw)
+		gotHash := hex.EncodeToString(sum[:])
+		if gotHash != s.Hash {
+			// The manifest changed on disk between pkg/skills' evaluation
+			// and this conversion (or the two hash computations otherwise
+			// disagree) — admitting it here would register a manifest the
+			// policy engine never actually evaluated, a policy-gate bypass
+			// in its own right. Fail closed (§11.4.6, §11.4.201, §11.4.252).
+			return nil, fmt.Errorf(
+				"skill activation: external tier %q: admitted skill %q manifest %q changed since policy evaluation "+
+					"(hash %s at evaluation, %s now) — refusing to register a manifest the policy engine never actually evaluated",
+				dir, s.Qualified(), manifestPath, s.Hash, gotHash)
 		}
-		skill, newErr := commands.NewSkill(commands.SkillOptions{
-			Name:              s.Dir,
-			Description:       s.Description,
-			Body:              s.Body,
-			Variables:         vars,
-			TriggerPatterns:   triggers,
-			RequiresIsolation: requiresIsolation,
-			SourcePath:        fmt.Sprintf("external:%s/%s/SKILL.md", dir, sourcePath),
-		})
-		if newErr != nil {
-			// commands.NewSkill only errors on an empty Name, already
-			// guarded above — unreachable in practice, but never assume.
-			return nil, fmt.Errorf("skill activation: external tier %q: build skill %q: %w", dir, s.Qualified(), newErr)
+
+		skill, parseErr := commands.ParseSkillFile(s.Dir, string(raw), fmt.Sprintf("external:%s", manifestPath))
+		if parseErr != nil {
+			return nil, fmt.Errorf("skill activation: external tier %q: parse admitted skill %q manifest %q: %w",
+				dir, s.Qualified(), manifestPath, parseErr)
 		}
 		out = append(out, skill)
 	}

@@ -128,6 +128,109 @@ func TestLoadSkillsAndDispatcher_EarlierDirOverrideOfBuiltinSurvivesLaterDirLoad
 	assert.True(t, ok, "the later directory's own skill must still load")
 }
 
+// TestLoadSkillsAndDispatcher_ExternalTierOverridesBuiltinOnGenuineCollision
+// is the HXC-159 T-P9.01 round-5 finding NEW-2 reproduction (2026-09-23,
+// found during the round-4 N1/N2 fix's OWN required independent review):
+// before this fix, cmd/cli/main.go's two hand-rolled bootstrap sequences
+// loaded the external tier BEFORE the built-in tier was even registered in
+// the shared registry (the opposite of LoadSkillsAndDispatcher's own
+// order), so a later, unconditional built-in re-add silently clobbered an
+// admitted external-tier skill sharing a builtin's name — the SAME skill
+// name resolved to a DIFFERENT source depending on which front-end loaded
+// it (LoadSkillsAndDispatcher correctly gave the external tier priority;
+// the CLI's own hand-rolled sequence gave the builtin priority instead).
+//
+// Since this fix, cmd/cli/main.go's two front-ends call the SAME
+// loadSkillLoader sequence LoadSkillsAndDispatcher itself uses (see
+// LoadSkillsAndDispatcherWithLoader), so there is only ONE place this
+// ordering is defined and no way for a front-end to diverge from it. This
+// test proves the ONE canonical sequence resolves the collision correctly
+// — an admitted (non-excluded) external-tier skill sharing a builtin's
+// directory name OVERRIDES the builtin, matching agent.AllSkillsDirs'
+// documented [legacy, canonical, EXTERNAL, project] precedence (external
+// ranks ABOVE built-in).
+func TestLoadSkillsAndDispatcher_ExternalTierOverridesBuiltinOnGenuineCollision(t *testing.T) {
+	isolateHomeAndConfig(t) // keep legacy/canonical dirs empty and irrelevant here
+
+	const builtinName = "conventional-commit"
+	dir := t.TempDir()
+	// Deliberately no similarity conflict: a distinctive description so the
+	// admitted skill is not excluded, only overriding the builtin by name.
+	writeExternalSkillWithDescription(t, dir, builtinName,
+		"compute the exact freight cost for an inbound shipping container")
+
+	t.Setenv(externalSkillsDirEnvVar, dir)
+
+	reg, _, err := LoadSkillsAndDispatcher([]string{dir})
+	if err != nil {
+		t.Fatalf("LoadSkillsAndDispatcher returned an unexpected error: %v", err)
+	}
+
+	s, ok := reg.Get(builtinName)
+	if !ok {
+		t.Fatalf("NEW-2: %s must still be registered (from the external tier, overriding the builtin)", builtinName)
+	}
+	if strings.HasPrefix(s.SourcePath(), "builtin:") {
+		t.Fatalf("NEW-2: the external tier's admitted skill must OVERRIDE the builtin of the same name "+
+			"(external ranks above built-in per agent.AllSkillsDirs), but the registry still holds the builtin (source %q)",
+			s.SourcePath())
+	}
+	if !strings.Contains(s.SourcePath(), "external:") {
+		t.Fatalf("expected the external-tier skill's source path to be tagged \"external:...\", got %q", s.SourcePath())
+	}
+}
+
+// TestLoadSkillsAndDispatcherWithLoader_ReloadAfterRemovingOverrideRestoresBuiltin
+// is the HXC-159 T-P9.01 round-5 finding NEW-4 reproduction (2026-09-23,
+// found during the round-4 N1/N2 fix's OWN required independent review):
+// the ONE commands.SkillLoader instance the CLI keeps wired to its
+// filesystem watcher and its `/skills reload`/`skills reload` commands used
+// a per-instance SkipBuiltins(true) flag that, once set at bootstrap to
+// avoid a redundant re-add, ALSO silently disabled built-in
+// re-registration on every SUBSEQUENT Reload of that SAME instance —
+// including every future watcher-triggered or `/skills reload`-triggered
+// one. Deleting a project override of a builtin and reloading therefore
+// PERMANENTLY removed that builtin from the running registry with nothing
+// left to restore it.
+//
+// Since this fix, LoadSkillsAndDispatcherWithLoader returns a SINGLE
+// commands.SkillLoader that owns the FULL tier stack (built-in + every
+// on-disk directory), and its Reload ALWAYS unconditionally re-establishes
+// the built-in base layer before replaying the on-disk directories — see
+// commands.SkillLoader's doc comment. This test drives EXACTLY the CLI's
+// own real-world sequence: override a builtin, confirm the override wins,
+// delete the override, call the SAME loader's Reload (precisely what the
+// watcher and `/skills reload` do), and confirm the builtin is restored
+// rather than lost.
+func TestLoadSkillsAndDispatcherWithLoader_ReloadAfterRemovingOverrideRestoresBuiltin(t *testing.T) {
+	const builtinName = "conventional-commit"
+	projectDir := t.TempDir()
+	overrideDir := filepath.Join(projectDir, builtinName)
+	require.NoError(t, os.MkdirAll(overrideDir, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(overrideDir, "SKILL.md"),
+		[]byte("---\ndescription: overridden conventional-commit\n---\nOVERRIDDEN BODY\n"), 0o644))
+
+	reg, loader, _, err := LoadSkillsAndDispatcherWithLoader([]string{projectDir})
+	require.NoError(t, err)
+
+	s, ok := reg.Get(builtinName)
+	require.True(t, ok)
+	assert.Equal(t, "OVERRIDDEN BODY", s.Body(), "sanity: the project override initially wins")
+
+	// Delete the override and reload the SAME loader instance — exactly
+	// what the CLI's fsnotify-triggered watcher and `/skills reload` /
+	// `skills reload` commands do against the ONE loader they retain.
+	require.NoError(t, os.RemoveAll(overrideDir))
+	require.NoError(t, loader.Reload())
+
+	s, ok = reg.Get(builtinName)
+	require.True(t, ok, "NEW-4: %s must still be registered after the override is removed and the loader is reloaded — "+
+		"it must fall back to the builtin, never be permanently lost", builtinName)
+	assert.True(t, strings.HasPrefix(s.SourcePath(), "builtin:"),
+		"NEW-4: after removing the project override and reloading, %s must fall back to the REAL builtin (source %q), not stay permanently lost",
+		builtinName, s.SourcePath())
+}
+
 func TestLoadSkillsAndDispatcher_EmptyAndMissingDirsAreSafe(t *testing.T) {
 	reg, disp, err := LoadSkillsAndDispatcher([]string{"", filepath.Join(t.TempDir(), "does-not-exist")})
 	require.NoError(t, err)

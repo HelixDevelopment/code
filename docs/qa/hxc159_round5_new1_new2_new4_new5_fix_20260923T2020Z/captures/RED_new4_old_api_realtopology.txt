@@ -1,0 +1,12 @@
+=== RUN   TestScratch_NEW4_SkipBuiltinsStickyReloadLosesOverriddenBuiltin_RealTopology
+    zz_scratch_new4_red_test.go:48: sanity: override in place, body="OVERRIDDEN" source="/home/milosvasic/.cache/hxc159-newfix-gotmp/TestScratch_NEW4_SkipBuiltinsStickyReloadLosesOverriddenBuiltin_3001169915/002/conventional-commit/SKILL.md"
+    zz_scratch_new4_red_test.go:61: NEW-4 REPRODUCED: conventional-commit is GONE (PERMANENTLY REMOVED) from the registry after removing the override and reloading the loader the CLI actually keeps wired to its watcher / `/skills reload` command — SkipBuiltins(true), set once at bootstrap, permanently disabled built-in re-registration on every subsequent Reload of this instance
+--- FAIL: TestScratch_NEW4_SkipBuiltinsStickyReloadLosesOverriddenBuiltin_RealTopology (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/commands	0.028s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/commands/builtin	0.028s [no tests to run]
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]
+FAIL

@@ -482,6 +482,86 @@ func writeExternalSkillNamed(t *testing.T, dir, dirName, frontMatterName, descri
 	}
 }
 
+// TestLoadExternalTierIntoRegistry_DuplicateLeafDirNameAcrossDepthsFailsClosed
+// closes the HXC-159 T-P9.01 round-5 minor finding (2026-09-23): a
+// duplicate leaf-directory-name across nesting depths (skillsFromPolicySet's
+// Dir-collision check) drops the WHOLE external tier including unrelated
+// skills, but the path had NO test coverage at all — the round-4/round-5
+// independent review's paired mutation m4 (removing the check) SURVIVED,
+// proving the fail-closed refusal was genuinely untested.
+//
+// Two skills at DIFFERENT nesting depths sharing the same leaf directory
+// basename ("shared") but with DISTINCT, non-conflicting descriptions
+// (deliberately, so this test proves the Dir-collision check fires
+// specifically — not merely a similarity-conflict exclusion, a different
+// code path already covered elsewhere) are both genuinely admitted by the
+// policy engine (pkg/skills' Dir is a bare basename, not a full relative
+// path, so two skills at different depths CAN collide on it — see
+// skillsFromPolicySet's doc comment). commands.SkillRegistry keys every
+// packaged skill by directory basename, so this consumer cannot represent
+// both — LoadExternalTierIntoRegistry MUST fail closed (return an error,
+// register NEITHER skill, including a genuinely-unrelated THIRD skill in
+// the same directory) rather than let one silently clobber the other.
+//
+// This test deliberately does NOT change that whole-tier-refusal behaviour
+// itself (a genuine design choice with its own trade-offs — see the task
+// report for why it was kept as-is for this remediation pass); it only
+// closes the coverage gap the independent review's paired mutation
+// surfaced.
+func TestLoadExternalTierIntoRegistry_DuplicateLeafDirNameAcrossDepthsFailsClosed(t *testing.T) {
+	dir := t.TempDir()
+	writeExternalSkillWithDescription(t, dir, "unrelated-third-skill",
+		"translate legal contracts between spanish and portuguese dialects")
+
+	// Distinct front-matter `name:` values (hence distinct pkg/skills
+	// Qualified() identities — "external.Shared Skill A" /
+	// "external.Shared Skill B" — so pkg/skills' own load-time duplicate-
+	// qualified-identity check does NOT fire first) but the SAME directory
+	// BASENAME ("shared") at two different nesting depths — pkg/skills' Dir
+	// is a bare basename, not a full relative path (Skill.Dir's doc
+	// comment), so this is exactly the shape that collides on the identity
+	// commands.SkillRegistry actually keys on, downstream of pkg/skills'
+	// own (Qualified()-based) admission.
+	groupADir := filepath.Join(dir, "groupA", "shared")
+	if err := os.MkdirAll(groupADir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(groupADir, "SKILL.md"),
+		[]byte("---\nname: Shared Skill A\ndescription: compute the exact freight cost for an inbound shipping container\n---\nBody A.\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	groupBDir := filepath.Join(dir, "groupB", "shared")
+	if err := os.MkdirAll(groupBDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(groupBDir, "SKILL.md"),
+		[]byte("---\nname: Shared Skill B\ndescription: reconcile ledger balance entries in a nightly batch job\n---\nBody B.\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	reg := commands.NewSkillRegistry()
+	err := LoadExternalTierIntoRegistry(reg, dir)
+	if err == nil {
+		t.Fatal("expected LoadExternalTierIntoRegistry to fail closed on the Dir collision between " +
+			"groupA/shared and groupB/shared, got nil error")
+	}
+	if !strings.Contains(err.Error(), "share directory identity") {
+		t.Fatalf("expected the Dir-collision error message, got: %v", err)
+	}
+
+	// Fail-closed means the WHOLE tier is refused — not even the genuinely
+	// unrelated third skill (in a different, non-colliding directory) is
+	// registered.
+	if _, ok := reg.Get("unrelated-third-skill"); ok {
+		t.Fatal("a Dir-collision anywhere in the tier must refuse the WHOLE tier, " +
+			"including a genuinely unrelated skill in a different directory")
+	}
+	if _, ok := reg.Get("shared"); ok {
+		t.Fatal("neither colliding skill may be registered under the collided identity")
+	}
+}
+
 // TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName
 // is the HXC-159 T-P9.01 round-4 finding F-21 reproduction (2026-09-23):
 // pkg/skills' DialectHelixCode Qualified() identity is the front-matter

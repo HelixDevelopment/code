@@ -348,105 +348,177 @@ func (r *SkillRegistry) FindMatching(input string) (*Skill, map[string]string, b
 // (T1.6); it coexists with the legacy flat "<name>.md" form.
 const skillManifestName = "SKILL.md"
 
-// SkillLoader registers skills from three precedence tiers, lowest to highest:
+// ExtraTier is implemented by a caller-owned skill source that must be
+// integrated into a SkillLoader's Reload sequence at a specific,
+// caller-declared directory position, but cannot live in THIS package —
+// e.g. HXC-159's policy-gated external tier (internal/agent's
+// LoadExternalTierIntoRegistry / externalTierExtraTier), which depends on
+// the shared pkg/skills policy engine one level up. Importing that engine
+// here would create an internal/commands -> internal/agent ->
+// internal/commands import cycle (internal/agent already imports
+// internal/commands), so the integration instead runs through this small
+// interface, registered via SetExtraTier.
+type ExtraTier interface {
+	// Load returns the skills this tier CURRENTLY admits, keyed by the
+	// same identity SkillRegistry.Add keys on (Skill.Name()). A read or
+	// policy-gate error is reported via err; Reload logs it at WARN and
+	// treats the tier as admitting nothing for THIS pass — matching the
+	// existing per-directory WARN-and-skip philosophy every other tier
+	// already uses (it never aborts Reload).
+	Load() (map[string]*Skill, error)
+}
+
+// SkillLoader registers skills from the embedded built-in tier plus an
+// ORDERED list of on-disk directory tiers, lowest precedence first:
 //
 //	built-in   skills embedded in the binary (builtin_skills/<name>/SKILL.md)
-//	user       skills under the user skills directory
-//	project    skills under the project skills directory
+//	dirs[0]    the first caller-supplied directory
+//	dirs[1]    the second caller-supplied directory
+//	...        (each later directory overrides an earlier one, and the
+//	           built-in tier, on a same-name collision)
 //
-// On-disk tiers (user, project) recognise two layouts:
+// On-disk directories recognise two layouts:
 //
 //	<dir>/<name>.md                   (legacy flat form; name = filename sans .md)
 //	<dir>/<name>/SKILL.md             (packaged manifest form; name = subdir name)
 //
-// Resolution is project > user > built-in: a project (or user) skill of a given
-// name overrides a user (or built-in) skill of the same name. Within a single
-// on-disk directory, the packaged SKILL.md manifest takes precedence over a
-// legacy flat <name>.md of the same skill name. The built-in tier carries only
-// the packaged SKILL.md layout. Non-existent directories are silently skipped;
-// per-file parse errors are logged at WARN and do not cause Load/Reload to
-// fail.
+// Within a single on-disk directory, the packaged SKILL.md manifest takes
+// precedence over a legacy flat <name>.md of the same skill name. The
+// built-in tier carries only the packaged SKILL.md layout. Non-existent
+// directories are silently skipped; per-file parse errors are logged at
+// WARN and do not cause Load/Reload to fail.
+//
+// The built-in tier is loaded UNCONDITIONALLY, as the lowest-precedence
+// base layer, on EVERY Reload call — not merely the first — so a caller
+// that deletes an on-disk override and reloads always correctly falls back
+// to the built-in (HXC-159 T-P9.01 round-5 NEW-4 remediation, 2026-09-23:
+// see NewMultiDirSkillLoader's doc comment for the per-instance
+// SkipBuiltins(bool) design this replaces and why it broke exactly that
+// reload path).
 type SkillLoader struct {
-	registry     *SkillRegistry
-	projectDir   string
-	userDir      string
-	mu           sync.Mutex
-	loaded       map[string]string // skill name → source path
-	log          *zap.Logger
-	skipBuiltins bool
+	registry   *SkillRegistry
+	dirs       []string             // ordered on-disk tiers, lowest precedence first
+	extraTiers map[string]ExtraTier // dirs[] entry -> tier hook, see SetExtraTier
+	mu         sync.Mutex
+	loaded     map[string]string // skill name → source path
+	log        *zap.Logger
 }
 
-// NewSkillLoader constructs a loader. Either dir may be empty or
-// nonexistent; the loader gracefully skips missing dirs.
+// NewSkillLoader constructs a loader over the classic two-slot
+// (projectDir, userDir) shape — project overrides user overrides built-in.
+// Either dir may be empty or nonexistent; the loader gracefully skips
+// missing dirs. Equivalent to
+// NewMultiDirSkillLoader(reg, []string{userDir, projectDir}) — see that
+// constructor for the general, arbitrary-ordered-list form.
 func NewSkillLoader(reg *SkillRegistry, projectDir, userDir string) *SkillLoader {
+	return NewMultiDirSkillLoader(reg, []string{userDir, projectDir})
+}
+
+// NewMultiDirSkillLoader constructs a loader over an ARBITRARY ORDERED list
+// of on-disk directory tiers, lowest precedence first — the general form of
+// NewSkillLoader's fixed two-slot signature, and the SINGLE canonical
+// sequencing primitive every front-end (interactive REPL bootstrap, the
+// `skills` CLI subcommand, internal/agent's LoadSkillsAndDispatcher /
+// LoadSkillsAndDispatcherWithLoader) now shares (HXC-159 T-P9.01 round-5
+// NEW-2/NEW-4 remediation, 2026-09-23).
+//
+// Before this fix, a caller driving more than two ordered directories
+// (plus the built-in tier, plus a policy-gated external tier that cannot
+// re-scan through this package) had to hand-assemble a SEQUENCE of
+// independently constructed SkillLoader instances sharing one
+// SkillRegistry, using a per-instance SkipBuiltins(bool) flag to keep only
+// the FIRST instance re-adding the embedded built-in tier. That design had
+// two defects, both found by the independent review of the fix that
+// introduced it (commit 97e8c852): (1) each front-end hand-rolled its OWN
+// version of the sequence, and the ORDER in which builtins/legacy/
+// canonical/external/project were assembled could — and did — silently
+// diverge between front-ends (NEW-2: the same skill name resolved to a
+// DIFFERENT source depending on which front-end loaded it); (2) the
+// SkipBuiltins flag, once set true on a loader instance, ALSO silently
+// disabled built-in re-registration on every SUBSEQUENT Reload of THAT
+// SAME instance — including a filesystem-watcher-triggered or `/skills
+// reload`-triggered one — so deleting an on-disk override of a built-in
+// and reloading PERMANENTLY lost the built-in with nothing left to
+// restore it (NEW-4).
+//
+// This constructor eliminates both defects by construction: ONE loader
+// instance owns the FULL tier stack (built-in + every on-disk directory,
+// in order, plus any registered ExtraTier — see SetExtraTier), so there is
+// only ONE place the sequence is defined (no possibility of two front-ends
+// independently drifting), and Reload always re-establishes the SAME
+// built-in base layer before replaying every tier, so the reload path can
+// no longer lose it.
+func NewMultiDirSkillLoader(reg *SkillRegistry, dirs []string) *SkillLoader {
 	return &SkillLoader{
-		registry:   reg,
-		projectDir: projectDir,
-		userDir:    userDir,
-		loaded:     map[string]string{},
-		log:        zap.NewNop(),
+		registry: reg,
+		dirs:     append([]string(nil), dirs...),
+		loaded:   map[string]string{},
+		log:      zap.NewNop(),
 	}
 }
 
 // SetLogger installs a non-noop logger.
 func (l *SkillLoader) SetLogger(log *zap.Logger) { l.log = log }
 
-// SkipBuiltins configures whether Reload registers the embedded built-in
-// skill tier (builtin_skills/*, loadBuiltinSkills). Defaults to false —
-// builtins ARE registered — matching every pre-existing caller's
-// expectation of a single, self-sufficient SkillLoader instance.
+// SetExtraTier registers tier to run at dir's position in the ordered dirs
+// list this loader was constructed with (see NewMultiDirSkillLoader):
+// whenever Reload reaches an entry equal to dir, it calls tier.Load()
+// INSTEAD of scanning dir as an on-disk directory, and folds the result
+// into the SAME want map — by the SAME override-by-precedence-order rule
+// every other tier uses. Reload's removal tracking (l.loaded) covers this
+// tier exactly like an on-disk one: a skill the tier stops admitting is
+// removed on the very next Reload, exactly like a deleted file.
 //
-// Set true when this loader instance is one of SEVERAL independently
-// constructed SkillLoaders that each scan a DIFFERENT directory into the
-// SAME shared SkillRegistry in sequence (the exact shape
-// agent.LoadSkillsAndDispatcher uses to generalise this loader's built-in
-// two-directory-slot precedence to an arbitrary ordered directory list).
-//
-// Reload() unconditionally re-Adds the WHOLE built-in tier on every call
-// (loadBuiltinSkills(want) runs first; the final "for name, s := range want
-// { l.registry.Add(s) }" step then Adds every builtin name unconditionally,
-// regardless of what the registry already held for that name). That is
-// correct and intended for a SINGLE loader instance managing its own two
-// slots (built-in < user < project). It is NOT correct across MULTIPLE
-// independently constructed instances sharing one registry: each fresh
-// instance's own removal-tracking (l.loaded) starts empty, so its
-// unconditional builtin re-Add silently REVERTS any EARLIER, higher-
-// precedence loader instance's override of that same builtin-named skill —
-// even when the later instance's own directory does not mention that name
-// at all (HXC-159 T-P9.01 round-4 investigation, 2026-09-23: proven live
-// against the real embedded builtin corpus before this fix landed).
-//
-// A caller driving a multi-directory sequence into one shared registry MUST
-// call SkipBuiltins(true) on every loader instance AFTER the first, so the
-// built-in tier is registered exactly once — at the lowest-precedence
-// position — and never re-touched by a later directory's independent pass.
-func (l *SkillLoader) SkipBuiltins(v bool) { l.skipBuiltins = v }
+// A dir value that never appears in this loader's own dirs list is
+// harmless to register — the hook simply never fires.
+func (l *SkillLoader) SetExtraTier(dir string, tier ExtraTier) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if l.extraTiers == nil {
+		l.extraTiers = map[string]ExtraTier{}
+	}
+	l.extraTiers[dir] = tier
+}
 
 // Load is a synonym for Reload. Provided for clarity at startup.
 func (l *SkillLoader) Load() error { return l.Reload() }
 
-// Reload re-scans both directories and reconciles the registry. Added files
-// are registered, removed files are unregistered, changed files are replaced.
-// Per-file errors (parse, read) are logged at WARN and the file is skipped;
-// they do NOT cause Reload to fail.
+// Reload re-scans every configured tier — the embedded built-in tier
+// (always first, always unconditional), each ordered on-disk directory in
+// turn, and any registered ExtraTier at its declared position — and
+// reconciles the registry. Added skills are registered, removed skills are
+// unregistered, changed skills are replaced. Per-tier errors (a directory
+// read failure, a per-file parse failure, an ExtraTier's own Load error)
+// are logged at WARN and the tier is skipped for this pass; they do NOT
+// cause Reload to fail — matching the pre-existing "a single broken skill
+// file never blocks the front-end" contract, now applied uniformly across
+// every tier rather than a hard-fail-for-on-disk / soft-fail-for-external
+// split (HXC-159 T-P9.01 round-5 NEW-2/NEW-4 remediation, 2026-09-23).
 func (l *SkillLoader) Reload() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	want := map[string]*Skill{}
 	// Lowest-precedence tier first: built-in skills embedded in the binary.
-	// They are written into `want` before the on-disk passes, so a user or
-	// project skill of the same name overrides the built-in (later writes to
-	// `want[name]` win). Precedence: project > user > built-in.
-	// Skipped entirely when this loader instance is a NON-FIRST member of a
-	// multi-directory sequence sharing one registry (see SkipBuiltins) — the
-	// built-in tier must be registered exactly once across such a sequence.
-	if !l.skipBuiltins {
-		l.loadBuiltinSkills(want)
-	}
-	// Then user, then project (project overrides user, both override built-in).
-	for _, dir := range []string{l.userDir, l.projectDir} {
+	// Loaded UNCONDITIONALLY on every call — see this type's doc comment
+	// for why (NEW-4 remediation) — so a later directory's or ExtraTier's
+	// override always has a real built-in base layer to override, and a
+	// removed override always has a real built-in base layer to fall back
+	// to.
+	l.loadBuiltinSkills(want)
+	for _, dir := range l.dirs {
 		if dir == "" {
+			continue
+		}
+		if tier, ok := l.extraTiers[dir]; ok {
+			skills, err := tier.Load()
+			if err != nil {
+				l.log.Warn("skill loader: extra tier load failed", zap.String("dir", dir), zap.Error(err))
+				continue
+			}
+			for name, s := range skills {
+				want[name] = s
+			}
 			continue
 		}
 		entries, err := os.ReadDir(dir)
@@ -586,10 +658,36 @@ func (l *SkillLoader) Loaded() map[string]string {
 	return out
 }
 
-// ParseSkillForTest exposes parseSkillFile to other packages' tests.
-// Production code uses SkillLoader; this helper is for unit tests in
-// packages such as internal/agent that need to construct Skills without
-// a real filesystem or a running SkillLoader.
-func ParseSkillForTest(name, raw, sourcePath string) (*Skill, error) {
+// ParseSkillFile parses raw SKILL.md content (frontmatter + body) into a
+// *Skill using the SAME production yaml.v3-based parser every on-disk tier
+// (built-in, legacy, canonical, project) already goes through via
+// SkillLoader. name is the skill's registry identity (the directory
+// basename for a packaged manifest, or the flat-file stem); sourcePath is
+// an opaque provenance string recorded on the returned Skill.
+//
+// This is the exported production entry point HXC-159's external tier uses
+// (internal/agent's skillsFromPolicySet) to build a *Skill from a manifest
+// it re-reads directly from disk itself, rather than converting an
+// already-parsed struct from a DIFFERENT parser (HXC-159 T-P9.01 round-5
+// NEW-1/NEW-5 remediation, 2026-09-23): pkg/skills' own front-matter reader
+// (a deliberately minimal, dependency-free scanner — R-25 forbids a YAML
+// dependency in that project-not-aware library) does not process YAML
+// string-escaping or YAML-1.1 boolean forms the way this parser does,
+// which broke trigger-regex matching (NEW-1) and requires_isolation
+// parsing (NEW-5) when the external tier's skills were built directly from
+// pkg/skills' own parsed fields instead of being re-parsed here.
+func ParseSkillFile(name, raw, sourcePath string) (*Skill, error) {
 	return parseSkillFile(name, raw, sourcePath)
+}
+
+// ParseSkillForTest exposes parseSkillFile to other packages' tests.
+// Production code uses SkillLoader (or, for a manifest it re-reads from
+// disk itself outside SkillLoader's own directory scan, ParseSkillFile
+// directly — see its doc comment); this helper is for unit tests in
+// packages such as internal/agent that need to construct Skills without a
+// real filesystem or a running SkillLoader. It is now a thin alias for
+// ParseSkillFile, kept under its original test-only name for the many
+// existing call sites.
+func ParseSkillForTest(name, raw, sourcePath string) (*Skill, error) {
+	return ParseSkillFile(name, raw, sourcePath)
 }

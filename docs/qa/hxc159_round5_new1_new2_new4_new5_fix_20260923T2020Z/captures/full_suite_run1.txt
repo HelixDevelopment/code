@@ -1,0 +1,13 @@
+ok  	dev.helix.code/internal/agent	9.059s
+ok  	dev.helix.code/internal/agent/i18n	0.013s
+ok  	dev.helix.code/internal/agent/profiles	0.045s
+ok  	dev.helix.code/internal/agent/subagent	7.738s
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+ok  	dev.helix.code/internal/agent/task	0.031s
+ok  	dev.helix.code/internal/agent/types	0.029s
+ok  	dev.helix.code/internal/commands	1.643s
+ok  	dev.helix.code/internal/commands/builtin	0.135s
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]
+ok  	dev.helix.code/cmd/cli	10.357s
+ok  	dev.helix.code/cmd/cli/i18n	0.012s

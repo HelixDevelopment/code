@@ -1,0 +1,17 @@
+2026/09/23 20:22:38 ⚠️  skill activation: external tier ".claude/skills": skills: "external.Reporting Workable Items" excluded — scores 0.1045 above similarity threshold 0.0709 against already-admitted "external.Action Prefix System" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+2026/09/23 20:22:38 ⚠️  skill activation: external tier ".claude/skills": skills: "external.session-sync" excluded — scores 0.0794 above similarity threshold 0.0709 against already-admitted "external.Multitrack" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+total skills registered: 10
+action-prefix-system source=external:.claude/skills/action-prefix-system/SKILL.md
+  trigger: (?i)^what does the (?P<action>[A-Za-z][A-Za-z0-9_]*) (?:action )?prefix (?:do|mean)\b.*$
+  trigger: (?i)^(?:what|how).*\baction[- ]prefix(?:es)?\b.*$
+  trigger: (?i)^how do i (?:add|register) (?:a )?new (?:action|directive)\b.*$
+OK action-prefix-system: prompt "what does the BACKGROUND action prefix mean" matched, rendered 5865 bytes
+media-validator source=external:.claude/skills/media-validator/SKILL.md
+  trigger: (?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\b.*?(?P<path>\S+\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\s*$
+  trigger: (?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\b.*?(?P<path>\S+\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\s*$
+OK media-validator: prompt "validate the recording evidence.mp4" matched, rendered 1124 bytes
+reporting-workable-items source=builtin:reporting-workable-items/SKILL.md
+  trigger: (?i)^report (?:a |an )?(?P<kind>bug|issue|defect|regression|task|feature)\b[\s:,-]+(?P<summary>.+)$
+  trigger: (?i)^(?:file|open|raise|log) (?:a |an )?(?P<kind>bug|issue|defect|ticket|task|feature)\b[\s:,-]+(?P<summary>.+)$
+OK reporting-workable-items: prompt "report a bug: subtitles render one frame late" matched, rendered 4544 bytes
+ALL REAL-CORPUS DISPATCH CHECKS PASSED

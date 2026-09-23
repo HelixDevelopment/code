@@ -1,0 +1,22 @@
+=== RUN   TestLoadExternalTierIntoRegistry_TriggerRegexEscapingMatchesProductionParser
+--- PASS: TestLoadExternalTierIntoRegistry_TriggerRegexEscapingMatchesProductionParser (0.00s)
+=== RUN   TestLoadExternalTierIntoRegistry_RequiresIsolationHonoursAllYAMLBooleanForms
+--- PASS: TestLoadExternalTierIntoRegistry_RequiresIsolationHonoursAllYAMLBooleanForms (0.00s)
+PASS
+ok  	dev.helix.code/internal/agent	0.036s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/i18n	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/profiles	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/subagent	(cached) [no tests to run]
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/task	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/types	(cached) [no tests to run]

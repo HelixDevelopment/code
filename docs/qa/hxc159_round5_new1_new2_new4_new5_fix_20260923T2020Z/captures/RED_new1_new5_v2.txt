@@ -1,0 +1,25 @@
+=== RUN   TestLoadExternalTierIntoRegistry_TriggerRegexEscapingMatchesProductionParser
+    skill_new1_new5_test.go:86: NEW-1: trigger pattern was not decoded through the production YAML parser — want "(?i)^zap (?P<what>\\w+) now$", got "\"(?i)^zap (?P<what>\\\\w+) now$\"" (quote characters and/or a doubled backslash leaked through unescaped)
+--- FAIL: TestLoadExternalTierIntoRegistry_TriggerRegexEscapingMatchesProductionParser (0.00s)
+=== RUN   TestLoadExternalTierIntoRegistry_RequiresIsolationHonoursAllYAMLBooleanForms
+    skill_new1_new5_test.go:145: NEW-5: requires_isolation: True must be honoured as true (pkg/skills' own front-matter reader is an exact case-sensitive comparison against the literal "true" and silently reads "True" as false)
+--- FAIL: TestLoadExternalTierIntoRegistry_RequiresIsolationHonoursAllYAMLBooleanForms (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/agent	0.036s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/i18n	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/profiles	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/subagent	(cached) [no tests to run]
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/task	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/types	(cached) [no tests to run]
+FAIL
