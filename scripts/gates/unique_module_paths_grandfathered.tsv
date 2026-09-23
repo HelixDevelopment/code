@@ -5,36 +5,46 @@
 # RS-13's 2026-09-14 amendment per specs/001-helixskills-incorporation/tasks.md:509-512).
 #
 # Every row is a Go module path that is ALLOWED to be declared by more than
-# one live go.mod, because both declarers are the SAME own-org submodule
-# checked out at two locations: once directly under submodules/<name>/ (or
-# constitution/), and once nested inside the submodules/claude-toolkit/**
-# checkout (which vendors its own copies of the same own-org submodules).
-# submodules/claude-toolkit is a submodule this project does NOT own and was
-# explicitly instructed not to restructure or delete content from — the
-# grandfather list is the correct scope per §11.4.124 (investigate before
-# remove) + this finding's own instructions, mirroring the RS-13 pattern
-# instead of masking the class with a blanket path exclusion.
+# one live go.mod, because every declarer is the SAME own-org submodule
+# checked out at two (or three) locations: once directly under
+# submodules/<name>/ (or constitution/), and once nested inside the
+# submodules/claude-toolkit/** checkout (which vendors its own copies of the
+# same own-org submodules). submodules/claude-toolkit is a submodule this
+# project does NOT own and was explicitly instructed not to restructure or
+# delete content from — the grandfather list is the correct scope per
+# §11.4.124 (investigate before remove) + this finding's own instructions,
+# mirroring the RS-13 pattern instead of masking the class with a blanket
+# path exclusion.
 #
 # Grandfathered rows shrink ONLY (per §11.4.135 ratchet discipline): removing
-# or de-duplicating a submodules/claude-toolkit/** copy removes its row here;
-# a NEW duplicate module path appearing anywhere else in the tree is NEVER
-# covered by this list and MUST still fail scripts/gates/unique_module_paths_gate.sh.
+# or de-duplicating a submodules/claude-toolkit/** copy removes its row (or
+# its declarer) here; a NEW duplicate module path appearing anywhere else in
+# the tree is NEVER covered by this list and MUST still fail
+# scripts/gates/unique_module_paths_gate.sh.
 #
-# Schema: module_path<TAB>reason
-# Measured live 2026-09-23 via `scripts/gates/unique_module_paths_gate.sh --list`
-# cross-referenced against `scripts/gates/unique_module_paths_gate.sh` (real run).
-digital.vasic.challenges	own-org submodule vendored twice: submodules/challenges + submodules/claude-toolkit/submodules/challenges
-digital.vasic.challenges.memprobe	fixture module inside the digital.vasic.challenges duplicate above
-digital.vasic.containers	own-org submodule vendored twice: submodules/containers + submodules/claude-toolkit/submodules/containers
-digital.vasic.docs_chain	own-org submodule vendored thrice: constitution/submodules/docs_chain + submodules/docs_chain + submodules/claude-toolkit/constitution/submodules/docs_chain
-digital.vasic.llmsverifier	own-org submodule vendored twice: submodules/llms_verifier/llm-verifier + submodules/claude-toolkit/submodules/LLMsVerifier/llm-verifier
-github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity	own-org submodule vendored twice: constitution/scripts/doc_integrity + submodules/claude-toolkit/constitution/scripts/doc_integrity
-github.com/HelixDevelopment/HelixConstitution/scripts/llm-alias-health	own-org submodule vendored twice: constitution/scripts/llm-alias-health + submodules/claude-toolkit/constitution/scripts/llm-alias-health
-github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine	own-org submodule vendored twice: constitution/scripts/scheduled-work-engine + submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
-github.com/HelixDevelopment/HelixConstitution/scripts/workable-items	own-org submodule vendored twice: constitution/scripts/workable-items + submodules/claude-toolkit/constitution/scripts/workable-items
-github.com/HelixDevelopment/helix_perf_cache	own-org submodule vendored twice: constitution/submodules/helix_perf_cache + submodules/claude-toolkit/constitution/submodules/helix_perf_cache
-github.com/vasic-digital/continuum	own-org submodule vendored twice: constitution/submodules/continuum + submodules/claude-toolkit/constitution/submodules/continuum
-github.com/vasic-digital/session_orchestrator	own-org submodule vendored twice: constitution/submodules/session_orchestrator + submodules/claude-toolkit/constitution/submodules/session_orchestrator
-github.com/vasic-digital/token_optimizer	own-org submodule vendored twice: constitution/submodules/token_optimizer + submodules/claude-toolkit/constitution/submodules/token_optimizer
-llmsverifier	own-org submodule vendored twice: submodules/llms_verifier + submodules/claude-toolkit/submodules/LLMsVerifier
-scoring-example	fixture module inside the llmsverifier duplicate above (examples/scoring)
+# Schema (T-P9.01 round-3 review, finding F-18):
+#   module_path<TAB>declarers<TAB>reason
+# `declarers` is the EXACT, ';'-separated, sorted set of go.mod paths
+# (repo-relative) that are grandfathered for that module path. The gate
+# compares the LIVE declarer set against this column: a live go.mod that
+# declares a grandfathered module path but is NOT listed here is a NEW
+# duplicate and FAILS the gate. (Round 2 keyed the allowlist by module path
+# alone, so a THIRD copy of e.g. digital.vasic.containers planted anywhere
+# live was silently absorbed as "grandfathered" — measured 2026-09-23,
+# qa-results/hxc159/review/20260923T_review3/10_f12_gate_mutation_probe.txt.)
+# Measured live 2026-09-23 via `scripts/gates/unique_module_paths_gate.sh --list`.
+digital.vasic.challenges	submodules/challenges/go.mod;submodules/claude-toolkit/submodules/challenges/go.mod	own-org submodule vendored twice: submodules/challenges + submodules/claude-toolkit/submodules/challenges
+digital.vasic.challenges.memprobe	submodules/challenges/challenges/fixtures/memprobe/go.mod;submodules/claude-toolkit/submodules/challenges/challenges/fixtures/memprobe/go.mod	fixture module inside the digital.vasic.challenges duplicate above
+digital.vasic.containers	submodules/claude-toolkit/submodules/containers/go.mod;submodules/containers/go.mod	own-org submodule vendored twice: submodules/containers + submodules/claude-toolkit/submodules/containers
+digital.vasic.docs_chain	constitution/submodules/docs_chain/go.mod;submodules/claude-toolkit/constitution/submodules/docs_chain/go.mod;submodules/docs_chain/go.mod	own-org submodule vendored thrice: constitution/submodules/docs_chain + submodules/docs_chain + submodules/claude-toolkit/constitution/submodules/docs_chain
+digital.vasic.llmsverifier	submodules/claude-toolkit/submodules/LLMsVerifier/llm-verifier/go.mod;submodules/llms_verifier/llm-verifier/go.mod	own-org submodule vendored twice: submodules/llms_verifier/llm-verifier + submodules/claude-toolkit/submodules/LLMsVerifier/llm-verifier
+github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity	constitution/scripts/doc_integrity/go.mod;submodules/claude-toolkit/constitution/scripts/doc_integrity/go.mod	own-org submodule vendored twice: constitution/scripts/doc_integrity + submodules/claude-toolkit/constitution/scripts/doc_integrity
+github.com/HelixDevelopment/HelixConstitution/scripts/llm-alias-health	constitution/scripts/llm-alias-health/go.mod;submodules/claude-toolkit/constitution/scripts/llm-alias-health/go.mod	own-org submodule vendored twice: constitution/scripts/llm-alias-health + submodules/claude-toolkit/constitution/scripts/llm-alias-health
+github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine	constitution/scripts/scheduled-work-engine/go.mod;submodules/claude-toolkit/constitution/scripts/scheduled-work-engine/go.mod	own-org submodule vendored twice: constitution/scripts/scheduled-work-engine + submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
+github.com/HelixDevelopment/HelixConstitution/scripts/workable-items	constitution/scripts/workable-items/go.mod;submodules/claude-toolkit/constitution/scripts/workable-items/go.mod	own-org submodule vendored twice: constitution/scripts/workable-items + submodules/claude-toolkit/constitution/scripts/workable-items
+github.com/HelixDevelopment/helix_perf_cache	constitution/submodules/helix_perf_cache/go.mod;submodules/claude-toolkit/constitution/submodules/helix_perf_cache/go.mod	own-org submodule vendored twice: constitution/submodules/helix_perf_cache + submodules/claude-toolkit/constitution/submodules/helix_perf_cache
+github.com/vasic-digital/continuum	constitution/submodules/continuum/go.mod;submodules/claude-toolkit/constitution/submodules/continuum/go.mod	own-org submodule vendored twice: constitution/submodules/continuum + submodules/claude-toolkit/constitution/submodules/continuum
+github.com/vasic-digital/session_orchestrator	constitution/submodules/session_orchestrator/go.mod;submodules/claude-toolkit/constitution/submodules/session_orchestrator/go.mod	own-org submodule vendored twice: constitution/submodules/session_orchestrator + submodules/claude-toolkit/constitution/submodules/session_orchestrator
+github.com/vasic-digital/token_optimizer	constitution/submodules/token_optimizer/go.mod;submodules/claude-toolkit/constitution/submodules/token_optimizer/go.mod	own-org submodule vendored twice: constitution/submodules/token_optimizer + submodules/claude-toolkit/constitution/submodules/token_optimizer
+llmsverifier	submodules/claude-toolkit/submodules/LLMsVerifier/go.mod;submodules/llms_verifier/go.mod	own-org submodule vendored twice: submodules/llms_verifier + submodules/claude-toolkit/submodules/LLMsVerifier
+scoring-example	submodules/claude-toolkit/submodules/LLMsVerifier/examples/scoring/go.mod;submodules/llms_verifier/examples/scoring/go.mod	fixture module inside the llmsverifier duplicate above (examples/scoring)

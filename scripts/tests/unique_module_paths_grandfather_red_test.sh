@@ -107,6 +107,31 @@ else
   cleanup_fixture
   trap - EXIT
 
+  # (iii) Declarer-set ratchet (HXC-159 T-P9.01 round-3 review, F-18): a NEW
+  # go.mod that re-declares an ALREADY-GRANDFATHERED module path must still
+  # FAIL the gate. Round 2's allowlist keyed on module path alone, so a third
+  # copy of digital.vasic.containers planted at a live path was silently
+  # absorbed as "grandfathered" (RED evidence:
+  # qa-results/hxc159/review/20260923T_review3/10_f12_gate_mutation_probe.txt).
+  FIX_C="$ROOT/scripts/testing/.f12_fixture_extra_declarer"
+  cleanup_fixture_c() { rm -rf "$FIX_C"; }
+  trap cleanup_fixture_c EXIT
+  mkdir -p "$FIX_C"
+  printf 'module digital.vasic.containers\n\ngo 1.21\n' > "$FIX_C/go.mod"
+  if bash "$GATE" >/tmp/f12_extra.out 2>&1; then
+    echo "GUARD FAIL: a NEW declarer of an already-grandfathered module path was silently absorbed — the ratchet keys on path, not declarer set:"
+    grep -n "f12_fixture_extra_declarer" /tmp/f12_extra.out | sed 's/^/    /'
+    fail=1
+  elif ! grep -q "f12_fixture_extra_declarer" /tmp/f12_extra.out; then
+    echo "GUARD FAIL: gate FAILed but did not name the planted extra declarer (investigate):"
+    cat /tmp/f12_extra.out | sed 's/^/    /'
+    fail=1
+  else
+    echo "GUARD PASS (iii): a new declarer of a grandfathered module path still FAILs the gate (declarer-set ratchet)."
+  fi
+  cleanup_fixture_c
+  trap - EXIT
+
   [ "$fail" -eq 0 ] && echo "VERDICT: WIRED" || echo "VERDICT: NOT-WIRED"
   exit "$fail"
 fi

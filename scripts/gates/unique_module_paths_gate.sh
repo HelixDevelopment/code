@@ -9,7 +9,10 @@
 # file is grandfathered is reported informationally and does NOT fail the
 # gate; a module path with ANY non-grandfathered declarer still FAILs. The
 # grandfather list shrinks only (§11.4.135 ratchet) — a NEW duplicate anywhere
-# in the tree is never covered by it and always fails.
+# in the tree is never covered by it and always fails. The allowlist pins the
+# exact DECLARER SET per module path (TSV column 2), not merely the path: a
+# new go.mod re-declaring an already-grandfathered path is a NEW duplicate
+# (HXC-159 T-P9.01 round-3 review, finding F-18).
 #
 #   scripts/gates/unique_module_paths_gate.sh          # gate
 #   scripts/gates/unique_module_paths_gate.sh --list   # show the live module set
@@ -76,19 +79,46 @@ fi
 # fail the gate; grandfathered ones are reported informationally so the
 # allowlist can never silently hide the class.
 GRANDFATHER="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/unique_module_paths_grandfathered.tsv"
-is_grandfathered_path() {
+# grandfathered_declarers prints the ';'-separated declarer set recorded for
+# module path $1 (column 2 of the TSV), or nothing when the path is not
+# grandfathered at all.
+grandfathered_declarers() {
   local p="$1"
   [[ -f "$GRANDFATHER" ]] || return 1
-  awk -F'\t' -v p="$p" '!/^#/ && NF && $1==p {found=1} END{exit !found}' "$GRANDFATHER"
+  awk -F'\t' -v p="$p" '!/^#/ && NF>=2 && $1==p {print $2; found=1} END{exit !found}' "$GRANDFATHER"
+}
+# is_grandfathered_path succeeds ONLY when EVERY live declarer of module
+# path $1 is in the recorded declarer set (HXC-159 T-P9.01 round-3 review,
+# finding F-18: keying the allowlist by module path alone let a THIRD copy of
+# an already-grandfathered path be absorbed silently — the ratchet must pin
+# the declarer SET, not just the path). On failure it prints the unrecorded
+# declarers, one per line, so the FAIL report can name them.
+is_grandfathered_path() {
+  local p="$1" recorded live i unrecorded=()
+  recorded="$(grandfathered_declarers "$p")" || return 1
+  for i in "${!live_paths[@]}"; do
+    [[ "${live_paths[$i]}" == "$p" ]] || continue
+    live="${live_files[$i]}"
+    case ";$recorded;" in
+      *";$live;"*) ;;
+      *) unrecorded+=("$live") ;;
+    esac
+  done
+  if [[ "${#unrecorded[@]}" -gt 0 ]]; then
+    printf '%s\n' "${unrecorded[@]}"
+    return 1
+  fi
+  return 0
 }
 
-declare -a new_dupes=() grandfathered_dupes=()
+declare -a new_dupes=() grandfathered_dupes=() unrecorded_notes=()
 while IFS= read -r d; do
   [[ -n "$d" ]] || continue
-  if is_grandfathered_path "$d"; then
+  if extra="$(is_grandfathered_path "$d")"; then
     grandfathered_dupes+=("$d")
   else
     new_dupes+=("$d")
+    [[ -n "$extra" ]] && unrecorded_notes+=("'$d' is grandfathered for a FIXED declarer set, but these live declarer(s) are NOT in it: $(printf '%s ' $extra)")
   fi
 done <<< "$dupes"
 
@@ -108,6 +138,7 @@ if [[ "${#new_dupes[@]}" -eq 0 ]]; then
 fi
 
 echo "FAIL CM-UNIQUE-MODULE-PATHS — ${#new_dupes[@]} NEW (non-grandfathered) duplicate module path(s) among ${#live_paths[@]} live modules:"
+for n in "${unrecorded_notes[@]}"; do echo "  $n"; done
 for d in "${new_dupes[@]}"; do
   echo "  '$d' declared by:"
   for i in "${!live_paths[@]}"; do
