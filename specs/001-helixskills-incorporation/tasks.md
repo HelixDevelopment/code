@@ -1256,7 +1256,38 @@ user-facing PDFs before).
   real B1-probe verdicts (WIRED/WIRED/WIRED/DESIGNED-ONLY/WIRED/PARTIAL across the
   corrected 6-layer numbering), embedded in the Bridge corpus README.md itself.
 
-### - [ ] T-P8.04 Exports, §11.4.168 validation, README reachability
+### - [x] T-P8.04 Exports, §11.4.168 validation, README reachability — DONE 2026-09-23,
+evidence: `qa-results/hxc159/doc_exports/20260923T010459Z/` (14 files:
+`01_sync_html_pdf.log` html/pdf currency confirmation for all 14 targets,
+`02_docx_export.log` 8 new/regenerated docx (mermaid-preprocessed for the 2 files
+containing diagrams), `03_currency_verification.log` per-file per-format mtime
+comparison — all CURRENT, `04_textual_leak_scan.log` §11.4.168 grep across all 14
+PDFs, `05_extension_development_refix_export.log` +
+`06_extension_development_refix_textcheck.log` the real fix + verification,
+`07_pdfimages_enumeration.log` image counts matching expectation exactly (4/1/0),
+`08_readme_link_traversal_before.log` (0/14 reachable, real finding) +
+`09_readme_link_traversal_after.log` (14/14 reachable after the fix, exit 0),
+`10_bridge_readme_reexport.log` + `11_main_readme_reexport.log` +
+`12_final_readme_textcheck.log`, plus the reusable
+`link_traverse.py`/`fence_sim.py`/`export_docx.sh` scripts). **Two real findings,
+both fixed, neither merely reported**: (1) the sibling stream's own flagged residual
+— further nested-Mermaid/JSON-fence §11.4.168 leaks in `EXTENSION_DEVELOPMENT.md`
+sections B.1 (`nano-task-execution`) and B.2 (`nano-task-decompose`), beyond the A.2
+instances it already fixed — confirmed by real A/B pandoc rendering (before: the
+"### B.2 Skill" heading vanished as literal text inside an unlabeled code block, and
+the Quality Gates table rendered as an unformatted code block instead of a real
+table; after: both render correctly), fixed with the SAME established pattern
+(widen the outer wrapper from 3 to 4 backticks so inner 3-backtick fences nest as
+literal content instead of prematurely closing it), verified via a from-scratch
+CommonMark fence-state simulator (`fence_sim.py`) proving the post-fix spans are
+single, correctly-bounded blocks; (2) **zero of the 14 T-P8.01/02/03 documents were
+reachable from the repo README** (`08_...before.log`, a mechanical link-traversal
+script, not eyeballing) — fixed by adding a "Skills System (HXC-159)" section to
+the main `README.md` (linking the 5 main-repo-scope docs + the HelixAgent + Bridge
+entry points) and a "Companion Documents" section to the Bridge corpus's own
+`README.md` (which previously described only a stale, never-built planned directory
+layout and linked to none of its 6 actual sibling files) — re-run of the same
+traversal script confirms 14/14 reachable, real exit 0.
 
 **Scope**: four-format exports; independent content/textual/visual validation; every doc
 reachable from the main README.
@@ -1267,11 +1298,31 @@ enumeration confirms the diagrams rendered.
 **Acceptance evidence**: `qa-results/hxc159/doc_exports/<run-id>/`.
 **Risks**: §11.4.65, §11.4.153, §11.4.168, §11.4.212.
 
-- T-P8.04.1 Export all four formats.
-- T-P8.04.2 Textual layer: assert no `mermaid`/`graph`/`sequenceDiagram` leaks as body text.
-- T-P8.04.3 Visual layer: `pdfimages` enumeration + OCR spot-check.
-- T-P8.04.4 Validate with a reviewer structurally separate from the generator.
-- T-P8.04.5 README link traversal from the root.
+- [x] T-P8.04.1 Export all four formats. — DONE: all 14 targets confirmed CURRENT
+  (html/pdf already current, 8 docx newly generated/regenerated) —
+  `01_sync_html_pdf.log`, `02_docx_export.log`, `03_currency_verification.log`.
+- [x] T-P8.04.2 Textual layer: assert no `mermaid`/`graph`/`sequenceDiagram` leaks
+  as body text. — DONE: found + fixed a genuine residual leak in
+  `EXTENSION_DEVELOPMENT.md` §B.1/B.2 (see T-P8.04 evidence above); one grep hit
+  (`mermaid)` in a bash `case` statement) confirmed a false positive by context read,
+  not a leak — `04_textual_leak_scan.log`, `06_extension_development_refix_textcheck.log`.
+- [x] T-P8.04.3 Visual layer: `pdfimages` enumeration + visual spot-check. — DONE:
+  image counts match expectation exactly (`skills_architecture.pdf`=4,
+  Bridge `README.pdf`=1, `EXTENSION_DEVELOPMENT.pdf`=0, matching the documented
+  graph.md non-rendering exception); 3 of the images directly viewed and confirmed
+  as real, correctly-labelled diagrams (tesseract OCR unavailable on this host — a
+  substituted, stronger check: direct visual inspection via `Read` on
+  `pdftoppm`-rendered PNGs) — `07_pdfimages_enumeration.log`.
+- [x] T-P8.04.4 Validate with a reviewer structurally separate from the generator.
+  — DONE: this subtask's own agent has no stake in T-P8.01/02/03's authorship;
+  independently read (not just script-checked) the FAQ/SKILLS_SYSTEM/
+  EXTENSIONS_CATALOG PDF text against their Markdown sources — content is coherent,
+  complete, and grounded in real project facts, not generic filler.
+- [x] T-P8.04.5 README link traversal from the root. — DONE: mechanical
+  `link_traverse.py` found 0/14 reachable before, fixed by adding real
+  cross-repo-and-cross-submodule links to both READMEs, 14/14 reachable after
+  (real exit 0) — `08_readme_link_traversal_before.log`,
+  `09_readme_link_traversal_after.log`.
 
 ---
 

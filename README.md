@@ -312,6 +312,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [User Guide](helix_code/docs/general/USER_GUIDE.md)
 - [API Documentation](helix_code/docs/general/API_DOCUMENTATION.md)
 
+### Skills System (HXC-159)
+
+- [Capabilities — Skills sections §4/§10.5](helix_code/docs/CAPABILITIES.md)
+- [Skills Architecture (three-layer diagram + registration path)](helix_code/docs/architecture/skills_architecture.md)
+- [Skills User Manual](helix_code/docs/guides/skills_user_manual.md)
+- [Skills FAQ](helix_code/docs/guides/skills_faq.md)
+- [Extensions Catalog (per-platform compatibility matrix, §11.4.228)](docs/extensions/EXTENSIONS_CATALOG.md)
+- [HelixAgent Skills System (submodule-side capability-enforcement model)](submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md)
+- [Constitution-Powered SpecKit-Superpowers Bridge (design corpus)](constitution/docs/research/extensions/speckit_superpowers/implementation/README.md)
+
 ## 🆘 Support
 
 - **Issues**: tracked in-repo at `docs/Issues.md` (+ `docs/Fixed.md`), the SQLite-backed single source of truth `docs/workable_items.db` (§11.4.93/95)
