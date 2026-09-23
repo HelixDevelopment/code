@@ -1,0 +1,50 @@
+{
+  "run_id": "p2_curve1",
+  "sizes": [
+    {
+      "size": "small",
+      "n": 12,
+      "n_tasks": 12,
+      "repetitions": 3,
+      "pass_rate": 0.8333,
+      "pass_rate_per_rep": [
+        0.8333,
+        0.8333,
+        0.8333
+      ],
+      "failures_by_mode": {
+        "mis-selection": 2.0
+      }
+    },
+    {
+      "size": "mid",
+      "n": 16,
+      "n_tasks": 12,
+      "repetitions": 3,
+      "pass_rate": 0.8333,
+      "pass_rate_per_rep": [
+        0.8333,
+        0.8333,
+        0.8333
+      ],
+      "failures_by_mode": {
+        "mis-selection": 2.0
+      }
+    },
+    {
+      "size": "large",
+      "n": 20,
+      "n_tasks": 12,
+      "repetitions": 3,
+      "pass_rate": 0.8333,
+      "pass_rate_per_rep": [
+        0.8333,
+        0.8333,
+        0.8333
+      ],
+      "failures_by_mode": {
+        "mis-selection": 2.0
+      }
+    }
+  ]
+}

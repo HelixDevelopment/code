@@ -1,0 +1,4 @@
+size,n_active,pass_rate,abandonment,mis-selection,model-error
+small,12,0.8333,0,2.0,0
+mid,16,0.8333,0,2.0,0
+large,20,0.8333,0,2.0,0

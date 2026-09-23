@@ -265,3 +265,6 @@ docs/qa/infra_fulltest_20260712/integration_full_tests.log
 # Regenerate: cd helix_code && go build ./cmd/security_fix_standalone
 # (source is tracked at helix_code/cmd/security_fix_standalone/ — CONST-053 §11.4.77)
 /helix_code/security_fix_standalone
+
+# Python bytecode caches (T-P9.01 review: scripts/benchmark_skills/__pycache__/ was untracked noise)
+__pycache__/

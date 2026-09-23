@@ -1,0 +1,29 @@
+{
+  "sizes": {
+    "large": {
+      "repetitions": [
+        1,
+        2,
+        3
+      ],
+      "identical_verdicts": true
+    },
+    "mid": {
+      "repetitions": [
+        1,
+        2,
+        3
+      ],
+      "identical_verdicts": true
+    },
+    "small": {
+      "repetitions": [
+        1,
+        2,
+        3
+      ],
+      "identical_verdicts": true
+    }
+  },
+  "identical_all": true
+}

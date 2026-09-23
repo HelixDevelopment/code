@@ -1,0 +1,9 @@
+{
+  "mutation": "ceiling raised 20 -> 20 (past knee)",
+  "static_gate_under_mutation": "refused-despite-mutation (  SIMILARITY-EXCEEDED: 0.1045 > 0.0256 between 'Action Prefix System' and 'Reporting Workable Items')",
+  "baseline_small_rate": 0.8333,
+  "mutated_large_rate": 0.8333333333333334,
+  "regression_shown_by_benchmark": null,
+  "outcome": "NOT-APPLICABLE-FLAT",
+  "meaning": "curve is FLAT (spread<0.05): no knee exists to mutate past; benchmark re-run confirms no regression, honestly recorded per T-P2.03.3"
+}
