@@ -232,3 +232,7 @@ docs/testing/Tests_Catalog.md
 
 # §11.4.53 — built e2e-challenges runner binary (go build cmd/runner)
 tests/e2e/challenges/runner
+
+# Python bytecode cache (CONST-053 — never versioned build derivative)
+__pycache__/
+*.pyc

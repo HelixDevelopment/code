@@ -1,0 +1,38 @@
+{
+  "C5": {
+    "covered": true,
+    "evidence": "submodules/skills/pkg/skills/sandbox_gate.go + sandbox_gate_test.go (HXC-159 T-P7.05.5): EnforceSandboxPrecondition refuses third-party activation while sandboxReady=false; qa-results/hxc159/security/20260922T212742Z/04_green_c5_gate.txt (4/4 PASS)."
+  },
+  "A9": {
+    "covered": true,
+    "evidence": "submodules/skills/pkg/skills/conformance.go (HXC-159 T-P7.01): LibrarySelfReport feeds the capability manifest behind the FR-035/T-P7.02 parity report; qa-results/hxc159/conformance/20260922T212742Z/02_green_library_conformance.txt."
+  },
+  "E1": {
+    "covered": true,
+    "evidence": "pkg/skills/registry.go RegisterSource/Sources, exercised live via cmd/conformance-report; qa-results/hxc159/conformance/20260922T212742Z/04_library_cli_run_wellformed.txt (5 real skills registered from a real source)."
+  },
+  "E4": {
+    "covered": true,
+    "evidence": "pkg/skills/source.go Source{Name,Root,Dialect,Precedence,Trust} exercised the same way as E1 (same CLI run, same evidence file) — Source is the abstraction that made the constitution/skills fixture registrable."
+  },
+  "E8": {
+    "covered": true,
+    "evidence": "pkg/skills/loader.go LoadSource/parseSkillFile parsed 5 real constitution SKILL.md files (well-formed) AND correctly fail-closed-refused the whole source on 3 malformed ones; qa-results/hxc159/conformance/20260922T212742Z/03_library_cli_run.txt (real failure) + 04_library_cli_run_wellformed.txt (real success)."
+  },
+  "F1": {
+    "covered": false,
+    "reason": "MCP server liveness was already proven in Phase P6 (T-P6.02, RS-17, qa-results/hxc159/agent_mcp/20260922T192508Z/) — not re-exercised in this P7 pass; citing the P6 evidence rather than re-testing."
+  },
+  "6-COMPOSE-02": {
+    "covered": true,
+    "evidence": "reporting-workable-items (constitution skill) was a REAL fixture in every T-P7.01/T-P7.02 conformance run — registered, loaded, hashed; qa-results/hxc159/conformance/20260922T212742Z/library_report.json + parity/20260922T212742Z/helix_agent_report_samecorpus.json."
+  },
+  "6-ORTHOGONAL-02": {
+    "covered": true,
+    "evidence": "multitrack (constitution skill) was a REAL fixture in every T-P7.01/T-P7.02 conformance run alongside reporting-workable-items — same evidence files."
+  },
+  "6-REUSE-01": {
+    "covered": true,
+    "evidence": "credential_scan_lib.sh reused UNCHANGED per FR-027 (T-P7.05.3): qa-results/hxc159/security/20260922T212742Z/01_credential_scan_skills_library.txt (651 files scanned) + 02_credential_scan_helixagent_skills_corpus.txt (1330 files scanned, 1174-skill vendored corpus)."
+  }
+}
