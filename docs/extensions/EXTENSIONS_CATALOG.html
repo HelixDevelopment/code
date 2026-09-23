@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>HelixCode Extensions Catalog</title>
+  <title>EXTENSIONS_CATALOG</title>
   <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -47,7 +47,7 @@ text-decoration: line-through;
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">HelixCode Extensions Catalog</h1>
+<h1 class="title">EXTENSIONS_CATALOG</h1>
 </header>
 <h1 id="helixcode-extensions-catalog">HelixCode Extensions Catalog</h1>
 <table>
@@ -62,7 +62,7 @@ text-decoration: line-through;
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-09-23T00:35:58Z</td>
+<td>2026-09-23T07:14:24Z</td>
 </tr>
 <tr>
 <td>Status</td>
@@ -135,46 +135,46 @@ loading a Markdown-frontmatter skill).</p>
 </tr>
 <tr>
 <td><code>media-validator</code></td>
-<td>CONFIG-ONLY (<code>.claude/skills/media-validator</code>)</td>
+<td>SUPPORTED (<code>.claude/skills/media-validator</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/media-validator (external tier)</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 </tr>
 <tr>
 <td><code>multitrack</code></td>
-<td>CONFIG-ONLY (<code>.claude/skills/multitrack</code>)</td>
+<td>SUPPORTED (<code>.claude/skills/multitrack</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/multitrack (external tier)</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 </tr>
 <tr>
 <td><code>reporting-workable-items</code></td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/reporting-workable-items</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/reporting-workable-items (external tier)</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 </tr>
 <tr>
 <td><code>scheduled-work-queue</code></td>
-<td>CONFIG-ONLY (<code>.claude/skills/scheduled-work-queue</code>)</td>
+<td>SUPPORTED (<code>.claude/skills/scheduled-work-queue</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/scheduled-work-queue (external tier)</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 </tr>
 <tr>
 <td><code>session-sync</code></td>
-<td>CONFIG-ONLY (<code>.claude/skills/session-sync</code>)</td>
+<td>SUPPORTED (<code>.claude/skills/session-sync</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
-<td>CONFIG-ONLY
+<td>SUPPORTED
 (<code>.claude/skills/session-sync (external tier)</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
 <td>UNTESTED (<code>N/A</code>)</td>
@@ -227,7 +227,7 @@ loading a Markdown-frontmatter skill).</p>
 <td>SUPPORTED</td>
 <td><code>.claude/skills/action-prefix-system</code></td>
 <td>symlink, SKILL.md read 6515 bytes (resolves to the manifest-declared
-source). Live-probed 2026-09-23T00:35:58Z.</td>
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -300,11 +300,10 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <tbody>
 <tr>
 <td>Claude Code</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/media-validator</code></td>
-<td>declared in scripts/skills_manifest.tsv; not present at
-.claude/skills/media-validator this run (live probe,
-2026-09-23T00:35:58Z).</td>
+<td>symlink, SKILL.md read 1111 bytes (resolves to the manifest-declared
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -318,19 +317,14 @@ targets one — zero recorded loading path this cycle, tracked per
 </tr>
 <tr>
 <td>HelixCode</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/media-validator (external tier)</code></td>
-<td>external tier defaults to .claude/skills/media-validator
-(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory
-does not currently carry this skill (declared in
-scripts/skills_manifest.tsv; not present at
-.claude/skills/media-validator this run (live probe,
-2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go
-ExternalSkillsDir() defaults to ‘.claude/skills’ (config-injectable via
-HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier’s end-to-end
-load+list+invoke path is REAL-BINARY verified at
-qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt).
-Honest boundary (§11.4.6, T-P5.05.4 in
+<td>via external tier -&gt; .claude/skills/media-validator.
+helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to
+‘.claude/skills’ (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR);
+the external tier’s end-to-end load+list+invoke path is REAL-BINARY
+verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/
+(green_cli_e2e.txt). Honest boundary (§11.4.6, T-P5.05.4 in
 specs/001-helixskills-incorporation/tasks.md): the per-skill
 activation-allowlist/ceiling mechanism was NOT verifiable from within
 helix_code/’s own file scope this cycle — grep-confirmed zero Go
@@ -382,11 +376,10 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <tbody>
 <tr>
 <td>Claude Code</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/multitrack</code></td>
-<td>declared in scripts/skills_manifest.tsv; not present at
-.claude/skills/multitrack this run (live probe,
-2026-09-23T00:35:58Z).</td>
+<td>symlink, SKILL.md read 1965 bytes (resolves to the manifest-declared
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -400,13 +393,9 @@ targets one — zero recorded loading path this cycle, tracked per
 </tr>
 <tr>
 <td>HelixCode</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/multitrack (external tier)</code></td>
-<td>external tier defaults to .claude/skills/multitrack
-(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory
-does not currently carry this skill (declared in
-scripts/skills_manifest.tsv; not present at .claude/skills/multitrack
-this run (live probe, 2026-09-23T00:35:58Z).).
+<td>via external tier -&gt; .claude/skills/multitrack.
 helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to
 ‘.claude/skills’ (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR);
 the external tier’s end-to-end load+list+invoke path is REAL-BINARY
@@ -463,11 +452,10 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <tbody>
 <tr>
 <td>Claude Code</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/reporting-workable-items</code></td>
-<td>declared in scripts/skills_manifest.tsv; not present at
-.claude/skills/reporting-workable-items this run (live probe,
-2026-09-23T00:35:58Z).</td>
+<td>symlink, SKILL.md read 5013 bytes (resolves to the manifest-declared
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -481,19 +469,14 @@ targets one — zero recorded loading path this cycle, tracked per
 </tr>
 <tr>
 <td>HelixCode</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/reporting-workable-items (external tier)</code></td>
-<td>external tier defaults to .claude/skills/reporting-workable-items
-(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory
-does not currently carry this skill (declared in
-scripts/skills_manifest.tsv; not present at
-.claude/skills/reporting-workable-items this run (live probe,
-2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go
-ExternalSkillsDir() defaults to ‘.claude/skills’ (config-injectable via
-HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier’s end-to-end
-load+list+invoke path is REAL-BINARY verified at
-qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt).
-Honest boundary (§11.4.6, T-P5.05.4 in
+<td>via external tier -&gt; .claude/skills/reporting-workable-items.
+helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to
+‘.claude/skills’ (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR);
+the external tier’s end-to-end load+list+invoke path is REAL-BINARY
+verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/
+(green_cli_e2e.txt). Honest boundary (§11.4.6, T-P5.05.4 in
 specs/001-helixskills-incorporation/tasks.md): the per-skill
 activation-allowlist/ceiling mechanism was NOT verifiable from within
 helix_code/’s own file scope this cycle — grep-confirmed zero Go
@@ -545,11 +528,10 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <tbody>
 <tr>
 <td>Claude Code</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/scheduled-work-queue</code></td>
-<td>declared in scripts/skills_manifest.tsv; not present at
-.claude/skills/scheduled-work-queue this run (live probe,
-2026-09-23T00:35:58Z).</td>
+<td>symlink, SKILL.md read 3258 bytes (resolves to the manifest-declared
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -563,19 +545,14 @@ targets one — zero recorded loading path this cycle, tracked per
 </tr>
 <tr>
 <td>HelixCode</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/scheduled-work-queue (external tier)</code></td>
-<td>external tier defaults to .claude/skills/scheduled-work-queue
-(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory
-does not currently carry this skill (declared in
-scripts/skills_manifest.tsv; not present at
-.claude/skills/scheduled-work-queue this run (live probe,
-2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go
-ExternalSkillsDir() defaults to ‘.claude/skills’ (config-injectable via
-HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier’s end-to-end
-load+list+invoke path is REAL-BINARY verified at
-qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt).
-Honest boundary (§11.4.6, T-P5.05.4 in
+<td>via external tier -&gt; .claude/skills/scheduled-work-queue.
+helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to
+‘.claude/skills’ (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR);
+the external tier’s end-to-end load+list+invoke path is REAL-BINARY
+verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/
+(green_cli_e2e.txt). Honest boundary (§11.4.6, T-P5.05.4 in
 specs/001-helixskills-incorporation/tasks.md): the per-skill
 activation-allowlist/ceiling mechanism was NOT verifiable from within
 helix_code/’s own file scope this cycle — grep-confirmed zero Go
@@ -627,11 +604,10 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <tbody>
 <tr>
 <td>Claude Code</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/session-sync</code></td>
-<td>declared in scripts/skills_manifest.tsv; not present at
-.claude/skills/session-sync this run (live probe,
-2026-09-23T00:35:58Z).</td>
+<td>symlink, SKILL.md read 4414 bytes (resolves to the manifest-declared
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -645,13 +621,9 @@ targets one — zero recorded loading path this cycle, tracked per
 </tr>
 <tr>
 <td>HelixCode</td>
-<td>CONFIG-ONLY</td>
+<td>SUPPORTED</td>
 <td><code>.claude/skills/session-sync (external tier)</code></td>
-<td>external tier defaults to .claude/skills/session-sync
-(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory
-does not currently carry this skill (declared in
-scripts/skills_manifest.tsv; not present at .claude/skills/session-sync
-this run (live probe, 2026-09-23T00:35:58Z).).
+<td>via external tier -&gt; .claude/skills/session-sync.
 helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to
 ‘.claude/skills’ (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR);
 the external tier’s end-to-end load+list+invoke path is REAL-BINARY
@@ -711,7 +683,7 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <td>SUPPORTED</td>
 <td><code>.claude/skills/skill-catalog</code></td>
 <td>symlink, SKILL.md read 2328 bytes (resolves to the manifest-declared
-source). Live-probed 2026-09-23T00:35:58Z.</td>
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
@@ -787,7 +759,7 @@ cycle, tracked per §11.4.197 (the exact G1 gap the constitution’s own
 <td>SUPPORTED</td>
 <td><code>.claude/skills/workable-item-lifecycle</code></td>
 <td>symlink, SKILL.md read 4648 bytes (resolves to the manifest-declared
-source). Live-probed 2026-09-23T00:35:58Z.</td>
+source). Live-probed 2026-09-23T07:14:24Z.</td>
 </tr>
 <tr>
 <td>OpenCode</td>
