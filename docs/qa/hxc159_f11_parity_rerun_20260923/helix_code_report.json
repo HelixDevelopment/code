@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "consumer": "helix_code",
+  "generated_at": "2026-09-23T07:07:32Z",
+  "loader_api_surface": {
+    "source_registration": true,
+    "namespaced_identity": false,
+    "capability_declaration": false,
+    "capability_enforcement": false,
+    "allowlist_activation": false,
+    "audit_log": false,
+    "content_hash_provenance": false,
+    "malformed_skill_visibility": true
+  },
+  "skills": [
+    {
+      "qualified_name": "external.action-prefix-system",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "builtin.conventional-commit",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "external.media-validator",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.multitrack",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.reporting-workable-items",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.scheduled-work-queue",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.session-sync",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.skill-catalog",
+      "source": "external",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "external.workable-item-lifecycle",
+      "source": "external",
+      "trust_tier": "vendored"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "a_consumer": "helix_code",
+  "b_consumer": "helix_agent",
+  "surface_asymmetries": [
+    {
+      "key": "audit_log",
+      "a_value": false,
+      "b_value": true
+    },
+    {
+      "key": "capability_declaration",
+      "a_value": false,
+      "b_value": true
+    },
+    {
+      "key": "capability_enforcement",
+      "a_value": false,
+      "b_value": true
+    }
+  ],
+  "skill_asymmetries": [
+    {
+      "qualified_name": "builtin.conventional-commit",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "external.media-validator",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "external.scheduled-work-queue",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "external.session-sync",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    }
+  ]
+}
+skillparity: FAIL — 3 surface asymmetries, 4 skill asymmetries, none explicitly marked optional on both sides
+exit status 1
+CM-CROSS-CONSUMER-PARITY: FAIL — see the printed diff above for unexplained asymmetries
+gate exit=1
