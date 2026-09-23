@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>skills_faq</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">skills_faq</h1>
+</header>
+<h1 id="skills-faq-hxc-159-t-p8.01.3">Skills FAQ (HXC-159
+T-P8.01.3)</h1>
+<p><strong>Revision</strong>: 1 · <strong>Last modified</strong>:
+2026-09-23 · <strong>Status</strong>: current</p>
+<p>Every entry below is based on a genuine question this multi-phase
+build (HXC-159 Phases P4–P8) actually surfaced — traced to the phase
+report, commit, or test that produced it — never invented generic
+filler. See <a href="skills_user_manual.md"><code>docs/guides/skills_user_manual.md</code></a>
+for the reference manual this FAQ complements.</p>
+<hr />
+<h3 id="q-i-installed-a-skill-for-the-cli.-why-doesnt-the-tui-see-it">Q:
+I installed a skill for the CLI. Why doesn’t the TUI see it?</h3>
+<p><strong>A:</strong> Before HXC-159 Phase P5 (T-P5.03), this was a
+real bug, not a misunderstanding — the CLI resolved its user-level
+skills directory as <code>os.UserConfigDir()/helixcode/skills</code>,
+while the TUI and desktop front-ends resolved
+<code>$HOME/.helix/skills</code>, two <strong>independent,
+non-overlapping</strong> directories. A skill installed for one
+front-end was genuinely invisible to the other. This is fixed: every
+front-end now scans the same four-tier ordered list via
+<code>agent.AllSkillsDirs</code>
+(<code>internal/agent/skill_dirs.go:125</code>), including BOTH the old
+and the new user-level locations (tiers 1 and 2). If you are still
+seeing this on a current build, verify your skill file is under one of
+the four tiers documented in the user manual §2, not some other
+directory. Full history:
+<code>docs/guides/skills_directory_migration.md</code>.</p>
+<hr />
+<h3 id="q-why-does-the-cross-consumer-parity-gate-cm-cross-consumer-parity-fail">Q:
+Why does the cross-consumer parity gate
+(<code>CM-CROSS-CONSUMER-PARITY</code>) fail?</h3>
+<p><strong>A:</strong> As of this revision, running
+<code>skillparity</code> against the ACTUAL <code>helix_code</code> and
+<code>helix_agent</code> capability reports over the same fixture corpus
+surfaces <strong>3 genuine, currently-unmarked surface
+asymmetries</strong>: <code>helix_code</code>’s own skill loader has NO
+<code>capability_declaration</code> /
+<code>capability_enforcement</code> / <code>audit_log</code> surface,
+while <code>helix_agent</code>’s does (via <code>SkillAuthorizer</code>,
+HXC-159 T-P6.03). This is not a bug in the parity gate — it is the gate
+<strong>working exactly as designed</strong>: it exists to catch real,
+pre-existing capability drift between the two consumers, and it found
+one. <code>helix_code</code>’s TUI/CLI skill system is a lightweight
+trigger-regex mechanism (see the manual §3) that does not implement
+<code>allowed-tools</code> enforcement, content-hash provenance pinning,
+or an audit log the way <code>helix_agent</code>’s
+<code>internal/skills</code> package does — that gap is tracked as a
+follow-up item (HXC-159 T-P5.05.4 already documented it; the parity
+gate’s job was to prove it is <em>detectable</em>, not to close it). If
+you are extending <code>helix_code</code>’s loader to add one of those
+three capabilities, either implement the matching capability on the
+<code>helix_agent</code> side too, or mark it
+<code>OptionalCapability{Key, Reason}</code> on <strong>both</strong>
+sides — a one-sided mark is deliberately insufficient
+(<code>TestDiff_OneSidedMarkIsNotEnough</code>).</p>
+<hr />
+<h3 id="q-why-can-helixagent-depend-on-the-skills-library-but-the-library-cant-depend-on-helixagent">Q:
+Why can HelixAgent depend on the skills library, but the library can’t
+depend on HelixAgent?</h3>
+<p><strong>A:</strong> This is decision D-4 in the HXC-159 spec, and it
+is load-bearing, not arbitrary. The upstream
+<code>HelixDevelopment/HelixSkills</code> submodule’s own
+<code>helix-deps.yaml</code> already declares
+<code>HelixDevelopment/HelixAgent</code> as <strong>its</strong>
+dependency. If HelixAgent’s own code then imported the skills library as
+a Go package, that would invert the edge and create a dependency cycle —
+and CONST-051(C) (submodule dependency-layout discipline) forbids
+exactly the nested own-org submodule chain that would result. The
+mandated fix: <strong>HelixAgent is a client, never an importer</strong>
+— it consumes skills through a registered external tool source /
+MCP-style client boundary
+(<code>ExternalSkillSource.RegisterWith</code>,
+<code>submodules/helix_agent/internal/skills/external_source.go:98</code>),
+never a direct Go import. This is mechanically enforced, not just
+documented: a module-graph edge gate (HXC-159 T-P6.05) scans
+HelixAgent’s full dependency graph and asserts zero edges into the
+skills module; the same discipline applies to <code>helix_code</code>’s
+own <code>internal/skillconformance</code> package, which independently
+<em>re-implements</em> the shared capability-manifest schema rather than
+importing it (<code>git diff --stat -- go.mod go.sum</code> stays empty
+in both consumer trees).</p>
+<hr />
+<h3 id="q-i-tagged-a-skill-as-third-party-trust-tier-and-it-refuses-to-run.-is-this-broken">Q:
+I tagged a skill as <code>third-party</code> trust tier and it refuses
+to run. Is this broken?</h3>
+<p><strong>A:</strong> No — this is the C5 sandbox precondition gate
+working as intended, and it is a genuine, honestly-declared limitation
+rather than a bug. <code>EnforceSandboxPrecondition</code>
+(<code>submodules/skills/pkg/skills/sandbox_gate.go</code>) refuses
+<strong>every</strong> <code>third-party</code>-tier activation while
+<code>sandboxReady=false</code> — which is the real current state of
+this project, because the only shipped <code>IsolatedExecutor</code>
+implementation is <code>SkipIsolatedExecutor</code>, a deliberate no-op
+stand-in, not a working sandbox. Before this gate was landed (HXC-159
+T-P7.05.5), the refusal existed only as a doc comment on
+<code>VendoredTierEnforced</code> stating “the refusal belongs to the
+sandbox gate, which does not exist yet” — i.e. the safety claim was
+aspirational, not enforced. The gate closes that gap: it now genuinely
+refuses (naming every offending skill) rather than silently allowing a
+third-party skill to run with no isolation. If your workflow needs a
+skill to actually execute today, ship it in the <code>vendored</code> or
+<code>built-in</code> trust tier instead — those do not require a real
+sandbox executor — and track the real sandbox implementation as separate
+upstream work.</p>
+<hr />
+<h3 id="q-where-does-the-explain-arch-example-skill-actually-live-and-can-i-use-it-as-a-template">Q:
+Where does the <code>explain-arch</code> example skill actually live,
+and can I use it as a template?</h3>
+<p><strong>A:</strong> <code>.helix/skills/explain-arch.md</code> in
+this repository’s root — it is a real, loaded, working skill (project
+tier, §2 of the manual), not a documentation-only example. Its
+front-matter trigger is
+<code>explain (?P&lt;topic&gt;\w+) architecture</code>; try
+<code>explain ensemble architecture</code> in the TUI and it will
+substitute an architecture-explanation prompt with <code>topic</code>
+resolved to <code>ensemble</code>. Yes, it is a reasonable template for
+a new project-tier skill — copy the front-matter shape and adjust the
+trigger regex and body for your use case.</p>
+<hr />
+<h3 id="q-does-installing-a-skill-for-one-project-affect-other-projects">Q:
+Does installing a skill for one project affect other projects?</h3>
+<p><strong>A:</strong> Only if you install it at a user-level tier (tier
+1 or 2 in the manual’s directory table) — those are scanned for
+<strong>every</strong> project you open with that front-end. A skill
+installed at the project tier (<code>.helix/skills/</code> inside a
+specific project’s root) is scoped to that project only, and — being the
+highest-precedence tier — will override a same-named user-level or
+external-tier skill just for that project.</p>
+<hr />
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="skills_user_manual.md"><code>docs/guides/skills_user_manual.md</code></a></li>
+<li><a href="../CAPABILITIES.md"><code>docs/CAPABILITIES.md</code></a></li>
+<li><a href="skills_directory_migration.md"><code>docs/guides/skills_directory_migration.md</code></a></li>
+</ul>
+</body>
+</html>

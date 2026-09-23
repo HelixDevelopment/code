@@ -1117,7 +1117,24 @@ pointer (see `evidence_map.json` + the generator's default-reason logic).
 **Gate**: P7. The operator requires existing docs **extended and updated**, not merely
 new ones added.
 
-### - [ ] T-P8.01 Update existing documentation
+### - [x] T-P8.01 Update existing documentation — DONE 2026-09-23
+
+**Evidence**: `qa-results/hxc159/docs_update/20260923_1/` (mechanical citation-checker
+output, 59/59 OK for `helix_code/docs/CAPABILITIES.md`, 25/25 OK for
+`submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md`, checker script included).
+`helix_code/docs/CAPABILITIES.md` was heavily re-verified — nearly every `file:line`
+citation had drifted (not just the flagged `:325`/`:1652`), Skills §4 was substantively
+rewritten for the unified `agent.AllSkillsDirs` four-tier model (HXC-159 P5), and a new
+§10.5 documents the HelixAgent capability-enforcement model + the cross-consumer parity
+gate. The nested-Mermaid-fence §11.4.168 defect B3 flagged in
+`constitution/…/EXTENSION_DEVELOPMENT.md` (graph.md example) was investigated,
+found to recur across the WHOLE "A.2 Command Markdown Files" section (5 examples, not
+1), and fixed for all 5 by widening the outer fence to 4 backticks — real A/B pandoc
+comparison confirms 2 additional spurious leaked headings ("Anti-Bluff", "Exit Codes")
+are also now fixed. Two honest out-of-scope findings recorded (not fixed): the
+graph.md mermaid illustration does not embed as a live image (pre-existing in BOTH the
+original and fixed version, unrelated to this fix); residual fence leaks exist further
+into the same 2500-line document outside the A.2 section (§A.5/§B.1+, not touched).
 
 **Scope**: `docs/CAPABILITIES.md` (already drifted — cites `:325`/`:1652`, actual
 `:368`/`:1730`), both consumers' skill docs, the README, and the upstream Bridge corpus.
@@ -1127,10 +1144,23 @@ symbol — checked mechanically, not by eye.
 **Acceptance evidence**: `qa-results/hxc159/docs_update/<run-id>/`.
 **Risks**: `03` §7.10 documentation drift.
 
-- T-P8.01.1 Re-derive every `file:line` citation; fix drift.
-- T-P8.01.2 Update both consumers' skill documentation to the new model.
-- T-P8.01.3 Author the skills user manual and FAQ.
-- T-P8.01.4 Update the upstream Bridge design corpus to the corrected 6-layer form (B3).
+- [x] T-P8.01.1 Re-derive every `file:line` citation; fix drift. — DONE: mechanical
+  checker (`qa-results/hxc159/docs_update/20260923_1/check_citations.py`) opens every
+  cited file at its cited line and confirms the claimed symbol; 84/84 citations OK
+  across the two files.
+- [x] T-P8.01.2 Update both consumers' skill documentation to the new model. — DONE:
+  `helix_code/docs/CAPABILITIES.md` §4/§10.5 (helix_code side) +
+  `submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md` (new, HelixAgent side — the
+  submodule previously had zero documentation of its own skills *system*, only one
+  skill *file*).
+- [x] T-P8.01.3 Author the skills user manual and FAQ. — DONE:
+  `helix_code/docs/guides/skills_user_manual.md` + `helix_code/docs/guides/skills_faq.md`,
+  FAQ grounded in real gotchas (D-4 edge direction, the P7 capability-parity finding,
+  the C5 sandbox precondition).
+- [x] T-P8.01.4 Update the upstream Bridge design corpus to the corrected 6-layer form (B3). — DONE:
+  verified no stray 7-layer references remain; added a new "Bridge layer-health (B1
+  probe result)" section with the measured per-layer diagram (see T-P8.03.5), embedded
+  at point of use and cross-linked from `helix_code/docs/architecture/skills_architecture.md`.
 
 ### - [x] T-P8.02 [P] Extensions catalogue — DONE 2026-09-23, evidence:
 `qa-results/hxc159/extensions_catalog/20260923T000000Z/` (01_red_gate_before_catalog.txt
@@ -1183,7 +1213,27 @@ per-platform columns.
   golden-good case (real catalogue PASSes) + two golden-bad cases (missing row FAILs
   naming the skill; blanked cell FAILs naming the blank) — 3/3 as expected).
 
-### - [ ] T-P8.03 [P] Diagrams and illustrations
+### - [x] T-P8.03 [P] Diagrams and illustrations — DONE 2026-09-23
+
+**Evidence**: `qa-results/hxc159/diagrams/20260923_1/` (`.mmd` sources for all 5
+diagrams + `render_and_export_evidence.txt` — real `sync_all_markdown_exports.sh`
+run, `pdfimages -list` enumeration, `pdftotext` leak checks). All 5 diagrams authored
+as Mermaid (mermaid-cli 11.17.0), embedded at point of use in
+`helix_code/docs/architecture/skills_architecture.md` (diagrams 1–4, new doc) and
+`constitution/…/speckit_superpowers/implementation/README.md` (diagram 5, embedded
+in the Bridge corpus itself, cross-linked from the new doc rather than duplicated —
+never filed off to an orphan gallery). RS-verified: `pdfimages -list` shows exactly
+4 real embedded images in `skills_architecture.pdf` and exactly 1 in the Bridge
+`README.pdf`, matching the diagram count in each file; `pdftotext` on both shows
+zero leaked raw diagram-directive lines. The shadowing curve (T-P8.03.3) plots the
+REAL Phase P2 data from `docs/qa/p2_shadowing_20260914/curve.csv` (mermaid
+`xychart-beta`) — the honest FLAT-curve finding is stated in the doc, not smoothed
+over. The Bridge layer-states diagram (T-P8.03.5) uses the REAL measured B1-probe
+verdicts (`qa-results/hxc159/bridge_layers/20260922T185455Z/report.json`), not a
+hypothetical. While verifying the pre-existing §11.4.168 risk this phase names, a
+recurrence of the SAME nested-fence defect class was found (and fixed, see T-P8.01.4)
+across the whole "A.2 Command Markdown Files" section of `EXTENSION_DEVELOPMENT.md`,
+not just the single instance B3 had flagged.
 
 **Scope**: five diagrams, incorporated into the materials rather than filed beside them.
 **Test types**: full-automation (render validation).
@@ -1193,11 +1243,18 @@ by image enumeration, not by the source looking right.
 **Risks**: §11.4.168 (this project has shipped raw Mermaid source as body text into
 user-facing PDFs before).
 
-- T-P8.03.1 Three-layer architecture (source / graph service / generated catalogue).
-- T-P8.03.2 Registration-path sequence (constitution → registrar → `.claude/skills/` → consumer).
-- T-P8.03.3 The measured shadowing curve (a real plot of real data).
-- T-P8.03.4 Trust-tier and capability-enforcement flow.
-- T-P8.03.5 Bridge layer states, colour-coded by the four-value vocabulary.
+- [x] T-P8.03.1 Three-layer architecture (source / graph service / generated catalogue). — DONE:
+  `skillsource.Orchestrator` → `skill.Store` (+ `codegraph.IndexManager` evidence) →
+  `skillscatalog` generated Markdown + fingerprint sidecar.
+- [x] T-P8.03.2 Registration-path sequence (constitution → registrar → `.claude/skills/` → consumer). — DONE:
+  `register_skills.sh` symlink-by-reference → both consumers' external-tier discovery.
+- [x] T-P8.03.3 The measured shadowing curve (a real plot of real data). — DONE: real
+  P2 `curve.csv` data, honest FLAT-verdict finding stated.
+- [x] T-P8.03.4 Trust-tier and capability-enforcement flow. — DONE: C5 sandbox
+  precondition gate feeding `SkillAuthorizer.Authorize`'s `AllowedTools` decision.
+- [x] T-P8.03.5 Bridge layer states, colour-coded by the four-value vocabulary. — DONE:
+  real B1-probe verdicts (WIRED/WIRED/WIRED/DESIGNED-ONLY/WIRED/PARTIAL across the
+  corrected 6-layer numbering), embedded in the Bridge corpus README.md itself.
 
 ### - [ ] T-P8.04 Exports, §11.4.168 validation, README reachability
 

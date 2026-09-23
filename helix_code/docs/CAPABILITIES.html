@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc 3.10" />
+  <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>CAPABILITIES</title>
   <style>
@@ -23,7 +23,6 @@ width: 0.8em;
 margin: 0 0.8em 0.2em -1.6em;
 vertical-align: middle;
 }
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
 
 html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -127,7 +126,7 @@ Guide</h1>
 <tbody>
 <tr>
 <td>Revision</td>
-<td>1</td>
+<td>2</td>
 </tr>
 <tr>
 <td>Created</td>
@@ -135,7 +134,7 @@ Guide</h1>
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-06-14</td>
+<td>2026-09-23</td>
 </tr>
 <tr>
 <td>Status</td>
@@ -181,6 +180,16 @@ rather than available.</p>
 <p>Provider API keys are sourced from the environment (see <a href="#9-providers-from-the-environment-via-llmsverifier">§9 Providers
 from the environment</a>). A common pattern is
 <code>source ~/api_keys.sh</code> before launching.</p>
+<blockquote>
+<p><strong>Skills documentation set:</strong> this document’s §4 and
+§10.5 cover the wiring of HelixCode’s skill system; for an
+operator-facing how-to (installing a skill, directory tiers,
+troubleshooting) and real gotchas from this build, see <a href="guides/skills_user_manual.md"><code>docs/guides/skills_user_manual.md</code></a>
+and <a href="guides/skills_faq.md"><code>docs/guides/skills_faq.md</code></a>.
+For diagrams of the shared skills library’s internal architecture, the
+registration path, the measured shadowing curve, and the
+trust-tier/capability-enforcement flow, see <a href="architecture/skills_architecture.md"><code>docs/architecture/skills_architecture.md</code></a>.</p>
+</blockquote>
 <h2 id="table-of-contents">Table of contents</h2>
 <ul>
 <li><a href="#1-streaming-responses">1. Streaming responses</a></li>
@@ -199,6 +208,8 @@ the TUI</a></li>
 Providers from the environment via LLMsVerifier</a></li>
 <li><a href="#10-helixagent-full-capacity-provider">10. HelixAgent
 full-capacity provider</a></li>
+<li><a href="#105-skills-capability-model-cross-consumer-parity-helixagent">10.5
+Skills capability model — cross-consumer parity (HelixAgent)</a></li>
 <li><a href="#11-screenshots">11. Screenshots</a></li>
 </ul>
 <hr />
@@ -209,7 +220,7 @@ appears as it is produced.</p>
 <p><strong>How it is wired.</strong> The chat submit path drives
 <code>agent.RunToolLoopStream(ctx, provider, registry, history, opts, onFinalChunk)</code>
 (<code>internal/agent/tool_loop.go:175</code>), called from the submit
-handler in <code>applications/terminal_ui/main.go:1763</code>. The
+handler in <code>applications/terminal_ui/main.go:1854</code>. The
 final-chunk callback renders each streamed segment as it arrives.</p>
 <p><strong>How to trigger it.</strong> Just type a prompt into the chat
 input and press Enter — streaming is the default path.</p>
@@ -228,12 +239,12 @@ repository.</p>
 <p><strong>How it is wired.</strong> At startup the TUI loads and merges
 MCP config via
 <code>mcp.LoadMerged(mcpUserPath, &quot;.helixcode/mcp.yml&quot;)</code>
-(<code>applications/terminal_ui/main.go:294-295</code>) and registers
-the manager onto the tool registry with
-<code>reg.RegisterMCPManager(mgr)</code> (<code>main.go:309</code>). The
+(<code>applications/terminal_ui/main.go:345</code>) and registers the
+manager onto the tool registry with
+<code>reg.RegisterMCPManager(mgr)</code> (<code>main.go:359</code>). The
 startup log prints the real count:
 <code>✅ TUI: MCP wired — %d tool(s) registered from %d server(s)</code>
-(<code>main.go:311</code>).</p>
+(<code>main.go:361</code>).</p>
 <p><strong>The shipped server.</strong> <code>.helixcode/mcp.yml</code>
 declares a single server named <code>fs</code>, running
 <code>npx -y @modelcontextprotocol/server-filesystem &lt;repo-root&gt;</code>
@@ -264,10 +275,10 @@ agent as tools, backed by the Go language server.</p>
 <code>tools.WireLSP(reg, repoDir, ...)</code> registers two read-only
 tools, <code>lsp_get_diagnostics</code> and
 <code>lsp_analyze_diagnostic</code>
-(<code>applications/terminal_ui/main.go:285</code>); the startup log
+(<code>applications/terminal_ui/main.go:335</code>); the startup log
 confirms
 <code>✅ TUI: LSP diagnostics tools wired (lsp_get_diagnostics, lsp_analyze_diagnostic)</code>
-(<code>main.go:286</code>). Both are registered at
+(<code>main.go:336</code>). Both are registered at
 <code>LevelReadOnly</code>, so they pass the read-only agent loop.</p>
 <blockquote>
 <p><strong>Prerequisite:</strong> <code>gopls</code> on
@@ -283,20 +294,74 @@ diagnostics; with <code>gopls</code> absent, it reports that no
 diagnostics were available.</p>
 <hr />
 <h2 id="skills">4. Skills</h2>
-<p><strong>What it is.</strong> Markdown “skills”
-(<code>.helix/skills/*.md</code>) whose front-matter trigger regexes
-match a user prompt; on a match the skill body <em>replaces</em> the
-outgoing prompt sent to the model.</p>
+<p><strong>What it is.</strong> Markdown “skills” (<code>*.md</code>
+files with a trigger front-matter) whose trigger regexes match a user
+prompt; on a match the skill body <em>replaces</em> the outgoing prompt
+sent to the model. As of HXC-159 Phase P5 (T-P5.03 + T-P5.05), skill
+discovery is <strong>unified across every HelixCode front-end</strong>
+(CLI, TUI, desktop) through a single, front-end-neutral
+directory-resolution module — before this fix the TUI/desktop scanned
+only <code>$HOME/.helix/skills</code> while the CLI scanned only
+<code>os.UserConfigDir()/helixcode/skills</code>, so a skill installed
+via one front-end’s documented path was invisible to the other two. See
+<code>docs/guides/skills_directory_migration.md</code> for the full
+migration narrative.</p>
 <p><strong>How it is wired.</strong> At startup the TUI calls
-<code>agent.LoadSkillsAndDispatcher([]string{userSkillsDir, &quot;.helix/skills&quot;})</code>
-(<code>applications/terminal_ui/main.go:325</code>), loading from
-<code>~/.helix/skills</code> first and the project
-<code>.helix/skills</code> last (project overrides on name collision).
-On submit,
+<code>agent.LoadSkillsAndDispatcher(agent.AllSkillsDirs(&quot;.helix/skills&quot;))</code>
+(<code>applications/terminal_ui/main.go:380-381</code>).
+<code>agent.AllSkillsDirs</code>
+(<code>internal/agent/skill_dirs.go:125</code>) returns the FULL ordered
+directory list every front-end now scans, <strong>lowest precedence
+first</strong>:</p>
+<ol type="1">
+<li><strong>Legacy user tier</strong> — <code>$HOME/.helix/skills</code>
+(<code>agent.LegacyUserSkillsDir</code>,
+<code>internal/agent/skill_dirs.go:47</code>) — the pre-unification
+TUI/desktop directory, retained as a read-compatibility tier so nothing
+installed there before the fix goes missing.</li>
+<li><strong>Canonical user tier</strong> —
+<code>os.UserConfigDir()/helixcode/skills</code>
+(<code>agent.CanonicalUserSkillsDir</code>,
+<code>internal/agent/skill_dirs.go:27</code>) — the forward-looking,
+cross-platform-correct location every front-end should target for new
+installs (mirrors the CLI’s sibling <code>.../helixcode/commands</code>
+directory and respects
+<code>XDG_CONFIG_HOME</code>/<code>%AppData%</code>/etc.
+conventions).</li>
+<li><strong>External tier</strong> — <code>.claude/skills</code> by
+default, overridable via the <code>HELIXCODE_EXTERNAL_SKILLS_DIR</code>
+environment variable (<code>agent.ExternalSkillsDir</code>,
+<code>internal/agent/skill_dirs.go:102</code>) — skills
+<em>provisioned</em> by something other than a user hand-authoring files
+directly (e.g. <code>scripts/register_skills.sh</code>, which links
+constitution-owned governance skills into <code>.claude/skills/</code>
+by reference).</li>
+<li><strong>Project tier</strong> — <code>.helix/skills</code> (the
+caller-supplied <code>projectDir</code> argument) — highest precedence,
+so a project-specific skill overrides a same-named
+user/external/built-in skill.</li>
+</ol>
+<p>Each directory is loaded via <code>commands.SkillLoader</code> in
+ascending-precedence order onto one shared
+<code>commands.SkillRegistry</code>, so a later tier’s same-named skill
+overrides an earlier tier’s
+(<code>internal/agent/skill_activation.go:23</code>,
+<code>LoadSkillsAndDispatcher</code>). On submit,
 <code>agent.DispatchSkill(tui.skillDispatcher, message)</code>
-(<code>applications/terminal_ui/main.go:1652</code>) matches the prompt
-against each skill’s trigger regex and, on a match, substitutes the
-rendered skill body.</p>
+(<code>applications/terminal_ui/main.go:1743</code>) matches the prompt
+against every loaded skill’s trigger regex and, on a match, substitutes
+the rendered skill body for the outgoing LLM prompt
+(<code>internal/agent/skill_activation.go:58</code>).</p>
+<p><strong>Scope note (anti-bluff).</strong> This TUI-level skill system
+is a lightweight trigger-regex-to-prompt-substitution mechanism — it
+does <strong>not</strong> implement the fuller Agent Skills capability
+model (declared <code>allowed-tools</code>, content-hash provenance
+pinning, cross-consumer parity conformance) that
+<code>submodules/helix_agent</code>’s dedicated
+<code>internal/skills</code> package and the shared
+<code>submodules/skills</code> package provide for HelixAgent’s agentic
+loop; see §10.5 below for that model and the cross-consumer parity
+note.</p>
 <p><strong>Shipped skill.</strong>
 <code>.helix/skills/explain-arch.md</code> — front-matter trigger
 <code>explain (?P&lt;topic&gt;\w+) architecture</code>, which captures a
@@ -315,11 +380,11 @@ typed.</p>
 prompt with the <code>@plugin:&lt;name&gt; &lt;action&gt;</code> syntax.
 HelixCode ships one read-only demo plugin, <code>sysinfo</code>.</p>
 <p><strong>How it is wired.</strong> At startup
-<code>plugins.LoadPlugins(ctx, &quot;plugins&quot;)</code>
-(<code>applications/terminal_ui/main.go:332</code>) loads the
+<code>plugins.LoadPlugins(context.Background(), &quot;plugins&quot;)</code>
+(<code>applications/terminal_ui/main.go:388</code>) loads the
 <code>plugins/</code> directory. On submit,
-<code>plugins.MaybeRunPlugin(ctx, tui.pluginLoader, message)</code>
-(<code>applications/terminal_ui/main.go:1632</code>) parses the
+<code>plugins.MaybeRunPlugin(context.Background(), tui.pluginLoader, message)</code>
+(<code>applications/terminal_ui/main.go:1723</code>) parses the
 <code>@plugin:&lt;name&gt; &lt;action&gt;</code> prefix and runs the
 matching plugin.</p>
 <p><strong>Shipped plugin.</strong>
@@ -347,14 +412,15 @@ Only <strong>read-only</strong> tools are reachable.</p>
 <p><strong>How it is wired.</strong> The TUI builds a read-only tool
 registry once at startup and explicitly registers
 <code>git_status</code>
-(<code>applications/terminal_ui/main.go:273</code>), alongside the
+(<code>applications/terminal_ui/main.go:323</code>), alongside the
 auto-registered read-only <code>fs_read</code>, <code>glob</code>, and
 <code>grep</code>, plus the LSP and MCP read-only tools
-(<code>main.go:316</code> logs
+(<code>main.go:366</code> logs
 <code>✅ TUI: agentic tool registry ready (read-only: git_status, fs_read, glob, grep + LSP/MCP tools)</code>).
 The submit path invokes <code>agent.RunToolLoopStream(...)</code> with
-<code>agent.ToolLoopOptions{ReadOnlyOnly: true}</code>
-(<code>main.go:1763,1779</code>).</p>
+<code>agent.ToolLoopOptions{ReadOnlyOnly: true}</code> (call at
+<code>main.go:1854</code>, the <code>ReadOnlyOnly: true</code> field at
+<code>main.go:1870</code>).</p>
 <p><strong>The safety guard.</strong> <code>ReadOnlyOnly: true</code>
 means the loop offers and executes <strong>only</strong> tools
 classified <code>approval.LevelReadOnly</code>; any write/shell tool the
@@ -389,11 +455,19 @@ registered as <code>EnsembleDisplayName = &quot;Helix Agent ensemble&quot;</code
 id <code>helix-agent-ensemble</code>
 (<code>internal/llm/ensemble_provider.go:42,46</code>). It registers
 only when <strong>two or more</strong> member providers exist
-(<code>registerEnsembleProvider</code>,
-<code>applications/terminal_ui/env_providers.go:234</code>) — a
-single-member “ensemble” would be a pass-through and is refused. The
-per-member display is produced by <code>FormatEnsemblePanel</code>
-(<code>applications/terminal_ui/ensemble_render.go:148</code>).</p>
+(<code>registerEnsembleProvider</code>, defined at
+<code>applications/terminal_ui/env_providers.go:248</code>, guard
+condition <code>len(members) &lt; 2</code> at
+<code>env_providers.go:249</code>) — a single-member “ensemble” would be
+a pass-through and is refused. The per-member display is produced by
+<code>FormatEnsemblePanel</code>
+(<code>applications/terminal_ui/ensemble_render.go:21</code>), which —
+since the render logic was promoted into the shared, front-end-neutral
+<code>internal/ensembleui</code> package so the TUI and desktop GUI
+render an <strong>identical</strong> panel (§11.4.74
+reuse-over-reimplement) — is now a thin re-export aliasing onto
+<code>ensembleui.FormatEnsemblePanel</code> rather than the
+panel-formatting logic itself.</p>
 <p><strong>Exact rendered strings</strong>
 (<code>ensemble_render.go</code>):</p>
 <ul>
@@ -432,8 +506,11 @@ TUI</h2>
 <strong>not</strong> type a model-name string into chat.</p>
 <p><strong>How it is wired.</strong> The chat command handler maps
 <code>/model</code> to <code>tui.showModelSelector()</code>
-(<code>applications/terminal_ui/main.go:1998</code> →
-<code>showModelSelector</code>). The picker lists
+(<code>applications/terminal_ui/main.go:2202-2204</code>; the function
+is also bound to the “Select Model” action button,
+<code>applications/terminal_ui/main.go:1587-1588</code>), defined at
+<code>applications/terminal_ui/main.go:2245</code>
+(<code>showModelSelector</code>). The picker lists
 <code>tui.llmManager.GetAvailableModels()</code>, sorted so the
 <strong>Helix Agent ensemble</strong> sorts first (flagship), then
 HelixAgent logical models, then the rest by provider and name. Each
@@ -467,20 +544,36 @@ are sourced <strong>dynamically from LLMsVerifier</strong> — there is no
 hardcoded model list when the verifier is reachable (CONST-036 /
 CONST-046).</p>
 <p><strong>How it is wired.</strong> <code>registerEnvProviders</code>
-(<code>applications/terminal_ui/env_providers.go:99</code>) iterates the
-curated key-only provider set and registers each provider whose key is
-present (<code>llm.IsProviderKeyPresent</code>,
-<code>env_providers.go:113</code>). Then
+(<code>applications/terminal_ui/env_providers.go:100</code>) iterates
+the curated key-only provider set and registers each provider whose key
+is present (<code>llm.IsProviderKeyPresent</code>, called at
+<code>env_providers.go:115</code>), constructing via
+<code>llm.NewCloudProvider</code> (not the catch-all
+<code>llm.NewProvider</code>, which has no DeepSeek/Mistral arms). Then
 <code>buildOpenAICompatibleProviders(cfg)</code>
-(<code>env_providers.go:147</code>) sources the OpenAI-compatible
+(<code>env_providers.go:161</code>) sources the OpenAI-compatible
 providers dynamically — when the verifier is reachable the log states
 <code>✅ TUI: OpenAI-compatible providers sourced DYNAMICALLY from LLMsVerifier</code>
-(<code>env_providers.go:149</code>); when unreachable it falls back to a
+(<code>env_providers.go:163</code>); when unreachable it falls back to a
 hardcoded catalogue as a <strong>degraded offline fallback only</strong>
-(<code>env_providers.go:151</code>).</p>
+(<code>env_providers.go:165</code>).</p>
+<blockquote>
+<p><strong>Cloud gate note (W2c-1, 2026-09-05):</strong> cloud-provider
+construction is additionally gated by
+<code>llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)</code>
+(<code>applications/terminal_ui/main.go:287</code>), default
+<strong>false</strong>. When a credentialed provider’s construction is
+refused because <code>llm.cloud.enabled</code> is <code>false</code>
+(the default), the TUI logs a single summary line —
+<code>ℹ️  TUI: N hosted provider(s) with credentials present were NOT registered because llm.cloud.enabled is false</code>
+(<code>env_providers.go:152</code>) — rather than a per-provider
+warning, and local routes (helixllm coder, llama.cpp, Ollama) are
+unaffected. Set <code>llm.cloud.enabled: true</code> in config to permit
+hosted providers.</p>
+</blockquote>
 <p><strong>Key-only cloud providers auto-registered</strong>
 (<code>envProviderCandidates</code>,
-<code>env_providers.go:76-85</code>): DeepSeek, Mistral, Groq,
+<code>env_providers.go:77-86</code>): DeepSeek, Mistral, Groq,
 OpenRouter, OpenAI, Anthropic, xAI, Qwen. The recognized environment
 variable names (with aliases) come from
 <code>ProviderEnvAliases()</code>
@@ -548,7 +641,7 @@ variable names (with aliases) come from
 Azure are intentionally <strong>not</strong> auto-registered from a bare
 env var — they need region/project/deployment wiring; auto-registering
 them from one key would produce a half-configured provider
-(<code>env_providers.go:71-75</code>). They remain reachable via the
+(<code>env_providers.go:72-76</code>). They remain reachable via the
 explicit <code>config.yaml</code> / server path.</p>
 </blockquote>
 <p><strong>How to trigger it.</strong> Export the keys you have (or
@@ -566,19 +659,21 @@ own multi-provider engine + ensemble), consumed over its running REST
 server, registered as a standalone provider so its logical models appear
 in the picker.</p>
 <p><strong>How it is wired.</strong>
-<code>registerHelixAgentProvider</code>
-(<code>applications/terminal_ui/env_providers.go:189</code>) resolves
-the base URL from <code>HELIXAGENT_BASE_URL</code> (falling back to
+<code>registerHelixAgentProvider</code> (defined at
+<code>applications/terminal_ui/env_providers.go:203</code>, doc comment
+from <code>env_providers.go:189</code>) resolves the base URL from
+<code>HELIXAGENT_BASE_URL</code> (falling back to
 <code>helixagent.DefaultBaseURL</code>,
-<code>env_providers.go:194-197</code>), constructs
+<code>env_providers.go:208-211</code>), constructs
 <code>helixagent.New(baseURL)</code>, and runs a 2-second
 <code>IsAvailable</code> health probe <strong>before</strong>
 registering — so the picker never lists a dead HelixAgent entry when the
 server isn’t running (anti-bluff: a listed model is a claim it can be
-used, <code>env_providers.go:205-209</code>). Its logical models
+used, <code>env_providers.go:219-224</code>). Its logical models
 (<code>helixagent-llm</code>, <code>helixagent-ensemble</code>) are
 sourced from HelixAgent’s live <code>/v1/models</code> (no hardcoded
-list, <code>env_providers.go:164-169</code>).</p>
+list, per the CONST-036/037 note at
+<code>env_providers.go:199-201</code>).</p>
 <p><strong>How to trigger it.</strong></p>
 <ol type="1">
 <li>Start the HelixAgent server (optionally set
@@ -594,6 +689,72 @@ startup log shows
 HelixAgent’s logical models appear in the picker and run against its
 full engine; with the server down, you instead see the honest info line
 <em>“HelixAgent not reachable … skipping”</em> and no dead entry.</p>
+<hr />
+<h2 id="skills-capability-model-cross-consumer-parity-helixagent">10.5
+Skills capability model — cross-consumer parity (HelixAgent)</h2>
+<p><strong>What it is.</strong> HelixCode’s TUI skill system (§4) is
+deliberately lightweight (trigger-regex → prompt substitution).
+<code>submodules/helix_agent</code> ships a <strong>fuller Agent Skills
+capability model</strong> on top of the same on-disk skill format,
+adding declared tool-capability enforcement, content-hash provenance
+pinning, and an external-source registration path — and both consumers’
+capability surfaces are mechanically diffed by a parity gate so the two
+never silently drift apart.</p>
+<p><strong>Declared capability enforcement
+(<code>AllowedTools</code>).</strong> Each skill’s front-matter may
+declare <code>allowed-tools</code>
+(<code>submodules/helix_agent/internal/skills/types.go:16</code>, struct
+field <code>AllowedTools</code>), parsed by
+<code>ParseAllowedTools</code>
+(<code>submodules/helix_agent/internal/skills/types.go:179</code>). At
+the tool-call boundary, <code>SkillAuthorizer.Authorize</code>
+(<code>submodules/helix_agent/internal/skills/authorizer.go:56</code>)
+checks the calling skill’s declared <code>AllowedTools</code> against
+the requested tool name via <code>skillDeclaresTool</code>
+(<code>authorizer.go:101</code>): a skill whose
+<code>AllowedTools</code> is non-empty and does not name the tool is
+<strong>refused</strong>; a skill with an <strong>empty</strong>
+<code>AllowedTools</code> is a deliberate backward-compatible allow
+(<code>authorizer.go:35</code>) — every authorization decision is
+recorded to an audit log (<code>AuditLog</code>,
+<code>authorizer.go:88</code>).</p>
+<p><strong>External tool-source registration.</strong>
+<code>ExternalSkillSource.RegisterWith</code>
+(<code>submodules/helix_agent/internal/skills/external_source.go:98</code>)
+calls <code>ToolRegistry.RegisterExternalToolSource</code>
+(<code>submodules/helix_agent/internal/services/tool_registry.go:159</code>)
+to expose an external skill directory’s skills as callable tools — the
+mechanism a skill loaded from outside the built-in tier uses to become
+invocable.</p>
+<p><strong>Content-hash provenance pinning.</strong> The capability
+manifest each consumer generates carries a
+<code>content_hash_provenance</code> flag
+(<code>submodules/helix_agent/internal/skillconformance/manifest.go:49</code>)
+recording whether a skill’s provenance is pinned by content hash rather
+than by a mutable path reference — part of the same
+<code>CapabilityManifest</code> schema (<code>manifest.go:69</code>,
+<code>Validate</code> at <code>manifest.go:81</code>) both consumers
+populate.</p>
+<p><strong>Cross-consumer parity gate.</strong> Both
+<code>helix_code</code> and <code>helix_agent</code> ship their own
+<code>internal/skillconformance</code> package generating a comparable
+<code>CapabilityManifest</code> for their own loaded-skill surface
+(helix_code’s report generator:
+<code>helix_code/internal/skillconformance/report.go:74</code>,
+<code>GenerateReport</code>). Gate <code>CM-CROSS-CONSUMER-PARITY</code>
+(HXC-159 T-P7.02, <code>helix_code/cmd/skillparity/main.go</code>) reads
+one manifest JSON from each consumer and diffs them via
+<code>skillparity.Diff</code>
+(<code>helix_code/internal/skillparity/parity.go:78</code>), exiting
+non-zero on any <strong>unexplained</strong> asymmetry
+(<code>skillparity.Result.OK</code>, <code>parity.go:40</code>) — a
+capability present on one consumer and silently absent from the other
+(rather than deliberately, mutually marked as such via
+<code>isMutuallyMarked</code>, <code>parity.go:49</code>) fails the
+gate. This is the mechanism referenced elsewhere in this document as
+“the cross-consumer parity gate”: HXC-159 Phase P7 used it to find and
+close a capability gap between the two consumers before this
+revision.</p>
 <hr />
 <h2 id="screenshots">11. Screenshots</h2>
 <p>The frames below are <strong>real captured TUI frames</strong>
@@ -714,18 +875,40 @@ calls.</td>
 </tbody>
 </table>
 <hr />
-<h2 id="sources-verified-2026-06-14">Sources verified 2026-06-14</h2>
-<p>All triggers above were cross-checked against the live wiring code in
-this commit: <code>applications/terminal_ui/main.go</code>,
+<h2 id="sources-verified-2026-06-14-initial-re-verified-2026-09-23-revision-2-hxc-159-t-p8.01">Sources
+verified 2026-06-14 (initial); re-verified 2026-09-23 (Revision 2,
+HXC-159 T-P8.01)</h2>
+<p>All triggers were originally cross-checked against the live wiring
+code as of the 2026-06-14 commit. <strong>Revision 2 (2026-09-23,
+HXC-159 T-P8.01.1)</strong> mechanically re-derived every
+<code>file:line</code> citation in this document against the current
+tree — every citation was opened at its cited line and its claimed
+symbol/log-string confirmed present; every drifted citation was
+corrected in place, and §4 (Skills) was substantively rewritten to
+describe the unified <code>agent.AllSkillsDirs</code> four-tier
+directory model HXC-159 Phase P5 (T-P5.03/T-P5.05) introduced, replacing
+the pre-unification two-directory description. The re-check covered:
+<code>applications/terminal_ui/main.go</code>,
 <code>applications/terminal_ui/env_providers.go</code>,
 <code>applications/terminal_ui/ensemble_render.go</code>,
 <code>internal/agent/tool_loop.go</code>,
+<code>internal/agent/skill_dirs.go</code>,
+<code>internal/agent/skill_activation.go</code>,
 <code>internal/llm/ensemble_provider.go</code>,
 <code>internal/llm/keyrecognition.go</code>,
-<code>.helixcode/mcp.yml</code>,
+<code>internal/ensembleui/*.go</code>, <code>.helixcode/mcp.yml</code>,
 <code>.helix/skills/explain-arch.md</code>,
-<code>plugins/sysinfo/manifest.yaml</code>. Screenshot paths verified
-present under <code>docs/qa/</code> at the meta-repo root.</p>
+<code>plugins/sysinfo/manifest.yaml</code>, plus
+<code>submodules/helix_agent/internal/skills/*.go</code>,
+<code>submodules/helix_agent/internal/services/tool_registry.go</code>,
+<code>submodules/helix_agent/internal/skillconformance/manifest.go</code>,
+<code>helix_code/internal/skillconformance/report.go</code>, and
+<code>helix_code/internal/skillparity/parity.go</code> for the new
+§10.5. Screenshot paths verified present under <code>docs/qa/</code> at
+the meta-repo root. Runtime signature:
+<code>qa-results/hxc159/docs_update/&lt;run-id&gt;/</code> (see the
+T-P8.01 completion evidence for the mechanical citation-checker
+output).</p>
 <blockquote>
 <p><strong>Export note (CONST-066 / CONST-063):</strong> the
 synchronized <code>.html</code> and <code>.pdf</code> siblings of this

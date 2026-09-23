@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>skills_user_manual</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">skills_user_manual</h1>
+</header>
+<h1 id="skills-user-manual-hxc-159-t-p8.01.3">Skills user manual
+(HXC-159 T-P8.01.3)</h1>
+<p><strong>Revision</strong>: 1 · <strong>Last modified</strong>:
+2026-09-23 · <strong>Status</strong>: current</p>
+<p>This is the operator-facing manual for HelixCode’s skills system —
+how to install a skill, where it is looked for, how it activates, and
+what each of the two consumers (<code>helix_code</code> and
+<code>submodules/helix_agent</code>) actually enforces once a skill
+matches. It complements, and does not duplicate:</p>
+<ul>
+<li><a href="../CAPABILITIES.md#4-skills"><code>docs/CAPABILITIES.md</code>
+§4</a> — the HelixCode TUI’s trigger-regex skill mechanism, with
+verified <code>file:line</code> wiring citations.</li>
+<li><a href="../CAPABILITIES.md#105-skills-capability-model-cross-consumer-parity-helixagent"><code>docs/CAPABILITIES.md</code>
+§10.5</a> — the HelixAgent capability-enforcement model
+(<code>AllowedTools</code>, content-hash provenance, external
+tool-source registration, cross-consumer parity gate).</li>
+<li><a href="skills_directory_migration.md"><code>docs/guides/skills_directory_migration.md</code></a>
+— the historical narrative of why the directory model changed (HXC-159
+Phase P5, T-P5.03 + T-P5.05).</li>
+<li><a href="skills_faq.md"><code>docs/guides/skills_faq.md</code></a> —
+real questions this build surfaced, with real answers.</li>
+</ul>
+<h2 id="what-a-skill-is">1. What a skill is</h2>
+<p>A skill is a single Markdown file with a YAML front-matter block
+declaring at minimum a <code>trigger</code> regular expression, plus a
+body — the text sent to the model when the trigger matches. Optional
+front-matter fields include <code>allowed-tools</code> (HelixAgent’s
+capability-enforcement surface — see §4 below) and a description used by
+<code>/skills</code>-class introspection commands.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> explain-arch</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">trigger:</span><span class="co"> &#39;explain (?P&lt;topic&gt;\w+) architecture&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> Render an architecture-explanation prompt for a subsystem.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Explain the architecture of the <span class="in">`{{topic}}`</span> subsystem of HelixCode: its</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>package layout, its key types, and how it is wired into the rest of the</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>system.</span></code></pre></div>
+<p>The shipped example above lives at
+<code>.helix/skills/explain-arch.md</code> in this repository — try it
+with a prompt like <code>explain ensemble architecture</code> in the
+TUI, and <code>topic</code> resolves to <code>ensemble</code>.</p>
+<h2 id="where-a-skill-is-discovered-four-tiers-one-precedence-order">2.
+Where a skill is discovered (four tiers, one precedence order)</h2>
+<p>Every HelixCode front-end (CLI, TUI, desktop) resolves the SAME
+ordered list of directories via <code>agent.AllSkillsDirs</code>
+(<code>internal/agent/skill_dirs.go:125</code>), lowest precedence
+first:</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Tier</th>
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Legacy user</td>
+<td><code>$HOME/.helix/skills</code></td>
+<td>Pre-unification TUI/desktop location — read-compatibility only.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Canonical user</td>
+<td><code>os.UserConfigDir()/helixcode/skills</code></td>
+<td>The forward-looking, cross-platform-correct install target for new
+personal skills.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>External</td>
+<td><code>.claude/skills</code> (or
+<code>$HELIXCODE_EXTERNAL_SKILLS_DIR</code>)</td>
+<td>Skills <em>provisioned</em> by something other than hand-authoring —
+e.g. constitution-owned governance skills linked in by
+<code>scripts/register_skills.sh</code>.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Project</td>
+<td><code>.helix/skills</code> (per-project)</td>
+<td>Highest precedence — a project skill overrides a same-named skill
+from any lower tier.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>To install a personal skill that works everywhere:</strong>
+drop a <code>.md</code> file into tier 2,
+<code>os.UserConfigDir()/helixcode/skills</code> — on Linux this is
+typically <code>$XDG_CONFIG_HOME/helixcode/skills</code> or
+<code>~/.config/helixcode/skills</code>; on macOS
+<code>~/Library/Application Support/helixcode/skills</code>; on Windows
+<code>%AppData%/helixcode/skills</code>.</p>
+<p><strong>To install a project-specific skill:</strong> drop it into
+<code>.helix/skills/</code> at the project root — it will override any
+same-named skill from a lower tier for that project only.</p>
+<p><strong>A skill installed before HXC-159 Phase P5</strong>
+(i.e. under the old <code>$HOME/.helix/skills</code> location for the
+TUI/desktop) is still found — that directory is tier 1 and remains
+scanned — but new installs should target tier 2. See
+<code>docs/guides/skills_directory_migration.md</code> for the full
+history.</p>
+<h2 id="how-activation-works-the-tuicli-trigger-model">3. How activation
+works (the TUI/CLI trigger model)</h2>
+<p>On every chat submit, the front-end runs
+<code>agent.DispatchSkill</code> against the loaded registry
+(<code>internal/agent/skill_activation.go:58</code>). Every loaded
+skill’s <code>trigger</code> regex is matched against the raw prompt
+text; on the first match, the skill’s rendered body — with named capture
+groups (like <code>{{topic}}</code> above) substituted —
+<strong>replaces</strong> the prompt sent to the model. The operator’s
+original message stays visible in the on-screen chat history; only what
+the model receives changes.</p>
+<p>If no trigger matches, the prompt is sent unmodified — skills are
+additive, never mandatory.</p>
+<h2 id="capability-enforcement-helixagent-only">4. Capability
+enforcement (HelixAgent only)</h2>
+<p>HelixCode’s TUI/CLI skill system (§3 above) is intentionally
+lightweight: it substitutes a prompt, nothing more.
+<code>submodules/helix_agent</code> layers a fuller <strong>Agent Skills
+capability model</strong> on top of the same on-disk file format:</p>
+<ul>
+<li><strong><code>allowed-tools</code> front-matter</strong> declares
+which tools a skill’s rendered prompt may cause the agent to call.
+<code>SkillAuthorizer.Authorize</code>
+(<code>submodules/helix_agent/internal/skills/authorizer.go:56</code>)
+refuses a tool call a skill’s non-empty <code>allowed-tools</code> does
+not name; an <strong>empty</strong> <code>allowed-tools</code> is a
+deliberate backward-compatible allow-all. Every decision is recorded to
+an audit log you can inspect via <code>AuditLog()</code>.</li>
+<li><strong>Content-hash provenance pinning</strong> — a skill’s origin
+can be pinned by content hash rather than a mutable file path, recorded
+on the capability manifest (<code>content_hash_provenance</code>,
+<code>submodules/helix_agent/internal/skillconformance/manifest.go:49</code>).</li>
+<li><strong>External tool-source registration</strong> — a skill loaded
+from outside the built-in tier is exposed as a callable tool via
+<code>ToolRegistry.RegisterExternalToolSource</code>
+(<code>submodules/helix_agent/internal/services/tool_registry.go:159</code>).</li>
+</ul>
+<p><strong>helix_code’s own TUI/CLI loader does NOT yet enforce
+<code>allowed-tools</code>.</strong> This is a real, tracked,
+currently-open gap surfaced by the cross-consumer parity gate (see §5) —
+see <code>docs/guides/skills_faq.md</code> for the operator-facing
+explanation.</p>
+<h2 id="the-cross-consumer-parity-gate">5. The cross-consumer parity
+gate</h2>
+<p>Because <code>helix_code</code> and <code>helix_agent</code> each
+implement their own skill loader and their own capability-manifest
+generator, the two surfaces can silently drift apart — one consumer
+starts enforcing a capability the other one doesn’t.
+<code>CM-CROSS-CONSUMER-PARITY</code>
+(<code>helix_code/cmd/skillparity</code>,
+<code>helix_code/internal/skillparity/parity.go:78</code>) diffs both
+consumers’ manifests and fails on any <strong>unexplained</strong>
+asymmetry — a capability marked optional on both sides (via
+<code>OptionalCapability{Key, Reason}</code>, mutually acknowledged) is
+not a failure; a capability present on one side and silently absent from
+the other is.</p>
+<p>Run it locally:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> helix_code</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">go</span> run ./cmd/skillconformance ... <span class="op">&gt;</span> /tmp/helix_code_report.json      <span class="co"># generate helix_code&#39;s report</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (helix_agent&#39;s own cmd/skillconformance generates the sibling report)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">go</span> run ./cmd/skillparity <span class="at">-a</span> /tmp/helix_code_report.json <span class="at">-b</span> /tmp/helix_agent_report.json</span></code></pre></div>
+<p>A non-zero exit means a real, currently-unmarked asymmetry exists —
+see the FAQ for the specific gap this build’s own parity run found.</p>
+<h2 id="sandboxed-third-party-tier-execution-whats-real-today">6.
+Sandboxed / third-party-tier execution — what’s real today</h2>
+<p>If a skill declares itself in the <code>third-party</code> trust
+tier, HelixAgent gates its execution behind
+<code>EnforceSandboxPrecondition</code>
+(<code>submodules/skills/pkg/skills/sandbox_gate.go</code>), which
+refuses activation while <code>sandboxReady=false</code> — the honest
+current state, because the only shipped <code>IsolatedExecutor</code>
+implementation is <code>SkipIsolatedExecutor</code> (a deliberate no-op
+stand-in, not a real sandbox). <strong>No skill in the
+<code>third-party</code> tier can execute today</strong> until a real
+isolated executor lands upstream. This is by design (§11.4.6 no-guessing
+/ §11.4.133 target-safety) — see the FAQ entry on the C5 sandbox
+precondition for the forensic detail.</p>
+<h2 id="troubleshooting">7. Troubleshooting</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A skill I installed doesn’t trigger</td>
+<td>Front-matter <code>trigger</code> regex doesn’t match, or the skill
+lives in a directory outside the four tiers</td>
+<td>Verify the file is under one of the four tiers in §2; verify the
+regex with a quick
+<code>python3 -c &quot;import re; print(re.search(r&#39;&lt;your regex&gt;&#39;, &#39;&lt;your prompt&gt;&#39;))&quot;</code></td>
+</tr>
+<tr>
+<td>Two front-ends see different skills</td>
+<td>You installed under the pre-P5 <code>$HOME/.helix/skills</code> path
+expecting only the CLI to see it, or vice versa</td>
+<td>All four tiers are now scanned by every front-end (§2); a genuinely
+front-end-specific skill is not a supported configuration — install at
+the project tier (<code>.helix/skills/</code>) if you need it scoped to
+one project</td>
+</tr>
+<tr>
+<td>A <code>third-party</code>-tier skill refuses to run</td>
+<td>The sandbox precondition gate (§6)</td>
+<td>Expected — no real sandbox executor ships yet; use a
+<code>vendored</code> or <code>built-in</code> tier skill instead, or
+track the upstream sandbox work</td>
+</tr>
+<tr>
+<td><code>skillparity</code> fails in CI</td>
+<td>A genuine, currently-unmarked capability asymmetry between the two
+consumers (§5)</td>
+<td>See <code>docs/guides/skills_faq.md</code> for the specific known
+gap; if this is a NEW asymmetry, either close it or mark it
+<code>OptionalCapability</code> on BOTH sides with a reason</td>
+</tr>
+</tbody>
+</table>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../CAPABILITIES.md"><code>docs/CAPABILITIES.md</code></a> —
+full HelixCode TUI capabilities guide (§4 Skills, §10.5 capability
+model).</li>
+<li><a href="skills_directory_migration.md"><code>docs/guides/skills_directory_migration.md</code></a>
+— the directory-unification history.</li>
+<li><a href="skills_faq.md"><code>docs/guides/skills_faq.md</code></a> —
+frequently asked questions from this build.</li>
+<li><a href="../../../constitution/docs/research/extensions/speckit_superpowers/implementation/"><code>constitution/docs/research/extensions/speckit_superpowers/implementation/</code></a>
+— the Bridge design corpus (constitution/HelixAgent skill-bridge
+architecture).</li>
+</ul>
+</body>
+</html>
