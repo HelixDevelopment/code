@@ -1,0 +1,18 @@
+=== D-4: go mod graph in submodules/helix_agent, edges touching a skills module
+exit=1 (1 means zero matching edges)
+=== go.mod require lines mentioning skills:
+(none above = none)
+=== source imports of the skills library module:
+tests/compliance/module_graph_edge_test.go:29:const forbiddenSkillsModule = "github.com/HelixDevelopment/skills"
+tests/compliance/module_graph_edge_test.go:35:// module. A future accidental `import "github.com/HelixDevelopment/skills"`
+tests/compliance/module_graph_edge_test.go:78:	// mistaken `import "github.com/HelixDevelopment/skills/pkg/skills"`
+tests/compliance/module_graph_edge_test.go:84:		"github.com/HelixDevelopment/skills@v0.0.0-20260101000000-abcdef123456 github.com/BurntSushi/toml@v1.3.2",
+(none above = none)
+=== what module path is the skills library?
+module github.com/HelixDevelopment/skills
+
+go 1.25.5
+=== helix_code (meta) side: does it import it?
+internal/agent/skill_external_policy.go:9:	skillslib "github.com/HelixDevelopment/skills/pkg/skills"
+21:	github.com/HelixDevelopment/skills v0.0.0-00010101000000-000000000000
+215:replace github.com/HelixDevelopment/skills => ../submodules/skills

@@ -1,0 +1,78 @@
+=== sweep summary block
+  G1  FAIL  cascade verifier reported failures (see /tmp/g1-cascade.out)
+  G2  FAIL  production code contains bluff markers
+  G3  PASS  no production code imports internal/mocks
+  G4  PASS  no nested own-org submodule chains in any owned submodule
+  G5  PASS  every owned submodule has .gitignore + no sensitive files tracked at owned-paths
+  G6  PASS  15 unprotected rename candidates (0 protected from rename)
+  G7  FAIL  feature commit(s) lack docs/qa/<run-id>/ evidence (see /tmp/g7-qa.out)
+  G8  PASS  every Obsolete-status item carries a valid Obsolete-Details line
+  G9  PASS  every summary one-liner is self-contained (no anti-pattern rows)
+  G10  PASS  no multi-platform script drops a manifest platform without honest-gap citation
+  G11  FAIL  docs/workable_items.db drifted from Issues.md/Fixed.md (see /tmp/g11-wi.out)
+  G12  FAIL  summary docs drifted from the SQLite SSoT (docs/workable_items.db) — regenerate via the §11.4.93 binary (HXC-201: use ABSOLU
+  G13  FAIL  operator-facing doc(s) lack a §11.4.99 Sources-verified footer (see /tmp/g13-sv.out)
+  G14  SKIP  docs_chain engine absent (not on PATH, no sibling ../docs_chain, no .docs_chain/bin/docs_chain) — SKIP-OK: install engine to 
+  G15  PASS  8 cited durable evidence paths all exist; no rotatable-corpus citation; fingerprint matches (0d8e196645b3da9efc48a65860ac768226
+  G16  PASS  RESULT: 9 passed, 0 failed — run-challenge-matrix dispatch/preflight contract pinned
+  G17  PASS  call sites: 28 | goroutine-dispatched: 28 | violations: 0 — every fyneui.Do/DoAndWait site is goroutine-dispatched
+  G18  PASS  checked 212 H2 closure section(s), 99 ticket-id pipe row(s), 1 Obsolete item(s) — all present in Fixed_Summary.md
+  G19  PASS  commits in range: 3 | compile-checked: 0 | skipped (no inner Go): 3 — no non-compiling commit in the bounded window (see gate
+  G20  PASS  21 correctly-marked reference(s) — every reference names the DB exporter, five-carrier lockstep intact
+  G21  PASS  transcript redaction is literal, loud on failure, and post-write-scanned for server-originated secrets
+  G22  PASS  default_resolves=yes interpolation_ok=yes noop_echoes=yes restore_ok=yes — runtime-probed in a fresh process, submodule tree 
+  G23  PASS  green=2/2 red_falsifiable=2/2 source_clean=2/2 — hostile origin denied on simple AND preflight, permitted origin still accept
+  G24  PASS  documented export invocation wrote all four docs to the caller's real docs/ tree; nothing landed inside the relocated tool dire
+  G25  PASS  bind=9100 published=9100 probed=via-MCP_PORT transport=sse — bind observed at runtime under the container's own environment
+  G26  PASS  green=1/1 red_falsifiable=1/1 source_clean=1/1 artifact_clean=1/1 — hostile origin denied on preflight AND simple, permitted 
+  G27  PASS  4 assertion(s) green — a bare provenance stamp cannot clear a commit, while declared citations and RULE 1 still do
+  G28  PASS  root go.mod and inner helix_code/go.mod module paths verified exact-match distinct via module_paths_identical() — both-direct
+  G29  PASS  shipped constitution/scripts/workable-items/bin/workable-items behaviourally carries the closure-evidence-resolvability invaria
+  G30  PASS  PASS-with-caveat (HXC-229): pid=2587 carries GIN_MODE=release, read from the live process's own /proc/2587/environ — the prim
+  G31  FAIL  the product's primary capability is dead or degraded — the completion endpoint answered, but not with a real generation (see 
+  G32  PASS  GREEN (HXC-244): health report names 4 checked component(s): llm_providers,kv_cache_redis,vector_store_qdrant,llms_verifier
+  G33  PASS  checked 12 item(s) across 5 canonical carrier(s), the consumer CLAUDE.md and .specify/memory/constitution.md
+  G34  FAIL  a configured Helix endpoint has drifted — records contradict each other, or an endpoint does not reach the service it names w
+  G35  PASS  no tracked file hands over a historical DB credential and every scoped DB port publish binds 127.0.0.1 — NOTE: this does not 
+  G36  PASS  the HXC-168 exposure class has not regressed in source or at runtime — see /tmp/g36-hxc168.out for any OPERATOR-BLOCKED items
+  G37  SKIP  no in-tree generator produces the required --skills-json active-skill snapshot — SKIP-OK: §11.4.197 follow-up
+  G38  PASS  every declared phase->layer dependency is WIRED
+  G39  SKIP  no dedicated gate script exists; constitution/scripts/post_update_hook.sh does real skill/plugin install work on pull but never
+  G40  PASS  CM-CONSTITUTION-PIN-SINGLE PASS: direct pin b1303c26421933d324465ea5239be9564c20bd82 (single, not stale)
+  G41  PASS  CM-CONSUMER-VERSION-PARITY: PASS — pkg/skills graph is stdlib-only (101 packages, zero third-party)
+  G42  PASS  CM-COVERAGE-LEDGER-NO-BLANK: PASS — 80 rows, zero blank cells
+  G43  SKIP  no wrapper generates the two skillconformance capability-manifest JSON args gate_cross_consumer_parity.sh requires; authoring o
+  G44  PASS  CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE: PASS — 8 manifest skills, all present with complete (5-platform) non-blank cells
+  G45  PASS  CM-HXC159-SOURCE-CONSUMABLE: PASS — root go.mod module=github.com/HelixDevelopment/skills, build green, packages=31
+  G46  FAIL  .mcp.json has drifted from scripts/mcp_manifest.tsv (see /tmp/g46-mcpgen.out)
+  G47  PASS  CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS PASS
+  G48  PASS  CM-NO-NESTED-OWN-ORG-CHAIN PASS
+  G49  PASS  CM-SKILL-CAPABILITY-DECLARED: PASS — refusal typed+audited at the call boundary, polarity discriminates, always-allow mutatio
+  G50  PASS  CM-SKILL-MANIFEST-COMPLETE PASS
+  G51  PASS  CM-SKILL-NAMESPACE-DISJOINT PASS
+  G52  PASS  CM-SKILLS-LOADER-HEADLESS: PASS — no Fyne/GL/X11 in source or dep closure; suite green without headers
+  G53  FAIL  one or more owned submodules are missing onboarding invariants (pre-existing, see /tmp/g53-onboard.out)
+  G54  PASS  CM-SUBMODULE-PIN-ON-MAIN: PASS — PIN.md sha=1506c914b56e13aa336b1ab4415b31ccc3607c19 on branch=main, ancestor of main tip
+  G55  PASS  PASS CM-UNIQUE-MODULE-PATHS — 155 live modules; 15 pre-existing duplicate(s) grandfathered, zero NEW duplicates
+  G56  PASS  CM-WORKABLE-ITEMS-SSOT-UNFORKED PASS
+
+=== counts G1-G36 vs G37-G56
+HXC159(G37-56) FAIL 2
+HXC159(G37-56) PASS 15
+HXC159(G37-56) SKIP 3
+pre(G1-36) FAIL 8
+pre(G1-36) PASS 27
+pre(G1-36) SKIP 1
+
+=== SKIP reasons for G37-56
+  G37  SKIP  no in-tree generator produces the required --skills-json active-skill snapshot — SKIP-OK: §11.4.197 follow-up
+  G39  SKIP  no dedicated gate script exists; constitution/scripts/post_update_hook.sh does real skill/plugin install work on pull but never calls register_skills.sh/register_mcp.sh by name — SKIP-O
+  G43  SKIP  no wrapper generates the two skillconformance capability-manifest JSON args gate_cross_consumer_parity.sh requires; authoring one touches helix_code/internal/agent + submodules/helix_agen
+=== FAIL lines G37-56
+  G46  FAIL  .mcp.json has drifted from scripts/mcp_manifest.tsv (see /tmp/g46-mcpgen.out)
+  G53  FAIL  one or more owned submodules are missing onboarding invariants (pre-existing, see /tmp/g53-onboard.out)
+=== does the sweep or gates dir carry ANY fence-leak regression guard (§11.4.135 for the 4x-fixed class)?
+1301:# Fenced code blocks are stripped before matching: constitution/CLAUDE.md:91 and
+1302:# GEMINI.md:33 carry `## INHERITED FROM ...` inside ```markdown fences as
+1305:# incl. M6 which asserts the fenced example does NOT trip the gate).
+(none above = no permanent guard for the fence class)

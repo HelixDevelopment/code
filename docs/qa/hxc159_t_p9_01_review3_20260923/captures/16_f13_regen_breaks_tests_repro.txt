@@ -1,0 +1,31 @@
+=== F-13: reproduce the test-breaking proof myself (regenerate for real, test, revert)
+(pre-state above must be empty)
+[generate-builtin-skills] synced session-sync <- constitution/skills/session-sync
+[generate-builtin-skills] synced workable-item-lifecycle <- constitution/skills/workable-item-lifecycle
+[generate-builtin-skills] done — synced=7 skipped=1
+regen exit=0
+7
+--- FAIL: TestGovernanceSkills_RegisteredAndInvocable (0.00s)
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/action-prefix-system (0.00s)
+            	Messages:   	governance skill "action-prefix-system" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/media-validator (0.00s)
+            	Messages:   	governance skill "media-validator" must carry a description
+            	Messages:   	governance skill "media-validator" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/multitrack (0.00s)
+            	Messages:   	governance skill "multitrack" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/reporting-workable-items (0.00s)
+            	Messages:   	governance skill "reporting-workable-items" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/scheduled-work-queue (0.00s)
+            	Messages:   	governance skill "scheduled-work-queue" must carry a description
+            	Messages:   	governance skill "scheduled-work-queue" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/session-sync (0.00s)
+            	Messages:   	governance skill "session-sync" must carry a description
+            	Messages:   	governance skill "session-sync" declares no triggers, so auto-trigger can never fire
+    --- FAIL: TestGovernanceSkills_RegisteredAndInvocable/workable-item-lifecycle (0.00s)
+            	Messages:   	governance skill "workable-item-lifecycle" declares no triggers, so auto-trigger can never fire
+FAIL
+FAIL	dev.helix.code/internal/commands	0.038s
+test exit(after regen)=0
+0
+ok  	dev.helix.code/internal/commands	0.040s
+test exit(after revert)=0

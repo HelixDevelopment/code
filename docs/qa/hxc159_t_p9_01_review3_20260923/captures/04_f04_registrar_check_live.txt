@@ -1,0 +1,20 @@
+=== F-04: registrar --check on the LIVE checkout
+-rwxrwxr-x 1 milosvasic milosvasic 17352 Sep 23 08:30 scripts/register_skills.sh
+[register-skills] VERDICT: WIRED
+exit=0
+
+=== .claude/skills/ live listing
+total 12
+drwxrwxr-x 3 milosvasic milosvasic 4096 Sep 23 08:31 .
+drwxrwxr-x 4 milosvasic milosvasic 4096 Sep  7 14:28 ..
+drwxrwxr-x 2 milosvasic milosvasic 4096 Sep 23 08:31 .manifest
+-rw-rw-r-- 1 milosvasic milosvasic    0 Sep 23 08:31 .register.lock
+lrwxrwxrwx 1 milosvasic milosvasic   46 Sep 23 08:31 action-prefix-system -> ../../constitution/skills/action-prefix-system
+lrwxrwxrwx 1 milosvasic milosvasic   41 Sep 23 08:31 media-validator -> ../../constitution/skills/media-validator
+lrwxrwxrwx 1 milosvasic milosvasic   36 Sep 23 08:31 multitrack -> ../../constitution/skills/multitrack
+lrwxrwxrwx 1 milosvasic milosvasic   50 Sep 23 08:31 reporting-workable-items -> ../../constitution/skills/reporting-workable-items
+lrwxrwxrwx 1 milosvasic milosvasic   46 Sep 23 08:31 scheduled-work-queue -> ../../constitution/skills/scheduled-work-queue
+lrwxrwxrwx 1 milosvasic milosvasic   38 Sep 23 08:31 session-sync -> ../../constitution/skills/session-sync
+lrwxrwxrwx 1 milosvasic milosvasic   39 Sep 23 08:31 skill-catalog -> ../../constitution/skills/skill-catalog
+lrwxrwxrwx 1 milosvasic milosvasic   41 Sep  8 15:02 speckit-analyze -> ../.skill-activation/pool/speckit-analyze
+lrwxrwxrwx 1 milosvasic milosvasic   49 Sep 23 08:31 workable-item-lifecycle -> ../../constitution/skills/workable-item-lifecycle

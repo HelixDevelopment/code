@@ -1,0 +1,28 @@
+=== F-04 GREEN guard (RED_MODE=0) for real
+GUARD PASS (case A): coexisted with unmanaged name, linked the managed one.
+GUARD PASS (case B): adopted pre-existing correctly-resolved unmarked link.
+GUARD PASS (case C non-regression): genuine collision still refused, tree unchanged.
+VERDICT: WIRED
+exit=0
+
+=== F-04 RED polarity (RED_MODE=1 must now say not-reproduced)
+RED not reproduced: registrar coexisted with both unmanaged and pre-existing
+correctly-resolved names without aborting (fixed).
+exit=1 (expect 1 = defect absent)
+
+=== F-12 GREEN guard (RED_MODE=0)
+GUARD PASS (i): live tree passes with known claude-toolkit duplicates honestly grandfathered.
+GUARD PASS (ii): a genuinely new, non-grandfathered duplicate still FAILs the gate.
+VERDICT: WIRED
+exit=0
+
+=== F-11 identity test (helix_agent)
+--- PASS: TestGenerateReport_RealService_ValidatesClean (0.00s)
+--- PASS: TestGenerateReport_QualifiedUsesDirectoryNotFrontMatterTitle (0.00s)
+--- PASS: TestGenerateReport_MalformedSkillIsVisibleNotFatal (0.00s)
+ok  	dev.helix.agent/internal/skillconformance	0.016s
+70:func qualifiedIdentity(s *skills.Skill) string {
+71-	if dirName := filepath.Base(filepath.Dir(s.FilePath)); dirName != "" && dirName != "." && dirName != string(filepath.Separator) {
+72-		return dirName
+73-	}
+74-	// FilePath absent or degenerate (e.g. a NewSkill-style in-memory

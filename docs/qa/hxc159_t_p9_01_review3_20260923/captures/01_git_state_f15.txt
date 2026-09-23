@@ -1,0 +1,39 @@
+=== .
+main
+6b05ee4e
+ M submodules/helix_qa
+--- ahead/behind vs upstreams:
+github/main: ahead=42 behind=0
+gitlab/main: ahead=42 behind=0
+origin/main: ahead=42 behind=0
+upstream/main: ahead=42 behind=0
+=== constitution
+main
+b1303c2
+--- ahead/behind vs upstreams:
+gitflic/main: ahead=9 behind=11
+github/main: ahead=9 behind=11
+gitlab/main: ahead=9 behind=11
+gitverse/main: ahead=9 behind=11
+origin/main: ahead=9 behind=11
+upstream/main: ahead=9 behind=11
+vasic_digital_github/main: ahead=9 behind=11
+vasic_digital_gitlab/main: ahead=9 behind=11
+=== submodules/helix_agent
+main
+4cbadfb4
+--- ahead/behind vs upstreams:
+github/main: ahead=11 behind=0
+githubhelixdevelopment/main: ahead=11 behind=0
+origin/main: ahead=11 behind=0
+upstream/main: ahead=11 behind=0
+=== submodules/skills
+HEAD
+83d5bfa
+--- ahead/behind vs upstreams:
+gitflic/HEAD: (no such ref)
+github/HEAD: (no such ref)
+gitlab/HEAD: (no such ref)
+gitverse/HEAD: (no such ref)
+origin/HEAD: ahead=8 behind=0
+upstream/HEAD: (no such ref)

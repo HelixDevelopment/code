@@ -1,0 +1,62 @@
+=== control needles for BOTH instruments
+-- fence_audit.py
+   golden-bad exit=1 (expect 1)
+   golden-good exit=0 (expect 0)
+-- fence_scan2.py
+   golden-bad exit=1 (expect 1)
+   golden-good exit=0 (expect 0)
+
+=== instrument 1 (prior fence_audit.py) over 18 files
+{
+ "files": 18,
+ "total_findings": 0,
+ "per_file": {
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/README.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md": 0,
+  "helix_code/docs/architecture/skills_architecture.md": 0,
+  "helix_code/docs/CAPABILITIES.md": 0,
+  "helix_code/docs/guides/skills_user_manual.md": 0,
+  "helix_code/docs/guides/skills_faq.md": 0,
+  "docs/extensions/EXTENSIONS_CATALOG.md": 0,
+  "submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md": 0,
+  "README.md": 0,
+  "specs/001-helixskills-incorporation/tasks.md": 0,
+  "specs/001-helixskills-incorporation/plan.md": 0,
+  "specs/001-helixskills-incorporation/spec.md": 0
+ }
+}
+exit=0
+=== instrument 2 (review-3 fence_scan2.py) over the same 18 files
+{
+ "files": 18,
+ "total": 0,
+ "per_file": {
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/README.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md": 0,
+  "helix_code/docs/architecture/skills_architecture.md": 0,
+  "helix_code/docs/CAPABILITIES.md": 0,
+  "helix_code/docs/guides/skills_user_manual.md": 0,
+  "helix_code/docs/guides/skills_faq.md": 0,
+  "docs/extensions/EXTENSIONS_CATALOG.md": 0,
+  "submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md": 0,
+  "README.md": 0,
+  "specs/001-helixskills-incorporation/tasks.md": 0,
+  "specs/001-helixskills-incorporation/plan.md": 0,
+  "specs/001-helixskills-incorporation/spec.md": 0
+ }
+}
+exit=0
+=== corpus HEAD: constitution b1303c2, meta 6b05ee4e
+ 17692 total

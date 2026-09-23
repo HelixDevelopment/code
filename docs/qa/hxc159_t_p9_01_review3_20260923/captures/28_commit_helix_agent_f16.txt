@@ -1,0 +1,14 @@
+=== clean suite summary
+ok  	dev.helix.agent/internal/skills	1.404s
+ok  	dev.helix.agent/internal/skillconformance	1.111s
+ok  	dev.helix.agent/tests/compliance	1.331s
+=== §11.4.84 quiescence: mutation markers in files to be staged?
+(none)
+ M internal/skills/parser.go
+?? internal/skills/frontmatterless_visibility_test.go
+=== staged:
+ internal/skills/frontmatterless_visibility_test.go | 72 ++++++++++++++++++++++
+ internal/skills/parser.go                          | 19 ++++++
+ 2 files changed, 91 insertions(+)
+=== committed:
+5f3124aa HXC-159 T-P9.01 F-16: surface nameless (front-matter-less) skills in the load report instead of silently dropping them

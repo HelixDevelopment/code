@@ -1,0 +1,14 @@
+=== RED probe: plant a 3rd declarer of an already-grandfathered module path at a live non-toolkit location
+INFO CM-UNIQUE-MODULE-PATHS — 15 duplicate module path(s) grandfathered per scripts/gates/unique_module_paths_grandfathered.tsv (HXC-159 F-12; not caused by this repo, tracked, never silently expanded):
+    - helix_code/tmp_review3_dupe_probe/go.mod
+PASS CM-UNIQUE-MODULE-PATHS — 156 live modules; 15 pre-existing duplicate(s) grandfathered, zero NEW duplicates
+gate exit=0
+cleanup: ls: cannot access 'helix_code/tmp_review3_dupe_probe': No such file or directory
+
+=== control: plant a NEW (non-grandfathered) duplicate pair
+FAIL CM-UNIQUE-MODULE-PATHS — 1 NEW (non-grandfathered) duplicate module path(s) among 157 live modules:
+  'review3.probe.newdupe' declared by:
+    - helix_code/tmp_review3_dupe_probe/a/go.mod
+    - helix_code/tmp_review3_dupe_probe/b/go.mod
+gate exit=1
+cleanup: ls: cannot access 'helix_code/tmp_review3_dupe_probe': No such file or directory

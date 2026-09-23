@@ -1,0 +1,17 @@
+check 1 09:51:27: lock age=1024s size=0 fd_holders=[] git_procs_in_repo=[]
+check 2 09:52:03: lock age=1060s size=0 fd_holders=[] git_procs_in_repo=[]
+check 3 09:52:33: lock age=1090s size=0 fd_holders=[] git_procs_in_repo=[]
+check 4 09:52:53: lock age=1110s size=0 fd_holders=[] git_procs_in_repo=[]
+check 5 09:53:13: lock age=1130s size=0 fd_holders=[] git_procs_in_repo=[]
+§11.4.180 REAPED: index.lock age=1130s, 0 fd holders, 0 git processes in repo — provably stale (holder dead), removing
+=== stage + commit F-18
+ scripts/gates/unique_module_paths_gate.sh          | 41 +++++++++++--
+ .../gates/unique_module_paths_grandfathered.tsv    | 70 ++++++++++++----------
+ .../unique_module_paths_grandfather_red_test.sh    | 25 ++++++++
+ 3 files changed, 101 insertions(+), 35 deletions(-)
+=== committed:
+fc056c6a HXC-159 T-P9.01 F-18: CM-UNIQUE-MODULE-PATHS grandfather ratchet pins the declarer SET, not just the module path
+ M specs/001-helixskills-incorporation/tasks.md
+ M submodules/helix_agent
+ M submodules/helix_qa
+?? docs/qa/hxc159_t_p9_01_review3_20260923/

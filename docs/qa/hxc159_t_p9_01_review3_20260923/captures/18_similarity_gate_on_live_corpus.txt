@@ -1,0 +1,22 @@
+    zz_review3_probe_test.go:32: copied 6 skills into /tmp/TestReview3Probe_LiveTierMinusFrontmatterless1387348943/001
+    zz_review3_probe_test.go:38: Load: 6 skills err=<nil>
+    zz_review3_probe_test.go:46:   jaccard Action Prefix System       Multitrack                 0.0141
+    zz_review3_probe_test.go:46:   jaccard Action Prefix System       Reporting Workable Items   0.1045  <-- ABOVE THRESHOLD
+    zz_review3_probe_test.go:46:   jaccard Action Prefix System       Workable Item Lifecycle    0.0282  <-- ABOVE THRESHOLD
+    zz_review3_probe_test.go:46:   jaccard Action Prefix System       skill-catalog              0.0179
+    zz_review3_probe_test.go:46:   jaccard Action Prefix System       speckit-analyze            0.0185
+    zz_review3_probe_test.go:46:   jaccard Multitrack                 Reporting Workable Items   0.0000
+    zz_review3_probe_test.go:46:   jaccard Multitrack                 Workable Item Lifecycle    0.0000
+    zz_review3_probe_test.go:46:   jaccard Multitrack                 skill-catalog              0.0000
+    zz_review3_probe_test.go:46:   jaccard Multitrack                 speckit-analyze            0.0000
+    zz_review3_probe_test.go:46:   jaccard Reporting Workable Items   Workable Item Lifecycle    0.0806  <-- ABOVE THRESHOLD
+    zz_review3_probe_test.go:46:   jaccard Reporting Workable Items   skill-catalog              0.0200
+    zz_review3_probe_test.go:46:   jaccard Reporting Workable Items   speckit-analyze            0.0208
+    zz_review3_probe_test.go:46:   jaccard Workable Item Lifecycle    skill-catalog              0.0000
+    zz_review3_probe_test.go:46:   jaccard Workable Item Lifecycle    speckit-analyze            0.0000
+    zz_review3_probe_test.go:46:   jaccard skill-catalog              speckit-analyze            0.0323  <-- ABOVE THRESHOLD
+    zz_review3_probe_test.go:54: Activate: admitted=0 refusal=skills: active pair "external.Action Prefix System" || "external.Reporting Workable Items" scores 0.1045 above similarity threshold 0.0256 (T-P2.04 NON-SEPARABLE fallback, fp risk accepted) — refusing; drop or rename one description
+--- PASS: TestReview3Probe_LiveTierMinusFrontmatterless (0.01s)
+ok  	github.com/HelixDevelopment/skills/pkg/skills	0.018s
+exit=0
+SimilarityThreshold=28:const SimilarityThreshold = 0.0256

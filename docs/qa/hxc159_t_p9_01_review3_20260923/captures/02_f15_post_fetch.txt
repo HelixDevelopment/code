@@ -1,0 +1,49 @@
+=== fetch .
+=== fetch constitution
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+=== fetch submodules/helix_agent
+=== fetch submodules/skills
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+
+=== . 6b05ee4e
+github/main: ahead=42 behind=0
+gitlab/main: ahead=42 behind=0
+origin/main: ahead=42 behind=0
+upstream/main: ahead=42 behind=0
+=== constitution b1303c2
+gitflic/main: ahead=9 behind=11
+github/main: ahead=9 behind=11
+gitlab/main: ahead=9 behind=11
+gitverse/main: ahead=9 behind=11
+origin/main: ahead=9 behind=11
+upstream/main: ahead=9 behind=11
+vasic_digital_github/main: ahead=9 behind=11
+vasic_digital_gitlab/main: ahead=9 behind=11
+=== submodules/helix_agent 4cbadfb4
+github/main: ahead=11 behind=0
+githubhelixdevelopment/main: ahead=11 behind=0
+origin/main: ahead=11 behind=0
+upstream/main: ahead=11 behind=0
+=== submodules/skills 83d5bfa (detached)
+gitflic/main: ahead=31 behind=0
+github/main: ahead=8 behind=0
+gitlab/main: ahead=31 behind=0
+gitverse/main: ahead=31 behind=0
+origin/main: ahead=8 behind=0
+upstream/main: ahead=31 behind=0
+=== constitution behind-commits (upstream has these, local does not):
+10aa984 feat(skill-activation): land the host-CLI wrapper + its auto-install seam (§11.4.272 clause G)
+34e42f0 fix(gates): resolve CM-GATE-LEDGER-RATCHET FAIL — cite the §11.4.209 gate rename, bump baseline 397->403
+e7ef51c fix(gates): enable globstar so OD_VISREG_GLOBS's ** patterns recurse as documented
+61b0c69 Merge origin/main: reconcile with upstream after §11.4.184(I) security-tooling extension
+4698c6f feat(11.4.184): extend with HawkScan + OWASP ZAP + gitleaks + Trivy tooling
+8935d99 Merge origin/main: reconcile with upstream (28 commits, incl. design-toolkit gitlink fix) after a locally-mislabeled but harmless pointer-bump commit
+454e331 docs: capture real layer-4 Superpowers-TUI verification evidence for llmctl-small/vision/moe-fast
+f9e99be amend §11.4.209: Opus-xhigh default reviewer, Fable-xhigh for big/complex (supersedes 2026-07-15)
+6bf5805 chore: update constitution submodule with nested submodule inheritance pointers committed and pushed
+c7064fa chore: commit CLAUDE.md/AGENTS.md inheritance pointers in all nested submodules
+16af233 Add validation/verification submodules and inheritance wiring

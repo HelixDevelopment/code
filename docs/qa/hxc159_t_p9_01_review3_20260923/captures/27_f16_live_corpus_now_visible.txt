@@ -1,0 +1,7 @@
+    zz_review3_probe2_test.go:17: registered=5
+    zz_review3_probe2_test.go:19: LoadFailures: media-validator — front-matter carries no name: (or no front-matter block at a
+    zz_review3_probe2_test.go:19: LoadFailures: scheduled-work-queue — front-matter carries no name: (or no front-matter block at a
+    zz_review3_probe2_test.go:19: LoadFailures: session-sync — front-matter carries no name: (or no front-matter block at a
+    zz_review3_probe2_test.go:21: load_failures=3
+--- PASS: TestReview3Probe2_LiveCorpusNamelessSkillsAreNowVisible (0.01s)
+ok  	dev.helix.agent/internal/skills	0.020s

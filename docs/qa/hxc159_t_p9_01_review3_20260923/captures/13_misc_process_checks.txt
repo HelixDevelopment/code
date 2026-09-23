@@ -1,0 +1,40 @@
+=== submodule pointer consistency (meta-recorded vs checked-out)
+ b1303c26421933d324465ea5239be9564c20bd82 constitution (helixconstitution-v68-85-gb1303c2)
+ 4cbadfb406f5a075a56b944adeb8d5f0a3da2279 submodules/helix_agent (helix-code-1.0.0-dev-0.0.1-128-g4cbadfb4)
+ 05e3b832d2a9ef9c99d665e4f3c26e524f67313c submodules/helix_qa (helixcode-v1.1.0-100-g05e3b83)
+ 83d5bfa8457452c286ac1c6d65f96d0346e51875 submodules/skills (remotes/github/HEAD-8-g83d5bfa)
+(leading '+' = checkout differs from recorded pointer; ' ' = matches)
+
+=== F-05: .claude/skills gitignored?
+.gitignore:150:.claude/*	.claude/skills
+.gitignore:150:.claude/*	.claude/skills/media-validator
+exit=0
+
+=== F-13 side-effect: is go generate wired into any build/test target?
+(none = go:generate --check is not on any build path)
+
+=== APPENDIX top banner + §F context around line 1045
+# Appendix: Manifests, Schemas, Templates & Full Source Code
+
+**Revision:** 3
+**Last modified:** 2026-09-23T06:50:49Z
+
+> **ARCHITECTURE AMENDMENT — 2026-09-22 (HXC-159 Phase B3).** Appendix section
+> F ("SuperBridge MCP Server — `src/index.ts`") is a FULL TYPESCRIPT SOURCE
+> LISTING for a server that was **never built and does not exist as
+> software** — independently re-derived twice (GitHub `total_count: 0`; npm
+> exact-name lookup `HTTP 404`). Nothing in section F is checked into any git
+> tree; it is a DESIGN artifact, not evidence the server exists (confirmed by
+> the same GitHub/npm sweep). This project's REAL Bridge architecture is 6
+...
+427:## D. MCP Server Configuration
+481:## E. Helix LLM Gateway — `main.go`
+917:## F. SuperBridge MCP Server — `src/index.ts`
+];
+
+// ─── Server ─────────────────────────────────�
+
+const server = new Server(
+  { name: 'superbridge-mcp', version: '1.0.0' },
+  { capabilities: { tools: {} } }
+);

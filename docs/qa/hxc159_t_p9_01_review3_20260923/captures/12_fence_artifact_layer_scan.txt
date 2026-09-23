@@ -1,0 +1,11 @@
+=== ARTIFACT-LAYER leak check: diagram directives appearing as body text in the rendered PDFs (pdftotext) and HTML
+README: md_mermaid_fences=1 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+IMPLEMENTATION_PLAN: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+NANO_TASK_ENGINE: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+EXTENSION_DEVELOPMENT: md_mermaid_fences=1 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+TDD_INTEGRATION: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+CONSTITUTION_INTEGRATION: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+SECURITY: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+APPENDIX: md_mermaid_fences=0 html_mermaid_elems=0 html_mermaid_any=0 pdf_directive_body_lines=0
+
+(md_mermaid_fences should equal html mermaid elems; pdf_directive_body_lines>0 indicates diagram SOURCE leaked as text — investigate each)

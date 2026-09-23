@@ -1,0 +1,42 @@
+=== fence auditor
+-rw-rw-r-- 1 milosvasic milosvasic 3345 Sep 23 03:39 docs/qa/hxc159_t_p9_01_review_20260923/captures/fence_audit.py
+=== Bridge corpus location
+constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.md
+constitution/docs/research/extensions/speckit_superpowers/implementation/README.md
+constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md
+constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md
+constitution/docs/research/extensions/speckit_superpowers/request_with_materials.md
+=== 8 bridge docs (dir listing)
+dir=constitution/docs/research/extensions/speckit_superpowers/implementation
+-rw-rw-r-- 1 milosvasic milosvasic  58048 Sep 23 08:52 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.docx
+-rw-rw-r-- 1 milosvasic milosvasic 485982 Sep 23 08:51 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.html
+-rw-rw-r-- 1 milosvasic milosvasic  80940 Sep 23 08:50 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md
+-rw-rw-r-- 1 milosvasic milosvasic 241542 Sep 23 08:52 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  39364 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.docx
+-rw-rw-r-- 1 milosvasic milosvasic 105120 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.html
+-rw-rw-r-- 1 milosvasic milosvasic  53004 Sep 22 23:09 constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.md
+-rw-rw-r-- 1 milosvasic milosvasic 125498 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  64454 Sep 23 08:52 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.docx
+-rw-rw-r-- 1 milosvasic milosvasic 561959 Sep 23 08:51 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.html
+-rw-rw-r-- 1 milosvasic milosvasic  97903 Sep 23 08:50 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md
+-rw-rw-r-- 1 milosvasic milosvasic 272737 Sep 23 08:51 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  24055 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.docx
+-rw-rw-r-- 1 milosvasic milosvasic  41861 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.html
+-rw-rw-r-- 1 milosvasic milosvasic  27395 Sep 22 23:06 constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.md
+-rw-rw-r-- 1 milosvasic milosvasic  81471 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  69358 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.docx
+-rw-rw-r-- 1 milosvasic milosvasic 446321 Sep 22 23:10 constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.html
+-rw-rw-r-- 1 milosvasic milosvasic 104295 Sep 22 23:07 constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.md
+-rw-rw-r-- 1 milosvasic milosvasic 274855 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  85506 Sep 23 03:14 constitution/docs/research/extensions/speckit_superpowers/implementation/README.docx
+-rw-rw-r-- 1 milosvasic milosvasic 160351 Sep 23 03:14 constitution/docs/research/extensions/speckit_superpowers/implementation/README.html
+-rw-rw-r-- 1 milosvasic milosvasic  70386 Sep 23 03:14 constitution/docs/research/extensions/speckit_superpowers/implementation/README.md
+-rw-rw-r-- 1 milosvasic milosvasic 180844 Sep 23 03:14 constitution/docs/research/extensions/speckit_superpowers/implementation/README.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  26485 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.docx
+-rw-rw-r-- 1 milosvasic milosvasic  57026 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.html
+-rw-rw-r-- 1 milosvasic milosvasic  27838 Sep 22 23:08 constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.md
+-rw-rw-r-- 1 milosvasic milosvasic  74624 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.pdf
+-rw-rw-r-- 1 milosvasic milosvasic  39126 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.docx
+-rw-rw-r-- 1 milosvasic milosvasic 208471 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.html
+-rw-rw-r-- 1 milosvasic milosvasic  47015 Sep 22 23:07 constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.md
+-rw-rw-r-- 1 milosvasic milosvasic 151211 Sep 22 23:11 constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.pdf

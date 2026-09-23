@@ -1,0 +1,66 @@
+=== commit order: F-01 fix vs catalogue regen vs RS-01 live proof
+c3622f7e 2026-09-23 09:15:55 +0200 HXC-159: regenerate extensions catalogue now that F-03 symlink fix landed
+1acb113f 2026-09-23 09:13:55 +0200 HXC-159 F-09: register the 20 HXC-159 gates into the pre-build sweep
+e2135a17 2026-09-23 08:54:30 +0200 HXC-159 F-01: wire external skill tier through the real pkg/skills policy engine
+18ea70e5 2026-09-23 08:48:31 +0200 HXC-159 F-13: investigate builtin_skills divergence — real root cause, not a simple sync bug
+8d48a71b 2026-09-23 08:42:47 +0200 HXC-159 F-12: grandfather pre-existing claude-toolkit module-path duplicates, correct false PASS claims
+87a6ef35 2026-09-23 08:39:36 +0200 HXC-159 F-12: remove accidental nested duplicate helix_code/tests/e2e/orchestrator/tests/e2e/orchestrator/
+545ebe1a 2026-09-23 08:32:27 +0200 HXC-159 F-04: registrar coexists with unmanaged names, adopts pre-existing correct links
+321dca40 2026-09-23 03:36:33 +0200 HXC-159 T-P9.01: external tier follows symlinked skill directories (P1↔P5 seam defect)
+
+=== how generate_catalog.py decides HelixCode SUPPORTED (does it drive the CLI or read builtins?)
+16:    SUPPORTED   — a real SKILL.md resolves + reads non-empty at the
+27:    UNSUPPORTED — NOT used by this generator: no platform here has been
+58:# script). HelixCode is handled specially below — it has no directory of its
+61:# config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR. OpenCode, Gemini CLI
+71:    ("helixcode", "HelixCode", None, False),
+76:HELIXCODE_EVIDENCE = (
+78:    "'.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); "
+79:    "the external tier's end-to-end load+list+invoke path is REAL-BINARY "
+80:    "verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ "
+165:    return "SUPPORTED", rel_path, (
+174:        if key == "helixcode":
+190:    # HelixCode: external tier defaults to the SAME directory Claude Code
+194:    if claude_cell["status"] == "SUPPORTED":
+195:        helix_status = "SUPPORTED"
+196:        helix_note = f"via external tier -> {claude_cell['path']}. {HELIXCODE_EVIDENCE}"
+201:            f"(config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that "
+203:            f"({claude_cell['note']}). {HELIXCODE_EVIDENCE}"
+205:    cells["helixcode"] = {"status": helix_status, "path": f".claude/skills/{row['name']} (external tier)", "note": helix_note}
+213:    lines.append("# HelixCode Extensions Catalog\n")
+229:        "minimum: Claude Code, OpenCode, HelixCode, Gemini CLI, Qwen Code. "
+237:        "**Closed status vocabulary** (§11.4.228(A)(1)): `SUPPORTED` "
+242:        "§11.4.197-tracked gap) / `UNSUPPORTED` (proven structurally "
+330:    supported = sum(
+331:        1 for r in rows_with_cells for k, _d, _rd, _hr in PLATFORMS if r["cells"][k]["status"] == "SUPPORTED"
+337:        f"({supported} SUPPORTED cells)"
+
+=== prior review live RS-01/RS-08 post-F-03 capture (what it observed for skill-catalog)
+4:lrwxrwxrwx 1 milosvasic milosvasic 39 Sep  7 13:59 skill-catalog -> ../../constitution/skills/skill-catalog
+8:--- helixcode skills list | grep -E 'skill-catalog|\.claude/skills' :
+9:skill-catalog             Lists every skill available to this project — including ones not currently active — and activates any of them 
+13:--- helixcode skills invoke skill-catalog (constitution body, not 'not found'):
+24:--- PRE-fix control (review build without the fix, same tree): skill-catalog count
+01_loader_suite_race.log
+02_loader_suite_count3.log
+03_loader_deps_nonstd.log
+04_loader_bench.log
+05_helixcode_cli_build.log
+06_cm_skill_manifest_complete_live.log
+07_cm_skill_manifest_complete_meta.log
+08_c5_wiring_red_prefix.log
+09_c5_wiring_red_mode1_prefix.log
+10_rs08_live_tree_skills_list.log
+11_external_tier_symlink_isolation.log
+12_c5_wiring_green_postfix.log
+13_c5_wiring_red_mode1_postfix.log
+14_loader_suite_race_postfix.log
+15_symlink_red_prefix.log
+16_symlink_red_mode1_prefix.log
+17_symlink_green_postfix.log
+18_symlink_red_mode1_postfix.log
+19_commands_agent_race_postfix.log
+20_helixcode_cli_build_postfix.log
+21_rs01_rs08_live_tree_postfix.log
+23_round2_gates_and_status.log
+24_unique_module_paths_gate_live.log

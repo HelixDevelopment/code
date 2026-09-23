@@ -1,0 +1,15 @@
+=== RED run (pre-fix parser): expect assertion FAIL
+=== RUN   TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/skills/frontmatterless_visibility_test.go:47
+        	Error:      	"[0xa27b715ce00 0xa27b715cfc0]" should have 1 item(s), but has 2
+        	Messages:   	only the registrable skill may be returned as discovered
+--- FAIL: TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped (0.00s)
+=== RUN   TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/skills/frontmatterless_visibility_test.go:70
+        	Error:      	"[]" should have 1 item(s), but has 0
+        	Messages:   	the dropped skill must be visible in LoadFailures() — silent drop is the F-16 defect
+--- FAIL: TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures (0.01s)
+FAIL
+FAIL	dev.helix.agent/internal/skills	0.072s
+FAIL
+exit=1 (expect 1)

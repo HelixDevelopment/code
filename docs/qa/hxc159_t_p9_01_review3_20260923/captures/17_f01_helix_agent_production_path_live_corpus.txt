@@ -1,0 +1,17 @@
+=== RUN   TestReview3Probe_LiveConstitutionSkillsThroughProductionLoad
+    zz_review3_probe_test.go:20: ParseDirectory: discovered=8 failures=0 err=<nil>
+    zz_review3_probe_test.go:22:   parsed: dir=action-prefix-system name="Action Prefix System" desc_len=628
+    zz_review3_probe_test.go:22:   parsed: dir=media-validator name="" desc_len=0
+    zz_review3_probe_test.go:22:   parsed: dir=multitrack name="Multitrack" desc_len=381
+    zz_review3_probe_test.go:22:   parsed: dir=reporting-workable-items name="Reporting Workable Items" desc_len=484
+    zz_review3_probe_test.go:22:   parsed: dir=scheduled-work-queue name="" desc_len=0
+    zz_review3_probe_test.go:22:   parsed: dir=session-sync name="" desc_len=0
+    zz_review3_probe_test.go:22:   parsed: dir=skill-catalog name="skill-catalog" desc_len=253
+    zz_review3_probe_test.go:22:   parsed: dir=workable-item-lifecycle name="Workable Item Lifecycle" desc_len=395
+2026/09/23 09:31:24 ⚠️  skills: external source "helixskills-external" refused by policy: skills: external source active pair "helixskills-external." || "helixskills-external." scores 1.0000 above similarity threshold 0.0256 (T-P2.04 NON-SEPARABLE fallback, fp risk accepted) — refusing; drop or rename one description
+    zz_review3_probe_test.go:27: PRODUCTION ExternalSkillSource.Load(): admitted_tools=0 err=<nil>
+    zz_review3_probe_test.go:31: skills.Service registry after Load: 0
+--- PASS: TestReview3Probe_LiveConstitutionSkillsThroughProductionLoad (0.01s)
+PASS
+ok  	dev.helix.agent/internal/skills	0.029s
+exit=0

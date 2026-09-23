@@ -1,0 +1,22 @@
+=== GREEN run (post-fix): F-16 tests
+=== RUN   TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped
+--- PASS: TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped (0.01s)
+=== RUN   TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures
+--- PASS: TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures (0.00s)
+PASS
+ok  	dev.helix.agent/internal/skills	1.087s
+exit=0 (expect 0)
+
+=== full internal/skills + skillconformance + compliance + router suites under -race
+       |         ^
+sqlite3-binding.c: In function ‘unistrFunc’:
+sqlite3-binding.c:132979:15: warning: initialization discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+132979 |     char *z = strchr(&zIn[i],'\\');
+       |               ^~~~~~
+ok  	dev.helix.agent/internal/router	7.897s
+exit=0
+=== go vet
+vet-ok
+=== gofmt
+internal/skills/registry.go
+(empty = formatted)

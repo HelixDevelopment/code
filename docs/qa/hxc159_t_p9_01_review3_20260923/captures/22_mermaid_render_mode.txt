@@ -1,0 +1,27 @@
+=== README: how the mermaid block renders
+-- md fence info + first directive line:
+```mermaid
+flowchart TB
+-- html occurrences of that directive text:
+0
+-- html <img>/<svg>/data:image count:
+1
+1
+-- pdf embedded images:
+1
+-- pdf text contains directive as text?
+0
+=== EXTENSION_DEVELOPMENT: how the mermaid block renders
+-- md fence info + first directive line:
+```mermaid
+graph TD
+-- html occurrences of that directive text:
+2
+```mermaid</span><span class="sc">\n</span><span class="st">graph TD</span><span class="sc">\n</sp
+-- html <img>/<svg>/data:image count:
+0
+0
+-- pdf embedded images:
+0
+-- pdf text contains directive as text?
+2

@@ -1,0 +1,75 @@
+=== F-10 markers in .md sources
+-- EXTENSION_DEVELOPMENT.md: HISTORICAL markers=2 superbridge-mcp mentions=27 SUPERBRIDGE_MCP_ mentions=3
+2293:> **HISTORICAL — never built (see the top-of-document 2026-09-22 Phase B3
+2865:> **HISTORICAL — never built (see the top-of-document 2026-09-22 Phase B3
+-- APPENDIX.md: HISTORICAL markers=1 superbridge-mcp mentions=9 SUPERBRIDGE_MCP_ mentions=0
+429:> **HISTORICAL — never built (see the top-of-document 2026-09-22 Phase B3
+
+=== every superbridge-mcp/SUPERBRIDGE_MCP config line and the nearest preceding HISTORICAL marker distance (lines)
+-- EXTENSION_DEVELOPMENT.md
+  line 7  dist_from_marker=-1  > document ("MCP Server (`superbridge-mcp`)") specifies a server that was
+  line 183  dist_from_marker=-1      - "superbridge-mcp"
+  line 1405  dist_from_marker=-1  - Tool: `superbridge-mcp.execute_tdd_cycle`
+  line 1488  dist_from_marker=-1  - Tool: `superbridge-mcp.nano_task_decompose`
+  line 1489  dist_from_marker=-1  - Tool: `superbridge-mcp.nano_task_graph`
+  line 1569  dist_from_marker=-1  ## Part C: MCP Server (`superbridge-mcp`)
+  line 1574  dist_from_marker=-1  // superbridge-mcp/src/index.ts
+  line 1584  dist_from_marker=-1      name: "superbridge-mcp",
+  line 2224  dist_from_marker=-1      oracle: "superbridge-mcp/anti-bluff",
+  line 2295  dist_from_marker=2  > below names a `superbridge-mcp` server that does not exist as software
+  line 2305  dist_from_marker=12      "superbridge-mcp": {
+  line 2307  dist_from_marker=14        "args": ["/path/to/superbridge-mcp/dist/index.js"],
+  line 2324  dist_from_marker=31      "superbridge-mcp": {
+  line 2326  dist_from_marker=33        "args": ["/path/to/superbridge-mcp/dist/index.js"]
+  line 2339  dist_from_marker=46        "arguments": ["/path/to/superbridge-mcp/dist/index.js"]
+  line 2349  dist_from_marker=56      "superbridge-mcp": {
+  line 2351  dist_from_marker=58        "args": ["/path/to/superbridge-mcp/dist/index.js"]
+  line 2360  dist_from_marker=67    superbridge-mcp:
+  line 2363  dist_from_marker=70        - /path/to/superbridge-mcp/dist/index.js
+  line 2834  dist_from_marker=541  # HISTORICAL — superbridge-mcp was never built (2026-09-22 Phase B3
+  line 2838  dist_from_marker=545  SUPERBRIDGE_MCP_ENABLED=true
+  line 2839  dist_from_marker=546  SUPERBRIDGE_MCP_PORT=9595
+  line 2840  dist_from_marker=547  SUPERBRIDGE_MCP_HOST=127.0.0.1
+  line 2867  dist_from_marker=2  > unbuilt `helix-nano-bridge` extension, including its `mcp/superbridge-mcp/`
+  line 2898  dist_from_marker=33  cp -r mcp/superbridge-mcp/ "${RELEASE_DIR}/mcp/" 2>/dev/null || true
+  line 2938  dist_from_marker=73      echo "MCP config exists at ${MCP_CONFIG_DIR} — add superbridge-mcp manually"
+  line 2940  dist_from_marker=75      echo '{"mcpServers":{"superbridge-mcp":{"command":"node","args":["'"${INSTALL_DIR}"'/m
+  line 2944  dist_from_marker=79  if [[ -f "${INSTALL_DIR}/mcp/superbridge-mcp/package.json" ]]; then
+  line 2946  dist_from_marker=81      (cd "${INSTALL_DIR}/mcp/superbridge-mcp" && npm install && npm run build) || \
+  line 2985  dist_from_marker=120      "mcp_server": "superbridge-mcp (5 tools, TypeScript)",
+-- APPENDIX.md
+  line 26  dist_from_marker=-1  - [F. SuperBridge MCP Server — `src/index.ts`](#f-superbridge-mcp-server--srcindexts)
+  line 73  dist_from_marker=-1    - name: superbridge-mcp
+  line 122  dist_from_marker=-1      server: superbridge-mcp
+  line 125  dist_from_marker=-1      server: superbridge-mcp
+  line 128  dist_from_marker=-1      server: superbridge-mcp
+  line 131  dist_from_marker=-1      server: superbridge-mcp
+  line 134  dist_from_marker=-1      server: superbridge-mcp
+  line 447  dist_from_marker=18        "cwd": "${PROJECT_ROOT}/superbridge-mcp",
+  line 1045  dist_from_marker=616    { name: 'superbridge-mcp', version: '1.0.0' },
+
+=== export currency (pdftotext marker count, docx->plain marker count, mtime order)
+-- EXTENSION_DEVELOPMENT: pdf_markers=2 docx_markers=2 html_markers=2
+2026-09-23 08:50:54.991349187 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md
+2026-09-23 08:51:29.095845080 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.html
+2026-09-23 08:51:44.732310734 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.pdf
+2026-09-23 08:52:32.993349613 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.docx
+-- APPENDIX: pdf_markers=1 docx_markers=1 html_markers=1
+2026-09-23 08:50:55.007372405 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md
+2026-09-23 08:51:46.756312365 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.html
+2026-09-23 08:52:01.244324036 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.pdf
+2026-09-23 08:52:33.704350186 +0200 constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.docx
+
+=== constitution git status for corpus dir (must be clean = exports committed)
+(empty above = clean)
+=== b1303c2 touched:
+b1303c2 HXC-159 F-10: retire stale SuperBridge MCP references with local markers
+ .../implementation/APPENDIX.docx                   | Bin 57628 -> 58048 bytes
+ .../implementation/APPENDIX.html                   | 439 +++++++--------------
+ .../speckit_superpowers/implementation/APPENDIX.md |  12 +-
+ .../implementation/APPENDIX.pdf                    | Bin 267991 -> 241542 bytes
+ .../implementation/EXTENSION_DEVELOPMENT.docx      | Bin 63753 -> 64454 bytes
+ .../implementation/EXTENSION_DEVELOPMENT.html      |  74 ++--
+ .../implementation/EXTENSION_DEVELOPMENT.md        |  23 +-
+ .../implementation/EXTENSION_DEVELOPMENT.pdf       | Bin 270493 -> 272737 bytes
+ 8 files changed, 232 insertions(+), 316 deletions(-)

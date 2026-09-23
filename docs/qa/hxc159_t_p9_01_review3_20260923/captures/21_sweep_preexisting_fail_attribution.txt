@@ -1,0 +1,141 @@
+=== G7 (feature commits lacking docs/qa evidence) — are HXC-159 commits implicated?
+===========================================================================
+ §11.4.83 docs/qa/ end-user evidence — ENFORCING release gate
+===========================================================================
+ Scope     : 925169c98945ca0fee1e84dae53ad494e4897832..HEAD  (commits before the baseline are exempt)
+ Opt-out   : commits whose message contains [no-qa-evidence] are exempt
+ Exit      : 0 when clean, 1 on any violation (release-gate blocking).
+---------------------------------------------------------------------------
+  VIOL   e2135a17  HXC-159 F-01: wire external skill tier through the real pkg/skills policy engine
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   18ea70e5  HXC-159 F-13: investigate builtin_skills divergence — real root cause, not a simple sync bug
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   321dca40  HXC-159 T-P9.01: external tier follows symlinked skill directories (P1↔P5 seam defect)
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   0b97f2f4  HXC-159 P7 (helix_code side): T-P7.01/T-P7.02/T-P7.04/T-P7.05 tooling
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   465b814b  HXC-159 T-P5.04: generate .mcp.json entries from the manifest
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   964d13d8  HXC-159 T-P5.03 + T-P5.05: unify user skills dir + wire external tier
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   6c0b08e5  HXC-159 T-P5.01: export a Skill constructor (NewSkill)
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   9850f84d  feat: implement HelixLLM Provider Toolkit Binding (spec 005) - complete implementation
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   859c22ca  feat: add provider startup files from spec 005
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   8dbe13c5  feat: implement HelixLLM Provider Toolkit Binding (spec 005)
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   318598a5  test(toolcall): recorded wire corpus so the tool-call guards stop flaking
+         -> no docs/qa evidence: commit adds none, none cites its SHA, subject names no run-id
+  VIOL   b1af49d0  fix(discovery): allocate fallback ports outside the OS ephemeral range
+
+=== G2 bluff markers — any in HXC-159-touched files?
+/tmp/g20-sgn.out
+/tmp/g21-red.out
+/tmp/g22-i18n.out
+/tmp/g23-cors.out
+/tmp/g24-export-loc.out
+/tmp/g25-mcp-port.out
+/tmp/g26-mcp-cors.out
+/tmp/g27-qa-citation.out
+/tmp/g28-module-identity.out
+/tmp/g29-wi-binary-fresh.out
+/tmp/g23-cors.out
+/tmp/g21-red.out
+CM-SUPERSEDED-GENERATOR-NAMING: 21 correctly-marked reference(s) across 12 governed carrier(s), 0 violation(s)
+CM-QA-TRANSCRIPT-REDACTION-FAIL-CLOSED  RED_MODE=0 (standing GREEN guard)
+  [ok] fail-open sed construct absent from the library's executable source
+  [ok] gate and library agree on the redaction marker
+  [ok] check (0) detector FIRES on a planted executable construct (paired mutation)
+  [ok] check (0) detector ignores comment-only occurrences (negative control)
+  [ok] redaction marker matches no scan pattern (loop termination safe)
+  [ok] metacharacter secret removed (literal replacement, no regex)
+  [ok] metacharacter battery: all 8 variants removed or aborted loudly
+  [ok] degenerate no-op (marker registered as secret) does not abort
+  [ok] plain secret removed
+  [ok] server-originated Set-Cookie neutralised by the post-write scan
+  [ok] unregistered provider-shaped key: file quarantined (rc=1) — Layer 3 wired
+  [ok] all 4 same-line credentials removed (greedy-extract + allowlist-masking closed)
+  [ok] .scan-secrets-allow does not exempt docs/qa transcripts — Layer 3 real
+  [ok] unscrubbable secret: aborted loudly (rc=1)
+  [ok] abort message present on stderr (not swallowed)
+  [ok] abort terminates the whole capture script (rc=1), not just a subshell
+  [ok] unscrubbable transcript quarantined, not left for a later commit
+  [ok] no secret value appears in any failure output
+  [ok] benign transcript untouched (no false positive on WS digest / trace id / response id)
+CM-TOOLSCHEMA-I18N-DEFAULT-RESOLVES  RED_MODE=0
+  module : digital.vasic.toolschema (/home/milosvasic/Projects/helix_code/submodules/tool_schema)
+  source : package default is NoopTranslator{} ? no
+  tree   : submodules/tool_schema byte-clean, unchanged by the probe (porcelain empty)
+    GATEPROBE r1_default id=toolschema_git_desc_commit got="Create git commit" want="Create git commit"
+    GATEPROBE r2_interp id=toolschema_err_invalid_file_path got="invalid file path: /gate/probe/path" template="invalid file path: {{.Path}}"
+    GATEPROBE r3_noop id=toolschema_git_desc_commit got="toolschema_git_desc_commit"
+    GATEPROBE r4_restore id=toolschema_git_desc_commit got="Create git commit" want="Create git commit"
+    GATEPROBE RESULT default_resolves=yes interpolation_ok=yes noop_echoes=yes restore_ok=yes
+GREEN PASS (RUNTIME EVIDENCE) — the zero-wired package default resolves real bundle text
+           matching i18n/bundles/active.en.yaml, placeholder interpolation renders, SetTranslator(nil)
+           restores that default, and NoopTranslator still echoes verbatim (negative
+           control alive). Probed in a fresh process; submodule tree left byte-clean.
+== CM-MOCK-SERVICES-CORS-ALLOWLIST (HXC-194) ==
+-- module: llm-provider
+   ok   green: hostile origin denied (simple + preflight), permitted origin accepted,
+              no-Origin client unaffected, no wildcard emitted
+   ok   red:   RED_MODE=1 correctly fails — defect absent, guard falsifiable
+   ok   source: no wildcard Allow-Origin literal in service code
+-- module: slack
+   ok   green: hostile origin denied (simple + preflight), permitted origin accepted,
+              no-Origin client unaffected, no wildcard emitted
+   ok   red:   RED_MODE=1 correctly fails — defect absent, guard falsifiable
+   ok   source: no wildcard Allow-Origin literal in service code
+RESULT: PASS — green=2/2 red_falsifiable=2/2 source_clean=2/2
+CM-EXPORT-OUTPUT-LOCATION: PASS — documented export invocation wrote docs/{Issues,Fixed,Issues_Summary,Fixed_Summary}.md to the caller's real docs/ tree; nothing landed inside the relocated tool directory
+CM-MCP-SERVER-PORT-AGREEMENT  RED_MODE=0
+CM-MCP-SERVER-PORT-AGREEMENT: PASS — bind=9100 published=9100 probed=via-MCP_PORT transport=sse; all three agree, observed at runtime under the container's own environment
+  ok  source:   no wildcard Allow-Origin literal in src/
+  ok  artifact: no wildcard Allow-Origin literal in tracked dist/
+  ok  green:    hostile origin denied (preflight + simple), permitted origin echoed
+               with Vary: Origin, no-Origin client unaffected
+  ok  red:      RED_MODE=1 correctly fails — defect absent, guard falsifiable
+
+CM-MCP-SERVER-CORS-ALLOWLIST: PASS — 4 assertion(s) evaluated, 0 violation(s)
+RESULT: green=1/1 red_falsifiable=1/1 source_clean=1/1 artifact_clean=1/1
+===========================================================================
+ HXC-186 — RULE 3 citation-vs-coincidence meta-test
+   RED_MODE=0  (asserting the DEFECT IS ABSENT (regression guard))
+   temp repo : /tmp/qa-citation-coincidence.BSdSuJ/repo
+   baseline  : f774306ca6807c0eb2f991ae9fa852add5c3e93b
+===========================================================================
+  PASS: (1) GREEN: a bare HEAD-provenance stamp does NOT clear an unrelated feature commit → exit 1 (got 1)
+  PASS: (2) INVARIANT: a DECLARED '**Source commit:**' citation clears its commit → exit 0 (got 0)
+  PASS: (3) INVARIANT: RULE 1 (commit ships its own docs/qa path) still clears → exit 0 (got 0)
+  PASS: (4) GREEN: an incidental scratch-path SHA does NOT clear it → exit 1 (got 1)
+---------------------------------------------------------------------------
+ RESULT: PASS — the coincidence defect is ABSENT on this artifact
+         (regression guard green; declared citations and RULE 1 unaffected).
+===========================================================================
+CM-MODULE-IDENTITY-EXACT-MATCH  RED_MODE=0
+  root  go.mod module path : dev.helix.code/meta   (/home/milosvasic/Projects/helix_code/go.mod)
+  inner go.mod module path : dev.helix.code   (/home/milosvasic/Projects/helix_code/helix_code/go.mod)
+  S1a genuine recurrence caught (identical paths)         : yes   (want yes)
+  S1b prefix-lookalike NOT falsely caught, BOTH orders    : yes   (want yes)
+  S1c OLD substring predicate DOES misfire on the lookalike: yes   (want yes — reproduces the historical bug's mechanism)
+  S1d historical R-26 pair NOT falsely caught, BOTH orders: yes   (want yes)
+GREEN PASS — root go.mod (dev.helix.code/meta) and inner go.mod (dev.helix.code) are exact-match distinct,
+             verified via module_paths_identical() (scripts/lib/module_identity.sh) — never a
+             substring/prefix test. The reconstructed OLD substring predicate would have
+             wrongly flagged this pair as a collision (see S1c above); this guard would not.
+=== RED_MODE=0 — standing guard: the SHIPPED binary carries the invariant ===
+  S1 yes — tracked binary reports the violation on the golden-bad fixture
+  S2 yes — tracked binary stays silent when the evidence file exists
+  S3 NOTE (advisory, not a failure basis) — at least one source file is
+         newer than the tracked binary: /home/milosvasic/Projects/helix_code/constitution/scripts/workable-items/cmd/workable-items/export.go
+         S1/S2 still pass, so the invariant under guard IS present; but a
+         newer source may carry OTHER changes the artifact lacks. Consider
+         rebuilding and extending this gate's fixtures for them.
+GREEN PASS — the shipped workable-items binary genuinely carries the
+             closure-evidence-resolvability invariant (behaviour-asserted,
+             not mtime-inferred).
+
+=== G1-G36 verdicts: F-09's own evidence run vs this run
+(compared 36 rows)

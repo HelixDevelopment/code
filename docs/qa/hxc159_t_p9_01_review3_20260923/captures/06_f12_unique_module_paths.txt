@@ -1,0 +1,76 @@
+=== F-12: CM-UNIQUE-MODULE-PATHS live run
+INFO CM-UNIQUE-MODULE-PATHS — 15 duplicate module path(s) grandfathered per scripts/gates/unique_module_paths_grandfathered.tsv (HXC-159 F-12; not caused by this repo, tracked, never silently expanded):
+  'digital.vasic.challenges' (grandfathered) declared by:
+    - submodules/challenges/go.mod
+    - submodules/claude-toolkit/submodules/challenges/go.mod
+  'digital.vasic.challenges.memprobe' (grandfathered) declared by:
+    - submodules/challenges/challenges/fixtures/memprobe/go.mod
+    - submodules/claude-toolkit/submodules/challenges/challenges/fixtures/memprobe/go.mod
+  'digital.vasic.containers' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/containers/go.mod
+    - submodules/containers/go.mod
+  'digital.vasic.docs_chain' (grandfathered) declared by:
+    - constitution/submodules/docs_chain/go.mod
+    - submodules/claude-toolkit/constitution/submodules/docs_chain/go.mod
+    - submodules/docs_chain/go.mod
+  'digital.vasic.llmsverifier' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/llm-verifier/go.mod
+    - submodules/llms_verifier/llm-verifier/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity' (grandfathered) declared by:
+    - constitution/scripts/doc_integrity/go.mod
+    - submodules/claude-toolkit/constitution/scripts/doc_integrity/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/llm-alias-health' (grandfathered) declared by:
+    - constitution/scripts/llm-alias-health/go.mod
+    - submodules/claude-toolkit/constitution/scripts/llm-alias-health/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine' (grandfathered) declared by:
+    - constitution/scripts/scheduled-work-engine/go.mod
+    - submodules/claude-toolkit/constitution/scripts/scheduled-work-engine/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/workable-items' (grandfathered) declared by:
+    - constitution/scripts/workable-items/go.mod
+    - submodules/claude-toolkit/constitution/scripts/workable-items/go.mod
+  'github.com/HelixDevelopment/helix_perf_cache' (grandfathered) declared by:
+    - constitution/submodules/helix_perf_cache/go.mod
+    - submodules/claude-toolkit/constitution/submodules/helix_perf_cache/go.mod
+  'github.com/vasic-digital/continuum' (grandfathered) declared by:
+    - constitution/submodules/continuum/go.mod
+    - submodules/claude-toolkit/constitution/submodules/continuum/go.mod
+  'github.com/vasic-digital/session_orchestrator' (grandfathered) declared by:
+    - constitution/submodules/session_orchestrator/go.mod
+    - submodules/claude-toolkit/constitution/submodules/session_orchestrator/go.mod
+  'github.com/vasic-digital/token_optimizer' (grandfathered) declared by:
+    - constitution/submodules/token_optimizer/go.mod
+    - submodules/claude-toolkit/constitution/submodules/token_optimizer/go.mod
+  'llmsverifier' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/go.mod
+    - submodules/llms_verifier/go.mod
+  'scoring-example' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/examples/scoring/go.mod
+    - submodules/llms_verifier/examples/scoring/go.mod
+PASS CM-UNIQUE-MODULE-PATHS — 155 live modules; 15 pre-existing duplicate(s) grandfathered, zero NEW duplicates
+exit=0
+
+=== grandfather allowlist:
+5:# (T-P9.01) via a GRANDFATHERED-ALLOWLIST (scripts/gates/unique_module_paths_grandfathered.tsv),
+9:# file is grandfathered is reported informationally and does NOT fail the
+10:# gate; a module path with ANY non-grandfathered declarer still FAILs. The
+11:# grandfather list shrinks only (§11.4.135 ratchet) — a NEW duplicate anywhere
+73:# Split the duplicate set into GRANDFATHERED (every declarer of this module
+74:# path is a pre-existing, allowlisted collision — see the header) and NEW
+75:# (at least one declarer is not covered by the allowlist). Only NEW dupes
+76:# fail the gate; grandfathered ones are reported informationally so the
+77:# allowlist can never silently hide the class.
+78:GRANDFATHER="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/unique_module_paths_grandfathered.tsv"
+79:is_grandfathered_path() {
+81:  [[ -f "$GRANDFATHER" ]] || return 1
+82:  awk -F'\t' -v p="$p" '!/^#/ && NF && $1==p {found=1} END{exit !found}' "$GRANDFATHER"
+85:declare -a new_dupes=() grandfathered_dupes=()
+88:  if is_grandfathered_path "$d"; then
+89:    grandfathered_dupes+=("$d")
+95:if [[ "${#grandfathered_dupes[@]}" -gt 0 ]]; then
+96:  echo "INFO CM-UNIQUE-MODULE-PATHS — ${#grandfathered_dupes[@]} duplicate module path(s) grandfathered per scripts/gates/unique_module_paths_grandfathered.tsv (HXC-159 F-12; not caused by this repo, tracked, never silently expanded):"
+97:  for d in "${grandfathered_dupes[@]}"; do
+98:    echo "  '$d' (grandfathered) declared by:"
+
+40 scripts/gates/unique_module_paths_grandfathered.tsv
+=== is the removed nested copy really gone from tracking + disk?
+ls: cannot access 'helix_code/tests/e2e/orchestrator/tests': No such file or directory

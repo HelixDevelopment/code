@@ -1,0 +1,22 @@
+=== F-18 fix: gate live (must still PASS, 15 grandfathered)
+INFO CM-UNIQUE-MODULE-PATHS — 15 duplicate module path(s) grandfathered per scripts/gates/unique_module_paths_grandfathered.tsv (HXC-159 F-12; not caused by this repo, tracked, never silently expanded):
+PASS CM-UNIQUE-MODULE-PATHS — 155 live modules; 15 pre-existing duplicate(s) grandfathered, zero NEW duplicates
+exit=0
+
+=== F-18: re-run the round-3 mutation probe (extra declarer of a grandfathered path) — expect FAIL naming it
+FAIL CM-UNIQUE-MODULE-PATHS — 1 NEW (non-grandfathered) duplicate module path(s) among 156 live modules:
+  'digital.vasic.containers' is grandfathered for a FIXED declarer set, but these live declarer(s) are NOT in it: helix_code/tmp_review3_dupe_probe/go.mod 
+    - helix_code/tmp_review3_dupe_probe/go.mod
+gate exit=1 (expect 1)
+
+=== F-18: RED test RED_MODE=0 (i)(ii)(iii)
+GUARD PASS (i): live tree passes with known claude-toolkit duplicates honestly grandfathered.
+GUARD PASS (ii): a genuinely new, non-grandfathered duplicate still FAILs the gate.
+GUARD PASS (iii): a new declarer of a grandfathered module path still FAILs the gate (declarer-set ratchet).
+VERDICT: WIRED
+exit=0
+=== bash -n
+syntax-ok
+ M scripts/gates/unique_module_paths_gate.sh
+ M scripts/gates/unique_module_paths_grandfathered.tsv
+ M scripts/tests/unique_module_paths_grandfather_red_test.sh
