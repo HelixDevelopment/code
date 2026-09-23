@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"dev.helix.code/internal/commands"
 	skillslib "github.com/HelixDevelopment/skills/pkg/skills"
 )
 
@@ -37,7 +38,7 @@ func TestPolicyGateExternalTier_CeilingRefusesTheWholeTier(t *testing.T) {
 		writeExternalSkill(t, dir, fmt.Sprintf("skill-%02d", i))
 	}
 
-	active, refusal, err := PolicyGateExternalTier(dir)
+	active, _, refusal, err := PolicyGateExternalTier(dir)
 	if err != nil {
 		t.Fatalf("PolicyGateExternalTier returned an infrastructure error, expected a policy refusal: %v", err)
 	}
@@ -60,7 +61,7 @@ func TestPolicyGateExternalTier_UnderCeilingIsAdmitted(t *testing.T) {
 	dir := t.TempDir()
 	writeExternalSkill(t, dir, "solo-skill")
 
-	active, refusal, err := PolicyGateExternalTier(dir)
+	active, _, refusal, err := PolicyGateExternalTier(dir)
 	if err != nil {
 		t.Fatalf("PolicyGateExternalTier returned an error for a policy-compliant tier: %v", err)
 	}
@@ -72,11 +73,98 @@ func TestPolicyGateExternalTier_UnderCeilingIsAdmitted(t *testing.T) {
 	}
 }
 
+// writeExternalSkillWithDescription is writeExternalSkill's description-
+// carrying sibling — needed to construct a genuine similarity conflict
+// (writeExternalSkill's fixture description is identical across every
+// skill it writes, by design, for the ceiling tests that don't care about
+// similarity).
+func writeExternalSkillWithDescription(t *testing.T, dir, name, description string) {
+	t.Helper()
+	skillDir := filepath.Join(dir, name)
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := fmt.Sprintf("---\nname: %s\ndescription: %s\n---\nBody for %s.\n", name, description, name)
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestPolicyGateExternalTier_SimilarityConflictExcludesOnlyThePair is the
+// HXC-159 F-17 (2026-09-23) residual-remediation proof at helix_code's own
+// call site: a confusable pair no longer refuses the whole external tier —
+// exactly one member is admitted (the alphabetically-first Qualified()
+// identity) and a third, unrelated skill in the same directory still
+// admits alongside it.
+func TestPolicyGateExternalTier_SimilarityConflictExcludesOnlyThePair(t *testing.T) {
+	dir := t.TempDir()
+	writeExternalSkillWithDescription(t, dir, "alpha-skill", "validate recording screenshot capture evidence pipeline")
+	writeExternalSkillWithDescription(t, dir, "beta-skill", "validate recording screenshot capture evidence pipeline")
+	writeExternalSkillWithDescription(t, dir, "gamma-skill", "translate legal contracts between spanish and portuguese dialects")
+
+	active, exclusions, refusal, err := PolicyGateExternalTier(dir)
+	if err != nil {
+		t.Fatalf("PolicyGateExternalTier returned an unexpected infrastructure error: %v", err)
+	}
+	if refusal != nil {
+		t.Fatalf("a similarity conflict must NOT refuse the whole tier under partial admission, got refusal: %v", refusal)
+	}
+	if len(active) != 2 {
+		t.Fatalf("expected exactly 2 admitted (one of the confusable pair + the unrelated skill), got %d: %+v", len(active), active)
+	}
+	byName := map[string]bool{}
+	for _, s := range active {
+		byName[s.Name] = true
+	}
+	if byName["alpha-skill"] == byName["beta-skill"] {
+		t.Fatalf("exactly one of alpha-skill/beta-skill must be admitted, got both present=%v", byName["alpha-skill"] && byName["beta-skill"])
+	}
+	if !byName["alpha-skill"] {
+		t.Fatalf("tie-break must keep alpha-skill (alphabetically first), got %+v", byName)
+	}
+	if !byName["gamma-skill"] {
+		t.Fatalf("the unrelated, non-conflicting skill must still be admitted under partial admission, got %+v", byName)
+	}
+	if len(exclusions) != 1 || exclusions[0].Excluded != "external.beta-skill" || exclusions[0].ConflictsWith != "external.alpha-skill" {
+		t.Fatalf("expected exactly one auditable exclusion naming beta-skill excluded by alpha-skill, got %+v", exclusions)
+	}
+}
+
+// TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded
+// is the PRODUCTION-ENTRY-POINT proof that LoadExternalTierIntoRegistry
+// (not merely the policy-gate helper) correctly implements partial
+// admission end-to-end: commands.SkillLoader unconditionally loads the
+// WHOLE directory, so this function MUST prune the excluded name back out
+// afterward — proving that prune actually happens, not merely that the
+// gate computed the right verdict in isolation.
+func TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded(t *testing.T) {
+	dir := t.TempDir()
+	writeExternalSkillWithDescription(t, dir, "alpha-skill", "validate recording screenshot capture evidence pipeline")
+	writeExternalSkillWithDescription(t, dir, "beta-skill", "validate recording screenshot capture evidence pipeline")
+	writeExternalSkillWithDescription(t, dir, "gamma-skill", "translate legal contracts between spanish and portuguese dialects")
+
+	reg := commands.NewSkillRegistry()
+	if err := LoadExternalTierIntoRegistry(reg, dir); err != nil {
+		t.Fatalf("LoadExternalTierIntoRegistry returned an unexpected error: %v", err)
+	}
+	if _, ok := reg.Get("alpha-skill"); !ok {
+		t.Fatal("alpha-skill (the tie-break winner) must be registered end-to-end")
+	}
+	if _, ok := reg.Get("gamma-skill"); !ok {
+		t.Fatal("gamma-skill (unrelated, non-conflicting) must be registered end-to-end")
+	}
+	if _, ok := reg.Get("beta-skill"); ok {
+		t.Fatal("beta-skill (excluded by the similarity gate) must NOT be registered — " +
+			"commands.SkillLoader loads the whole directory unconditionally, so LoadExternalTierIntoRegistry " +
+			"must prune excluded names back out, not merely compute the correct verdict without acting on it")
+	}
+}
+
 // TestPolicyGateExternalTier_AbsentDirIsNotAnError matches the pre-existing
 // AllSkillsDirs contract: a nonexistent external-tier directory is
 // silently skipped, not a policy question and not an infrastructure error.
 func TestPolicyGateExternalTier_AbsentDirIsNotAnError(t *testing.T) {
-	active, refusal, err := PolicyGateExternalTier(filepath.Join(t.TempDir(), "does-not-exist"))
+	active, _, refusal, err := PolicyGateExternalTier(filepath.Join(t.TempDir(), "does-not-exist"))
 	if err != nil || refusal != nil || active != nil {
 		t.Fatalf("expected (nil, nil, nil) for an absent directory, got active=%v refusal=%v err=%v", active, refusal, err)
 	}
@@ -129,7 +217,7 @@ func TestPolicyGateExternalTier_C5SandboxPreconditionIsReachable(t *testing.T) {
 	dir := t.TempDir()
 	writeExternalSkill(t, dir, "third-party-skill")
 
-	active, refusal, err := policyGateExternalTierWithTrust(dir, skillslib.TrustThirdParty)
+	active, _, refusal, err := policyGateExternalTierWithTrust(dir, skillslib.TrustThirdParty)
 	if err != nil {
 		t.Fatalf("expected a policy refusal, got an infrastructure error: %v", err)
 	}

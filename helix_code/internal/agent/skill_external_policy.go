@@ -73,28 +73,36 @@ const externalTierDialect = skillslib.DialectHelixCode
 // PolicyGateExternalTier runs the shared pkg/skills policy engine — source
 // registration, Load (now symlink-aware after this same fix round's
 // loader.go correction), and Activate's allowlist + activation-ceiling +
-// description-similarity + C5-sandbox-precondition checks — over dir and
-// reports the outcome as one of three DISTINCT cases, never collapsed:
+// description-similarity (HXC-159 F-17, 2026-09-23: now PER-SKILL partial
+// admission, not whole-tier fail-closed) + C5-sandbox-precondition checks —
+// over dir and reports the outcome as one of three DISTINCT cases, never
+// collapsed:
 //
-//  1. dir does not exist (or is empty/""): (nil, nil, nil) — matches the
-//     pre-existing "AllSkillsDirs entries are silently skipped when
+//  1. dir does not exist (or is empty/""): (nil, nil, nil, nil) — matches
+//     the pre-existing "AllSkillsDirs entries are silently skipped when
 //     absent" contract; this is not a policy question.
-//  2. the policy GENUINELY REFUSES the tier (ceiling exceeded, a
-//     similarity conflict, or the C5 sandbox precondition failing for a
-//     third-party-tier skill): (nil, <refusal>, nil). Refusal is
-//     fail-closed over the WHOLE tier — Registry.Activate's allowlist here
-//     is every skill the directory contains, and Activate is all-or-
-//     nothing over that list, so a refusal means NONE of the tier's
-//     skills may be exposed this load, not a silent partial admission.
+//  2. the policy GENUINELY REFUSES THE WHOLE TIER (ceiling exceeded, or
+//     the C5 sandbox precondition failing for a third-party-tier skill):
+//     (nil, nil, <refusal>, nil). These two checks remain whole-set
+//     fail-closed (unchanged by F-17 — see pkg/skills.Registry.Activate's
+//     doc comment): a ceiling breach is a resource-budget concern over the
+//     WHOLE candidate set, and the sandbox precondition is a readiness gate
+//     on the WHOLE admitted set, neither is a pairwise conflict eligible
+//     for partial admission.
 //  3. a genuine load/registration error (malformed front-matter, an
-//     unreadable file, a duplicate qualified identity): (nil, nil, err).
+//     unreadable file, a duplicate qualified identity): (nil, nil, nil, err).
 //
-// On success (case where policy admits the tier), active holds the full,
-// policy-approved skill set discovered — callers that want the RENDERED
+// On success (case where policy does not whole-tier-refuse), active holds
+// the PARTIAL, policy-approved skill set — a description-similarity
+// conflict between two skills in dir no longer refuses the whole tier; it
+// excludes only the conflicting pair's alphabetically-later member (per
+// pkg/skills.admitBySimilarity's deterministic tie-break), and exclusions
+// names every excluded skill + which already-admitted skill it conflicted
+// with + the score, for the caller to log. Callers that want the RENDERED
 // bodies (not just the policy verdict) still load the directory through
 // their own existing skill loader afterward; this function's job is
-// solely the ADMIT/REFUSE decision.
-func PolicyGateExternalTier(dir string) (active []skillslib.Skill, refusal error, err error) {
+// solely the ADMIT/EXCLUDE/REFUSE decision.
+func PolicyGateExternalTier(dir string) (active []skillslib.Skill, exclusions []skillslib.SimilarityExclusion, refusal error, err error) {
 	return policyGateExternalTierWithTrust(dir, externalTierTrust)
 }
 
@@ -106,12 +114,12 @@ func PolicyGateExternalTier(dir string) (active []skillslib.Skill, refusal error
 // the library and trusted by inspection. PolicyGateExternalTier's exported
 // contract always uses externalTierTrust; this parameterisation is not
 // itself part of the public seam.
-func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (active []skillslib.Skill, refusal error, err error) {
+func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (active []skillslib.Skill, exclusions []skillslib.SimilarityExclusion, refusal error, err error) {
 	if dir == "" {
-		return nil, nil, nil
+		return nil, nil, nil, nil
 	}
 	if _, statErr := os.Stat(dir); statErr != nil {
-		return nil, nil, nil
+		return nil, nil, nil, nil
 	}
 
 	reg := skillslib.NewRegistry()
@@ -123,14 +131,14 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 		Trust:      trust,
 	}
 	if regErr := reg.RegisterSource(src); regErr != nil {
-		return nil, nil, fmt.Errorf("external skill tier %q: register source: %w", dir, regErr)
+		return nil, nil, nil, fmt.Errorf("external skill tier %q: register source: %w", dir, regErr)
 	}
 	loaded, loadErr := reg.Load()
 	if loadErr != nil {
-		return nil, nil, fmt.Errorf("external skill tier %q: load: %w", dir, loadErr)
+		return nil, nil, nil, fmt.Errorf("external skill tier %q: load: %w", dir, loadErr)
 	}
 	if len(loaded) == 0 {
-		return nil, nil, nil
+		return nil, nil, nil, nil
 	}
 
 	reg.SetSandboxReady(os.Getenv(externalTierSandboxReadyEnvVar) == "true")
@@ -139,16 +147,18 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 	for _, s := range loaded {
 		allow = append(allow, s.Qualified())
 	}
-	activated, actErr := reg.Activate(allow, 0)
+	activated, excl, actErr := reg.Activate(allow, 0)
 	if actErr != nil {
-		// A policy refusal (CeilingExceededError, SimilarityConflictError,
-		// ThirdPartyActivationBlockedError, UnknownAllowEntryError) is NOT
-		// a load error: the external tier is genuinely, correctly refused —
+		// A whole-tier policy refusal (CeilingExceededError,
+		// ThirdPartyActivationBlockedError, UnknownAllowEntryError) is NOT a
+		// load error: the external tier is genuinely, correctly refused —
 		// report it as the refusal return, not the err return, so callers
 		// can log/skip rather than treating it as an infrastructure fault.
-		return nil, actErr, nil
+		// (SimilarityConflictError no longer exists per F-17: a similarity
+		// conflict is reported via excl below, never actErr.)
+		return nil, nil, actErr, nil
 	}
-	return activated, nil, nil
+	return activated, excl, nil, nil
 }
 
 // LoadExternalTierIntoRegistry is the SINGLE production seam every front-end
@@ -167,13 +177,23 @@ func policyGateExternalTierWithTrust(dir string, trust skillslib.TrustTier) (act
 // callers pass whatever they resolved so a fresh env-var read is not forced
 // on every call. reg is the caller's OWN commands.SkillRegistry; this
 // function ADDS to it exactly the skills PolicyGateExternalTier admits and
-// adds NOTHING when the tier is refused or the directory is absent/empty —
-// it never partially loads a refused tier.
+// adds NOTHING when the whole tier is refused (ceiling/sandbox) or the
+// directory is absent/empty.
+//
+// HXC-159 F-17 (2026-09-23): PolicyGateExternalTier now performs PER-SKILL
+// (partial) admission on a similarity conflict — active may be a STRICT
+// SUBSET of everything dir contains. commands.SkillLoader has no
+// directory-scoped filtered-load primitive of its own (Reload() walks and
+// registers the WHOLE directory unconditionally, T1.6), so after the
+// unconditional load this function PRUNES every policy-excluded name back
+// out of reg via SkillRegistry.Remove — a confusable, policy-refused skill
+// is never left silently registered just because it shares a directory
+// with an admitted one.
 func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error {
 	if dir == "" {
 		return nil
 	}
-	active, refusal, err := PolicyGateExternalTier(dir)
+	active, exclusions, refusal, err := PolicyGateExternalTier(dir)
 	if err != nil {
 		return fmt.Errorf("skill activation: external tier policy gate %q: %w", dir, err)
 	}
@@ -188,5 +208,22 @@ func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error
 	if loadErr := loader.Load(); loadErr != nil {
 		return fmt.Errorf("skill activation: load %q: %w", dir, loadErr)
 	}
+	for _, ex := range exclusions {
+		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
+		reg.Remove(externalTierBareName(ex.Excluded))
+	}
 	return nil
+}
+
+// externalTierBareName strips the fixed "external." source qualifier
+// policyGateExternalTierWithTrust always registers its source under,
+// turning a pkg/skills Qualified() identity (e.g. "external.reporting-
+// workable-items") back into the bare skill name commands.SkillRegistry
+// keys its entries by (e.g. "reporting-workable-items").
+func externalTierBareName(qualified string) string {
+	const prefix = "external."
+	if len(qualified) > len(prefix) && qualified[:len(prefix)] == prefix {
+		return qualified[len(prefix):]
+	}
+	return qualified
 }

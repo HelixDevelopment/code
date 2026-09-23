@@ -1,0 +1,38 @@
+== building + running pkg/skills' similarity-probe ==
+{
+  "admitted": [
+    "action-prefix-system",
+    "media-validator",
+    "multitrack",
+    "session-sync"
+  ],
+  "excluded": [
+    {
+      "excluded": "reporting-workable-items",
+      "conflicts_with": "action-prefix-system",
+      "score": 0.38461538461538464,
+      "threshold": 0.0709
+    }
+  ],
+  "refusal": ""
+}
+== building + running helix_agent's similarity-probe ==
+{
+  "admitted": [
+    "action-prefix-system",
+    "media-validator",
+    "multitrack",
+    "session-sync"
+  ],
+  "excluded": [
+    {
+      "excluded": "reporting-workable-items",
+      "conflicts_with": "action-prefix-system",
+      "score": 0.38461538461538464,
+      "threshold": 0.0709
+    }
+  ],
+  "refusal": ""
+}
+== diff ==
+PARITY: IDENTICAL
