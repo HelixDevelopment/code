@@ -1,0 +1,10 @@
+=== RUN   TestEnforceSandboxPrecondition_RefusesThirdPartyWhileSandboxUnready
+--- PASS: TestEnforceSandboxPrecondition_RefusesThirdPartyWhileSandboxUnready (0.00s)
+=== RUN   TestEnforceSandboxPrecondition_AllowsWhenSandboxReady
+--- PASS: TestEnforceSandboxPrecondition_AllowsWhenSandboxReady (0.00s)
+=== RUN   TestEnforceSandboxPrecondition_AllowsNonThirdPartyRegardlessOfSandbox
+--- PASS: TestEnforceSandboxPrecondition_AllowsNonThirdPartyRegardlessOfSandbox (0.00s)
+=== RUN   TestEnforceSandboxPrecondition_NamesEveryOffender
+--- PASS: TestEnforceSandboxPrecondition_NamesEveryOffender (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/skills/pkg/skills	0.004s

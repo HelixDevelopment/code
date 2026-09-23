@@ -1,0 +1,30 @@
+=== RUN   TestHistoricalSplit_CLIConventionVsTUIConvention
+--- PASS: TestHistoricalSplit_CLIConventionVsTUIConvention (0.01s)
+=== RUN   TestUnifiedHelper_SeesEitherLegacyOrCanonical
+--- PASS: TestUnifiedHelper_SeesEitherLegacyOrCanonical (0.01s)
+=== RUN   TestExternalSkillsDir_DefaultsToDotClaudeSkills
+--- PASS: TestExternalSkillsDir_DefaultsToDotClaudeSkills (0.00s)
+=== RUN   TestExternalSkillsDir_ConfigInjected
+--- PASS: TestExternalSkillsDir_ConfigInjected (0.00s)
+=== RUN   TestAllSkillsDirs_ExternalTierIsVisibleAndOverridableByProject
+--- PASS: TestAllSkillsDirs_ExternalTierIsVisibleAndOverridableByProject (0.01s)
+=== RUN   TestUserSkillsDirs_CanonicalOverridesLegacyOnCollision
+--- PASS: TestUserSkillsDirs_CanonicalOverridesLegacyOnCollision (0.00s)
+PASS
+ok  	dev.helix.code/internal/agent	0.087s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/i18n	0.008s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/profiles	0.023s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/subagent	3.664s [no tests to run]
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/task	0.017s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/agent/types	0.045s [no tests to run]

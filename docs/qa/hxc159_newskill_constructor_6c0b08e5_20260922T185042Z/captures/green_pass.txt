@@ -1,0 +1,19 @@
+=== grep for func NewSkill (post-fix) ===
+135:func NewSkill(opts SkillOptions) (*Skill, error) {
+
+=== go vet ./internal/commands/... (post-fix) ===
+
+=== go test -count=1 -v -run TestNewSkill ./internal/commands/... ===
+=== RUN   TestNewSkill_ExternalPackageConstructsInMemory
+--- PASS: TestNewSkill_ExternalPackageConstructsInMemory (0.00s)
+=== RUN   TestNewSkill_RejectsEmptyName
+--- PASS: TestNewSkill_RejectsEmptyName (0.00s)
+=== RUN   TestNewSkill_InvalidTriggerPatternIsSkippedNotFatal
+--- PASS: TestNewSkill_InvalidTriggerPatternIsSkippedNotFatal (0.00s)
+PASS
+ok  	dev.helix.code/internal/commands	0.043s
+testing: warning: no tests to run
+PASS
+ok  	dev.helix.code/internal/commands/builtin	0.051s [no tests to run]
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]

@@ -1,0 +1,7 @@
+# dev.helix.code/internal/skillconformance [dev.helix.code/internal/skillconformance.test]
+internal/skillconformance/report_test.go:39:7: undefined: GenerateReport
+internal/skillconformance/report_test.go:39:27: undefined: DirTierMap
+internal/skillconformance/report_test.go:99:7: undefined: GenerateReport
+internal/skillconformance/report_test.go:99:27: undefined: DirTierMap
+FAIL	dev.helix.code/internal/skillconformance [build failed]
+FAIL

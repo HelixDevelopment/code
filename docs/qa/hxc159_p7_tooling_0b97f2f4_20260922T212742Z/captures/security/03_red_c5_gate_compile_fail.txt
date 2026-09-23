@@ -1,0 +1,9 @@
+# github.com/HelixDevelopment/skills/pkg/skills [github.com/HelixDevelopment/skills/pkg/skills.test]
+pkg/skills/sandbox_gate_test.go:29:9: undefined: EnforceSandboxPrecondition
+pkg/skills/sandbox_gate_test.go:33:15: undefined: ThirdPartyActivationBlockedError
+pkg/skills/sandbox_gate_test.go:50:12: undefined: EnforceSandboxPrecondition
+pkg/skills/sandbox_gate_test.go:64:12: undefined: EnforceSandboxPrecondition
+pkg/skills/sandbox_gate_test.go:77:9: undefined: EnforceSandboxPrecondition
+pkg/skills/sandbox_gate_test.go:78:15: undefined: ThirdPartyActivationBlockedError
+FAIL	github.com/HelixDevelopment/skills/pkg/skills [build failed]
+FAIL

@@ -1,0 +1,6 @@
+=== RUN   TestGenerateReport_RealLoader_ValidatesClean
+--- PASS: TestGenerateReport_RealLoader_ValidatesClean (0.00s)
+=== RUN   TestGenerateReport_MalformedSkillIsVisibleNotFatal
+--- PASS: TestGenerateReport_MalformedSkillIsVisibleNotFatal (0.00s)
+PASS
+ok  	dev.helix.code/internal/skillconformance	0.027s

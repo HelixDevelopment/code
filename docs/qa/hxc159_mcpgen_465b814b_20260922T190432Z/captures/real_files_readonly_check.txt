@@ -1,0 +1,5 @@
+=== READ-ONLY check against the REAL repo-root manifest + .mcp.json ===
+(this invocation NEVER writes to either file — 'check' only reads)
+mcpgen: CM-MCP-ENTRIES-GENERATED: NOT-WIRED — drifted entries: [media-validator session-sync]
+exit status 1
+REAL_GATE_EXIT=1

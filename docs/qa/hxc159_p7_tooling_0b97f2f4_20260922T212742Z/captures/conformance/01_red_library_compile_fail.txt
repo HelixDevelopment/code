@@ -1,0 +1,14 @@
+# github.com/HelixDevelopment/skills/pkg/skills [github.com/HelixDevelopment/skills/pkg/skills.test]
+pkg/skills/conformance_test.go:37:5: undefined: ConformanceSchemaVersion
+pkg/skills/conformance_test.go:58:7: undefined: LibrarySelfReport
+pkg/skills/conformance_test.go:90:17: undefined: CapabilityManifest
+pkg/skills/conformance_test.go:91:10: undefined: CapabilityManifest
+pkg/skills/conformance_test.go:92:19: undefined: ConformanceSchemaVersion
+pkg/skills/conformance_test.go:95:22: undefined: LoaderAPISurface
+pkg/skills/conformance_test.go:100:14: undefined: SkillReport
+pkg/skills/conformance_test.go:109:16: undefined: CapabilityManifest
+pkg/skills/conformance_test.go:111:36: undefined: CapabilityManifest
+pkg/skills/conformance_test.go:112:36: undefined: CapabilityManifest
+pkg/skills/conformance_test.go:112:36: too many errors
+FAIL	github.com/HelixDevelopment/skills/pkg/skills [build failed]
+FAIL

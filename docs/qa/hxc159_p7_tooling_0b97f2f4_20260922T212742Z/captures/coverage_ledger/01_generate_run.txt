@@ -1,0 +1,1 @@
+generate_ledger: wrote 80 rows to /home/milosvasic/Projects/helix_code/qa-results/hxc159/coverage_ledger/20260922T212742Z/ledger.md + ledger.json (8 covered, 72 skipped)

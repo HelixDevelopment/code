@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "consumer": "helix_agent",
+  "generated_at": "2026-09-22T21:51:10Z",
+  "loader_api_surface": {
+    "source_registration": true,
+    "namespaced_identity": false,
+    "capability_declaration": true,
+    "capability_enforcement": true,
+    "allowlist_activation": false,
+    "audit_log": true,
+    "content_hash_provenance": false,
+    "malformed_skill_visibility": true
+  },
+  "skills": [
+    {
+      "qualified_name": "local.skill-catalog",
+      "source": "local",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "local.Workable Item Lifecycle",
+      "source": "local",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "local.Action Prefix System",
+      "source": "local",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "local.Multitrack",
+      "source": "local",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "local.Reporting Workable Items",
+      "source": "local",
+      "trust_tier": "first-party"
+    }
+  ]
+}

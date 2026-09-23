@@ -1,0 +1,19 @@
+=== symlink-vs-realdir isolation of the external tier (review build) ===
+--- A: HELIXCODE_EXTERNAL_SKILLS_DIR=<tmp>/ext_symlink (registrar-shaped: symlink to constitution/skills/skill-catalog)
+0
+--- B: HELIXCODE_EXTERNAL_SKILLS_DIR=<tmp>/ext_realdir (real directory copy)
+1
+--- C: default (.claude/skills relative to cwd=repo root), grep skill-catalog
+0
+--- D: ls -la of the two fixtures
+/tmp/tmp.423IpnH79T/ext_realdir:
+total 0
+drwxrwxr-x 3 milosvasic milosvasic 60 Sep 23 03:32 .
+drwx------ 4 milosvasic milosvasic 80 Sep 23 03:32 ..
+drwxrwxr-x 2 milosvasic milosvasic 60 Sep 23 03:32 skill-catalog
+
+/tmp/tmp.423IpnH79T/ext_symlink:
+total 0
+drwxrwxr-x 2 milosvasic milosvasic 60 Sep 23 03:32 .
+drwx------ 4 milosvasic milosvasic 80 Sep 23 03:32 ..
+lrwxrwxrwx 1 milosvasic milosvasic 70 Sep 23 03:32 skill-catalog -> /home/milosvasic/Projects/helix_code/constitution/skills/skill-catalog

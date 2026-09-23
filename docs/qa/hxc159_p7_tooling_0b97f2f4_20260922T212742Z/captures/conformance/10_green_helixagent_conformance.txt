@@ -1,0 +1,18 @@
+=== RUN   TestGenerateReport_RealService_ValidatesClean
+time="2026-09-22T23:47:15+02:00" level=info msg="Initializing skill service"
+time="2026-09-22T23:47:15+02:00" level=info msg="Loading skills" directory=/tmp/TestGenerateReport_RealService_ValidatesClean4171075092/001
+time="2026-09-22T23:47:15+02:00" level=info msg="Skills loaded successfully" categories=1 failed=0 total=1 triggers=0
+time="2026-09-22T23:47:15+02:00" level=info msg="Hot reload enabled for skills"
+time="2026-09-22T23:47:15+02:00" level=info msg="Skill service initialized" skills_loaded=1
+--- PASS: TestGenerateReport_RealService_ValidatesClean (0.00s)
+=== RUN   TestGenerateReport_MalformedSkillIsVisibleNotFatal
+time="2026-09-22T23:47:15+02:00" level=info msg="Initializing skill service"
+time="2026-09-22T23:47:15+02:00" level=info msg="Loading skills" directory=/tmp/TestGenerateReport_MalformedSkillIsVisibleNotFatal2523703057/001
+time="2026-09-22T23:47:15+02:00" level=warning msg="Skill file failed to parse — surfaced in load report, not silently skipped" error="failed to split frontmatter: unterminated frontmatter" path=/tmp/TestGenerateReport_MalformedSkillIsVisibleNotFatal2523703057/001/bad-skill/SKILL.md
+time="2026-09-22T23:47:15+02:00" level=info msg="Skills loaded successfully" categories=1 failed=1 total=1 triggers=0
+time="2026-09-22T23:47:15+02:00" level=warning msg="Some skill files failed to parse during load — see LoadFailures() for the per-file report" failed_count=1
+time="2026-09-22T23:47:15+02:00" level=info msg="Hot reload enabled for skills"
+time="2026-09-22T23:47:15+02:00" level=info msg="Skill service initialized" skills_loaded=1
+--- PASS: TestGenerateReport_MalformedSkillIsVisibleNotFatal (0.00s)
+PASS
+ok  	dev.helix.agent/internal/skillconformance	0.011s

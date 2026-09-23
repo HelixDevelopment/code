@@ -1,0 +1,16 @@
+# github.com/smacker/go-tree-sitter/lua [dev.helix.code/cmd/cli.test]
+parser.c:254:17: warning: null character(s) preserved in literal
+  254 |   [anon_sym_] = " ",
+      |                 ^
+ok  	dev.helix.code/cmd/cli	29.728s
+ok  	dev.helix.code/cmd/cli/i18n	0.010s
+ok  	dev.helix.code/applications/terminal_ui	0.594s
+ok  	dev.helix.code/applications/terminal_ui/i18n	0.016s
+ok  	dev.helix.code/internal/clientcore	0.076s
+ok  	dev.helix.code/internal/agent	10.716s
+ok  	dev.helix.code/internal/agent/i18n	0.009s
+ok  	dev.helix.code/internal/agent/profiles	0.025s
+ok  	dev.helix.code/internal/agent/subagent	10.422s
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+ok  	dev.helix.code/internal/agent/task	0.030s
+ok  	dev.helix.code/internal/agent/types	0.055s

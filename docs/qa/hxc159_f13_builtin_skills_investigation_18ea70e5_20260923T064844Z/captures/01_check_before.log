@@ -1,0 +1,48 @@
+=== BEFORE: --check (expect FAIL, 7 drifted) ===
+[generate-builtin-skills] DRIFT action-prefix-system — differs from constitution/skills/action-prefix-system:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/action-prefix-system: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/action-prefix-system: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/action-prefix-system: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/action-prefix-system/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/action-prefix-system/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/action-prefix-system: SKILL.pdf
+[generate-builtin-skills] SKIP conventional-commit (no constitution/skills/conventional-commit — not constitution-sourced)
+[generate-builtin-skills] DRIFT media-validator — differs from constitution/skills/media-validator:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/media-validator: media-validator.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/media-validator: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/media-validator: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/media-validator: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/media-validator/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/media-validator/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/media-validator: SKILL.pdf
+[generate-builtin-skills] DRIFT multitrack — differs from constitution/skills/multitrack:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/multitrack: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/multitrack: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/multitrack: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/multitrack/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/multitrack/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/multitrack: SKILL.pdf
+[generate-builtin-skills] DRIFT reporting-workable-items — differs from constitution/skills/reporting-workable-items:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/reporting-workable-items: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/reporting-workable-items: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/reporting-workable-items: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/reporting-workable-items/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/reporting-workable-items/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/reporting-workable-items: SKILL.pdf
+[generate-builtin-skills] DRIFT scheduled-work-queue — differs from constitution/skills/scheduled-work-queue:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/scheduled-work-queue: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/scheduled-work-queue: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/scheduled-work-queue: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/scheduled-work-queue/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/scheduled-work-queue/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/scheduled-work-queue: SKILL.pdf
+[generate-builtin-skills] DRIFT session-sync — differs from constitution/skills/session-sync:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/session-sync: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/session-sync: session-sync.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/session-sync: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/session-sync: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/session-sync/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/session-sync/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/session-sync: SKILL.pdf
+[generate-builtin-skills] DRIFT workable-item-lifecycle — differs from constitution/skills/workable-item-lifecycle:
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/workable-item-lifecycle: register.sh
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/workable-item-lifecycle: SKILL.docx
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/workable-item-lifecycle: SKILL.html
+    Files /home/milosvasic/Projects/helix_code/constitution/skills/workable-item-lifecycle/SKILL.md and /home/milosvasic/Projects/helix_code/helix_code/internal/commands/builtin_skills/workable-item-lifecycle/SKILL.md differ
+    Only in /home/milosvasic/Projects/helix_code/constitution/skills/workable-item-lifecycle: SKILL.pdf
+[generate-builtin-skills] FAIL — 7 drifted (run without --check to regenerate)
+EXIT=1

@@ -1,0 +1,2 @@
+skillparity: FAIL — 3 surface asymmetries, 14 skill asymmetries, none explicitly marked optional on both sides
+exit status 1

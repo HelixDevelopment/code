@@ -1,0 +1,1 @@
+CM-COVERAGE-LEDGER-NO-BLANK: PASS — 80 rows, zero blank cells

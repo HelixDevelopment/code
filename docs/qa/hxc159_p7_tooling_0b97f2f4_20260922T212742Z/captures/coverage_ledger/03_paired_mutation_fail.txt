@@ -1,0 +1,3 @@
+CM-COVERAGE-LEDGER-NO-BLANK: FAIL — 1 violation(s):
+  - row A1: evidence_state is blank/invalid: None
+exit=1

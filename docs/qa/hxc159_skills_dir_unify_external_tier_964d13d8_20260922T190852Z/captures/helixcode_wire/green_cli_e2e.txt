@@ -1,0 +1,23 @@
+=== GREEN (post-T-P5.05 binary): helixcode skills list must show external-e2e-skill ===
+NAME                      DESCRIPTION                                                                                                                                 TRIGGERS                                                                                                                                                                                                                                                                      SOURCE
+external-e2e-skill        installed via the EXTERNAL tier (.claude/skills) fixture                                                                                    (?i)^external e2e trigger$                                                                                                                                                                                                                                                    .claude/skills/external-e2e-skill/SKILL.md
+
+=== invoke the externally-sourced skill directly and confirm REAL rendered output (not a stub, not an error) ===
+WARN: No config file found, using defaults and environment variables
+Name: external-e2e-skill
+Description: installed via the EXTERNAL tier (.claude/skills) fixture
+Source: .claude/skills/external-e2e-skill/SKILL.md
+Requires isolation: false
+Triggers:
+  (?i)^external e2e trigger$
+
+--- Body ---
+EXTERNAL E2E RENDERED BODY {{ARG1}}
+
+=== helixcode skills run (renders the body) ===
+WARN: No config file found, using defaults and environment variables
+Error: unknown command "run" for "skills"
+Run 'skills --help' for usage.
+=== helixcode skills invoke external-e2e-skill (REAL rendered output, not a stub, not an error) ===
+WARN: No config file found, using defaults and environment variables
+EXTERNAL E2E RENDERED BODY, arg was hello-world-arg

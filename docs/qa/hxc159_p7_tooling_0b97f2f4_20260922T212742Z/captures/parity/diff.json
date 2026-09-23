@@ -1,0 +1,88 @@
+{
+  "a_consumer": "helix_code",
+  "b_consumer": "helix_agent",
+  "surface_asymmetries": [
+    {
+      "key": "audit_log",
+      "a_value": false,
+      "b_value": true
+    },
+    {
+      "key": "capability_declaration",
+      "a_value": false,
+      "b_value": true
+    },
+    {
+      "key": "capability_enforcement",
+      "a_value": false,
+      "b_value": true
+    }
+  ],
+  "skill_asymmetries": [
+    {
+      "qualified_name": "builtin.action-prefix-system",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.conventional-commit",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.media-validator",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.multitrack",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.reporting-workable-items",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.scheduled-work-queue",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.session-sync",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "builtin.workable-item-lifecycle",
+      "present_in": "helix_code",
+      "missing_in": "helix_agent"
+    },
+    {
+      "qualified_name": "external.Action Prefix System",
+      "present_in": "helix_agent",
+      "missing_in": "helix_code"
+    },
+    {
+      "qualified_name": "external.Multitrack",
+      "present_in": "helix_agent",
+      "missing_in": "helix_code"
+    },
+    {
+      "qualified_name": "external.Reporting Workable Items",
+      "present_in": "helix_agent",
+      "missing_in": "helix_code"
+    },
+    {
+      "qualified_name": "external.Workable Item Lifecycle",
+      "present_in": "helix_agent",
+      "missing_in": "helix_code"
+    },
+    {
+      "qualified_name": "external.skill-catalog",
+      "present_in": "helix_agent",
+      "missing_in": "helix_code"
+    }
+  ]
+}

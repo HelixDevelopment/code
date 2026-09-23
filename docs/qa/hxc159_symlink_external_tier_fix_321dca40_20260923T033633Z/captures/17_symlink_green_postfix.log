@@ -1,0 +1,5 @@
+=== RUN   TestSkillLoader_FollowsSymlinkedSkillDirectory
+--- PASS: TestSkillLoader_FollowsSymlinkedSkillDirectory (0.00s)
+PASS
+ok  	dev.helix.code/internal/commands	0.031s
+EXIT=0

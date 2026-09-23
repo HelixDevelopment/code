@@ -1,0 +1,4 @@
+=== AFTER: --check (expect PASS, 0 drifted) ===
+[generate-builtin-skills] SKIP conventional-commit (no constitution/skills/conventional-commit — not constitution-sourced)
+[generate-builtin-skills] PASS — 0 drifted, 1 skipped (non-constitution-sourced)
+EXIT=0

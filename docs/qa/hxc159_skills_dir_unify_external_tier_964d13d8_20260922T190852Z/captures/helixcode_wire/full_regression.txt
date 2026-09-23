@@ -1,0 +1,18 @@
+ok  	dev.helix.code/cmd/cli	15.457s
+ok  	dev.helix.code/cmd/cli/i18n	0.007s
+ok  	dev.helix.code/applications/terminal_ui	0.593s
+ok  	dev.helix.code/applications/terminal_ui/i18n	0.014s
+ok  	dev.helix.code/internal/clientcore	0.084s
+ok  	dev.helix.code/internal/agent	9.596s
+ok  	dev.helix.code/internal/agent/i18n	0.006s
+ok  	dev.helix.code/internal/agent/profiles	0.015s
+ok  	dev.helix.code/internal/agent/subagent	6.631s
+?   	dev.helix.code/internal/agent/subagent/testhelper	[no test files]
+ok  	dev.helix.code/internal/agent/task	0.042s
+ok  	dev.helix.code/internal/agent/types	0.060s
+ok  	dev.helix.code/internal/commands	1.758s
+ok  	dev.helix.code/internal/commands/builtin	0.170s
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]
+ok  	dev.helix.code/internal/mcpgen	0.038s
+?   	dev.helix.code/cmd/mcpgen	[no test files]

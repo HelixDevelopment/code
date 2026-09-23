@@ -1,0 +1,25 @@
+=== RS-01/RS-08 re-observation on the LIVE tree AFTER the symlink fix (2026-09-23T01:36:33Z); binary md5 e1931453fdaf4a0be23a76c0b625b9ef; HEAD 17195f3b + uncommitted symlink fix ===
+--- .claude/skills/ (registrar-shaped symlinks on this checkout):
+lrwxrwxrwx 1 milosvasic milosvasic 46 Sep  7 13:28 action-prefix-system -> ../../constitution/skills/action-prefix-system
+lrwxrwxrwx 1 milosvasic milosvasic 39 Sep  7 13:59 skill-catalog -> ../../constitution/skills/skill-catalog
+lrwxrwxrwx 1 milosvasic milosvasic 41 Sep  8 15:02 speckit-analyze -> ../.skill-activation/pool/speckit-analyze
+lrwxrwxrwx 1 milosvasic milosvasic 49 Sep  7 13:28 workable-item-lifecycle -> ../../constitution/skills/workable-item-lifecycle
+
+--- helixcode skills list | grep -E 'skill-catalog|\.claude/skills' :
+skill-catalog             Lists every skill available to this project — including ones not currently active — and activates any of them 
+speckit-analyze           Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md af
+grep_exit=0
+
+--- helixcode skills invoke skill-catalog (constitution body, not 'not found'):
+INFO: Using config file: /home/milosvasic/.config/helixcode/config.json
+# Skill catalogue — see and activate what is not loaded
+
+Most skills are deliberately NOT active, to keep the per-turn token cost of the
+available-skills list minimal. They are all still one command away, and this
+skill is the index that keeps them findable.
+
+**Sessions start pruned to the core set by default.** If a task might be covered
+invoke_exit=0
+
+--- PRE-fix control (review build without the fix, same tree): skill-catalog count
+0

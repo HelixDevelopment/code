@@ -1,0 +1,47 @@
+=== 1) generate (fresh) ===
+mcpgen: wrote /tmp/tmp.omj5y0VgmT/.mcp.json (1 manifest row(s) considered)
+{
+  "mcpServers": {
+    "media-validator": {
+      "type": "command",
+      "command": "bash",
+      "args": [
+        "skills/media-validator/media-validator.sh"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+
+=== 2) gate check (expect WIRED, exit 0) ===
+mcpgen: CM-MCP-ENTRIES-GENERATED: WIRED — /tmp/tmp.omj5y0VgmT/.mcp.json matches the manifest for all 1 generated entr(y/ies)
+GATE_EXIT_CLEAN=0
+
+=== 3) PAIRED MUTATION: hand-edit the generated path ===
+{
+  "mcpServers": {
+    "media-validator": {
+      "type": "command",
+      "command": "bash",
+      "args": [
+        "some/other/hand-edited/path.sh"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+
+=== 4) gate check (expect NOT-WIRED, exit non-zero) ===
+mcpgen: CM-MCP-ENTRIES-GENERATED: NOT-WIRED — drifted entries: [media-validator]
+exit status 1
+GATE_EXIT_MUTATED=1
+
+=== 5) restore via regenerate, confirm gate passes again ===
+mcpgen: wrote /tmp/tmp.omj5y0VgmT/.mcp.json (1 manifest row(s) considered)
+mcpgen: CM-MCP-ENTRIES-GENERATED: WIRED — /tmp/tmp.omj5y0VgmT/.mcp.json matches the manifest for all 1 generated entr(y/ies)
+GATE_EXIT_RESTORED=0
+
+=== 6) probe every generated entry ===
+mcpgen probe media-validator      started=true  OK

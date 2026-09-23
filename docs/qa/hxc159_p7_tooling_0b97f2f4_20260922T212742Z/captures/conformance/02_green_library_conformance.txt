@@ -1,0 +1,32 @@
+=== RUN   TestConformanceSchemaVersionIsStable
+--- PASS: TestConformanceSchemaVersionIsStable (0.00s)
+=== RUN   TestLibrarySelfReport_ValidatesClean
+--- PASS: TestLibrarySelfReport_ValidatesClean (0.00s)
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/blank_schema_version
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/wrong_schema_version
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/blank_consumer
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/unknown_consumer
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/blank_generated_at
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/unparseable_generated_at
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/blank_skill_qualified_name
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/skill_qualified_name_missing_namespace_dot
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/blank_skill_source
+=== RUN   TestValidate_CatchesEveryRequiredFieldOmission/invalid_skill_trust_tier
+--- PASS: TestValidate_CatchesEveryRequiredFieldOmission (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/blank_schema_version (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/wrong_schema_version (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/blank_consumer (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/unknown_consumer (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/blank_generated_at (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/unparseable_generated_at (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/blank_skill_qualified_name (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/skill_qualified_name_missing_namespace_dot (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/blank_skill_source (0.00s)
+    --- PASS: TestValidate_CatchesEveryRequiredFieldOmission/invalid_skill_trust_tier (0.00s)
+=== RUN   TestValidate_OptionalCapabilitiesFieldIsOptional
+--- PASS: TestValidate_OptionalCapabilitiesFieldIsOptional (0.00s)
+=== RUN   TestCapabilityManifest_JSONRoundTrip
+--- PASS: TestCapabilityManifest_JSONRoundTrip (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/skills/pkg/skills	0.006s

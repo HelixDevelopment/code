@@ -1,0 +1,33 @@
+=== REAL CLI on the LIVE checkout (external tier = ./.claude/skills, 8 registrar links, 3 without frontmatter)
+cwd=/home/milosvasic/Projects/helix_code
+action-prefix-system media-validator multitrack reporting-workable-items scheduled-work-queue session-sync skill-catalog speckit-analyze workable-item-lifecycle 
+INFO: Using config file: /home/milosvasic/.config/helixcode/config.json
+2026/09/23 09:29:24 skills dispatcher: extra tier ".claude/skills" load failed: skill activation: external tier policy gate ".claude/skills": external skill tier ".claude/skills": load: skills: source "external": .claude/skills/media-validator/SKILL.md: skills: SKILL.md has no YAML front-matter block
+NAME                      DESCRIPTION                                                                                                                                 TRIGGERS                                                                                                                                                                                                                                                                      SOURCE
+action-prefix-system      Explain and apply the UPPERCASE action-prefix directive system (BACKGROUND, ISSUE, BUG, TASK, REMINDER, FEATURE)                            (?i)^what does the (?P<action>[A-Za-z][A-Za-z0-9_]*) (?:action )?prefix (?:do|mean)\b.*$ | (?i)^(?:what|how).*\baction[- ]prefix(?:es)?\b.*$ | (?i)^how do i (?:add|register) (?:a )?new (?:action|directive)\b.*$                                                            builtin:action-prefix-system/SKILL.md
+conventional-commit       Draft a Conventional Commits message from a short summary of the change                                                                     (?i)^commit message for (?P<summary>.+)$ | (?i)^write a (?:conventional )?commit(?: message)? for (?P<summary>.+)$                                                                                                                                                            builtin:conventional-commit/SKILL.md
+media-validator           Validate a recording, screenshot or capture by reading its actual content and returning a PASS/FAIL verdict with evidence                   (?i)^validate (?:the )?(?:recording|video|screenshot|capture|media|image|evidence)\b.*?(?P<path>\S+\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\s*$ | (?i)^(?:check|verify) (?:the )?(?:recording|video|screenshot|capture)\b.*?(?P<path>\S+\.(?:mp4|png|jpg|jpeg|txt|wav|cast))\s*$  builtin:media-validator/SKILL.md
+multitrack                Set up or reason about parallel multitrack work streams, their branches, isolation and identity labels                                      (?i)^(?:how do i |how to )?(?:start|create|spin up|set up|begin)\b.*\bmultitrack\b.*$ | (?i)^.*\bmultitrack\b.*\b(?:work ?stream|track|branch|worktree)s?\b.*$                                                                                                                builtin:multitrack/SKILL.md
+reporting-workable-items  Turn a reported bug, defect, task or feature request into a properly tracked workable item instead of a prose acknowledgement               (?i)^report (?:a |an )?(?P<kind>bug|issue|defect|regression|task|feature)\b[\s:,-]+(?P<summary>.+)$ | (?i)^(?:file|open|raise|log) (?:a |an )?(?P<kind>bug|issue|defect|ticket|task|feature)\b[\s:,-]+(?P<summary>.+)$                                                        builtin:reporting-workable-items/SKILL.md
+scheduled-work-queue      Record deferred or background work on the scheduled-work queue and verify its real outcome before reporting it done                         (?i)^remind me to (?P<task>.+)$ | (?i)^(?:schedule|queue|defer) (?:this |that )?(?:work |task )?(?:to |for )?(?P<task>.+)$                                                                                                                                                    builtin:scheduled-work-queue/SKILL.md
+session-sync              Sync session transcripts, memories, settings and handoff documents between this machine and the same project on a remote host               (?i)^(?:sync|pull|push) (?:my |the )?sessions?\b.*\b(?:remote|host|machine|laptop|workstation)\b.*$ | (?i)^(?:sync|pull|push) (?:my |the )?(?:session|memories|transcripts|handoff)\b.*\bfrom\b.*$                                                                            builtin:session-sync/SKILL.md
+workable-item-lifecycle   Move a tracked workable item through its lifecycle — start, close, reopen, block or mark obsolete — using the legal status and type values  (?i)^how do i (?:properly )?(?:close|reopen|start|finish|block|obsolete)\b.*\b(?:workable )?item\b.*$ | (?i)^(?:what|which) (?:status|type)\b.*\b(?:workable )?items?\b.*$ | (?i)^(?:close|reopen|mark)\b.*\bworkable item\b.*$                                               builtin:workable-item-lifecycle/SKILL.md
+exit=0
+
+=== does media-validator (no frontmatter) resolve?
+INFO: Using config file: /home/milosvasic/.config/helixcode/config.json
+2026/09/23 09:29:24 skills dispatcher: extra tier ".claude/skills" load failed: skill activation: external tier policy gate ".claude/skills": external skill tier ".claude/skills": load: skills: source "external": .claude/skills/media-validator/SKILL.md: skills: SKILL.md has no YAML front-matter block
+You are validating a captured media artifact for a HelixCode user.
+
+Artifact under validation: ``
+
+The governing rule is that a recording is evidence ONLY if its CONTENT has been
+read and checked. Duration, file size and mere existence prove nothing: a long
+exit=0
+=== does skill-catalog (has frontmatter) resolve?
+INFO: Using config file: /home/milosvasic/.config/helixcode/config.json
+2026/09/23 09:29:24 skills dispatcher: extra tier ".claude/skills" load failed: skill activation: external tier policy gate ".claude/skills": external skill tier ".claude/skills": load: skills: source "external": .claude/skills/media-validator/SKILL.md: skills: SKILL.md has no YAML front-matter block
+Error: skills invoke: "skill-catalog" not found
+Usage:
+  skills invoke <name> [args...] [flags]
+exit=1

@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "consumer": "library",
+  "generated_at": "2026-09-22T21:30:38Z",
+  "loader_api_surface": {
+    "source_registration": true,
+    "namespaced_identity": true,
+    "capability_declaration": true,
+    "capability_enforcement": true,
+    "allowlist_activation": true,
+    "audit_log": true,
+    "content_hash_provenance": true,
+    "malformed_skill_visibility": false
+  },
+  "skills": [
+    {
+      "qualified_name": "constitution.Action Prefix System",
+      "source": "constitution",
+      "trust_tier": "first-party",
+      "hash": "a9501b6bb47f06cdacd8c0366e3dd507f64037945505b0ce5b30522eab9409df"
+    },
+    {
+      "qualified_name": "constitution.Multitrack",
+      "source": "constitution",
+      "trust_tier": "first-party",
+      "hash": "25be145594d0dae03a332d4f5201b01a658a90c32bfdbab3a123659a2af0a671"
+    },
+    {
+      "qualified_name": "constitution.Reporting Workable Items",
+      "source": "constitution",
+      "trust_tier": "first-party",
+      "hash": "84ef4487a3f6090f8f64466d498843100ed1fb79abfcaffe2b018f272fd46684"
+    },
+    {
+      "qualified_name": "constitution.Workable Item Lifecycle",
+      "source": "constitution",
+      "trust_tier": "first-party",
+      "hash": "38eba81c1b18a820da889400dd87d25f5b7df9e0f3de98eec3ee28fed525cce7"
+    },
+    {
+      "qualified_name": "constitution.skill-catalog",
+      "source": "constitution",
+      "trust_tier": "first-party",
+      "hash": "c6b7a9d2726e3cf033cf11d2e497dc781cb64e083ca8c40a6963b30878d9b5bc"
+    }
+  ]
+}

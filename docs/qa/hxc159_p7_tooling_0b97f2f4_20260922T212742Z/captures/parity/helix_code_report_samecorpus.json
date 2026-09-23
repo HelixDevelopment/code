@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "consumer": "helix_code",
+  "generated_at": "2026-09-22T21:51:09Z",
+  "loader_api_surface": {
+    "source_registration": true,
+    "namespaced_identity": false,
+    "capability_declaration": false,
+    "capability_enforcement": false,
+    "allowlist_activation": false,
+    "audit_log": false,
+    "content_hash_provenance": false,
+    "malformed_skill_visibility": true
+  },
+  "skills": [
+    {
+      "qualified_name": "builtin.action-prefix-system",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.conventional-commit",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.media-validator",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.multitrack",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.reporting-workable-items",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.scheduled-work-queue",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "builtin.session-sync",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    },
+    {
+      "qualified_name": "user.skill-catalog",
+      "source": "user",
+      "trust_tier": "vendored"
+    },
+    {
+      "qualified_name": "builtin.workable-item-lifecycle",
+      "source": "builtin",
+      "trust_tier": "first-party"
+    }
+  ]
+}

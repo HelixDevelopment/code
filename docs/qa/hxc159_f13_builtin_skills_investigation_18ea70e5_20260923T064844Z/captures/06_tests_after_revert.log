@@ -1,0 +1,20 @@
+[generate-builtin-skills] DRIFT action-prefix-system — differs from constitution/skills/action-prefix-system (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] SKIP conventional-commit (no constitution/skills/conventional-commit — not constitution-sourced)
+[generate-builtin-skills] DRIFT media-validator — differs from constitution/skills/media-validator (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] DRIFT multitrack — differs from constitution/skills/multitrack (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] DRIFT reporting-workable-items — differs from constitution/skills/reporting-workable-items (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] DRIFT scheduled-work-queue — differs from constitution/skills/scheduled-work-queue (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] DRIFT session-sync — differs from constitution/skills/session-sync (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] DRIFT workable-item-lifecycle — differs from constitution/skills/workable-item-lifecycle (embedded-file set only):
+    differs: SKILL.md
+[generate-builtin-skills] FAIL — 7 drifted (run without --check to regenerate)
+ok  	dev.helix.code/internal/commands	(cached)
+ok  	dev.helix.code/internal/commands/builtin	(cached)
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]

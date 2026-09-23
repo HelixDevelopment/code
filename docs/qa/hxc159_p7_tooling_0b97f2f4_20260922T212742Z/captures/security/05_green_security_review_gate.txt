@@ -1,0 +1,16 @@
+=== RUN   TestShellExecOffByDefault_ProvenForASkillWithNoDeclaration
+--- PASS: TestShellExecOffByDefault_ProvenForASkillWithNoDeclaration (0.00s)
+=== RUN   TestShellExecOffByDefault_FalseWhenDeclared
+--- PASS: TestShellExecOffByDefault_FalseWhenDeclared (0.00s)
+=== RUN   TestHasDynamicContext
+--- PASS: TestHasDynamicContext (0.00s)
+=== RUN   TestEnforceSecurityReview_RefusesUnreviewedShellSkill
+--- PASS: TestEnforceSecurityReview_RefusesUnreviewedShellSkill (0.00s)
+=== RUN   TestEnforceSecurityReview_RefusesUnreviewedDynamicContextSkill
+--- PASS: TestEnforceSecurityReview_RefusesUnreviewedDynamicContextSkill (0.00s)
+=== RUN   TestEnforceSecurityReview_AllowsWithExplicitReviewMarker
+--- PASS: TestEnforceSecurityReview_AllowsWithExplicitReviewMarker (0.00s)
+=== RUN   TestEnforceSecurityReview_AllowsPlainSkillsRegardlessOfReviewMap
+--- PASS: TestEnforceSecurityReview_AllowsPlainSkillsRegardlessOfReviewMap (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/skills/pkg/skills	0.005s

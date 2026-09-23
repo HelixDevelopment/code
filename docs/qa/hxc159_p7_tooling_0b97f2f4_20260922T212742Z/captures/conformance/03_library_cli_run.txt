@@ -1,0 +1,2 @@
+conformance-report: skills: source "constitution": /home/milosvasic/Projects/helix_code/constitution/skills/media-validator/SKILL.md: skills: SKILL.md has no YAML front-matter block
+exit status 1

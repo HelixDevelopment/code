@@ -1,0 +1,727 @@
+{
+  "parsed_57_count": 57,
+  "parsed_23_count": 23,
+  "total_rows": 80,
+  "rows": [
+    {
+      "id": "A1",
+      "feature": "Skill CRUD store",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A2",
+      "feature": "Dependency-graph writes",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A3",
+      "feature": "Tree traversal / closure resolver",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A4",
+      "feature": "Cycle prevention",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A5",
+      "feature": "Granularity / composition",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A6",
+      "feature": "TOML import/export round-trip",
+      "disposition": "UPS",
+      "reason": "upstream-only per spec.md \u00a75 disposition; not surfaced to consumers this feature.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A7",
+      "feature": "Evidence attachment (10 methods)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A8",
+      "feature": "Resource attachment + revalidation",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "A9",
+      "feature": "Registry health / coverage",
+      "disposition": "INC",
+      "reason": "Feeds the capability report behind FR-035 parity.",
+      "kind": "power-feature",
+      "evidence_state": "covered",
+      "evidence": "submodules/skills/pkg/skills/conformance.go (HXC-159 T-P7.01): LibrarySelfReport feeds the capability manifest behind the FR-035/T-P7.02 parity report; qa-results/hxc159/conformance/20260922T212742Z/02_green_library_conformance.txt."
+    },
+    {
+      "id": "A10",
+      "feature": "Scheduled registry review",
+      "disposition": "DEF",
+      "reason": "deferred per spec.md's own named reason; see tasks.md/spec.md for the tracked follow-on.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "B1",
+      "feature": "Hybrid text search (pg_trgm)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "B2",
+      "feature": "Vector / semantic search (pgvector)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "B3",
+      "feature": "`Embedder` interface",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "B4",
+      "feature": "Batch embedding with progress",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "B5",
+      "feature": "Write-through embedding cache",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C1",
+      "feature": "LLM auto-expansion pipeline",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C2",
+      "feature": "Multi-provider LLM client",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C3",
+      "feature": "Validation pipeline",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C4",
+      "feature": "LLM jury validation",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C5",
+      "feature": "Isolated/sandboxed execution",
+      "disposition": "UPS",
+      "reason": "A skip-by-default sandbox cannot back FR-023/FR-026. A real executor must land upstream before any `third-party`-tier activation.",
+      "kind": "power-feature",
+      "evidence_state": "covered",
+      "evidence": "submodules/skills/pkg/skills/sandbox_gate.go + sandbox_gate_test.go (HXC-159 T-P7.05.5): EnforceSandboxPrecondition refuses third-party activation while sandboxReady=false; qa-results/hxc159/security/20260922T212742Z/04_green_c5_gate.txt (4/4 PASS)."
+    },
+    {
+      "id": "C6",
+      "feature": "Tree-sitter code analysis",
+      "disposition": "DEF",
+      "reason": "deferred per spec.md's own named reason; see tasks.md/spec.md for the tracked follow-on.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C7",
+      "feature": "Project analyzer \u2192 skill mapping",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C8",
+      "feature": "CodeGraph pattern extraction",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C9",
+      "feature": "CodeGraph index manager + sync",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "C10",
+      "feature": "CodeGraph MCP client",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D1",
+      "feature": "PostgreSQL pool + tx",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D2",
+      "feature": "Cache abstraction",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D3",
+      "feature": "Prometheus metrics",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D4",
+      "feature": "Per-tenant metrics",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D5",
+      "feature": "Audit log (10 functions)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D6",
+      "feature": "Multi-tenancy",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D7",
+      "feature": "Tenant audit logger",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D8",
+      "feature": "Background worker (6 job types)",
+      "disposition": "DEF",
+      "reason": "deferred per spec.md's own named reason; see tasks.md/spec.md for the tracked follow-on.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D9",
+      "feature": "TOON serialization",
+      "disposition": "N/S",
+      "reason": "explicitly out of scope per spec.md \u00a75/\u00a76 disposition (a scope decision, not a gap).",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "D10",
+      "feature": "TOML config + `${VAR}` interpolation",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E1",
+      "feature": "Skill-source registry",
+      "disposition": "INC",
+      "reason": "Directly realises FR-012 typed sources.",
+      "kind": "power-feature",
+      "evidence_state": "covered",
+      "evidence": "pkg/skills/registry.go RegisterSource/Sources, exercised live via cmd/conformance-report; qa-results/hxc159/conformance/20260922T212742Z/04_library_cli_run_wellformed.txt (5 real skills registered from a real source)."
+    },
+    {
+      "id": "E2",
+      "feature": "Sync orchestrator (3 seams)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E3",
+      "feature": "Source events",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E4",
+      "feature": "Generic `Source` abstraction",
+      "disposition": "INC",
+      "reason": "How `constitution/skills/` and the vendored corpus register as sources.",
+      "kind": "power-feature",
+      "evidence_state": "covered",
+      "evidence": "pkg/skills/source.go Source{Name,Root,Dialect,Precedence,Trust} exercised the same way as E1 (same CLI run, same evidence file) \u2014 Source is the abstraction that made the constitution/skills fixture registrable."
+    },
+    {
+      "id": "E5",
+      "feature": "Filesystem source",
+      "disposition": "**INC (degraded)**",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=**INC (degraded)**.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E6",
+      "feature": "GitHub source client",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E7",
+      "feature": "Ingestion pipeline",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E8",
+      "feature": "`SKILL.md` parser",
+      "disposition": "INC",
+      "reason": "The canonical-schema reader behind D-1.",
+      "kind": "power-feature",
+      "evidence_state": "covered",
+      "evidence": "pkg/skills/loader.go LoadSource/parseSkillFile parsed 5 real constitution SKILL.md files (well-formed) AND correctly fail-closed-refused the whole source on 3 malformed ones; qa-results/hxc159/conformance/20260922T212742Z/03_library_cli_run.txt (real failure) + 04_library_cli_run_wellformed.txt (real success)."
+    },
+    {
+      "id": "E9",
+      "feature": "Source \u2192 model mapper",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "E10",
+      "feature": "Dedup classifier",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F1",
+      "feature": "MCP server (13 tools)",
+      "disposition": "DEP",
+      "reason": "MCP server liveness was already proven in Phase P6 (T-P6.02, RS-17, qa-results/hxc159/agent_mcp/20260922T192508Z/) \u2014 not re-exercised in this P7 pass; citing the P6 evidence rather than re-testing.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F2",
+      "feature": "MCP stdio transport",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F3",
+      "feature": "MCP HTTP transport",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F4",
+      "feature": "ACP adapter",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F5",
+      "feature": "Agent config emitters",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F6",
+      "feature": "MCP system prompts",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F7",
+      "feature": "REST API (12 handlers)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F8",
+      "feature": "HTTP middleware stack",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F9",
+      "feature": "HTTP/2 + HTTP/3 + Brotli",
+      "disposition": "N/S",
+      "reason": "explicitly out of scope per spec.md \u00a75/\u00a76 disposition (a scope decision, not a gap).",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F10",
+      "feature": "Cobra CLI (27 subcommands)",
+      "disposition": "DEP",
+      "reason": "out-of-process dependency (D-3): tested within HelixDevelopment/skills' own upstream test suite, not retested at the consumer seam this cycle.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F11",
+      "feature": "Bubbletea TUI",
+      "disposition": "N/S",
+      "reason": "explicitly out of scope per spec.md \u00a75/\u00a76 disposition (a scope decision, not a gap).",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "F12",
+      "feature": "Catalogue generator (Layer 3)",
+      "disposition": "INC",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=INC.",
+      "kind": "power-feature",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-01",
+      "feature": "credential_scan_lib",
+      "disposition": "REUSE",
+      "reason": "FR-027 (scanner); the four guards apply unchanged to all work; SpecKit/Superpowers drive the workflow (US-5)",
+      "kind": "extension",
+      "evidence_state": "covered",
+      "evidence": "credential_scan_lib.sh reused UNCHANGED per FR-027 (T-P7.05.3): qa-results/hxc159/security/20260922T212742Z/01_credential_scan_skills_library.txt (651 files scanned) + 02_credential_scan_helixagent_skills_corpus.txt (1330 files scanned, 1174-skill vendored corpus)."
+    },
+    {
+      "id": "6-REUSE-02",
+      "feature": "guard-forbidden-commands",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-03",
+      "feature": "guard-track-branch-label",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-04",
+      "feature": "guard-branch-consistency",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-05",
+      "feature": "guard-work-track-binding",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-06",
+      "feature": "SpecKit",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-REUSE-07",
+      "feature": "Superpowers",
+      "disposition": "REUSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=REUSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-EXTEND-01",
+      "feature": "actions/registry.yaml",
+      "disposition": "EXTEND",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=EXTEND.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-01",
+      "feature": "action-prefix-system",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-02",
+      "feature": "reporting-workable-items",
+      "disposition": "COMPOSE",
+      "reason": "Hand-off, not merge. `post-merge` is the \u00a711.4.164 seam FR-037's registrars must be reachable from",
+      "kind": "extension",
+      "evidence_state": "covered",
+      "evidence": "reporting-workable-items (constitution skill) was a REAL fixture in every T-P7.01/T-P7.02 conformance run \u2014 registered, loaded, hashed; qa-results/hxc159/conformance/20260922T212742Z/library_report.json + parity/20260922T212742Z/helix_agent_report_samecorpus.json."
+    },
+    {
+      "id": "6-COMPOSE-03",
+      "feature": "scheduled-work-queue",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-04",
+      "feature": "workable-item-lifecycle",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-05",
+      "feature": "scheduled-work-mcp.json",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-06",
+      "feature": "`helix` plugin",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-07",
+      "feature": "`scheduled-work` plugin",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-08",
+      "feature": "action_prefix_expand.sh",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-COMPOSE-09",
+      "feature": "post-merge",
+      "disposition": "COMPOSE",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=COMPOSE.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-ORTHOGONAL-01",
+      "feature": "media-validator",
+      "disposition": "ORTHOGONAL",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=ORTHOGONAL.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-ORTHOGONAL-02",
+      "feature": "multitrack",
+      "disposition": "ORTHOGONAL",
+      "reason": "Each carries an explicit reason in `03b` \u00a74\u2013\u00a77; none is a silent omission",
+      "kind": "extension",
+      "evidence_state": "covered",
+      "evidence": "multitrack (constitution skill) was a REAL fixture in every T-P7.01/T-P7.02 conformance run alongside reporting-workable-items \u2014 same evidence files."
+    },
+    {
+      "id": "6-ORTHOGONAL-03",
+      "feature": "session-sync",
+      "disposition": "ORTHOGONAL",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=ORTHOGONAL.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-ORTHOGONAL-04",
+      "feature": "media-validator-mcp.json",
+      "disposition": "ORTHOGONAL",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=ORTHOGONAL.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-ORTHOGONAL-05",
+      "feature": "subagent_tiering.yaml",
+      "disposition": "ORTHOGONAL",
+      "reason": "not exercised by HXC-159 Phase P7 (T-P7.01/.02/.04/.05) this cycle; disposition=ORTHOGONAL.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    },
+    {
+      "id": "6-BLOCKED-01",
+      "feature": "Bridge L3/L4/L5",
+      "disposition": "BLOCKED",
+      "reason": "blocked per spec.md \u00a77 Bridge-layer disposition.",
+      "kind": "extension",
+      "evidence_state": "skip",
+      "tracked_item": "HXC-159-P7-FOLLOWUP: DEP/UPS/N/S/DEF-disposition rows are tracked as a standing coverage gap in specs/001-helixskills-incorporation/tasks.md Phase P8 (documentation) / P9 and beyond \u2014 see spec.md \u00a75/\u00a76 for the per-row disposition reasoning, which IS the tracked record for scope-decision rows (N/S), and tasks.md's existing DEF-row citations (A10/D8 scheduling-duplication decision, C6 tree-sitter partial, E5 Watch unimplemented) for deferred-row follow-ups."
+    }
+  ]
+}

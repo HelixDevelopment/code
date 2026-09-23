@@ -1,0 +1,14 @@
+=== RUN   TestDiff_IdenticalReportsOK
+--- PASS: TestDiff_IdenticalReportsOK (0.00s)
+=== RUN   TestDiff_UnmarkedSurfaceAsymmetryFails
+--- PASS: TestDiff_UnmarkedSurfaceAsymmetryFails (0.00s)
+=== RUN   TestDiff_MarkedSurfaceAsymmetryPasses
+--- PASS: TestDiff_MarkedSurfaceAsymmetryPasses (0.00s)
+=== RUN   TestDiff_SkillRegisteredInOnlyOneConsumerFails
+--- PASS: TestDiff_SkillRegisteredInOnlyOneConsumerFails (0.00s)
+=== RUN   TestDiff_MarkedSkillAsymmetryPasses
+--- PASS: TestDiff_MarkedSkillAsymmetryPasses (0.00s)
+=== RUN   TestDiff_OneSidedMarkIsNotEnough
+--- PASS: TestDiff_OneSidedMarkIsNotEnough (0.00s)
+PASS
+ok  	dev.helix.code/internal/skillparity	0.020s

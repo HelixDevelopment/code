@@ -1,0 +1,5 @@
+spec.md §5 row-id count: 57
+ledger power-feature row-id count: 57
+missing from ledger: NONE
+extra in ledger not in spec: NONE
+T-P7.04.2: every spec.md §5 disposition row has a matching ledger row -- CONFIRMED

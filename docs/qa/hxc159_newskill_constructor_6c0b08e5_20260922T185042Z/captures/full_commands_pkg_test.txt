@@ -1,0 +1,4 @@
+ok  	dev.helix.code/internal/commands	1.471s
+ok  	dev.helix.code/internal/commands/builtin	0.118s
+?   	dev.helix.code/internal/commands/builtin/i18n	[no test files]
+?   	dev.helix.code/internal/commands/i18n	[no test files]

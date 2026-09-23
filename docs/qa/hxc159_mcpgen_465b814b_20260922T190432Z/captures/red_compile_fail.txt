@@ -1,0 +1,2 @@
+=== go vet ./internal/mcpgen/... (RED: package does not exist yet) ===
+dev.helix.code/internal/mcpgen: no non-test Go files in /home/milosvasic/Projects/helix_code/helix_code/internal/mcpgen

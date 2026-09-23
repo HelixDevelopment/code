@@ -1,0 +1,11 @@
+=== REGENERATE (real, no --check) ===
+[generate-builtin-skills] synced action-prefix-system <- constitution/skills/action-prefix-system
+[generate-builtin-skills] SKIP conventional-commit (no constitution/skills/conventional-commit — not constitution-sourced)
+[generate-builtin-skills] synced media-validator <- constitution/skills/media-validator
+[generate-builtin-skills] synced multitrack <- constitution/skills/multitrack
+[generate-builtin-skills] synced reporting-workable-items <- constitution/skills/reporting-workable-items
+[generate-builtin-skills] synced scheduled-work-queue <- constitution/skills/scheduled-work-queue
+[generate-builtin-skills] synced session-sync <- constitution/skills/session-sync
+[generate-builtin-skills] synced workable-item-lifecycle <- constitution/skills/workable-item-lifecycle
+[generate-builtin-skills] done — synced=7 skipped=1
+EXIT=0

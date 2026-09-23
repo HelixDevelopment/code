@@ -1,0 +1,9 @@
+# dev.helix.code/internal/skillparity [dev.helix.code/internal/skillparity.test]
+internal/skillparity/parity_test.go:29:7: undefined: Diff
+internal/skillparity/parity_test.go:43:7: undefined: Diff
+internal/skillparity/parity_test.go:60:7: undefined: Diff
+internal/skillparity/parity_test.go:76:7: undefined: Diff
+internal/skillparity/parity_test.go:95:7: undefined: Diff
+internal/skillparity/parity_test.go:114:7: undefined: Diff
+FAIL	dev.helix.code/internal/skillparity [build failed]
+FAIL

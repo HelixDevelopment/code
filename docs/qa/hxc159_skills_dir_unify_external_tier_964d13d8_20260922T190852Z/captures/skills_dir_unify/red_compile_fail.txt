@@ -1,0 +1,4 @@
+=== go vet ./internal/agent/... (RED: helper does not exist yet) ===
+# dev.helix.code/internal/agent
+# [dev.helix.code/internal/agent]
+vet: internal/agent/skill_dirs_test.go:69:14: undefined: LegacyUserSkillsDir
