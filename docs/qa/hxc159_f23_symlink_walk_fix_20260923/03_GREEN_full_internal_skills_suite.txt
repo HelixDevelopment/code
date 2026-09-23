@@ -1,0 +1,418 @@
+=== RUN   TestExternalSkillSource_CeilingRefusesTheWholeSource
+2026/09/23 18:49:11 ⚠️  skills: external source "external" refused by policy: skills: external source active set 21 exceeds ceiling 20 — refusing; offender "external.skill-20" (drop it or raise the ceiling with a re-measured curve, T-P2.03)
+--- PASS: TestExternalSkillSource_CeilingRefusesTheWholeSource (0.01s)
+=== RUN   TestExternalSkillSource_UnderCeilingIsAdmitted
+--- PASS: TestExternalSkillSource_UnderCeilingIsAdmitted (0.00s)
+=== RUN   TestExternalSkillSource_SimilarityConflictExcludesOnlyThePair
+2026/09/23 18:49:11 ⚠️  skills: external source "external": skills: external source "external.beta-skill" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.alpha-skill" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+--- PASS: TestExternalSkillSource_SimilarityConflictExcludesOnlyThePair (0.00s)
+=== RUN   TestNativeAdmitBySimilarityNeverAdmitsBothOfAPair
+--- PASS: TestNativeAdmitBySimilarityNeverAdmitsBothOfAPair (0.00s)
+=== RUN   TestExternalSkillSource_C5SandboxPreconditionIsReachable
+2026/09/23 18:49:11 ⚠️  skills: external source "external" refused by policy: skills: refusing external-source activation — 1 third-party-tier skill(s) [external.third-party-skill] cannot be activated while the sandbox precondition holds (C5: no real sandbox executor wired); set ExternalSkillSource.SandboxReady=true only once one is
+--- PASS: TestExternalSkillSource_C5SandboxPreconditionIsReachable (0.00s)
+=== RUN   TestExternalSkillSource_AbsentDirIsNotAnError
+--- PASS: TestExternalSkillSource_AbsentDirIsNotAnError (0.00s)
+=== RUN   TestExternalSkillSource_MalformedSkillDoesNotAbortWholeLoad
+time="2026-09-23T18:49:11+02:00" level=warning msg="Skill file failed to parse — surfaced in load report, not silently skipped" error="failed to split frontmatter: unterminated frontmatter" path=/tmp/TestExternalSkillSource_MalformedSkillDoesNotAbortWholeLoad807719614/001/bad-skill/SKILL.md
+--- PASS: TestExternalSkillSource_MalformedSkillDoesNotAbortWholeLoad (0.00s)
+=== RUN   TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped
+time="2026-09-23T18:49:11+02:00" level=warning msg="Skill file has no front-matter name — surfaced in load report, not silently dropped (HXC-159 F-16)" path=/tmp/TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilen1637592216/001/skills/02-bare/media-validator/SKILL.md
+--- PASS: TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped (0.00s)
+=== RUN   TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures
+time="2026-09-23T18:49:11+02:00" level=warning msg="Skill file has no front-matter name — surfaced in load report, not silently dropped (HXC-159 F-16)" path=/tmp/TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailu4203184275/001/skills/02-bare/session-sync/SKILL.md
+--- PASS: TestRegistry_LoadFromPath_FrontmatterlessSkillAppearsInLoadFailures (0.00s)
+=== RUN   TestNewIntegration
+--- PASS: TestNewIntegration (0.00s)
+=== RUN   TestIntegration_ProcessRequest
+--- PASS: TestIntegration_ProcessRequest (0.00s)
+=== RUN   TestIntegration_CompleteRequest
+--- PASS: TestIntegration_CompleteRequest (0.00s)
+=== RUN   TestIntegration_RecordToolUse
+--- PASS: TestIntegration_RecordToolUse (0.00s)
+=== RUN   TestIntegration_BuildSkillsUsedSection
+--- PASS: TestIntegration_BuildSkillsUsedSection (0.00s)
+=== RUN   TestIntegration_BuildSkillsUsedSection_Empty
+--- PASS: TestIntegration_BuildSkillsUsedSection_Empty (0.00s)
+=== RUN   TestIntegration_EnhancePromptWithSkills
+--- PASS: TestIntegration_EnhancePromptWithSkills (0.00s)
+=== RUN   TestIntegration_EnhancePromptWithSkills_NoSkills
+--- PASS: TestIntegration_EnhancePromptWithSkills_NoSkills (0.00s)
+=== RUN   TestResponseEnhancer
+--- PASS: TestResponseEnhancer (0.00s)
+=== RUN   TestDebateIntegration
+--- PASS: TestDebateIntegration (0.00s)
+=== RUN   TestMCPIntegration
+--- PASS: TestMCPIntegration (0.00s)
+=== RUN   TestACPIntegration
+--- PASS: TestACPIntegration (0.00s)
+=== RUN   TestLSPIntegration
+--- PASS: TestLSPIntegration (0.00s)
+=== RUN   TestIntegration_GetService
+--- PASS: TestIntegration_GetService (0.00s)
+=== RUN   TestNewSkillLoader
+--- PASS: TestNewSkillLoader (0.00s)
+=== RUN   TestSkillLoader_LoadFromDirectory
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=1
+--- PASS: TestSkillLoader_LoadFromDirectory (0.00s)
+=== RUN   TestSkillLoader_LoadFromDirectory_Multiple
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=3
+--- PASS: TestSkillLoader_LoadFromDirectory_Multiple (0.00s)
+=== RUN   TestSkillLoader_LoadFromDirectory_NotFound
+--- PASS: TestSkillLoader_LoadFromDirectory_NotFound (0.00s)
+=== RUN   TestSkillLoader_LoadFromConfig
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=1
+--- PASS: TestSkillLoader_LoadFromConfig (0.00s)
+=== RUN   TestSkillLoader_LoadFromConfig_EnabledSkills
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=3
+--- PASS: TestSkillLoader_LoadFromConfig_EnabledSkills (0.00s)
+=== RUN   TestSkillLoader_GetLoaded
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=1
+--- PASS: TestSkillLoader_GetLoaded (0.00s)
+=== RUN   TestSkillLoader_GetLoadedCount
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=5
+--- PASS: TestSkillLoader_GetLoadedCount (0.00s)
+=== RUN   TestSkillLoader_GetLoadedByCategory
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=3
+--- PASS: TestSkillLoader_GetLoadedByCategory (0.00s)
+=== RUN   TestSkillLoader_GetInventory
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=1
+--- PASS: TestSkillLoader_GetInventory (0.00s)
+=== RUN   TestSkillLoader_ReloadSkill
+time="2026-09-23T18:49:11+02:00" level=info msg="Loaded skills from directory" count=1
+time="2026-09-23T18:49:11+02:00" level=info msg="Reloaded skill" skill=reloadable-skill
+--- PASS: TestSkillLoader_ReloadSkill (0.00s)
+=== RUN   TestSkillLoader_ReloadSkill_NotFound
+--- PASS: TestSkillLoader_ReloadSkill_NotFound (0.00s)
+=== RUN   TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDropped
+time="2026-09-23T18:49:11+02:00" level=warning msg="Skill file failed to parse — surfaced in load report, not silently skipped" error="failed to parse frontmatter: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `just-a-...` into skills.Skill" path=/tmp/TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDro461325709/001/skills/02-bad/malformed-skill/SKILL.md
+--- PASS: TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDropped (0.00s)
+=== RUN   TestParser_ParseDirectory_NoFailures_EmptyFailureSlice
+--- PASS: TestParser_ParseDirectory_NoFailures_EmptyFailureSlice (0.00s)
+=== RUN   TestMatcher_MatchExact
+--- PASS: TestMatcher_MatchExact (0.00s)
+=== RUN   TestMatcher_MatchPartial
+--- PASS: TestMatcher_MatchPartial (0.00s)
+=== RUN   TestMatcher_MatchFuzzy
+--- PASS: TestMatcher_MatchFuzzy (0.00s)
+=== RUN   TestMatcher_MatchBest
+--- PASS: TestMatcher_MatchBest (0.00s)
+=== RUN   TestMatcher_MatchMultiple
+--- PASS: TestMatcher_MatchMultiple (0.00s)
+=== RUN   TestMatcher_NoMatches
+--- PASS: TestMatcher_NoMatches (0.00s)
+=== RUN   TestMatcher_DeduplicateAndSort
+--- PASS: TestMatcher_DeduplicateAndSort (0.00s)
+=== RUN   TestTokenize
+=== RUN   TestTokenize/docker_compose
+=== RUN   TestTokenize/kubernetes-deployment
+=== RUN   TestTokenize/Hello_World_123
+=== RUN   TestTokenize/#00
+--- PASS: TestTokenize (0.00s)
+    --- PASS: TestTokenize/docker_compose (0.00s)
+    --- PASS: TestTokenize/kubernetes-deployment (0.00s)
+    --- PASS: TestTokenize/Hello_World_123 (0.00s)
+    --- PASS: TestTokenize/#00 (0.00s)
+=== RUN   TestWordOverlap
+--- PASS: TestWordOverlap (0.00s)
+=== RUN   TestSimilarity
+=== RUN   TestSimilarity/docker_compose_vs_docker_compose
+=== RUN   TestSimilarity/docker_compose_vs_docker_container
+=== RUN   TestSimilarity/completely_different_vs_totally_other
+--- PASS: TestSimilarity (0.00s)
+    --- PASS: TestSimilarity/docker_compose_vs_docker_compose (0.00s)
+    --- PASS: TestSimilarity/docker_compose_vs_docker_container (0.00s)
+    --- PASS: TestSimilarity/completely_different_vs_totally_other (0.00s)
+=== RUN   TestNormalizeQuery
+=== RUN   TestNormalizeQuery/Docker__Compose
+=== RUN   TestNormalizeQuery/__extra___spaces__
+=== RUN   TestNormalizeQuery/UPPERCASE
+--- PASS: TestNormalizeQuery (0.00s)
+    --- PASS: TestNormalizeQuery/Docker__Compose (0.00s)
+    --- PASS: TestNormalizeQuery/__extra___spaces__ (0.00s)
+    --- PASS: TestNormalizeQuery/UPPERCASE (0.00s)
+=== RUN   TestContainsIgnoreCase
+=== RUN   TestContainsIgnoreCase/Docker_Compose_contains_docker
+=== RUN   TestContainsIgnoreCase/HELLO_WORLD_contains_world
+=== RUN   TestContainsIgnoreCase/kubernetes_contains_xyz
+--- PASS: TestContainsIgnoreCase (0.00s)
+    --- PASS: TestContainsIgnoreCase/Docker_Compose_contains_docker (0.00s)
+    --- PASS: TestContainsIgnoreCase/HELLO_WORLD_contains_world (0.00s)
+    --- PASS: TestContainsIgnoreCase/kubernetes_contains_xyz (0.00s)
+=== RUN   TestParser_Parse
+--- PASS: TestParser_Parse (0.00s)
+=== RUN   TestParser_SplitFrontmatter
+=== RUN   TestParser_SplitFrontmatter/valid_frontmatter
+=== RUN   TestParser_SplitFrontmatter/no_frontmatter
+=== RUN   TestParser_SplitFrontmatter/unterminated_frontmatter
+--- PASS: TestParser_SplitFrontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/valid_frontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/no_frontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/unterminated_frontmatter (0.00s)
+=== RUN   TestParser_ExtractTriggers
+=== RUN   TestParser_ExtractTriggers/explicit_triggers
+=== RUN   TestParser_ExtractTriggers/trigger_on_format
+=== RUN   TestParser_ExtractTriggers/quoted_phrases
+=== RUN   TestParser_ExtractTriggers/no_triggers
+--- PASS: TestParser_ExtractTriggers (0.00s)
+    --- PASS: TestParser_ExtractTriggers/explicit_triggers (0.00s)
+    --- PASS: TestParser_ExtractTriggers/trigger_on_format (0.00s)
+    --- PASS: TestParser_ExtractTriggers/quoted_phrases (0.00s)
+    --- PASS: TestParser_ExtractTriggers/no_triggers (0.00s)
+=== RUN   TestParser_ExtractCategory
+=== RUN   TestParser_ExtractCategory//skills/01-devops-basics/docker-compose-creator/SKILL.md
+=== RUN   TestParser_ExtractCategory//some/path/skills/13-aws-skills/lambda-config/SKILL.md
+=== RUN   TestParser_ExtractCategory//no-skills-dir/other/SKILL.md
+--- PASS: TestParser_ExtractCategory (0.00s)
+    --- PASS: TestParser_ExtractCategory//skills/01-devops-basics/docker-compose-creator/SKILL.md (0.00s)
+    --- PASS: TestParser_ExtractCategory//some/path/skills/13-aws-skills/lambda-config/SKILL.md (0.00s)
+    --- PASS: TestParser_ExtractCategory//no-skills-dir/other/SKILL.md (0.00s)
+=== RUN   TestParser_ParseDirectory
+--- PASS: TestParser_ParseDirectory (0.00s)
+=== RUN   TestParser_ParseList
+--- PASS: TestParser_ParseList (0.00s)
+=== RUN   TestParser_ParseErrorTable
+--- PASS: TestParser_ParseErrorTable (0.00s)
+=== RUN   TestProtocolSkillAdapter_RegisterAllSkillsAsTools
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_RegisterAllSkillsAsTools (0.00s)
+=== RUN   TestProtocolSkillAdapter_MCPToolFormat
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_MCPToolFormat (0.00s)
+=== RUN   TestProtocolSkillAdapter_ACPActionFormat
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_ACPActionFormat (0.00s)
+=== RUN   TestProtocolSkillAdapter_LSPCommandFormat
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_LSPCommandFormat (0.00s)
+=== RUN   TestProtocolSkillAdapter_InvokeMCPTool
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_InvokeMCPTool (0.00s)
+=== RUN   TestProtocolSkillAdapter_InvokeACPAction
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_InvokeACPAction (0.00s)
+=== RUN   TestProtocolSkillAdapter_InvokeLSPCommand
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_InvokeLSPCommand (0.00s)
+=== RUN   TestProtocolSkillAdapter_InvokeNonexistentSkill
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_InvokeNonexistentSkill (0.00s)
+=== RUN   TestProtocolSkillAdapter_ToMCPToolList
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_ToMCPToolList (0.00s)
+=== RUN   TestProtocolSkillAdapter_ToACPActionList
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_ToACPActionList (0.00s)
+=== RUN   TestProtocolSkillAdapter_ToLSPCommandList
+time="2026-09-23T18:49:11+02:00" level=info msg="Registered skills as protocol tools" count=3
+--- PASS: TestProtocolSkillAdapter_ToLSPCommandList (0.00s)
+=== RUN   TestGetSkillUsageHeader
+--- PASS: TestGetSkillUsageHeader (0.00s)
+=== RUN   TestGetSkillUsageHeader_Empty
+--- PASS: TestGetSkillUsageHeader_Empty (0.00s)
+=== RUN   TestExtractSkillName
+=== RUN   TestExtractSkillName/mcp_skill_docker-compose
+=== RUN   TestExtractSkillName/acp_skill.kubernetes
+=== RUN   TestExtractSkillName/lsp_helixagent.skill.security
+=== RUN   TestExtractSkillName/mcp_unknown
+--- PASS: TestExtractSkillName (0.00s)
+    --- PASS: TestExtractSkillName/mcp_skill_docker-compose (0.00s)
+    --- PASS: TestExtractSkillName/acp_skill.kubernetes (0.00s)
+    --- PASS: TestExtractSkillName/lsp_helixagent.skill.security (0.00s)
+    --- PASS: TestExtractSkillName/mcp_unknown (0.00s)
+=== RUN   TestRegistry_RegisterAndGet
+--- PASS: TestRegistry_RegisterAndGet (0.00s)
+=== RUN   TestRegistry_GetByCategory
+--- PASS: TestRegistry_GetByCategory (0.00s)
+=== RUN   TestRegistry_GetByTrigger
+--- PASS: TestRegistry_GetByTrigger (0.00s)
+=== RUN   TestRegistry_Remove
+--- PASS: TestRegistry_Remove (0.00s)
+=== RUN   TestRegistry_GetAll
+--- PASS: TestRegistry_GetAll (0.00s)
+=== RUN   TestRegistry_GetCategories
+--- PASS: TestRegistry_GetCategories (0.00s)
+=== RUN   TestRegistry_GetTriggers
+--- PASS: TestRegistry_GetTriggers (0.00s)
+=== RUN   TestRegistry_Stats
+--- PASS: TestRegistry_Stats (0.00s)
+=== RUN   TestRegistry_Search
+--- PASS: TestRegistry_Search (0.00s)
+=== RUN   TestRegistry_Concurrent
+--- PASS: TestRegistry_Concurrent (0.00s)
+=== RUN   TestNewService
+=== RUN   TestNewService/creates_service_with_default_config
+=== RUN   TestNewService/creates_service_with_custom_config
+--- PASS: TestNewService (0.00s)
+    --- PASS: TestNewService/creates_service_with_default_config (0.00s)
+    --- PASS: TestNewService/creates_service_with_custom_config (0.00s)
+=== RUN   TestService_SetLogger
+--- PASS: TestService_SetLogger (0.00s)
+=== RUN   TestService_Start
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_Start (0.00s)
+=== RUN   TestService_Shutdown
+=== RUN   TestService_Shutdown/shuts_down_cleanly
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+time="2026-09-23T18:49:11+02:00" level=info msg="Shutting down skill service"
+=== RUN   TestService_Shutdown/shutdown_when_not_running_is_no-op
+--- PASS: TestService_Shutdown (0.00s)
+    --- PASS: TestService_Shutdown/shuts_down_cleanly (0.00s)
+    --- PASS: TestService_Shutdown/shutdown_when_not_running_is_no-op (0.00s)
+=== RUN   TestService_GetAllSkills
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetAllSkills (0.00s)
+=== RUN   TestService_RegisterSkill
+=== RUN   TestService_RegisterSkill/registers_skill_successfully
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_RegisterSkill (0.00s)
+    --- PASS: TestService_RegisterSkill/registers_skill_successfully (0.00s)
+=== RUN   TestService_GetSkill
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+=== RUN   TestService_GetSkill/returns_skill_when_found
+=== RUN   TestService_GetSkill/returns_not_found_for_unknown_skill
+--- PASS: TestService_GetSkill (0.00s)
+    --- PASS: TestService_GetSkill/returns_skill_when_found (0.00s)
+    --- PASS: TestService_GetSkill/returns_not_found_for_unknown_skill (0.00s)
+=== RUN   TestService_GetSkillsByCategory
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetSkillsByCategory (0.00s)
+=== RUN   TestService_GetCategories
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetCategories (0.00s)
+=== RUN   TestService_SearchSkills
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_SearchSkills (0.00s)
+=== RUN   TestService_RemoveSkill
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_RemoveSkill (0.00s)
+=== RUN   TestService_HealthCheck
+=== RUN   TestService_HealthCheck/returns_error_when_not_running
+=== RUN   TestService_HealthCheck/returns_error_when_no_skills_loaded
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+=== RUN   TestService_HealthCheck/returns_nil_when_healthy
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_HealthCheck (0.00s)
+    --- PASS: TestService_HealthCheck/returns_error_when_not_running (0.00s)
+    --- PASS: TestService_HealthCheck/returns_error_when_no_skills_loaded (0.00s)
+    --- PASS: TestService_HealthCheck/returns_nil_when_healthy (0.00s)
+=== RUN   TestService_GetConfig
+--- PASS: TestService_GetConfig (0.00s)
+=== RUN   TestService_UpdateConfig
+--- PASS: TestService_UpdateConfig (0.00s)
+=== RUN   TestService_GetRegistryStats
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetRegistryStats (0.00s)
+=== RUN   TestService_SkillTracking
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+=== RUN   TestService_SkillTracking/starts_tracking_execution
+=== RUN   TestService_SkillTracking/records_tool_use
+=== RUN   TestService_SkillTracking/completes_execution_successfully
+=== RUN   TestService_SkillTracking/completes_execution_with_error
+--- PASS: TestService_SkillTracking (0.00s)
+    --- PASS: TestService_SkillTracking/starts_tracking_execution (0.00s)
+    --- PASS: TestService_SkillTracking/records_tool_use (0.00s)
+    --- PASS: TestService_SkillTracking/completes_execution_successfully (0.00s)
+    --- PASS: TestService_SkillTracking/completes_execution_with_error (0.00s)
+=== RUN   TestService_GetUsageStats
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetUsageStats (0.00s)
+=== RUN   TestService_GetTopSkills
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetTopSkills (0.00s)
+=== RUN   TestService_GetUsageHistory
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetUsageHistory (0.00s)
+=== RUN   TestService_ExecuteWithTracking
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+=== RUN   TestService_ExecuteWithTracking/tracks_successful_execution
+=== RUN   TestService_ExecuteWithTracking/tracks_failed_execution
+--- PASS: TestService_ExecuteWithTracking (0.00s)
+    --- PASS: TestService_ExecuteWithTracking/tracks_successful_execution (0.00s)
+    --- PASS: TestService_ExecuteWithTracking/tracks_failed_execution (0.00s)
+=== RUN   TestService_CreateResponse
+--- PASS: TestService_CreateResponse (0.00s)
+=== RUN   TestService_FindSkills
+=== RUN   TestService_FindSkills/returns_error_when_not_running
+=== RUN   TestService_FindSkills/finds_matching_skills_when_running
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_FindSkills (0.00s)
+    --- PASS: TestService_FindSkills/returns_error_when_not_running (0.00s)
+    --- PASS: TestService_FindSkills/finds_matching_skills_when_running (0.00s)
+=== RUN   TestService_FindBestSkill
+=== RUN   TestService_FindBestSkill/returns_error_when_not_running
+=== RUN   TestService_FindBestSkill/finds_best_skill_when_running
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_FindBestSkill (0.00s)
+    --- PASS: TestService_FindBestSkill/returns_error_when_not_running (0.00s)
+    --- PASS: TestService_FindBestSkill/finds_best_skill_when_running (0.00s)
+=== RUN   TestService_IsRunning
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+time="2026-09-23T18:49:11+02:00" level=info msg="Shutting down skill service"
+--- PASS: TestService_IsRunning (0.00s)
+=== RUN   TestService_GetActiveExecutions
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetActiveExecutions (0.00s)
+=== RUN   TestService_GetSkillStats
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service started (manual mode)"
+--- PASS: TestService_GetSkillStats (0.00s)
+=== RUN   TestService_Initialize
+=== RUN   TestService_Initialize/initializes_successfully
+time="2026-09-23T18:49:11+02:00" level=info msg="Initializing skill service"
+time="2026-09-23T18:49:11+02:00" level=info msg="Loading skills" directory=/tmp/nonexistent-skills-20260923184911
+time="2026-09-23T18:49:11+02:00" level=info msg="Skills loaded successfully" categories=0 failed=0 total=0 triggers=0
+time="2026-09-23T18:49:11+02:00" level=info msg="Skill service initialized" skills_loaded=0
+=== RUN   TestService_Initialize/idempotent_initialization
+--- PASS: TestService_Initialize (0.00s)
+    --- PASS: TestService_Initialize/initializes_successfully (0.00s)
+    --- PASS: TestService_Initialize/idempotent_initialization (0.00s)
+=== RUN   TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories
+--- PASS: TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories (0.00s)
+=== RUN   TestParser_ParseDirectory_SymlinkCycleTerminates
+--- PASS: TestParser_ParseDirectory_SymlinkCycleTerminates (0.00s)
+=== RUN   TestTracker_StartAndComplete
+--- PASS: TestTracker_StartAndComplete (0.00s)
+=== RUN   TestTracker_CompleteWithError
+--- PASS: TestTracker_CompleteWithError (0.00s)
+=== RUN   TestTracker_Stats
+--- PASS: TestTracker_Stats (0.00s)
+=== RUN   TestTracker_GetTopSkills
+--- PASS: TestTracker_GetTopSkills (0.00s)
+=== RUN   TestTracker_History
+--- PASS: TestTracker_History (0.02s)
+=== RUN   TestTracker_Reset
+--- PASS: TestTracker_Reset (0.00s)
+=== RUN   TestTracker_ActiveUsages
+--- PASS: TestTracker_ActiveUsages (0.00s)
+=== RUN   TestTracker_SkillStats
+--- PASS: TestTracker_SkillStats (0.03s)
+=== RUN   TestParseAllowedTools_EmptyString
+--- PASS: TestParseAllowedTools_EmptyString (0.00s)
+=== RUN   TestParseAllowedTools_SingleTool
+--- PASS: TestParseAllowedTools_SingleTool (0.00s)
+=== RUN   TestParseAllowedTools_MultipleTools
+--- PASS: TestParseAllowedTools_MultipleTools (0.00s)
+=== RUN   TestParseAllowedTools_ToolWithConstraints
+--- PASS: TestParseAllowedTools_ToolWithConstraints (0.00s)
+=== RUN   TestParseAllowedTools_ToolWithMultipleConstraints
+--- PASS: TestParseAllowedTools_ToolWithMultipleConstraints (0.00s)
+=== RUN   TestParseAllowedTools_MixedToolsWithAndWithoutConstraints
+--- PASS: TestParseAllowedTools_MixedToolsWithAndWithoutConstraints (0.00s)
+=== RUN   TestParseAllowedTools_ComplexConstraints
+--- PASS: TestParseAllowedTools_ComplexConstraints (0.00s)
+=== RUN   TestParseAllowedTools_WhitespaceHandling
+--- PASS: TestParseAllowedTools_WhitespaceHandling (0.00s)
+=== RUN   TestParseAllowedTools_NestedParentheses
+--- PASS: TestParseAllowedTools_NestedParentheses (0.00s)
+=== RUN   TestParseToolString_SimpleToolName
+--- PASS: TestParseToolString_SimpleToolName (0.00s)
+=== RUN   TestParseToolString_ToolWithConstraint
+--- PASS: TestParseToolString_ToolWithConstraint (0.00s)
+=== RUN   TestParseToolString_EmptyConstraints
+--- PASS: TestParseToolString_EmptyConstraints (0.00s)
+=== RUN   TestDefaultSkillConfig
+--- PASS: TestDefaultSkillConfig (0.00s)
+=== RUN   TestMatchType_Constants
+--- PASS: TestMatchType_Constants (0.00s)
+PASS
+ok  	dev.helix.agent/internal/skills	0.100s

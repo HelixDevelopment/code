@@ -44,6 +44,7 @@ the SEPARATE, paired-mutation-tested validate_catalog.py is what enforces
 completeness as a gate).
 """
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -88,11 +89,13 @@ HELIXCODE_EVIDENCE = (
     "miscalibration), captured at "
     "docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and "
     "the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED "
-    "cell reports per-skill FILE PRESENCE at the platform directory "
-    "(§11.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a "
-    "distinction this catalogue's generator does not currently classify "
-    "separately (tracked per §11.4.197, see the F-17 subagent's final "
-    "report for the residual-finding discussion). Honest boundary "
+    "cell's status token reports per-skill FILE PRESENCE at the platform "
+    "directory (§11.4.228(A)(1)'s liveness probe), not whole-tier "
+    "ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is "
+    "PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct "
+    "fact of external-tier-SPECIFIC policy-gate admission (see "
+    "external_tier_admission in catalog.json), closing the residual gap "
+    "this paragraph used to describe as unclassified. Honest boundary "
     "(§11.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): "
     "the per-skill activation-allowlist/ceiling mechanism was NOT "
     "verifiable from within helix_code/'s own file scope this cycle — "
@@ -124,6 +127,180 @@ NEVER_WIRED_NOTES = {
         "platform)."
     ),
 }
+
+
+def read_frontmatter_name(skill_dir: Path):
+    """Read the front-matter `name:` field of skill_dir/SKILL.md.
+
+    Mirrors pkg/skills' `Qualified()` identity semantics (HXC-159 F-21/F-22):
+    under DialectHelixCode the front-matter `name:` is the identity the
+    external-tier policy gate AND commands.SkillRegistry key by whenever
+    present -- NOT always the manifest/directory basename (4 of 9 real
+    skills in this checkout carry a title-cased front-matter name that
+    differs from their directory name). Returns None when unreadable or
+    absent, in which case callers fall back to the directory name.
+    """
+    skill_md = skill_dir / "SKILL.md"
+    try:
+        content = skill_md.read_text()
+    except OSError:
+        return None
+    if not content.startswith("---"):
+        return None
+    end = content.find("\n---", 3)
+    if end == -1:
+        return None
+    for line in content[3:end].splitlines():
+        line = line.strip()
+        if line.startswith("name:"):
+            value = line[len("name:"):].strip()
+            return value.strip('"').strip("'") or None
+    return None
+
+
+def probe_external_tier_admission(root: Path):
+    """Real, live probe (§11.4.6/§11.4.99 — never hand-transcribed) of
+    helix_agent's ExternalSkillSource policy gate against the REAL
+    `.claude/skills/` directory THIS run, via
+    `submodules/helix_agent/cmd/similarity-probe` (the F-17 parity
+    harness, which calls `ExternalSkillSource.LoadForProbe()` — the exact
+    production `Load()` code path, `ParseDirectory` included).
+
+    HXC-159 T-P9.01 round-4 F-22(b): the generator previously derived the
+    HelixCode column purely from directory PRESENCE at `.claude/skills/`
+    (`probe_dir_platform`, `claude_cell["status"]`), which is TRUE for a
+    skill resolved via the SEPARATE, higher-precedence `builtin` tier
+    even when the external tier's OWN similarity-conflict policy gate
+    EXCLUDES it (F-22(a)) — so the prior static note's blanket "via
+    external tier" claim was false for exactly the two skills the
+    external-tier gate refuses. This probe distinguishes the two facts
+    for real, this run, instead of repeating that static claim.
+
+    Returns (verdicts, probe_error):
+      verdicts    {qualified_name: {"admitted": bool, "conflicts_with":
+                  str|None, "score": float|None, "threshold": float|None}}
+                  keyed by the SAME qualified identity Qualified() uses
+                  (front-matter name when present, else directory name).
+      probe_error None on success (verdicts is authoritative and MAY be
+                  empty when `.claude/skills/` is genuinely empty); a short
+                  human-readable string when the probe could not be run at
+                  all (missing directory/binary source, go toolchain
+                  failure, timeout, non-JSON output) — callers MUST render
+                  an honest caveat in that case, never silently reuse a
+                  stale or assumed verdict (§11.4.6).
+    """
+    external_dir = root / ".claude" / "skills"
+    if not external_dir.is_dir():
+        return {}, "no .claude/skills directory exists in this checkout to probe this run"
+    probe_module = root / "submodules" / "helix_agent"
+    if not (probe_module / "cmd" / "similarity-probe").is_dir():
+        return {}, "submodules/helix_agent/cmd/similarity-probe is not present in this checkout"
+    try:
+        result = subprocess.run(
+            ["go", "run", "./cmd/similarity-probe", str(external_dir)],
+            cwd=str(probe_module),
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {}, f"similarity-probe invocation failed: {exc}"
+    if result.returncode != 0:
+        stderr_tail = result.stderr.strip()[-500:]
+        return {}, f"similarity-probe exited {result.returncode}: {stderr_tail}"
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        return {}, f"similarity-probe produced non-JSON stdout: {exc}"
+
+    verdicts = {}
+    for name in payload.get("admitted", []):
+        verdicts[name] = {"admitted": True, "conflicts_with": None, "score": None, "threshold": None}
+    for exclusion in payload.get("excluded", []):
+        verdicts[exclusion.get("excluded", "")] = {
+            "admitted": False,
+            "conflicts_with": exclusion.get("conflicts_with"),
+            "score": exclusion.get("score"),
+            "threshold": exclusion.get("threshold"),
+        }
+    whole_set_refusal = payload.get("refusal") or None
+    if whole_set_refusal and not verdicts:
+        return {}, f"external tier whole-set refusal this run: {whole_set_refusal}"
+    return verdicts, None
+
+
+def probe_final_registry_source(root: Path, manifest_names):
+    """Real, live probe of the ACTUAL registry entry `helixcode skills list`
+    serves for each manifest skill name, by building the real CLI binary
+    and running it against this checkout (§11.4.6/§11.4.99).
+
+    HXC-159 T-P9.01 round-4 F-22(a)/(b): the external-tier policy gate's
+    admit/exclude verdict (probe_external_tier_admission, above) is a
+    SEPARATE fact from which tier's copy the FINAL registry actually
+    serves — `commands.SkillLoader.Load` calls `loadBuiltinSkills` on
+    EVERY load, and the CLI bootstrap loads the external tier FIRST and
+    the project/user (`builtin`) loader LAST, so a same-named `builtin`
+    entry OVERRIDES a POLICY-ADMITTED external-tier entry too (measured
+    live 2026-09-23: 5 of the 7 admitted skills still show
+    SOURCE=builtin:...). Conflating "admitted by the policy gate" with
+    "served from the external tier" would repeat a milder version of the
+    exact bluff this fix closes, so this second probe checks the real,
+    final SOURCE= column directly instead of assuming admission implies
+    external-tier service.
+
+    Returns (sources, probe_error) where sources is {name: "builtin"|
+    "external"|"other:<literal>"} and probe_error is None on success or a
+    short string when the binary could not be built/run (never silently
+    reused/assumed — §11.4.6).
+    """
+    inner_module = root / "helix_code"
+    if not (inner_module / "cmd" / "cli").is_dir():
+        return {}, "helix_code/cmd/cli is not present in this checkout"
+    binary = root / "docs" / "extensions" / ".final_source_probe_bin"
+    try:
+        build = subprocess.run(
+            ["go", "build", "-o", str(binary), "./cmd/cli"],
+            cwd=str(inner_module),
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {}, f"CLI build failed to run: {exc}"
+    if build.returncode != 0:
+        return {}, f"CLI build exited {build.returncode}: {build.stderr.strip()[-500:]}"
+    try:
+        run = subprocess.run(
+            [str(binary), "skills", "list"],
+            cwd=str(root),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    finally:
+        try:
+            binary.unlink()
+        except OSError:
+            pass
+    if run.returncode != 0:
+        return {}, f"'skills list' exited {run.returncode}: {run.stderr.strip()[-500:]}"
+
+    sources = {}
+    for line in run.stdout.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        first_token = stripped.split(None, 1)[0]
+        if first_token not in manifest_names:
+            continue
+        source_token = stripped.split()[-1]
+        if source_token.startswith("builtin:"):
+            sources[first_token] = "builtin"
+        elif ".claude/skills/" in source_token:
+            sources[first_token] = "external"
+        else:
+            sources[first_token] = f"other:{source_token}"
+    return sources, None
 
 
 def parse_manifest(path: Path):
@@ -183,7 +360,8 @@ def probe_dir_platform(root: Path, rel_dir: str, name: str, expected_source: str
     )
 
 
-def classify_row(root: Path, row: dict):
+def classify_row(root: Path, row: dict, external_tier_verdicts: dict, probe_error,
+                  final_sources: dict, source_probe_error):
     cells = {}
     for key, _display, rel_dir, has_registrar in PLATFORMS:
         if key == "helixcode":
@@ -203,12 +381,120 @@ def classify_row(root: Path, row: dict):
         cells[key] = {"status": status, "path": path, "note": note}
 
     # HelixCode: external tier defaults to the SAME directory Claude Code
-    # uses; mirror that probe result rather than re-probing a directory that
-    # does not independently exist for this platform.
+    # uses; mirror that PRESENCE probe result for reachability, but — F-22(b)
+    # — additionally consult the REAL, live external-tier policy-gate probe
+    # (external_tier_verdicts, from cmd/similarity-probe) so the note
+    # distinguishes "resolvable via SOME tier" (file presence — always true
+    # when claude_cell is SUPPORTED) from "ADMITTED specifically by the
+    # external tier's own policy gate" (which two real skills fail on a
+    # similarity conflict and instead resolve only via the separate
+    # higher-precedence `builtin` tier — F-22(a)). Two distinguishable facts,
+    # never collapsed back into one blanket claim.
     claude_cell = cells["claude_code"]
+    external_tier_admission = None
     if claude_cell["status"] == "SUPPORTED":
         helix_status = "SUPPORTED"
-        helix_note = f"via external tier -> {claude_cell['path']}. {HELIXCODE_EVIDENCE}"
+        qualified = read_frontmatter_name(root / row["source"]) or row["name"]
+        verdict = external_tier_verdicts.get(qualified)
+        if probe_error is not None:
+            helix_note = (
+                f"resolvable via .claude/skills/{row['name']} (file-presence "
+                f"probe this run — SOME tier serves it to end users). "
+                f"EXTERNAL-TIER POLICY ADMISSION COULD NOT BE LIVE-PROBED "
+                f"THIS RUN ({probe_error}) — per §11.4.6 this cell reports "
+                f"file-presence only, not a verified external-tier-specific "
+                f"admission claim. {HELIXCODE_EVIDENCE}"
+            )
+            external_tier_admission = {"verified": False, "reason": probe_error}
+        elif verdict is None:
+            helix_note = (
+                f"resolvable via .claude/skills/{row['name']} (file-presence "
+                f"probe this run). Live external-tier probe ran but returned "
+                f"no verdict for qualified identity {qualified!r} — treated "
+                f"as unverified this run rather than assumed admitted "
+                f"(§11.4.6). {HELIXCODE_EVIDENCE}"
+            )
+            external_tier_admission = {"verified": False, "reason": f"no verdict for {qualified!r}"}
+        elif verdict["admitted"]:
+            admitted_note = (
+                f"ADMITTED by the external-tier similarity-conflict policy "
+                f"gate (live-probed this run via "
+                f"submodules/helix_agent/cmd/similarity-probe against the "
+                f"real .claude/skills/, qualified identity {qualified!r} -- "
+                f"not excluded on a similarity conflict)."
+            )
+            # F-22(a)/(b): admission by the policy gate is a SEPARATE fact
+            # from which tier's copy the FINAL registry actually serves --
+            # a same-named `builtin` entry overrides an admitted external
+            # entry too (loadBuiltinSkills runs on every load, last).
+            # Cross-check the REAL final SOURCE= this run rather than
+            # assuming admission implies external-tier service.
+            final_source = final_sources.get(row["name"]) if source_probe_error is None else None
+            if source_probe_error is not None:
+                helix_note = (
+                    f"{admitted_note} Whether the FINAL registry serves "
+                    f"this skill from the external tier or a same-named "
+                    f"`builtin` copy (which overrides when both exist, per "
+                    f"F-22(a)) COULD NOT be live-probed this run "
+                    f"({source_probe_error}) -- do not assume policy "
+                    f"admission implies external-tier service; cross-check "
+                    f"`helixcode skills list` SOURCE= directly. "
+                    f"{HELIXCODE_EVIDENCE}"
+                )
+                external_tier_admission = {
+                    "verified": True, "admitted": True, "qualified_name": qualified,
+                    "final_source_verified": False, "final_source_error": source_probe_error,
+                }
+            elif final_source == "external":
+                helix_note = (
+                    f"{admitted_note} The FINAL registry SOURCE (live-"
+                    f"probed this run via a real `helixcode skills list`) "
+                    f"CONFIRMS it -- genuinely served from the external "
+                    f"tier -> {claude_cell['path']}. {HELIXCODE_EVIDENCE}"
+                )
+                external_tier_admission = {
+                    "verified": True, "admitted": True, "qualified_name": qualified,
+                    "final_source_verified": True, "final_source": "external",
+                }
+            else:
+                observed = final_source or "not found in `skills list` output"
+                helix_note = (
+                    f"{admitted_note} HOWEVER the FINAL registry SOURCE "
+                    f"(live-probed this run via a real `helixcode skills "
+                    f"list`) is {observed!r}, NOT the external tier -- a "
+                    f"same-named `builtin` copy loaded LAST overrides the "
+                    f"admitted external-tier entry (F-22(a)); content is "
+                    f"byte-identical post-F-13 so this is not user-visible-"
+                    f"wrong, but claiming this skill 'resolves via the "
+                    f"external tier' would be FALSE. {HELIXCODE_EVIDENCE}"
+                )
+                external_tier_admission = {
+                    "verified": True, "admitted": True, "qualified_name": qualified,
+                    "final_source_verified": True, "final_source": final_source or "unknown",
+                }
+        else:
+            helix_note = (
+                f"EXCLUDED by the external-tier similarity-conflict policy "
+                f"gate (live-probed this run via "
+                f"submodules/helix_agent/cmd/similarity-probe: qualified "
+                f"identity {qualified!r} conflicts with "
+                f"{verdict['conflicts_with']!r}, score={verdict['score']} >= "
+                f"threshold={verdict['threshold']}) -- this skill resolves "
+                f"ONLY via the SEPARATE, higher-precedence `builtin` tier "
+                f"(masking the external-tier exclusion for the end user, "
+                f"per F-22(a)); the prior blanket \"via external tier\" "
+                f"claim was FALSE for this skill specifically. Still "
+                f"SUPPORTED overall (a real tier does serve it), but NOT "
+                f"via the external tier. {HELIXCODE_EVIDENCE}"
+            )
+            external_tier_admission = {
+                "verified": True,
+                "admitted": False,
+                "qualified_name": qualified,
+                "conflicts_with": verdict["conflicts_with"],
+                "score": verdict["score"],
+                "threshold": verdict["threshold"],
+            }
     else:
         helix_status = "CONFIG-ONLY"
         helix_note = (
@@ -217,7 +503,12 @@ def classify_row(root: Path, row: dict):
             f"directory does not currently carry this skill "
             f"({claude_cell['note']}). {HELIXCODE_EVIDENCE}"
         )
-    cells["helixcode"] = {"status": helix_status, "path": f".claude/skills/{row['name']} (external tier)", "note": helix_note}
+    cells["helixcode"] = {
+        "status": helix_status,
+        "path": f".claude/skills/{row['name']} (external tier)",
+        "note": helix_note,
+        "external_tier_admission": external_tier_admission,
+    }
     return cells
 
 
@@ -258,6 +549,30 @@ def render_markdown(rows_with_cells, manifest_path: Path, out_path: Path):
         "impossible per §11.4.112 — unused by this generator; no platform "
         "here has been proven incapable of loading a Markdown-frontmatter "
         "skill)."
+    )
+    lines.append("")
+    lines.append(
+        "**HelixCode column — three distinct facts, not one (HXC-159 "
+        "T-P9.01 round-4 F-22(b) correction).** The HelixCode cell's "
+        "`SUPPORTED` / `CONFIG-ONLY` status still reports the SAME thing "
+        "it always has — whether the skill is *reachable via "
+        "`.claude/skills/` by some tier* (a directory-presence probe). "
+        "That status alone does NOT establish either of two further, "
+        "independently live-probed facts, each also-true and each "
+        "distinct: (1) whether the skill is specifically *ADMITTED by the "
+        "external tier's own similarity-conflict policy gate* (live-"
+        "probed via `submodules/helix_agent/cmd/similarity-probe`, the "
+        "SAME code path `Load()` uses); and (2) — for a skill the gate "
+        "DOES admit — whether the FINAL registry a user actually gets "
+        "skills from serves it FROM the external tier or from a same-"
+        "named, independently-loaded `builtin` copy that overrides it "
+        "(live-probed via a real `helixcode skills list`, HXC-159 "
+        "F-22(a)'s root cause: `loadBuiltinSkills` runs on every load, "
+        "last). Every Per-skill-detail note below states ALL applicable "
+        "facts explicitly and honestly — never hand-transcribed, §11.4.6 "
+        "— including when either probe itself could not run this run, in "
+        "which case the note says so rather than silently reusing a stale "
+        "or assumed verdict."
     )
     lines.append("")
     lines.append("## Table of contents")
@@ -325,10 +640,20 @@ def main():
     out_dir = Path(sys.argv[3])
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    external_tier_verdicts, probe_error = probe_external_tier_admission(root)
+    if probe_error is not None:
+        print(f"WARNING: external-tier policy-gate probe unavailable this run: {probe_error}", file=sys.stderr)
+
     rows = parse_manifest(manifest_path)
+    manifest_names = {r["name"] for r in rows}
+    final_sources, source_probe_error = probe_final_registry_source(root, manifest_names)
+    if source_probe_error is not None:
+        print(f"WARNING: final-registry-source probe unavailable this run: {source_probe_error}", file=sys.stderr)
+
     rows_with_cells = []
     for row in rows:
-        cells = classify_row(root, row)
+        cells = classify_row(root, row, external_tier_verdicts, probe_error,
+                              final_sources, source_probe_error)
         rows_with_cells.append({**row, "cells": cells})
 
     catalog_json = {

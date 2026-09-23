@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T09:34:18Z",
+  "generated_at": "2026-09-23T16:57:04Z",
   "manifest": "scripts/skills_manifest.tsv",
   "platforms": [
     "claude_code",
@@ -18,7 +18,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/action-prefix-system",
-          "note": "symlink, SKILL.md read 6515 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 7332 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -38,7 +38,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/action-prefix-system (external tier)",
-          "note": "via external tier -> .claude/skills/action-prefix-system. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'Action Prefix System' -- not excluded on a similarity conflict). HOWEVER the FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) is 'builtin', NOT the external tier -- a same-named `builtin` copy loaded LAST overrides the admitted external-tier entry (F-22(a)); content is byte-identical post-F-13 so this is not user-visible-wrong, but claiming this skill 'resolves via the external tier' would be FALSE. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "Action Prefix System",
+            "final_source_verified": true,
+            "final_source": "builtin"
+          }
         }
       }
     },
@@ -50,7 +57,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/media-validator",
-          "note": "symlink, SKILL.md read 1536 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 2225 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -70,7 +77,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/media-validator (external tier)",
-          "note": "via external tier -> .claude/skills/media-validator. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'media-validator' -- not excluded on a similarity conflict). HOWEVER the FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) is 'builtin', NOT the external tier -- a same-named `builtin` copy loaded LAST overrides the admitted external-tier entry (F-22(a)); content is byte-identical post-F-13 so this is not user-visible-wrong, but claiming this skill 'resolves via the external tier' would be FALSE. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "media-validator",
+            "final_source_verified": true,
+            "final_source": "builtin"
+          }
         }
       }
     },
@@ -82,7 +96,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/multitrack",
-          "note": "symlink, SKILL.md read 1965 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 2543 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -102,7 +116,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/multitrack (external tier)",
-          "note": "via external tier -> .claude/skills/multitrack. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'Multitrack' -- not excluded on a similarity conflict). HOWEVER the FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) is 'builtin', NOT the external tier -- a same-named `builtin` copy loaded LAST overrides the admitted external-tier entry (F-22(a)); content is byte-identical post-F-13 so this is not user-visible-wrong, but claiming this skill 'resolves via the external tier' would be FALSE. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "Multitrack",
+            "final_source_verified": true,
+            "final_source": "builtin"
+          }
         }
       }
     },
@@ -114,7 +135,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/reporting-workable-items",
-          "note": "symlink, SKILL.md read 5013 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 5644 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -134,7 +155,15 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/reporting-workable-items (external tier)",
-          "note": "via external tier -> .claude/skills/reporting-workable-items. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "EXCLUDED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe: qualified identity 'Reporting Workable Items' conflicts with 'Action Prefix System', score=0.1044776119402985 >= threshold=0.0709) -- this skill resolves ONLY via the SEPARATE, higher-precedence `builtin` tier (masking the external-tier exclusion for the end user, per F-22(a)); the prior blanket \"via external tier\" claim was FALSE for this skill specifically. Still SUPPORTED overall (a real tier does serve it), but NOT via the external tier. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": false,
+            "qualified_name": "Reporting Workable Items",
+            "conflicts_with": "Action Prefix System",
+            "score": 0.1044776119402985,
+            "threshold": 0.0709
+          }
         }
       }
     },
@@ -146,7 +175,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/scheduled-work-queue",
-          "note": "symlink, SKILL.md read 3681 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 4216 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -166,7 +195,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/scheduled-work-queue (external tier)",
-          "note": "via external tier -> .claude/skills/scheduled-work-queue. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'scheduled-work-queue' -- not excluded on a similarity conflict). HOWEVER the FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) is 'builtin', NOT the external tier -- a same-named `builtin` copy loaded LAST overrides the admitted external-tier entry (F-22(a)); content is byte-identical post-F-13 so this is not user-visible-wrong, but claiming this skill 'resolves via the external tier' would be FALSE. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "scheduled-work-queue",
+            "final_source_verified": true,
+            "final_source": "builtin"
+          }
         }
       }
     },
@@ -178,7 +214,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/session-sync",
-          "note": "symlink, SKILL.md read 4860 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 5473 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -198,7 +234,15 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/session-sync (external tier)",
-          "note": "via external tier -> .claude/skills/session-sync. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "EXCLUDED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe: qualified identity 'session-sync' conflicts with 'Multitrack', score=0.07936507936507936 >= threshold=0.0709) -- this skill resolves ONLY via the SEPARATE, higher-precedence `builtin` tier (masking the external-tier exclusion for the end user, per F-22(a)); the prior blanket \"via external tier\" claim was FALSE for this skill specifically. Still SUPPORTED overall (a real tier does serve it), but NOT via the external tier. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": false,
+            "qualified_name": "session-sync",
+            "conflicts_with": "Multitrack",
+            "score": 0.07936507936507936,
+            "threshold": 0.0709
+          }
         }
       }
     },
@@ -210,7 +254,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/skill-catalog",
-          "note": "symlink, SKILL.md read 2328 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 2328 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -230,7 +274,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/skill-catalog (external tier)",
-          "note": "via external tier -> .claude/skills/skill-catalog. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'skill-catalog' -- not excluded on a similarity conflict). The FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) CONFIRMS it -- genuinely served from the external tier -> .claude/skills/skill-catalog. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "skill-catalog",
+            "final_source_verified": true,
+            "final_source": "external"
+          }
         }
       }
     },
@@ -242,7 +293,7 @@
         "claude_code": {
           "status": "SUPPORTED",
           "path": ".claude/skills/workable-item-lifecycle",
-          "note": "symlink, SKILL.md read 4648 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T09:34:18Z."
+          "note": "symlink, SKILL.md read 5297 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T16:57:04Z."
         },
         "opencode": {
           "status": "UNTESTED",
@@ -262,7 +313,14 @@
         "helixcode": {
           "status": "SUPPORTED",
           "path": ".claude/skills/workable-item-lifecycle (external tier)",
-          "note": "via external tier -> .claude/skills/workable-item-lifecycle. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- a distinction this catalogue's generator does not currently classify separately (tracked per \u00a711.4.197, see the F-17 subagent's final report for the residual-finding discussion). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+          "note": "ADMITTED by the external-tier similarity-conflict policy gate (live-probed this run via submodules/helix_agent/cmd/similarity-probe against the real .claude/skills/, qualified identity 'Workable Item Lifecycle' -- not excluded on a similarity conflict). HOWEVER the FINAL registry SOURCE (live-probed this run via a real `helixcode skills list`) is 'builtin', NOT the external tier -- a same-named `builtin` copy loaded LAST overrides the admitted external-tier entry (F-22(a)); content is byte-identical post-F-13 so this is not user-visible-wrong, but claiming this skill 'resolves via the external tier' would be FALSE. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's LOADING MECHANISM (a single fixture skill, no similarity conflict) is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). HXC-159 F-17 (2026-09-23): the shared SimilarityThreshold was recalibrated 0.0256->0.0709 against the real, frontmatter-complete corpus-1 (see docs/qa/hxc159_f17_remediation_20260923T0921Z/threshold.json); the REAL 8-9-skill corpus-1 tier is nonetheless STILL policy-refused at BOTH consumers on a genuine confusable pair (action-prefix-system || reporting-workable-items, score 0.1045 -- real content overlap, not a miscalibration), captured at docs/qa/hxc159_f17_remediation_20260923T0921Z/helixcode_recalibrated_run.txt and the mirrored helix_agent_native_recalibrated_run.txt. This SUPPORTED cell's status token reports per-skill FILE PRESENCE at the platform directory (\u00a711.4.228(A)(1)'s liveness probe), not whole-tier ACTIVATION -- as of T-P9.01 round-4 F-22(b) (2026-09-23) this note is PREFIXED, above, by a SEPARATE, live-probed verdict on the distinct fact of external-tier-SPECIFIC policy-gate admission (see external_tier_admission in catalog.json), closing the residual gap this paragraph used to describe as unclassified. Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module.",
+          "external_tier_admission": {
+            "verified": true,
+            "admitted": true,
+            "qualified_name": "Workable Item Lifecycle",
+            "final_source_verified": true,
+            "final_source": "builtin"
+          }
         }
       }
     }

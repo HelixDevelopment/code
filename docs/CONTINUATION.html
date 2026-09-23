@@ -65,7 +65,7 @@ CLI-Agent Fusion — Programme Continuation Guide</h1>
 <tbody>
 <tr>
 <td>Revision</td>
-<td>27</td>
+<td>28</td>
 </tr>
 <tr>
 <td>Created</td>
@@ -73,12 +73,16 @@ CLI-Agent Fusion — Programme Continuation Guide</h1>
 </tr>
 <tr>
 <td>Last modified</td>
-<td>2026-09-07T10:02:04Z (rev 27 — state-correction pass only: the batch
-described by rev 25/26 is now COMMITTED (15 commits on meta
-<code>main</code>, <code>926eaf3e</code>..<code>dfb06d38</code>, plus
-<code>f3f0540b</code>) and is NOT PUSHED; rev 26 said “nothing is
-committed, nothing is pushed” and named this sync as the required next
-action. No engineering work claimed;
+<td>2026-09-23T16:58:00Z (rev 28 — HXC-159 T-P9.01 round-4 F-24
+remediation: this CONTINUATION document had ZERO mentions of the HXC-159
+programme across 80+ state-advancing commits since 2026-09-08, a
+CONST-044/§13.1 CRITICAL DEFECT the round-4 independent review flagged
+as F-24. This pass adds the full HXC-159 programme entry below (new
+<code>## Session 2026-09-23</code> section) AND, in the same working
+session, fixes two of the round’s other three open findings: F-23
+(helix_agent commit <code>a97a55fe</code>, RED→GREEN + real-corpus
+evidence) and F-22(b) (catalogue regenerator now runs two real live
+probes; regenerated + re-validated GREEN).
 §11.4.131/§12.10/§11.4.127/CONST-044)</td>
 </tr>
 <tr>
@@ -87,10 +91,20 @@ action. No engineering work claimed;
 </tr>
 <tr>
 <td>Status summary</td>
-<td><strong>REVISION 27 (2026-09-07T10:02:04Z)</strong> —
-state-correction pass only. The cloud-gate + CLI-agent-fanout batch that
-rev 25 and rev 26 described as unfinished <strong>IS NOW COMMITTED and
-IS NOT PUSHED</strong>: 15 commits on meta <code>main</code>
+<td><strong>REVISION 28 (2026-09-23T16:58:00Z)</strong> — HXC-159
+T-P9.01 round-4 F-24 remediation (this CONTINUATION doc) + same-session
+F-23/F-22(b) fixes. See the new
+<code>## Session 2026-09-23 — HXC-159 T-P9.01 round-4 closure: F-24/F-23/F-22(b)</code>
+section (document tail, after the 2026-09-08 session) for the full
+HXC-159 programme entry: what the feature is, its 17-phase build
+history, the 4-round independent-review closure state, which round-4
+findings are now fixed vs deliberately deferred, and the exact
+resumption path (round-5 review → T-P9.02 full-suite retest → T-P9.03
+tracker sync → push). <strong>REVISION 27
+(2026-09-07T10:02:04Z)</strong> — state-correction pass only. The
+cloud-gate + CLI-agent-fanout batch that rev 25 and rev 26 described as
+unfinished <strong>IS NOW COMMITTED and IS NOT PUSHED</strong>: 15
+commits on meta <code>main</code>
 (<code>926eaf3e</code>..<code>dfb06d38</code>), plus
 <code>f3f0540b</code> for one determinism guard that arrived after its
 group had been committed. Live anchors re-derived by execution this pass
@@ -8526,5 +8540,323 @@ still point the legacy summary generators at Markdown rather than the DB
 — inert only because the engine is absent; would reproduce the
 corruption G12 now blocks.</li>
 </ul>
+<hr />
+<h2 id="session-2026-09-08-lockstep-restored-two-reviews-caught-two-real-defects">Session
+2026-09-08 — lockstep restored, two reviews caught two real defects</h2>
+<h3 id="corrections-to-entries-above-both-were-true-when-written-both-now-stale">Corrections
+to entries above (both were true when written, both now stale)</h3>
+<ul>
+<li><strong>§11.4.157 lockstep gap — CLOSED.</strong> The note above
+(“the six root carriers still top out at §11.4.234”) is superseded by
+meta <code>94c8b2c3</code>. All five repo-root carriers
+(<code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>QWEN.md</code>,
+<code>GEMINI.md</code>, <code>CONSTITUTION.md</code>) now carry 271
+anchors, top §11.4.272, with anchor-set md5 <strong>identical</strong>
+across all five (<code>084ae1e39940</code>) and each new anchor heading
+exactly one block (§11.4.227(B)).</li>
+<li><strong>Canon non-anchor set — INCOMPLETE above.</strong> The entry
+lists §11.4.64 / §11.4.205 / §11.4.206. Measured against BOTH canonical
+block-opener forms, the full set of tokens present in carriers but not
+heading a canon block is <strong>§11.4.64, §11.4.175, §11.4.203,
+§11.4.204, §11.4.205, §11.4.206</strong>. Canon defines
+<strong>265</strong> blocks. METHOD NOTE (§11.4.6): a pattern matching
+only <code>^### §11.4.N</code> under-counts canon by ~24 and
+manufactures phantom dangling anchors — canon also opens blocks as
+<code>^**§11.4.N —</code>. Any <code>CM-COVENANT-*</code> gate written
+against the narrow pattern will report green while silently
+under-counting. Count BLOCKS, both forms.</li>
+</ul>
+<h3 id="landed-and-pushed-gitlab-github-blocked">Landed and pushed
+(GitLab; GitHub blocked)</h3>
+<p><code>94c8b2c3</code> lockstep cascade · <code>c9187041</code>
+redaction-fixture de-fang · <code>27e63d4c</code> +
+<code>2855c812</code> SpecKit feature 003. helix_agent
+<code>45457735</code> is committed but <strong>HELD, NOT PUSHED</strong>
+pending review closure.</p>
+<h3 id="github-push-block-diagnosed-safe-to-unblock-still-needs-the-operator">GitHub
+push block — diagnosed, safe to unblock, still needs the operator</h3>
+<p>The flagged secret is a Stripe <strong>TEST-mode</strong>-shaped
+fixture (<code>sk_test_</code> + 24 alphanumerics) shared by four
+redaction suites and quoted once at
+<code>docs/qa/2026-09-05-gap-ledger.md:75</code> as the measured pre-fix
+leak in the HXC-002-F3-11 CONST-042 record. Not a production credential.
+UNCONFIRMED (§11.4.6): whether that exact string was ever a live
+test-mode key on a real account — establishing it means sending the
+credential to a third party, which was not done. The unblock URL is
+still required: the literal is in published history
+(<code>0d8be909</code>, <code>2abc7a1f</code>) and force-push is
+forbidden without exception (§11.4.113). <code>c9187041</code> only
+stops NEW commits re-tripping the scanner; it does not unblock the
+existing range.</p>
+<h3 id="two-defects-that-passed-self-verification-and-were-caught-by-independent-review">Two
+defects that passed self-verification and were caught by independent
+review</h3>
+<ol type="1">
+<li><strong>claude_toolkit</strong> — the unconditional Kimi-twin
+rebuild at <code>claude-providers.sh:3232</code> broke the refresh no-op
+invariant (<code>test_alias_file_concurrency.sh</code> 69/69 → 2
+failed), and <code>test_kimi_wire_and_status_freshness.sh:312</code>
+carried a <strong>vacuous</strong> assertion that survived mutation M1c
+because the column it grepped already contained the expected character
+for an unrelated reason. Both CLOSED (config-exists gate; column-4 read
+plus the negative property). Re-review in flight at time of
+writing.</li>
+<li><strong>helix_agent <code>45457735</code></strong> — the
+<code>TokenSplit</code> partial-branch fix is correct inside
+<code>internal/models</code> but breaks
+<code>services/debate_service.go:257</code>, which RE-ENCODES the triple
+into metadata and reads it back. <code>(7,0,41)</code> is written as
+<code>completion_tokens: 0</code>, which that same commit’s test defines
+as a MEASURED zero, so the re-read takes the both-directions branch and
+derives total = 7. Measured through <code>debateResultToEnsemble</code>:
+<code>(200,6,247)</code> → <code>(207,6,213)</code> — <strong>34 tokens
+silently dropped</strong>, past a guard written to forbid exactly that,
+bypassed because the shrink happens upstream of it. ROOT CAUSE:
+<code>TokenSplit</code> returns plain <code>int</code>s, so a measured
+zero and an unknown collapse. Fix in flight at the encode seam with
+round-trip stability as the asserted invariant — NOT at the arithmetic
+symptom.</li>
+</ol>
+<h3 id="live-host-state-read-only-census">Live host state (read-only
+census)</h3>
+<p>27 <code>kimi-</code> twin aliases exist; only <strong>8</strong>
+have a <code>config.toml</code>. The other <strong>19</strong> present
+as available and refuse on use. UNCONFIRMED whether the uncommitted
+refresh loop authored all 19 — not bisected, and not claimed.</p>
+<h3 id="operator-decisions-taken-2026-09-08">Operator decisions taken
+2026-09-08</h3>
+<ul>
+<li><strong>Q1 — the 19 unusable aliases: REPAIR ALL 19.</strong>
+Nothing withdrawn, so §11.4.122 confirmation is never exercised.
+Accepted residual, recorded in FR-020: an alias that proves genuinely
+un-repairable returns as a fresh decision rather than being absorbed
+silently or left presenting as available.</li>
+<li><strong>Q2 — readiness bar: CORRECTNESS, NOT FORM</strong> (FR-021).
+A canned reply still fails.</li>
+<li><strong>Q3 — scope: CURRENTLY-EXPOSED MODELS + a documented, tested
+path to add more</strong> (FR-022). “Everything the hosts could serve”
+rejected as unbounded.</li>
+</ul>
+<p>All three carried into
+<code>specs/003-provable-model-alias-availability/spec.md</code> (22
+FRs, 10 SCs, zero open questions).</p>
+<h3 id="instrument-error-pattern-carry-this-forward">Instrument-error
+pattern — carry this forward</h3>
+<p>Three times this session a MEASURING tool failed silently and
+produced a confident wrong reading indistinguishable from a real
+finding: a too-narrow anchor grep (manufactured 24 phantom dangling
+anchors), <code>comm</code> on unsorted input (reported all 34 anchors
+missing), and <code>$?</code> read after a pipeline (reported a script
+failure as exit 0). Same false-null class as the product defects being
+hunted. <strong>Control-needle every census before believing it</strong>
+— a fabricated needle that comes back as the only diff proves the
+instrument can still report a real absence.</p>
+<h3 id="next-12">Next</h3>
+<ol type="1">
+<li>Land the two in-flight review outcomes; push helix_agent only on a
+clean GO (§11.4.134).</li>
+<li>Repair the 19 twin-less aliases per the Q1 decision (FR-020).</li>
+<li>Continue the SpecKit pipeline: clarify → plan → tasks → analyze →
+superspec handover. <code>/speckit-constitution</code> deliberately NOT
+run — <code>.specify/memory/constitution.md</code> is an inheritance
+pointer and says in its own text that running it re-opens risk R-23 by
+creating a third constitution (CONST-059).</li>
+<li>Operator: click the GitHub unblock URL; optionally put
+<code>~/.claude-shared/bin</code> on PATH so <code>skill-activate</code>
+is reachable without a full path.</li>
+</ol>
+<hr />
+<h2 id="session-2026-09-23-hxc-159-t-p9.01-round-4-closure-f-24f-23f-22b">Session
+2026-09-23 — HXC-159 T-P9.01 round-4 closure: F-24/F-23/F-22(b)</h2>
+<h3 id="why-this-section-exists-f-24-const-044-critical-defect">Why this
+section exists (F-24, CONST-044 CRITICAL DEFECT)</h3>
+<p>This document had <strong>zero mentions of the HXC-159
+programme</strong> across <strong>80+</strong> state-advancing commits
+since its last touch (<code>50ec26f3</code>, 2026-09-08), despite
+HXC-159 being one of the largest efforts in this repo’s history. Root
+<code>CLAUDE.md</code> §CONST-044/§13.1 declares an out-of-sync
+CONTINUATION a <strong>CRITICAL DEFECT — same severity as a
+false-success test result</strong>, and requires the update to land in
+the SAME commit as any state advance. Nothing in this document’s
+revision history above enforced that for HXC-159; this section is the
+round-4 independent review’s F-24 finding, fixed.</p>
+<h3 id="what-hxc-159-is">What HXC-159 is</h3>
+<p><code>specs/001-helixskills-incorporation/</code> — a large
+multi-phase feature incorporating a <strong>shared skills
+library</strong> (<code>submodules/skills</code>,
+<code>pkg/skills</code>) into both <strong>HelixCode</strong>
+(<code>helix_code/internal/agent</code>) and <strong>HelixAgent</strong>
+(<code>submodules/helix_agent/internal/skills</code>), plus a registrar
+(<code>scripts/register_skills.sh</code>, T-P1.04) that provisions a
+canonical <code>constitution/skills/&lt;name&gt;/</code> corpus into
+every governed CLI-agent platform’s own skill directory
+(<code>.claude/skills/</code>, etc.) via symlinks, plus an
+extensions-catalogue generator
+(<code>helix_code/scripts/extensions_catalog/</code>, T-P8.02) that
+produces a per-skill x per-platform compatibility matrix
+(<code>docs/extensions/EXTENSIONS_CATALOG.md</code> +
+<code>catalog.json</code>) from a single tracked manifest
+(<code>scripts/skills_manifest.tsv</code>).</p>
+<p><strong>Build history:</strong> 17 phases — P0 through P9 (core build
++ integration), plus B1-B3 (a later “Bridge layer-health” sub-effort:
+probing/installing/ documenting the SpecKit&lt;-&gt;Superpowers skill
+bridge). All P0-P9 core tasks and all B1-B3 tasks are checked
+<code>[x]</code> complete in
+<code>specs/001-helixskills-incorporation/tasks.md</code>; the
+outstanding work is entirely inside <strong>Phase P9 — Review &amp;
+closure</strong> (<code>T-P9.01</code> independent-review-to-GO,
+<code>T-P9.02</code> full-suite retest, <code>T-P9.03</code> tracker
+sync + follow-on items).</p>
+<h3 id="closure-review-state-round-4-done-round-5-next">Closure-review
+state: round 4 done, round 5 next</h3>
+<p><code>T-P9.01</code> (independent code review, iterated to a
+zero-finding GO per §11.4.134) has run <strong>4 rounds</strong>, each a
+structurally-separate reviewer (Fable 5.1, xhigh effort, zero authorship
+stake per §11.4.209/§11.4.240) — rounds 1-4 ALL returned
+<strong>NOT-GO</strong>. Round-4 raised 4 new/refined findings (F-21
+through F-24, on top of the accumulated ledger from rounds 1-3: F-01
+through F-20). <strong>As of this section (2026-09-23), the round-4
+findings are:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>What it is</th>
+<th>Status after this session</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F-21</td>
+<td><code>LoadExternalTierIntoRegistry</code> pruned a policy-excluded
+skill by front-matter-name identity while the registry keyed by
+directory identity — a silent no-op prune for 4 of 9 real skills (the
+ones with a title-cased front-matter <code>name:</code> differing from
+their directory).</td>
+<td><strong>FIXED</strong> by the round-4 reviewer itself, RED-first
+(<code>edbf50db</code> root cause, fix meta commit
+<code>1130788b</code>). <strong>Its own fix has NOT yet had its own
+independent review</strong> — that is the immediate next step (round 5),
+per §11.4.142/§11.4.240 (the reviewer cannot certify its own fix).</td>
+</tr>
+<tr>
+<td>F-22</td>
+<td>(a) The F-17 ledger row’s precedence wording was inverted (called
+<code>builtin</code> “lower-precedence” when it is actually the
+OVERRIDING tier); (b) the extensions-catalogue generator derived the
+HelixCode column from directory presence only, so it claimed “SUPPORTED
+… via external tier” for two skills the external tier’s OWN policy gate
+actually EXCLUDES (masked by <code>builtin</code>).</td>
+<td><strong>FIXED this session.</strong> (a) was already corrected by
+the round-4 reviewer’s own F-17 row text. (b):
+<code>helix_code/scripts/extensions_catalog/generate_catalog.py</code>
+now runs two real live probes per generation
+(<code>submodules/helix_agent/cmd/similarity-probe</code> for
+external-tier policy admission; a real
+<code>helixcode skills list</code> for the FINAL registry source)
+instead of a directory-presence assumption. Catalogue regenerated for
+real and re-validated GREEN; cross-checked cell-for-cell against a fresh
+real CLI run. See <code>docs/extensions/EXTENSIONS_CATALOG.md</code> +
+<code>catalog.json</code>.</td>
+</tr>
+<tr>
+<td>F-23</td>
+<td><code>submodules/helix_agent/internal/skills/parser.go</code>’s
+<code>ParseDirectory</code> used <code>filepath.Walk</code>, which does
+not follow directory symlinks — pointed at a registrar-shaped external
+tier (<code>.claude/skills/</code>, all-symlink), it silently discovered
+ZERO skills with no error. The exact same defect class Phase F-03
+already fixed for the sibling <code>pkg/skills</code> loader.</td>
+<td><strong>FIXED this session</strong>, RED-first:
+<code>parser.go</code> rewritten to a symlink-following walk mirroring
+<code>pkg/skills/loader.go</code>’s already-shipped fix. New tests
+reproduce the bug (RED: 0-vs-1 skills found) then confirm the fix
+(GREEN), plus a symlink-cycle-termination guard. Full
+<code>internal/skills</code> suite: 0 FAIL / 131 PASS. Real-corpus
+confirmation via <code>cmd/similarity-probe</code> against the REAL
+<code>.claude/skills/</code> (9 real symlinks): 9 of 9 discovered. Not
+production-live today (helix_agent’s current config points at
+<code>constitution/skills/</code> directly), but closes the
+inconsistency with helix_code’s already-fixed behaviour. helix_agent
+commit <code>a97a55fe</code>. Evidence:
+<code>docs/qa/hxc159_f23_symlink_walk_fix_20260923/</code>.</td>
+</tr>
+<tr>
+<td>F-24</td>
+<td><strong>This document</strong> — zero HXC-159 mentions despite 80+
+state-advancing commits (CONST-044 CRITICAL DEFECT).</td>
+<td><strong>FIXED by this very section.</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deliberately deferred / legitimately open (NOT touched this
+session, carried forward honestly, §11.4.6):</strong></p>
+<ul>
+<li><strong>F-15</strong> — the constitution submodule’s own upstream is
+currently measured 12 commits AHEAD of / 14 commits BEHIND this
+checkout’s pinned constitution ref. Per this programme’s standing
+operator decision, publication of any HXC-159 work to shared upstreams
+is HELD until T-P9.01 reaches a clean GO — re-fetch and reconcile the
+constitution pin as part of that final publication step, not
+mid-review.</li>
+<li><strong>F-09</strong> — pre-existing gate debt (documented in
+earlier rounds; not a regression introduced by this feature, not
+blocking closure by itself).</li>
+<li><strong>F-12</strong> — grandfathered duplicate skill entries from
+before the registrar existed; a cleanup item, not a correctness
+defect.</li>
+</ul>
+<h3 id="what-is-still-outstanding-the-real-next-actions">What is still
+outstanding (the real next actions)</h3>
+<ol type="1">
+<li><strong>Round-5 independent review</strong> of everything the
+round-4 reviewer and this session touched: the F-21 fix (meta commit
+<code>1130788b</code>, still unreviewed by anyone other than its own
+author per §11.4.142/§11.4.240), the F-23 fix (helix_agent
+<code>a97a55fe</code>), the F-22(b) catalogue-generator change, and this
+CONTINUATION.md edit itself (§11.4.142 — “if a diff exists, it gets an
+independent review”, no exceptions for doc edits).</li>
+<li><strong><code>T-P9.02</code> — Full-suite retest on a clean
+target</strong> (not yet run this round; §11.4.40/§11.4.130 — targeted
+retest of exactly what changed FIRST, then the broader suite).</li>
+<li><strong><code>T-P9.03</code> — Follow-on items and tracker
+sync</strong> — reconcile
+<code>specs/001-helixskills-incorporation/tasks.md</code>’s ledger
+(already updated for F-22/F-23/F-24 this session) against the
+workable-items tracker, and close out any remaining round-1-through-4
+follow-on items.</li>
+<li><strong>Push</strong> — nothing from this session is pushed yet.
+helix_agent commit <code>a97a55fe</code> (F-23) sits on the LOCAL
+<code>main</code> branch only; the main-repo commit(s) for F-22(b)/F-24
+are likewise local-only pending round-5 GO. Per §11.4.71/§11.4.113:
+fetch + investigate + integrate BEFORE any push, no force-push,
+ever.</li>
+</ol>
+<h3 id="resumption-prompt-11.4.12711.4.131">Resumption prompt
+(§11.4.127/§11.4.131)</h3>
+<blockquote>
+<p>Read <code>docs/CONTINUATION.md</code>’s “Session 2026-09-23 —
+HXC-159 T-P9.01 round-4 closure” section (this section) first, then
+<code>git fetch --all --prune</code> on the main repo AND
+<code>submodules/helix_agent</code>. Dispatch a structurally-
+independent (round-5) reviewer against: helix_agent commit
+<code>a97a55fe</code> (F-23 symlink fix), the meta-repo’s F-22(b)
+catalogue-generator change + F-24 CONTINUATION.md edit, and the
+still-unreviewed F-21 fix (meta commit <code>1130788b</code>). On a
+clean GO, proceed to <code>T-P9.02</code> full-suite retest, then
+<code>T-P9.03</code> tracker sync, then push helix_agent BEFORE the main
+repo bumps its gitlink (fresh clones otherwise fail
+<code>git submodule update</code> with <code>not our ref</code> — the
+exact push-order hazard rev 27 above documents for a different batch).
+<code>specs/001-helixskills-incorporation/tasks.md</code>’s
+<code>T-P9.01</code> ledger table is the authoritative per-finding
+status; this section is the resumption summary, not a replacement for
+it.</p>
+</blockquote>
 </body>
 </html>

@@ -1,0 +1,12 @@
+=== RUN   TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories
+    symlink_walk_test.go:51: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/skills/symlink_walk_test.go:51
+        	Error:      	"[]" should have 1 item(s), but has 0
+        	Test:       	TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories
+        	Messages:   	ParseDirectory must follow symlinked skill directories (F-23) — got 0 skills, want 1
+--- FAIL: TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories (0.00s)
+=== RUN   TestParser_ParseDirectory_SymlinkCycleTerminates
+--- PASS: TestParser_ParseDirectory_SymlinkCycleTerminates (0.00s)
+FAIL
+FAIL	dev.helix.agent/internal/skills	0.014s
+FAIL

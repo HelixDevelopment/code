@@ -1,0 +1,48 @@
+=== RUN   TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped
+time="2026-09-23T18:49:04+02:00" level=warning msg="Skill file has no front-matter name — surfaced in load report, not silently dropped (HXC-159 F-16)" path=/tmp/TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilen668741860/001/skills/02-bare/media-validator/SKILL.md
+--- PASS: TestParser_ParseDirectory_FrontmatterlessSkillIsSurfacedNotSilentlyDropped (0.00s)
+=== RUN   TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDropped
+time="2026-09-23T18:49:04+02:00" level=warning msg="Skill file failed to parse — surfaced in load report, not silently skipped" error="failed to parse frontmatter: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `just-a-...` into skills.Skill" path=/tmp/TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDro3383145146/001/skills/02-bad/malformed-skill/SKILL.md
+--- PASS: TestParser_ParseDirectory_MalformedSkillIsSurfacedNotSilentlyDropped (0.00s)
+=== RUN   TestParser_ParseDirectory_NoFailures_EmptyFailureSlice
+--- PASS: TestParser_ParseDirectory_NoFailures_EmptyFailureSlice (0.00s)
+=== RUN   TestParser_Parse
+--- PASS: TestParser_Parse (0.00s)
+=== RUN   TestParser_SplitFrontmatter
+=== RUN   TestParser_SplitFrontmatter/valid_frontmatter
+=== RUN   TestParser_SplitFrontmatter/no_frontmatter
+=== RUN   TestParser_SplitFrontmatter/unterminated_frontmatter
+--- PASS: TestParser_SplitFrontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/valid_frontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/no_frontmatter (0.00s)
+    --- PASS: TestParser_SplitFrontmatter/unterminated_frontmatter (0.00s)
+=== RUN   TestParser_ExtractTriggers
+=== RUN   TestParser_ExtractTriggers/explicit_triggers
+=== RUN   TestParser_ExtractTriggers/trigger_on_format
+=== RUN   TestParser_ExtractTriggers/quoted_phrases
+=== RUN   TestParser_ExtractTriggers/no_triggers
+--- PASS: TestParser_ExtractTriggers (0.00s)
+    --- PASS: TestParser_ExtractTriggers/explicit_triggers (0.00s)
+    --- PASS: TestParser_ExtractTriggers/trigger_on_format (0.00s)
+    --- PASS: TestParser_ExtractTriggers/quoted_phrases (0.00s)
+    --- PASS: TestParser_ExtractTriggers/no_triggers (0.00s)
+=== RUN   TestParser_ExtractCategory
+=== RUN   TestParser_ExtractCategory//skills/01-devops-basics/docker-compose-creator/SKILL.md
+=== RUN   TestParser_ExtractCategory//some/path/skills/13-aws-skills/lambda-config/SKILL.md
+=== RUN   TestParser_ExtractCategory//no-skills-dir/other/SKILL.md
+--- PASS: TestParser_ExtractCategory (0.00s)
+    --- PASS: TestParser_ExtractCategory//skills/01-devops-basics/docker-compose-creator/SKILL.md (0.00s)
+    --- PASS: TestParser_ExtractCategory//some/path/skills/13-aws-skills/lambda-config/SKILL.md (0.00s)
+    --- PASS: TestParser_ExtractCategory//no-skills-dir/other/SKILL.md (0.00s)
+=== RUN   TestParser_ParseDirectory
+--- PASS: TestParser_ParseDirectory (0.00s)
+=== RUN   TestParser_ParseList
+--- PASS: TestParser_ParseList (0.00s)
+=== RUN   TestParser_ParseErrorTable
+--- PASS: TestParser_ParseErrorTable (0.00s)
+=== RUN   TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories
+--- PASS: TestParser_ParseDirectory_FollowsSymlinkedSkillDirectories (0.00s)
+=== RUN   TestParser_ParseDirectory_SymlinkCycleTerminates
+--- PASS: TestParser_ParseDirectory_SymlinkCycleTerminates (0.00s)
+PASS
+ok  	dev.helix.agent/internal/skills	0.017s
