@@ -418,7 +418,19 @@ func (l *SkillLoader) Reload() error {
 		// this same directory (manifest form is the first-class T1.6 layout).
 		for _, entry := range entries {
 			if !entry.IsDir() {
-				continue
+				// A SYMLINKED skill directory — the exact shape
+				// scripts/register_skills.sh provisions into .claude/skills/
+				// (HXC-159 T-P1.04) — reports IsDir()==false from os.ReadDir.
+				// Follow it via os.Stat; a dangling link or a link to a plain
+				// file stat-fails / is not a dir and is skipped. Before this
+				// (HXC-159 T-P9.01 review finding) every registrar-produced
+				// entry was silently invisible to the external tier.
+				if entry.Type()&os.ModeSymlink == 0 {
+					continue
+				}
+				if info, statErr := os.Stat(filepath.Join(dir, entry.Name())); statErr != nil || !info.IsDir() {
+					continue
+				}
 			}
 			manifest := filepath.Join(dir, entry.Name(), skillManifestName)
 			if info, statErr := os.Stat(manifest); statErr != nil || info.IsDir() {
