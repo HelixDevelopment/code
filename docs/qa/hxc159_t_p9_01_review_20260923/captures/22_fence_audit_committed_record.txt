@@ -1,0 +1,27 @@
+=== fence audit re-run for the committed record (2026-09-23T01:39:50Z) ===
+/home/milosvasic/Projects/helix_code/docs/qa/hxc159_t_p9_01_review_20260923/captures/fence_audit.py:7: SyntaxWarning: "\w" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\w"? A raw string is also an option.
+  S1  INNER-OPENER-INSIDE-BLOCK : a line matching ^\\s{0,3}(```|~~~)\w+ occurs INSIDE an
+{
+ "files": 15,
+ "total_findings": 0,
+ "per_file": {
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/CONSTITUTION_INTEGRATION.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/EXTENSION_DEVELOPMENT.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/IMPLEMENTATION_PLAN.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/NANO_TASK_ENGINE.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/README.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/SECURITY.md": 0,
+  "constitution/docs/research/extensions/speckit_superpowers/implementation/TDD_INTEGRATION.md": 0,
+  "helix_code/docs/architecture/skills_architecture.md": 0,
+  "helix_code/docs/CAPABILITIES.md": 0,
+  "helix_code/docs/guides/skills_user_manual.md": 0,
+  "helix_code/docs/guides/skills_faq.md": 0,
+  "docs/extensions/EXTENSIONS_CATALOG.md": 0,
+  "submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md": 0,
+  "README.md": 0
+ }
+}
+EXIT=0
+--- self-validation
+golden-bad exit=1 (expect 1)

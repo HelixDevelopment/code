@@ -1,0 +1,11 @@
+=== RUN   TestSkillLoader_FollowsSymlinkedSkillDirectory
+    skill_loader_symlink_test.go:43: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/helix_code/internal/commands/skill_loader_symlink_test.go:43
+        	Error:      	Should be true
+        	Test:       	TestSkillLoader_FollowsSymlinkedSkillDirectory
+        	Messages:   	a symlinked skill directory (the registrar's output shape) must be discovered by the packaged-manifest pass
+--- FAIL: TestSkillLoader_FollowsSymlinkedSkillDirectory (0.00s)
+FAIL
+FAIL	dev.helix.code/internal/commands	0.025s
+FAIL
+EXIT=1

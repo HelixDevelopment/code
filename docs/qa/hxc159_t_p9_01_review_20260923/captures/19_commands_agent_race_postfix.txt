@@ -1,0 +1,4 @@
+VET_EXIT=0
+ok  	dev.helix.code/internal/commands	5.927s
+ok  	dev.helix.code/internal/agent	12.282s
+EXIT=0

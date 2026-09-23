@@ -1,0 +1,171 @@
+=== CM-UNIQUE-MODULE-PATHS full output (2026-09-23T01:44:13Z) ===
+FAIL CM-UNIQUE-MODULE-PATHS — duplicate module path(s) among 156 live modules:
+  'dev.helix.code/tests/e2e/orchestrator' declared by:
+    - helix_code/tests/e2e/orchestrator/go.mod
+    - helix_code/tests/e2e/orchestrator/tests/e2e/orchestrator/go.mod
+  'digital.vasic.challenges' declared by:
+    - submodules/challenges/go.mod
+    - submodules/claude-toolkit/submodules/challenges/go.mod
+  'digital.vasic.challenges.memprobe' declared by:
+    - submodules/challenges/challenges/fixtures/memprobe/go.mod
+    - submodules/claude-toolkit/submodules/challenges/challenges/fixtures/memprobe/go.mod
+  'digital.vasic.containers' declared by:
+    - submodules/claude-toolkit/submodules/containers/go.mod
+    - submodules/containers/go.mod
+      colliding import candidate: digital.vasic.containers/internal/netaddr  <- submodules/claude-toolkit/submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/exec  <- submodules/claude-toolkit/submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/buildpkg  <- submodules/claude-toolkit/submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/platform  <- submodules/claude-toolkit/submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/netaddr  <- submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/exec  <- submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/buildpkg  <- submodules/containers
+      colliding import candidate: digital.vasic.containers/internal/platform  <- submodules/containers
+  'digital.vasic.docs_chain' declared by:
+    - constitution/submodules/docs_chain/go.mod
+    - submodules/claude-toolkit/constitution/submodules/docs_chain/go.mod
+    - submodules/docs_chain/go.mod
+      colliding import candidate: digital.vasic.docs_chain/internal/state  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/adapter  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/config  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/orchestrator  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/runner  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/hash  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/graph  <- constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/state  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/adapter  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/config  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/orchestrator  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/runner  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/hash  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/graph  <- submodules/claude-toolkit/constitution/submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/state  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/adapter  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/config  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/orchestrator  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/runner  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/hash  <- submodules/docs_chain
+      colliding import candidate: digital.vasic.docs_chain/internal/graph  <- submodules/docs_chain
+  'digital.vasic.llmsverifier' declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/llm-verifier/go.mod
+    - submodules/llms_verifier/llm-verifier/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity' declared by:
+    - constitution/scripts/doc_integrity/go.mod
+    - submodules/claude-toolkit/constitution/scripts/doc_integrity/go.mod
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/adapter  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/config  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/model  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/runner  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/report  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/check  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/normalize  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/selfcheck  <- constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/adapter  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/config  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/model  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/runner  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/report  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/check  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/normalize  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/doc_integrity/internal/selfcheck  <- submodules/claude-toolkit/constitution/scripts/doc_integrity
+  'github.com/HelixDevelopment/HelixConstitution/scripts/llm-alias-health' declared by:
+    - constitution/scripts/llm-alias-health/go.mod
+    - submodules/claude-toolkit/constitution/scripts/llm-alias-health/go.mod
+  'github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine' declared by:
+    - constitution/scripts/scheduled-work-engine/go.mod
+    - submodules/claude-toolkit/constitution/scripts/scheduled-work-engine/go.mod
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/acp  <- constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/mcp  <- constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/store  <- constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/server  <- constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/acp  <- submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/mcp  <- submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/store  <- submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
+      colliding import candidate: github.com/HelixDevelopment/HelixConstitution/scripts/scheduled-work-engine/internal/server  <- submodules/claude-toolkit/constitution/scripts/scheduled-work-engine
+  'github.com/HelixDevelopment/HelixConstitution/scripts/workable-items' declared by:
+    - constitution/scripts/workable-items/go.mod
+    - submodules/claude-toolkit/constitution/scripts/workable-items/go.mod
+  'github.com/HelixDevelopment/helix_perf_cache' declared by:
+    - constitution/submodules/helix_perf_cache/go.mod
+    - submodules/claude-toolkit/constitution/submodules/helix_perf_cache/go.mod
+  'github.com/vasic-digital/continuum' declared by:
+    - constitution/submodules/continuum/go.mod
+    - submodules/claude-toolkit/constitution/submodules/continuum/go.mod
+  'github.com/vasic-digital/session_orchestrator' declared by:
+    - constitution/submodules/session_orchestrator/go.mod
+    - submodules/claude-toolkit/constitution/submodules/session_orchestrator/go.mod
+  'github.com/vasic-digital/token_optimizer' declared by:
+    - constitution/submodules/token_optimizer/go.mod
+    - submodules/claude-toolkit/constitution/submodules/token_optimizer/go.mod
+  'llmsverifier' declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/go.mod
+    - submodules/llms_verifier/go.mod
+      colliding import candidate: llmsverifier/internal/selfimprove  <- submodules/claude-toolkit/submodules/LLMsVerifier
+      colliding import candidate: llmsverifier/internal/rag  <- submodules/claude-toolkit/submodules/LLMsVerifier
+      colliding import candidate: llmsverifier/internal/llmops  <- submodules/claude-toolkit/submodules/LLMsVerifier
+      colliding import candidate: llmsverifier/internal/benchmark  <- submodules/claude-toolkit/submodules/LLMsVerifier
+      colliding import candidate: llmsverifier/internal/messaging  <- submodules/claude-toolkit/submodules/LLMsVerifier
+      colliding import candidate: llmsverifier/internal/selfimprove  <- submodules/llms_verifier
+      colliding import candidate: llmsverifier/internal/rag  <- submodules/llms_verifier
+      colliding import candidate: llmsverifier/internal/llmops  <- submodules/llms_verifier
+      colliding import candidate: llmsverifier/internal/benchmark  <- submodules/llms_verifier
+      colliding import candidate: llmsverifier/internal/messaging  <- submodules/llms_verifier
+  'scoring-example' declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/examples/scoring/go.mod
+    - submodules/llms_verifier/examples/scoring/go.mod
+
+Fix per spec.md D-7: rename the thin root module; bind nothing new to it.
+exit=1
+
+=== module lines ===
+root go.mod:   module dev.helix.code/meta
+inner go.mod:  module dev.helix.code
+skill_registry: module dev.helix.agent/skillregistry
+
+=== T-P0.03 record ===
+# T-P0.03 decision (2026-09-13, explicit — from measured evidence)
+
+## 1. Root/inner "duplicate dev.helix.code": REFUTED
+- root `go.mod`: `module dev.helix.code/meta`
+- `helix_code/go.mod`: `module dev.helix.code`
+- DISTINCT paths. No rename. No resolution-order hazard.
+- Seam choice consequence: the thin root module is metadata-only; consumer
+  binding targets the inner module (P5) and helix_agent (P6) — unchanged.
+
+## 2. skill_registry: REAL third module, dead replace key in helix_agent
+- `submodules/skill_registry/go.mod`: `module dev.helix.agent/skillregistry`
+  with full implementation (registry.go, manager.go, loader.go, validator.go,
+  storage_*.go, executor.go — not dead wiring).
+- `submodules/helix_llm/go.mod:110`: `replace dev.helix.agent/skillregistry =>
+  ../skill_registry` — CORRECT key, matches module path.
+- `submodules/helix_agent/go.mod:279`: `replace digital.vasic.skillregistry =>
+  ../skill_registry` — WRONG key (matches nothing required; no require line
+  for either key in helix_agent/go.mod). Dead replace.
+- DECISION: fix helix_agent's replace key to `dev.helix.agent/skillregistry`
+  (one line, zero build impact — nothing resolves through the old key).
+  Do NOT delete skill_registry (§11.4.124: investigated via module + file
+  inventory; it is the intended third-module answer, possibly `03` §7.4).
+
+## 3. Gate CM-UNIQUE-MODULE-PATHS: scripts/gates/unique_module_paths_gate.sh
+   + paired mutation (reintroduce a duplicate → FAIL).
+
+# T-P0.03 AMENDMENT (2026-09-13 — prior work discovered)
+
+D-7 was ALREADY CLOSED by commit 09a086a6 ("rename thin root module to
+dev.helix.code/meta"). The "duplicate dev.helix.code" premise was measured
+against the POST-fix tree — the refutation is real but not novel.
+
+NOVEL DELTA from this session: `submodules/helix_agent/go.mod:279` replace key
+`digital.vasic.skillregistry` matches nothing (module declares
+`dev.helix.agent/skillregistry`; helix_llm uses the correct key at go.mod:110).
+Fixed to the correct key (zero build impact — nothing resolved through it).
+
+Original gate scripts/gates/unique_module_paths_gate.sh (fd7f310c) RESTORED
+untouched after an accidental overwrite. Run correctly from repo root it exits 1
+with 16 dupe groups — ALL nested-copy/docs/fixture class, NONE in the live
+scopes {dev.helix.code, dev.helix.agent, skillregistry}. R-26 live hazard stays
+closed by D-7; nested-copy exemption design is follow-up work, not redesigned here.
+
+=== provenance of the duplicate groups ===
+nested orchestrator copy tracked since: cc339fc0 2026-05-16
+claude-toolkit submodule added: 1bc82267 2026-06-21 (predates HXC-159 execution 2026-09-13)
+dev.helix.code duplicated today: 0 (0 = D-7 executed)

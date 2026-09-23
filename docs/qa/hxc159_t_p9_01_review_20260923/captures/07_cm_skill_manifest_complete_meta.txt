@@ -1,0 +1,11 @@
+ASSERT-OK:   gate PASSED as expected (clean sandbox (2 manifest rows, 2 exact-case manifests))
+ASSERT-OK:   gate FAILED as expected (manifest row 'alpha' lost its SKILL.md)
+ASSERT-OK:   gate PASSED as expected (alpha SKILL.md restored)
+ASSERT-OK:   gate FAILED as expected (beta manifest is lowercase skill.md)
+ASSERT-OK:   gate PASSED as expected (beta case restored)
+ASSERT-OK:   gate FAILED as expected (gamma has register.sh but no SKILL.md)
+ASSERT-OK:   gate PASSED as expected (gamma manifest authored)
+ASSERT-OK:   gate FAILED as expected (manifest row 'delta' points at a missing directory)
+ASSERT-OK:   gate PASSED as expected (dangling row removed)
+META-TEST PASS: 4/4 mutations flip CM-SKILL-MANIFEST-COMPLETE, repaired tree passes
+EXIT=0

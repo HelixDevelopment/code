@@ -1,7 +1,7 @@
 feature: 001-helixskills-incorporation
 branch: main
 started: 2026-09-13
-current_phase: P0-complete
+current_phase: P9-in-progress (P0-P8, B1-B3 complete; T-P9.01 review done 2026-09-23; T-P9.02, T-P9.03 open)
 gates:
   T-P0.01: PASS  # qa-results/hxc159/env_facts/probe1/facts.json
   T-P0.02: PASS  # no competing abstraction; D-3 stands
@@ -32,3 +32,13 @@ p4_complete_20260914:
   loader: pkg/skills stdlib-only; Activate allowlist-only; ceiling 20; Jaccard 0.0256; NFR 500ms
   matrix: 13/13 rows, race clean, ledger complete
 next: P5 HelixCode wiring (T-P5.01..05) + P6 HelixAgent wiring (T-P6.01..05)
+p9_01_review_20260923:
+  verdict: NOT-GO for zero-finding closure (see tasks.md T-P9.01 for the finding ledger)
+  fixed_in_review:
+    - {repo: skills, commit: b590d50, what: C5 sandbox gate wired into Registry.Activate (was unwired)}
+    - {repo: skills, commit: see-tasks.md, what: loader-matrix evidence re-captured; ledger re-pointed}
+    - {repo: meta, commit: 321dca40, what: external tier follows symlinked skill dirs (P1<->P5 seam; RS-01 was never true end-to-end)}
+    - {repo: meta, commit: 17195f3b, what: CM-SKILL-MANIFEST-COMPLETE gate + meta-test (named by T-P1.01.5, never authored)}
+    - {repo: meta, commit: 8d4d5b09, what: docs/qa/p2_shadowing_20260914 committed (T-P2.02.4 claimed committed; was untracked)}
+  fence_leak_recheck: 0 findings across all 8 Bridge docs + 7 HXC-159 docs (independent CommonMark fence-state auditor, golden-good/bad self-validated)
+  evidence: qa-results/hxc159/review/20260923T_review1/ + docs/qa/hxc159_t_p9_01_review_20260923/

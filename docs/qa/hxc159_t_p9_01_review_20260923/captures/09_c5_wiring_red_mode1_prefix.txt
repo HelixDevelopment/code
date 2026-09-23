@@ -1,0 +1,5 @@
+=== RUN   TestActivateRefusesThirdPartyWhileSandboxUnready
+--- PASS: TestActivateRefusesThirdPartyWhileSandboxUnready (0.00s)
+PASS
+ok  	github.com/HelixDevelopment/skills/pkg/skills	0.003s
+EXIT=0

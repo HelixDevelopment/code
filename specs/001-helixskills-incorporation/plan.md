@@ -1,12 +1,11 @@
 # Implementation Plan: HelixSkills incorporation into HelixCode and HelixAgent
 
 **Branch**: `001-helixskills-incorporation` | **Date**: 2026-07-29 | **Spec**: [`spec.md`](spec.md)
-**Work item**: HXC-159 · **Revision**: 1 · **Author**: `(T1/main - claude1 - opus - xhigh)`
+**Work item**: HXC-159 · **Revision**: 2 (2026-09-23, T-P9.01 review corrections) · **Author**: `(T1/main - claude1 - opus - xhigh)`
 **Input**: [`spec.md`](spec.md) + the Phase-1 research tree
 `docs/research/fully_incorporate_the_helixskills_system_into_helixcode_heli_20260728T192622Z_2557683/`
 
-**Status**: PLAN ONLY. Nothing in this document has been implemented. Per §11.4.108,
-no item here is "done" until its runtime signature verifies on a clean target.
+**Status**: EXECUTED — every phase P0–P8 and B1–B3 is ticked in `tasks.md` with evidence pointers; P9 closure in progress (T-P9.01 review 2026-09-23 found and fixed real defects and recorded the residual gaps — see `tasks.md` §P9). Per §11.4.108 no item is "done" until its runtime signature verifies on a clean target: T-P9.02 (clean-target retest) is still open. (This line read "PLAN ONLY" until the review corrected it, §11.4.186.)
 
 ---
 
@@ -407,7 +406,7 @@ registry names real commands rather than plausible ones:
 | RS-17 | Generated MCP entries | Each generated `.mcp.json` server **starts and answers a probe** — path correctness proven by execution, not by the string looking right |
 | RS-18 | Bridge layer report | The probe emits per-layer `WIRED/PARTIAL/DESIGNED-ONLY/NONEXISTENT` with the captured command, checking **both** systemd scopes |
 | RS-19 | L3/L4 installed | After the installer, `specify extension list` is non-empty and names the pinned version |
-| RS-20 | L5 deleted, not stubbed | No artefact references a SuperBridge MCP endpoint; the Bridge design records 6 layers |
+| RS-20 | L5 deleted, not stubbed | The Bridge design records 6 live layers and every remaining SuperBridge reference sits under a dated `ARCHITECTURE AMENDMENT` banner marking it retired design (README.md redrawn; 7 other documents banner-amended). **Amended 2026-09-23 by the T-P9.01 review to match what B3 delivered:** the original wording "no artefact references a SuperBridge MCP endpoint" is NOT literally satisfied — `EXTENSION_DEVELOPMENT.md` Part C / §D config blocks (`superbridge-mcp` `.mcp.json` entries, `SUPERBRIDGE_MCP_PORT=9595`) and `APPENDIX.md` §F still carry the retired server's endpoint text as historical design under the banner; retiring or inline-marking those blocks is a T-P9.03 follow-up |
 | RS-21 | Catalogue complete | Every registered skill has a row with non-empty per-platform columns |
 | RS-22 | Docs reachable | Every produced document is reachable from the main README by link traversal |
 
@@ -455,9 +454,7 @@ into the PDF**, which is a defect this project has shipped before.
 re-verified where cheap. Every factual claim traces to a cited research-tree section or
 to a probe captured in this session.
 
-**What it is not**: proof that any of it works. **Nothing here has been implemented.**
-No gate exists yet; no runtime signature in §9 has been observed; no mitigation in §7
-has been proven. Per §11.4.108 none of them is "done" until verified on a clean target.
+**What it is not** (as written 2026-07-29): proof that any of it works — at planning time nothing had been implemented, no gate existed and no runtime signature had been observed. **Status 2026-09-23 (T-P9.01 review):** the plan HAS been executed; the §9 signatures were re-verified by the review with the results recorded in `tasks.md` §P9 (notably RS-01 was NOT true end-to-end until the review fixed the P1↔P5 symlink seam; RS-05/RS-06/RS-14(loader) hold only inside `pkg/skills`, which neither consumer imports; RS-20 holds in its amended form below). Per §11.4.108 none is "done" until T-P9.02 re-observes it on a clean target.
 
 **Two things were written, not merely planned**, and both are disclosed rather than
 folded in: `.specify/memory/constitution.md` (the R-23 pointer — a governance document,

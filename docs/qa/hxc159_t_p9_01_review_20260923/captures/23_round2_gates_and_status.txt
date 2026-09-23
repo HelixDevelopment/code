@@ -1,0 +1,51 @@
+=== ROUND-2 gate re-run on the live tree (2026-09-23T01:40:37Z) ===
+--- scripts/gates/skill_manifest_complete_gate.sh
+checked=16 fail=0
+CM-SKILL-MANIFEST-COMPLETE PASS
+exit=0
+--- scripts/gates/skill_namespace_disjoint_gate.sh
+checked=4 fail=0
+CM-SKILL-NAMESPACE-DISJOINT PASS
+exit=0
+--- scripts/gates/no_absolute_or_broken_symlinks_gate.sh
+checked=65 fail=0
+CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS PASS
+exit=0
+--- scripts/gates/constitution_pin_single_gate.sh
+CM-CONSTITUTION-PIN-SINGLE PASS: direct pin 9277b2be86905778f3dfb3affd1e81362576d364 (single, not stale)
+exit=0
+--- scripts/gates/no_nested_own_org_chain_gate.sh
+checked=13 fail=0
+CM-NO-NESTED-OWN-ORG-CHAIN PASS
+exit=0
+--- scripts/gates/unique_module_paths_gate.sh
+
+Fix per spec.md D-7: rename the thin root module; bind nothing new to it.
+exit=1
+--- scripts/gates/workable_items_ssot_unforked_gate.sh
+checked=1 fail=0
+CM-WORKABLE-ITEMS-SSOT-UNFORKED PASS
+exit=0
+
+=== fence audit of the edited spec files ===
+ "files": 3,
+ "total_findings": 0,
+ "per_file": {
+  "specs/001-helixskills-incorporation/tasks.md": 0,
+  "specs/001-helixskills-incorporation/plan.md": 0,
+  "specs/001-helixskills-incorporation/spec.md": 0
+ }
+}
+exit=0
+
+=== 4-repo status ===
+--- . @ 321dca40
+ M specs/001-helixskills-incorporation/plan.md
+ M specs/001-helixskills-incorporation/progress.yml
+ M specs/001-helixskills-incorporation/spec.md
+ M specs/001-helixskills-incorporation/tasks.md
+ M submodules/skills
+?? docs/qa/hxc159_t_p9_01_review_20260923/
+--- constitution @ 9277b2b
+--- submodules/helix_agent @ 22e36c91
+--- submodules/skills @ 413095b

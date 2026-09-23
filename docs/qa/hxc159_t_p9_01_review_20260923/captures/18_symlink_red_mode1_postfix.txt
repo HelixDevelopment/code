@@ -1,0 +1,3 @@
+FAIL	dev.helix.code/internal/commands	0.043s
+FAIL
+EXIT=1

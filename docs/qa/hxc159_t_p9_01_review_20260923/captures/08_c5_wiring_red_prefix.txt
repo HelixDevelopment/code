@@ -1,0 +1,9 @@
+=== RUN   TestActivateRefusesThirdPartyWhileSandboxUnready
+    sandbox_gate_wiring_test.go:48: Activate ADMITTED 1 third-party-tier skill(s) while the sandbox precondition holds — C5 gate is not wired into the activation path
+--- FAIL: TestActivateRefusesThirdPartyWhileSandboxUnready (0.00s)
+=== RUN   TestActivateFirstPartyUnaffectedBySandboxGate
+--- PASS: TestActivateFirstPartyUnaffectedBySandboxGate (0.00s)
+FAIL
+FAIL	github.com/HelixDevelopment/skills/pkg/skills	0.008s
+FAIL
+EXIT=1

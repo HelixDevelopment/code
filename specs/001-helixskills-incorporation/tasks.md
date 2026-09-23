@@ -2,9 +2,9 @@
 
 **Feature**: `001-helixskills-incorporation` | **Work item**: HXC-159
 **Spec**: [`spec.md`](spec.md) · **Plan**: [`plan.md`](plan.md)
-**Revision**: 2 · **Last modified**: 2026-09-02 · **Author**: `(T1/main - claude1 - opus - xhigh)`
+**Revision**: 3 · **Last modified**: 2026-09-23 · **Author**: `(T1/main - claude1 - opus - xhigh)` · Rev 3: T-P9.01 independent review (Fable 5.1, structurally separate reviewer) — corrections + finding ledger
 
-**Status**: IN EXECUTION since 2026-09-13. Phase P0 COMPLETE
+**Status**: P0–P8 and B1–B3 COMPLETE (2026-09-13→23); **P9 IN PROGRESS** — T-P9.01 review recorded 2026-09-23 (verdict **NOT-GO for zero-finding closure**; five defects fixed in-review, residual gaps enumerated for T-P9.03); T-P9.02 / T-P9.03 open. Original P0 note follows. Phase P0 COMPLETE
 (T-P0.01→facts.json, T-P0.02→no competitor/D-3 stands, T-P0.03→replace-key fix +
 CM-UNIQUE-MODULE-PATHS, T-P0.04→D1=A D2=A D3=A, T-P0.05→live verifier response).
 `T-P1.06` was already `[x]` before execution.
@@ -173,7 +173,7 @@ updating every reference in the **same** commit (§11.4.29 reference integrity).
 **Runtime signature**: **RS-04** — enumeration on a **case-sensitive** filesystem finds
 every manifest; the check uses `ls | grep -x 'SKILL.md'` so a case-insensitive FS cannot
 fake a pass.
-**Acceptance evidence**: `qa-results/hxc159/case_normalise/<run-id>/`.
+**Acceptance evidence**: NO dedicated evidence directory was ever written (T-P9.01 finding). What exists: constitution commit `92986f8` (3 × `skill.md → SKILL.md` renames + `multitrack/SKILL.md`), the loader guard `TestLoaderRequiresExactCaseManifest` (RS-04, `submodules/skills/qa-results/hxc159/loader_matrix/20260923T_review1/suite_race.txt`), and — authored by the review because T-P1.01.5's gate was named but never implemented — `scripts/gates/skill_manifest_complete_gate.sh` (live: checked=16 fail=0) + `scripts/tests/skill_manifest_complete_meta_test.sh` (4/4 mutations flip), `qa-results/hxc159/review/20260923T_review1/06_*, 07_*`.
 **Risks**: R-05.
 
 - T-P1.01.1 RED: assert exact-case presence for all 7 skills — MUST fail now.
@@ -189,7 +189,7 @@ so §11.4.124 forbids deleting it. Author the manifest; do not remove the skill.
 **Test types**: unit (schema-valid), integration (loads and is discoverable).
 **Runtime signature**: **RS-04** — after authoring, no source directory reports the
 `register.sh`-without-`SKILL.md` error.
-**Acceptance evidence**: `qa-results/hxc159/multitrack_manifest/<run-id>/`.
+**Acceptance evidence**: NO dedicated evidence directory was ever written (T-P9.01 finding); the manifest + its four exports landed in constitution commit `92986f8`; the review's `CM-SKILL-MANIFEST-COMPLETE` gate now asserts the register.sh-without-SKILL.md class live (`qa-results/hxc159/review/20260923T_review1/06_*`).
 **Risks**: R-05.
 
 - T-P1.02.1 `git log -S multitrack` to establish original intent (§11.4.124).
@@ -205,7 +205,7 @@ delete it and register `constitution/skills/` as a source instead (preferred).
 **Test types**: unit (gate), full-automation.
 **Runtime signature**: for every tracked symlink (`git ls-files -s | awk '$1==120000'`),
 `readlink -e` resolves **and** the target is not absolute.
-**Acceptance evidence**: `qa-results/hxc159/symlink_hygiene/<run-id>/`.
+**Acceptance evidence**: no dedicated directory; commit `487dd97b` (gate `scripts/gates/no_absolute_or_broken_symlinks_gate.sh` + `.kilo`/`.opencode` link repoint) and the gate's PASS capture `qa-results/hxc159/registrar/20260913T204524Z/logs/no_absolute_gate.log` (checked=55 fail=0).
 **Risks**: R-06 (§11.4.81 cross-platform, §11.4.111 resolve-by-stable-name).
 
 - T-P1.03.1 RED: the gate MUST fail on the current tree.
@@ -222,7 +222,7 @@ calls **and which does not exist**. Includes the **original-work** collision det
 **Runtime signature**: **RS-01 + RS-02 + RS-03** — registers on a clean checkout;
 byte-identical on re-run in either order; aborts non-zero on a planted foreign entry
 having changed nothing.
-**Acceptance evidence**: `qa-results/hxc159/registrar/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/registrar/20260913T204524Z/` (facts.json + 9 logs; RS-01/02/03 proven in a mktemp SANDBOX fixture only). **T-P9.01 finding:** on the LIVE tree the registrar aborts (`--check` exit 1: the 3 pre-existing unmarked links + the §11.4.272 engine's `speckit-analyze` are all "foreign"), so RS-01 has never been observed on a real checkout — see T-P9.01 F-04.
 **Risks**: R-22, R-22b, R-24, **R-29**.
 
 > **§11.4.8 declaration — `NO external solution found — original work`.** Claude Code
@@ -254,7 +254,7 @@ having changed nothing.
 **Test types**: unit, integration, full-automation.
 **Runtime signature**: **RS-17** — each generated MCP server entry **starts and answers
 a probe**. Path correctness is proven by execution, never by the string looking right.
-**Acceptance evidence**: `qa-results/hxc159/register_mcp/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/register_mcp/probe1/facts.json` (sandbox-only; live gate reported FAIL-honest: `scheduled-work` absent live).
 **Risks**: R-24, R-12.
 
 - T-P1.05.1 RED: assert the registrar's absence breaks the §11.4.164 hook contract.
@@ -305,7 +305,7 @@ re-point it at the DB.
 **Runtime signature**: the registered manifest contains no `speckit-taskstoissues`, or
 its configured target is the DB — asserted against the **manifest**, which the registrar
 actually reads.
-**Acceptance evidence**: `qa-results/hxc159/ssot_unfork/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/ssot_unfork/probe1/facts.json`.
 **Risks**: R-27.
 
 - T-P1.07.1 Confirm the command's current target by reading its skill body.
@@ -323,8 +323,7 @@ standard** canonical; the other two become profiled extensions.
 memory.
 **Runtime signature**: for every skill in all three corpora, `convert(convert(x)) == x`
 — a real round-trip over the real corpora, not over fixtures alone.
-**Acceptance evidence**: `qa-results/hxc159/schema_roundtrip/<run-id>/` including the
-per-corpus pass counts.
+**Acceptance evidence**: `qa-results/hxc159/schema_roundtrip/run-20260913-01/` (report.md, results.json — 1190/1190 round-trips; TOML leg blocked on P3, per progress.yml).
 **Risks**: D-1, FR-007; `03` §5.1 (the central technical problem).
 
 - T-P1.08.1 RED: assert each parser fails on the other's file today.
@@ -357,7 +356,7 @@ this project's real workflows. Not the paper's tasks; not synthetic tasks.
 **Test types**: full-automation (self-driving, re-runnable, §11.4.98).
 **Runtime signature**: the set runs end-to-end unattended and emits per-task
 `{selected_skill, expected_skill, pass}` — no human action after start.
-**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/<run-id>/taskset.json`.
+**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/p2_curve1/taskset.json` (+ `docs/qa/p2_shadowing_20260914/` — **committed by the T-P9.01 review in `8d4d5b09`; it had been left untracked**).
 **Risks**: R-19, U-3.
 
 - T-P2.01.1 Choose N tasks spanning the real activated categories.
@@ -371,7 +370,7 @@ this project's real workflows. Not the paper's tasks; not synthetic tasks.
 **Test types**: full-automation, performance/benchmarking.
 **Runtime signature**: **RS-07** — a curve artefact with ≥3 sampled sizes and a
 pass-rate per size, produced by a real run.
-**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/<run-id>/curve.json` + plot.
+**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/p2_curve1/curve.json` + `curve.svg`; perf re-runs `perf_20260914T000724Z`, `perf_20260914T001035Z`.
 **Risks**: R-19.
 
 - T-P2.02.1 Parameterise the active set size; sample at least {baseline, mid, large}.
@@ -386,7 +385,7 @@ pass-rate per size, produced by a real run.
 **Test types**: performance.
 **Runtime signature**: **RS-05 + RS-07** — the configured ceiling equals the value the
 curve derivation produced, and the derivation is shown.
-**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/<run-id>/derivation.md`.
+**Acceptance evidence**: `qa-results/hxc159/shadowing_curve/p2_curve1/derivation.md` + `ceiling.json` (verdict FLAT, ceiling provisional at N=20).
 **Risks**: R-19, U-3.
 
 - T-P2.03.1 Identify the knee by a stated, reproducible rule — not by eye.
@@ -401,7 +400,7 @@ Calibrate the pairwise-similarity threshold on this project's own descriptions.
 **Test types**: unit, performance.
 **Runtime signature**: **RS-06** — two active skills above the threshold make the gate
 exit non-zero, naming both.
-**Acceptance evidence**: `qa-results/hxc159/similarity/<run-id>/`.
+**Acceptance evidence**: no `similarity/` directory; the calibration lives in `qa-results/hxc159/shadowing_curve/p2_curve1/similarity_matrix.json` + `threshold.json` (Jaccard, threshold 0.0256, **non-separable — fp risk accepted**) and the Go/Python parity capture `submodules/skills/qa-results/hxc159/activation/20260914T025032Z/`.
 **Risks**: R-19.
 
 - T-P2.04.1 Choose the metric and justify it against this corpus, not literature.
@@ -415,7 +414,7 @@ exit non-zero, naming both.
 **Scope**: the enforcement, plus the mutation that proves the enforcement is real.
 **Test types**: unit, performance, full-automation.
 **Runtime signature**: **RS-05** — startup with ceiling+1 refuses and names the offender.
-**Acceptance evidence**: `qa-results/hxc159/ceiling_gate/<run-id>/`.
+**Acceptance evidence**: no `ceiling_gate/` directory; `qa-results/hxc159/shadowing_curve/p2_curve1/behav_mut/` (behavioural mutation) + `scripts/gates/cm_active_skill_ceiling_gate.sh`; the load-time refusal is `TestActivationCeilingRefusesAndNamesOffender` (RS-05, green in `…/loader_matrix/20260923T_review1/suite_race.txt`). **T-P9.01 note:** RS-05 holds inside `pkg/skills` only — neither consumer imports it (F-01).
 **Risks**: R-19.
 
 - T-P2.05.1 Enforce at load time, not at review time.
@@ -441,7 +440,7 @@ repo root; reconcile the declared module path
 **Test types**: unit, integration, e2e, full-automation, benchmarking.
 **Runtime signature**: **RS** — `go build ./...` succeeds from the repo root, and
 `go get` against the real repository URL resolves the module.
-**Acceptance evidence**: `qa-results/hxc159/module_promote/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/module_promote/20260914T003225Z/`.
 **Risks**: R-01; §11.4.29 (the path segment `Agent_AI_Skill_Tree_Development` is mixed case).
 
 - T-P3.01.1 RED: `go get github.com/HelixDevelopment/skills` MUST fail today.
@@ -462,7 +461,7 @@ repo root; reconcile the declared module path
 **Test types**: unit (gate).
 **Runtime signature**: both files exist at root and the manifest parses under the
 CONST-054 schema.
-**Acceptance evidence**: `qa-results/hxc159/upstream_governance/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/upstream_governance/20260914T011358Z/five_carrier_check.txt`.
 **Risks**: R-01, R-11.
 
 - T-P3.02.1 Lift the manifest to root, preserving all 7 declared dependencies.
@@ -476,7 +475,7 @@ recorded — never a bare branch name.
 **Test types**: unit (gate).
 **Runtime signature**: the recorded gitlink SHA is an **ancestor of the upstream `main`
 tip**, asserted by a live `git merge-base --is-ancestor` check.
-**Acceptance evidence**: `qa-results/hxc159/pin/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/pin/20260914T002406Z/`.
 **Risks**: R-13.
 
 - T-P3.03.1 Re-derive the branch table (it will have moved since Phase 1).
@@ -495,7 +494,7 @@ challenges README. Taking `main` alone inherits a **weaker** test posture than a
 exists.
 **Test types**: stress+chaos, fuzz, HelixQA.
 **Runtime signature**: after the merge, the 4 suites run and report from the pinned SHA.
-**Acceptance evidence**: `qa-results/hxc159/testing_infra_merge/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/testing_infra_merge/20260914T012856Z/`.
 **Risks**: R-13; §11.4.169.
 
 - T-P3.04.1 Merge (never rebase); resolve conflicts preserving both sides.
@@ -513,7 +512,7 @@ plus the grandfathered-allowlist for pre-existing nested copies
 (`submodules/claude-toolkit/constitution/` predates this task, so a
 repo-wide exactly-one assertion is unachievable without retiring it — tracked,
 not silently absorbed). Original repo-wide form kept as the ratchet direction.
-**Acceptance evidence**: `qa-results/hxc159/layout/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/layout/probe1/` (facts.json + update_none_finding.md).
 **Risks**: R-02, R-03 (CONST-051(C)).
 
 - T-P3.05.1 RED: prove that a naive `--recursive` add produces two constitution trees
@@ -533,7 +532,7 @@ onboarding is impossible.
 **Test types**: unit, full-automation.
 **Runtime signature**: the gate runs over **every** `.gitmodules` entry and reports
 per-entry per-item status — not only the new one.
-**Acceptance evidence**: `qa-results/hxc159/onboarding/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/onboarding/probe1/gate.txt`.
 **Risks**: R-11, CONST-056.
 
 - T-P3.06.1 Enumerate the checklist: governance carriers, `helix-deps.yaml`,
@@ -557,7 +556,7 @@ consumable artefact. Pure data: no Go `plugin`, no CGO, no GUI.
 **Test types**: **all 13** (this component is where the expensive types land).
 **Runtime signature**: a consumer imports `pkg/skills` and enumerates a real corpus; the
 package's own dependency graph is **empty of third-party modules**.
-**Acceptance evidence**: `qa-results/hxc159/loader/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/loader/20260914T021701Z/`.
 **Risks**: R-15 (resolved → pure data), R-25.
 
 - T-P4.01.1 RED: assert no importable loader exists today.
@@ -575,7 +574,7 @@ all registered sources into one namespace; **refuse to start** on a name collisi
 **Runtime signature**: **RS** — a collision fixture yields a typed `ErrDuplicateSkill`;
 the union count equals the sum of per-source counts (**no silent drops**) — today
 3 + 1 174 + 0.
-**Acceptance evidence**: `qa-results/hxc159/registry/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/registry/20260914T021701Z/`.
 **Risks**: R-04.
 
 - T-P4.02.1 RED: a collision currently resolves silently (last-writer-wins).
@@ -592,7 +591,7 @@ another.
 **Test types**: unit, integration.
 **Runtime signature**: every enumerated skill's identity carries its source prefix; two
 same-named skills from different sources coexist without collision.
-**Acceptance evidence**: `qa-results/hxc159/namespacing/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/namespacing/20260914T021701Z/`.
 **Risks**: R-04, R-19(4).
 
 - T-P4.03.1 Define the qualification rule and its escaping.
@@ -606,7 +605,7 @@ directory walk MUST NOT imply activation.
 **Test types**: unit, integration, performance, full-automation.
 **Runtime signature**: **RS-05** — with no allowlist, zero skills are active despite
 1 174 being registered; with ceiling+1, startup refuses and names the offender.
-**Acceptance evidence**: `qa-results/hxc159/activation/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/activation/20260914T025032Z/` (metric parity only) + `TestActivation*` in `…/loader_matrix/20260923T_review1/suite_race.txt`.
 **Risks**: R-19, R-28.
 
 - T-P4.04.1 RED: assert a directory walk currently implies activation.
@@ -622,7 +621,7 @@ directory walk MUST NOT imply activation.
 **Test types**: unit, integration, security, chaos.
 **Runtime signature**: **RS-14** — a fixture skill requesting an undeclared capability
 is refused at load, and the refusal appears in the audit record.
-**Acceptance evidence**: `qa-results/hxc159/capabilities/<run-id>/`.
+**Acceptance evidence**: the cited `capabilities/20260914T030500Z/` directory was **never written** (T-P9.01 finding); the guards `TestUndeclaredCapabilityRefusedAtCallBoundary` / `TestRefusalIsAudited` run green in `…/loader_matrix/20260923T_review1/suite_race.txt`; the `CM-SKILL-CAPABILITY-DECLARED` gate is `submodules/skills/gates/cm-skill-capability-declared.sh` — its always-allow mutation capture is NOT on record (T-P9.03).
 **Risks**: R-14; `03` §7.6 (HelixAgent's `AllowedTools` is parsed and enforced nowhere).
 
 - T-P4.05.1 RED: an undeclared capability currently succeeds silently.
@@ -640,7 +639,7 @@ GL-linked package. The host lacks X11/GL headers — turn the constraint into a 
 **Runtime signature**: **RS-16** — `go list -deps` on the loader shows no Fyne/GL/X11
 dependency, **and** the full loader suite exits 0 on this header-less host (the run
 itself is the proof).
-**Acceptance evidence**: `qa-results/hxc159/headless/<run-id>/`.
+**Acceptance evidence**: the cited `headless/20260914T031500Z/` directory was **never written** (T-P9.01 finding); the dependency-closure proof is `…/loader_matrix/20260923T_review1/deps.txt` (zero non-stdlib imports) and the suite runs green on this host — which, per the ledger's honest note, HAS X11/GL headers, so RS-16 rests on the closure proof.
 **Risks**: R-09.
 
 - T-P4.06.1 Gate `CM-SKILLS-LOADER-HEADLESS` + paired mutation (add a Fyne import → FAIL).
@@ -654,7 +653,7 @@ ways (§8 of the plan).
 security, stress+chaos, concurrency/atomicity, race/deadlock, memory, benchmarking.
 **Runtime signature**: a coverage ledger row per type with a captured evidence path —
 **no blank cells**.
-**Acceptance evidence**: `qa-results/hxc159/loader_matrix/<run-id>/`.
+**Acceptance evidence**: `submodules/skills/qa-results/hxc159/loader_matrix/20260914T033000Z/ledger.md` — **T-P9.01 finding:** the ledger cited five log files and two sibling directories that were never written (the repo ignores `*.log`); re-captured by the review at `…/loader_matrix/20260923T_review1/` (skills commits `8516dbe`, follow-up) and the ledger re-pointed with two rows honestly marked NOT ON RECORD.
 **Risks**: R-08.
 
 - T-P4.07.1 Race/deadlock: concurrent registrar writes + concurrent loader reads (`-race`).
@@ -955,9 +954,9 @@ RED-first (compile-fail, undefined symbols) then GREEN in all three trees.
 Standalone CLIs (`cmd/conformance-report`, `cmd/skillconformance` ×2) prove
 RS-12 live: `04_library_cli_run_wellformed.txt`, `08_helixcode_cli_run.txt`,
 `11_helixagent_cli_run.txt` — real reports from real skill directories
-(constitution/skills fixture), including a genuine fail-closed finding (3 of 7
-constitution skills lack YAML front-matter and correctly abort the whole
-source, `03_library_cli_run.txt`). Submodule commit `ae08704` (skills),
+(constitution/skills fixture), including a genuine fail-closed finding (3 of the 8
+constitution skills — `media-validator`, `scheduled-work-queue`, `session-sync` — lack YAML front-matter and correctly abort the whole
+source, `03_library_cli_run.txt`; "3 of 7" corrected to "3 of 8" by T-P9.01: the manifest has 8 rows). Submodule commit `ae08704` (skills),
 `ba16ba9c` (helix_agent); helix_code-side commit BLOCKED on a stale
 `.git/index.lock` in this checkout — staged, not yet committed (see final
 report / operator note).
@@ -985,7 +984,7 @@ corpus) surfaces 3 genuine, unmarked surface asymmetries — helix_code's own
 skill loader has NO `capability_declaration`/`capability_enforcement`/
 `audit_log` surface (T-P5.05.4's already-documented gap), while helix_agent's
 does (`SkillAuthorizer`, T-P6.03) — `04_real_parity_run_samecorpus_stderr.txt`
-+ `diff_samecorpus.json` (gate correctly exits 1). This is the gate WORKING
++ `diff_samecorpus.json` (gate correctly exits 1). **T-P9.01 correction — under-reported:** the same run also reports **14 skill-identity asymmetries** that this entry omitted: the two consumers qualify the SAME skills under incompatible identities (helix_code `builtin.multitrack` vs helix_agent `local.Multitrack`, `local.Reporting Workable Items` — helix_agent uses the front-matter title, violating D-1/FR-013 name-matches-directory), plus `builtin.conventional-commit` and host-state `user.skill-catalog` present only in helix_code. The parity gate can therefore never pass on skill identity until both reports use the D-1 `<source>.<dirname>` identity — T-P9.03 item. This is the gate WORKING
 AS DESIGNED: it detects a real, pre-existing parity gap rather than being
 tuned to pass. Not silently marked optional — reported here and in the final
 handback for operator/tracked follow-up. helix_code-side commit BLOCKED on
@@ -1186,7 +1185,7 @@ nothing declares intent to wire skills there at all (the exact §11.4.228 G1 gap
 HelixCode is SUPPORTED for the 3 currently-wired skills via its external tier
 (`agent.ExternalSkillsDir()` defaults to `.claude/skills`), citing the real T-P5.05
 e2e binary evidence at `qa-results/hxc159/helixcode_wire/20260922T190852Z/`, with the
-T-P5.05.4 activation-ceiling honest boundary carried forward verbatim.
+T-P5.05.4 activation-ceiling honest boundary carried forward verbatim. **T-P9.01 correction: this SUPPORTED claim was FALSE on the live tree until `321dca40`** — the external tier ignored SYMLINKED skill directories (the registrar's output shape; the T-P5.05 fixture was a real directory), so `helixcode skills invoke skill-catalog` returned "not found" (`qa-results/hxc159/review/20260923T_review1/10_*, 11_*`); fixed RED-first in `321dca40` and re-observed live (`21_*`). The catalogue must be regenerated after that fix (T-P9.03).
 
 **Scope**: `docs/extensions/EXTENSIONS_CATALOG.md` with per-platform compatibility
 (Claude Code / OpenCode / HelixCode / Gemini CLI / Qwen Code) — §11.4.228 mandates it and
@@ -1330,20 +1329,117 @@ enumeration confirms the diagrams rendered.
 
 **Gate**: P8.
 
-### - [ ] T-P9.01 Independent code review, iterated to a zero-finding GO
+### - [ ] T-P9.01 Independent code review, iterated to a zero-finding GO — **REVIEW EXECUTED 2026-09-23; verdict NOT-GO (residual findings enumerated; loop re-armed)**
 
 **Scope**: §11.4.142 (every change reviewed) + §11.4.125 (before build) + §11.4.134
 (iterate to GO). Reviewer structurally separate from the author; §11.4.209 model tier.
 **Test types**: all (the review reads the evidence).
 **Runtime signature**: a review verdict citing captured evidence, with **zero findings
 and zero warnings** — a residual warning re-arms the loop.
-**Acceptance evidence**: `qa-results/hxc159/review/<run-id>/`.
+**Acceptance evidence**: `qa-results/hxc159/review/20260923T_review1/` (24 captures,
+git-ignored per `/qa-results/`) + the committed §11.4.83 record
+`docs/qa/hxc159_t_p9_01_review_20260923/captures/` (16 captures copied verbatim; the narrative report is this section + the T-P9.01 handback — the harness refuses standalone report files from a subagent).
 **Risks**: acceptance criterion 6.
 
-- T-P9.01.1 Dispatch the reviewer with the full diff, evidence set and this plan.
-- T-P9.01.2 Remediate; **re-run** the review after each round (never one pass).
-- T-P9.01.3 Verify every §9 runtime signature was actually observed, not asserted.
-- T-P9.01.4 §11.4.145 multi-angle impact research across the eight angles.
+- [x] T-P9.01.1 Dispatch the reviewer with the full diff, evidence set and this plan. —
+  DONE: reviewer (Fable 5.1, xhigh, zero authorship stake) read `spec.md`/`plan.md`/`tasks.md`
+  in full, enumerated all 72 `HXC-159` commits (35 meta + 9 constitution + 9 helix_agent +
+  19 skills), opened the cited evidence for every phase, and re-ran the loader suite, the
+  registrar `--check`, seven gates and a rebuilt CLI on the live tree.
+- [x] T-P9.01.2 Remediate; **re-run** the review after each round. — DONE, two rounds.
+  **Round 1 fixed (five defects):** (1) skills `b590d50` — C5 gate `EnforceSandboxPrecondition`
+  was **unwired** (zero production callers; `Activate` admitted a third-party skill) → wired
+  RED-first, polarity proven; (2) meta `321dca40` — **P1↔P5 seam**: the external tier ignored
+  the registrar's SYMLINKED skill dirs (`skill-catalog` "not found" on the live tree; 0 vs 1
+  isolation) → fixed RED-first, re-observed live; (3) meta `17195f3b` — `CM-SKILL-MANIFEST-COMPLETE`
+  named by T-P1.01.5, never implemented → gate + 4-mutation meta-test; (4) meta `8d4d5b09` —
+  `docs/qa/p2_shadowing_20260914/` claimed committed by T-P2.02.4, was untracked → committed;
+  (5) skills `8516dbe` + `413095b` — T-P4.07 ledger cited five logs + two dirs never written
+  (repo ignores `*.log`) → re-captured, ledger re-pointed with two rows honestly NOT ON RECORD.
+  **Round 2** (after remediation): all fixed guards GREEN under `-race`, seven live gates re-run
+  (`23_round2_gates_and_status.log`), fence audit of the edited specs 0 findings — and one NEW
+  finding surfaced (F-12 below), so the loop stays armed.
+- [x] T-P9.01.3 Verify every §9 runtime signature was actually observed. — DONE, table below.
+- [x] T-P9.01.4 §11.4.145 eight-angle impact research. — DONE, summarised below (the eight-angle text is carried in this section and in the T-P9.01 handback).
+
+#### T-P9.01 finding ledger (every finding from every round, including the fixed ones)
+
+| # | Finding | Class | Status |
+|---|---|---|---|
+| F-01 | **Neither consumer imports `pkg/skills`.** The P4 activation policy — allowlist (FR-015), ceiling (FR-016, RS-05), similarity (FR-017, RS-06), capability refusal (FR-023), C5 gate — exists only in a library nothing links; both consumer seams (helix_code external tier, helix_agent `ExternalSkillSource`) are directory walks that imply activation. Confirms and widens T-P5.05.4's gap (helix_agent too). | architectural, seam P4↔P5/P6 | **OPEN → T-P9.03** (too large for a review pass) |
+| F-02 | C5 gate unwired (`EnforceSandboxPrecondition` had no caller; `Activate` admitted third-party). T-P7.05.5 called it "the ENFORCED gate". | latent/dangerous (§11.4.196(F)) | **FIXED** skills `b590d50` |
+| F-03 | External tier drops symlinked skill dirs — the registrar's output shape. RS-01 never true end-to-end; T-P8.02's "HelixCode SUPPORTED" cells were false on the live tree. | seam P1↔P5 | **FIXED** meta `321dca40`; catalogue regen → T-P9.03 |
+| F-04 | `register_skills.sh` aborts on ANY unmanaged name in `.claude/skills/` (T-P1.04.4 as literally specified), incl. the §11.4.272 activation engine's `speckit-analyze` and the 3 pre-existing unmarked links — so it cannot run on this or any checkout where another installer has written there; RS-01/02/03 were proven in a sandbox only. Spec T-P1.04.3 (reserved prefixes owned by others) contradicts T-P1.04.4. | design/spec contradiction | **OPEN → T-P9.03** |
+| F-05 | Operator decision **D3 = A (track `.claude/skills/`)** recorded 2026-09-13 in `operator_decisions/probe1/packet.md` was never implemented — `.claude/*` is still gitignored; the registrar implements option B. | operator-decision drift (§11.4.66) | **OPEN → T-P9.03 (operator re-confirmation)** |
+| F-06 | T-P4.07 coverage ledger cited `suite.log`/`rerun3.log`/`race_full.log`/`race_red.log`/`bench.log` + `capabilities/…`/`headless/…` that never existed (repo ignores `*.log`). | evidence integrity (§11.4.262) | **FIXED** skills `8516dbe`,`413095b`; 2 rows NOT ON RECORD → T-P9.03 |
+| F-07 | `docs/qa/p2_shadowing_20260914/` untracked though T-P2.02.4 says committed. | evidence integrity (§11.4.83) | **FIXED** meta `8d4d5b09` |
+| F-08 | `CM-SKILL-MANIFEST-COMPLETE` named (T-P1.01.5, plan §7) but never implemented (§11.4.227(A)). | gate missing | **FIXED** meta `17195f3b` |
+| F-09 | 0 of the 20 HXC-159 gates are registered in `scripts/verify-all-constitution-rules.sh`; they run only when someone invokes them. | enforcement (§11.4.226 decoration) | **OPEN → T-P9.03** |
+| F-10 | RS-20 as written ("no artefact references a SuperBridge MCP endpoint") not literally met: `EXTENSION_DEVELOPMENT.md` Part C/§D and `APPENDIX.md` §F still carry endpoint config text under the amendment banner. | spec↔delivery divergence | plan §9 wording amended to the delivered form; block retirement → T-P9.03 |
+| F-11 | T-P7.02 under-reported: besides the 3 surface asymmetries, the parity run shows **14 skill-identity asymmetries** (helix_agent qualifies by front-matter title — `local.Reporting Workable Items` — violating D-1/FR-013). The parity gate can never pass on identity as-is. | business-logic conformance | tasks.md corrected; fix → T-P9.03 |
+| F-12 | **(Round 2)** `CM-UNIQUE-MODULE-PATHS` exits 1 on the live tree (7 duplicate groups: `submodules/claude-toolkit/**` vendors nested copies of challenges/containers/docs_chain/llms_verifier/constitution; plus a tracked nested copy `helix_code/tests/e2e/orchestrator/tests/e2e/orchestrator/`), while T-P0.03/progress.yml record PASS. `dev.helix.code` itself is no longer duplicated (D-7 executed). All duplicates predate HXC-159 (claude-toolkit added 2026-06-21; orchestrator copy 2026-05-16). | stale PASS claim (§11.4.6) / CONST-051(C) | **OPEN → T-P9.03** (grandfather-allowlist or §11.4.124 investigate-before-remove) |
+| F-13 | helix_code embeds a **diverging** copy of 7 constitution skills as `builtin_skills` (all 7 differ from `constitution/skills/`); contradicts the spec's "source authoritative" premise. Pre-existing (2026-06-14). | business-logic conformance | **OPEN → T-P9.03** |
+| F-14 | Stale status/revision headers (`spec.md` "implementation NOT started", `plan.md` "PLAN ONLY", `tasks.md` Rev 2/2026-09-02 + "Nothing here has been implemented") and 27 P1–P4 acceptance-evidence fields left as `<run-id>` placeholders; T-P7.01 said "3 of 7" (manifest has 8). | §11.4.186 / §11.4.44 | **FIXED** (this revision) |
+| F-15 | 21 submodule commits produced by P6/P7/P8/B1–B3 are on no upstream (skills 4+3 review, constitution 8, helix_agent 9 ahead of `origin/main`). Not a review action (no push mandated), but closure cannot claim "published". | integration state | **OPEN → T-P9.02/T-P9.03** |
+
+**Previously self-reported gaps, re-assessed:** capability-parity gap (T-P7.02) — still accurate, now
+subsumed by F-01/F-11, must NOT be left open silently; 5-of-8 skills unwired + zero registrar for
+OpenCode/Gemini/Qwen (T-P8.02) — still accurate, root cause is F-04 + F-05; T-P5.05.4 unverifiable —
+accurate, root cause F-01; 3 constitution skills without front-matter — accurate (3 of **8**:
+`media-validator`, `scheduled-work-queue`, `session-sync`); pre-existing `harmony_os` `go vet`
+failure — confirmed unrelated (`qa-results/hxc159/final_verification/full_vet_excl_preexisting.txt`);
+**C5 gate "genuinely enforced" — it was NOT (F-02), now is inside the library, still not at any consumer (F-01).**
+
+**Nested-fence exhaustive re-check:** an independent CommonMark fence-state auditor
+(`docs/qa/hxc159_t_p9_01_review_20260923/captures/fence_audit.py`, self-validated: golden-bad → exit 1,
+golden-good → exit 0) over ALL 8 Bridge documents (12 604 lines) plus 7 further HXC-159 docs and the 3
+spec files: **0 findings** (`22_fence_audit_committed_record.txt`). The defect class is exhausted in
+the `.md` sources as of constitution `9277b2b`.
+
+#### Runtime-signature verification (T-P9.01.3)
+
+| RS | Verdict | Where observed |
+|---|---|---|
+| RS-01 | **PARTIAL** — link→`skills list` proven live only after F-03 fix (`21_*`); registrar→link never observed on a real checkout (F-04) | review `10_`,`11_`,`21_` |
+| RS-02 / RS-03 | VERIFIED in sandbox only (`registrar/20260913T204524Z/logs/determinism.log`, `guard_mode0.log`) | sandbox |
+| RS-04 | VERIFIED (`TestLoaderRequiresExactCaseManifest`, `…/loader_matrix/20260923T_review1/suite_race.txt`) + new gate | library |
+| RS-05 / RS-06 | VERIFIED **inside `pkg/skills` only** (`TestActivationCeilingRefusesAndNamesOffender`, `TestActivationSimilarityGateFires`); absent at both consumers (F-01) | library |
+| RS-07 | VERIFIED — 3 sizes, FLAT, `ceiling.json`=20=`DefaultCeiling` (provisional, honestly stated) | `shadowing_curve/p2_curve1/` |
+| RS-08 | VERIFIED live post-fix (`21_rs01_rs08_live_tree_postfix.log`) | live tree |
+| RS-09 | VERIFIED as an in-process REPL test (`cli_autotrigger/…/green_mode.txt`), not a driven CLI session | test |
+| RS-10 | VERIFIED via httptest against the real router wiring (`agent_wire/…/04_*`), not a booted binary (boundary recorded) | test |
+| RS-11 | VERIFIED — real `go mod graph`, zero edges + planted-edge detector (`edge_direction/…/01_*`) | real graph |
+| RS-12 | **NOT SATISFIED** — diff is non-empty (3 surface + 14 identity, F-01/F-11) | `parity/…/diff_samecorpus.json` |
+| RS-13 | PARTIAL by its own 2026-09-14 amendment (grandfathered allowlist) | `layout/probe1/` |
+| RS-14 | VERIFIED helix_agent (`allowedtools/…/02_*`) + library; **absent** helix_code | test |
+| RS-15 | VERIFIED — 1-byte mutation → exit 2 (`provenance/…/09_*`) | real files |
+| RS-16 | VERIFIED by dependency closure (`…/20260923T_review1/deps.txt`, 0 non-stdlib); host HAS GL headers, so not by header absence | live |
+| RS-17 | VERIFIED helix_agent live stdio probe, 13 tools (`agent_mcp/…/05_*`); meta-repo registrar sandbox only, live gate FAIL-honest | live / sandbox |
+| RS-18 | VERIFIED — both `--user` and system scopes in `bridge_layers/20260922T185455Z/report.json` | live |
+| RS-19 | VERIFIED in delivered form — L3 WIRED, L4 correctly REFUSED pending §11.4.66 vetting (`bridge_install/*/install_report.json`) | live |
+| RS-20 | PARTIAL — 6 live layers + banners; endpoint text remains (F-10) | corpus |
+| RS-21 | VERIFIED as generated (`08_RS21_*`) but the HelixCode SUPPORTED cells were false pre-`321dca40` — regenerate (T-P9.03) | generated |
+| RS-22 | VERIFIED — 14/14 reachable (`doc_exports/…/09_*`) | traversal |
+
+#### §11.4.145 eight-angle summary (T-P9.01.4)
+
+(1) correctness: F-02, F-03 (both fixed); (2) regression/call-graph: symlink fix widens the
+external tier to every link in `.claude/skills/` (incl. `speckit-analyze`) — by the tier's definition,
+recorded; `internal/commands` + `internal/agent` `-race` green; (3) latent/dangerous: F-02 (gate that
+nothing calls), F-04 (installer that cannot coexist), `mv -T` fallback non-atomic window in the
+registrar (flock-serialised, acceptable, noted); (4) security: credential scans clean (T-P7.05.3
+re-read), `shellSingleQuote` on the `sh -c` MCP entry, no `sudo`/host-power/force patterns in new
+scripts, §11.4.263 kill on a real `$!` PID only; (5) performance: cold enumeration 87–105 ms/op vs
+500 ms budget, 44 698 ops/s under sustained load, heap delta 0.98 MiB — all re-measured; (6)
+host/data safety: every review write was sandboxed or explicit-path staged; no shared `.claude/`
+state mutated; (7) cross-feature: THREE installers now write `.claude/skills/` (registrar, SpecKit,
+§11.4.272 engine) with no arbitration — F-04/F-05; diverging embedded corpus F-13; (8) business-logic
+conformance: FR-015 violated at both consumer seams (F-01); D-1 identity violated by helix_agent's
+report (F-11); D3 operator decision not honoured (F-05).
+
+**Verdict: NOT-GO for zero-finding closure.** Five defects fixed and re-verified with captured
+evidence; F-01/F-04/F-05/F-09/F-10/F-11/F-12/F-13/F-15 remain and are precisely scoped for T-P9.03.
+A GO here would be the false-success this gate exists to prevent (§11.4 / §11.4.6).
 
 ### - [ ] T-P9.02 Full-suite retest on a clean target
 
@@ -1378,6 +1474,34 @@ type, id and a comprehensive description (§11.4.148 / §11.4.171).
 - T-P9.03.5 Sync per §11.4.148 D5; honestly SKIP absent trackers with a machine-readable
   reason rather than faking a push. **Do not regenerate the tracker docs** while the
   coordinator's deferral stands.
+- **T-P9.03.6 Items from the T-P9.01 review (2026-09-23), each a precisely-scoped tracked item:**
+  (a) **F-01** wire `pkg/skills` (allowlist + ceiling + similarity + capability + C5) into BOTH
+  consumer seams — `agent.LoadSkillsAndDispatcher`/`commands.SkillLoader` external tier and
+  `skills.ExternalSkillSource` — so FR-015…FR-017/FR-023 hold at the consumer, not only in the
+  library; then T-P5.05.4 becomes verifiable; (b) **F-04** amend T-P1.04.4 → "abort on a foreign
+  entry that COLLIDES with a manifest-owned name; coexist with unmanaged names" (consistent with
+  T-P1.04.3's ownership model and FR-045), update `register_skills.sh` + its determinism/meta
+  tests, then run it on a real checkout and capture RS-01/02/03 live; (c) **F-05** operator
+  re-confirmation of D3 (track `.claude/skills/` = option A as answered, or ratify option B as
+  built) — §11.4.66 question, then implement whichever is confirmed; (d) **F-09** register the 20
+  HXC-159 gates (incl. `CM-SKILL-MANIFEST-COMPLETE`) in `scripts/verify-all-constitution-rules.sh`
+  with G-numbers + paired mutations; (e) **F-10** retire or inline-mark the `superbridge-mcp`
+  config/endpoint blocks in `EXTENSION_DEVELOPMENT.md` Part C/§D and `APPENDIX.md` §F, re-export
+  four formats; (f) **F-11** make helix_agent's conformance report use the D-1
+  `<source>.<dirname>` identity (and drop host-state `user.*` rows from helix_code's) so
+  `CM-CROSS-CONSUMER-PARITY` compares like with like; then mark the 3 surface asymmetries
+  optional on BOTH sides only if the operator accepts them; (g) **F-12** `CM-UNIQUE-MODULE-PATHS`:
+  either a grandfathered-allowlist for `submodules/claude-toolkit/**` nested copies (mirroring
+  RS-13's amendment) or §11.4.124 investigate-before-remove of the nested
+  `helix_code/tests/e2e/orchestrator/tests/e2e/orchestrator/` copy; correct T-P0.03/progress.yml PASS
+  claims; (h) **F-13** generate `helix_code/internal/commands/builtin_skills/` from
+  `constitution/skills/` via the T-P1.08 converters (or retire the embed) so the source is
+  authoritative; (i) **F-06 residue** capture `race_red.log` (lock-neutralised `-race`
+  discrimination) and the `CM-SKILL-CAPABILITY-DECLARED` always-allow mutation log as tracked
+  `.txt`; (j) **F-03 residue** regenerate `docs/extensions/EXTENSIONS_CATALOG.md` after
+  `321dca40`; (k) **F-15** push the 21 unpublished submodule commits + the review commits to
+  every upstream via §11.4.113 merge-onto-latest-main (never force) before T-P9.02's clean-target
+  retest can be honest.
 
 ---
 
@@ -1485,7 +1609,7 @@ same convention T-B1.01's scripts use. Constitution submodule commit `b43a2a8`.
 **Test types**: unit.
 **Runtime signature**: the directory exists with executable, syntax-valid scripts
 (`bash -n`).
-**Acceptance evidence**: `qa-results/hxc159/bridge_installer/<run-id>/`.
+**Acceptance evidence**: no `bridge_installer/` directory; covered by the 34 `qa-results/hxc159/bridge_install/*` runs.
 **Risks**: R-20.
 
 - T-B2.01.1 Create the directory in the **constitution** submodule (inherited by
@@ -1662,7 +1786,7 @@ not silently fixed or hidden.
 with a phantom middle tier is a 6-layer architecture drawn wrong.*
 **Test types**: full-automation (export validation).
 **Runtime signature**: **RS-20** — no artefact references a SuperBridge MCP endpoint, and
-the design records 6 layers.
+the design records 6 layers. **T-P9.01 amendment:** the first clause is NOT literally met — `EXTENSION_DEVELOPMENT.md` Part C/§D (`superbridge-mcp` `.mcp.json` blocks, `SUPERBRIDGE_MCP_PORT=9595`) and `APPENDIX.md` §F still carry endpoint text as banner-marked retired design; plan.md §9 RS-20 was amended by the review to the delivered form (banner-amended + 6 live layers), and retiring those blocks is a T-P9.03 item.
 **Acceptance evidence**: `qa-results/hxc159/bridge_redraw/<run-id>/`.
 **Risks**: R-21.
 
@@ -1723,8 +1847,7 @@ are otherwise independent.
 
 ## Honest boundary
 
-**Nothing here has been implemented.** `T-P1.06` is the sole exception, is marked `[x]`,
-and carries its own disclosure. Every other checkbox is unticked and honest.
+*(As written at planning time, 2026-09-02: nothing had been implemented and only `T-P1.06` was ticked.)* **Status 2026-09-23:** every task P0–P8 / B1–B3 is ticked with an evidence pointer; the T-P9.01 review (below) re-verified those pointers, found several that named evidence never written, fixed what was in scope, and recorded the rest — the honest boundary is now the T-P9.01 finding ledger, not this paragraph.
 
 Per §11.4.108, no task is "done" when its code is written — only when its runtime
 signature verifies on a clean target. Per §11.4.115, no fix is credible unless its RED

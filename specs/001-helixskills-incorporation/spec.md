@@ -2,11 +2,11 @@
 
 **Feature Branch**: `001-helixskills-incorporation`
 **Created**: 2026-07-29
-**Status**: Draft — specification complete, implementation NOT started
+**Status**: IMPLEMENTED (P0–P8, B1–B3 executed 2026-09-13→23); Phase P9 closure in progress — T-P9.01 independent review verdict recorded in `tasks.md` §P9 (2026-09-23). This line was stale ("implementation NOT started") until the T-P9.01 review corrected it (§11.4.186).
 **Work item**: HXC-159 (Task · In-progress · High)
 **Phase**: 2 — specification + implementation plan (Phases 1a inventory and 1b research/risk are COMPLETE)
-**Revision**: 1
-**Last modified**: 2026-07-29
+**Revision**: 2
+**Last modified**: 2026-09-23
 **Author**: `(T1/main - claude1 - opus - xhigh)`
 **Input**: Operator description — *"Fully incorporate into HelixCode and HelixAgent the HelixSkills System for all work with Skills: git@github.com:HelixDevelopment/skills.git, we MUST fully incorporate all HelixSkills power-features fully without nothing leftout!"* plus the 2026-07-29 Bridge addendum.
 

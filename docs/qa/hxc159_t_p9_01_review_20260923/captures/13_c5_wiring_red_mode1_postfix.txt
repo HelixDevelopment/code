@@ -1,0 +1,6 @@
+--- FAIL: TestActivateRefusesThirdPartyWhileSandboxUnready (0.00s)
+    sandbox_gate_wiring_test.go:43: RED_MODE=1 expects the defect (third-party admitted while sandbox unready); got refusal skills: refusing activation — 1 third-party-tier skill(s) [ext.tp] cannot be activated while the sandbox precondition holds (C5: the only shipped IsolatedExecutor is a skip — spec.md §5 row C5, R-14); pass sandboxReady=true only once a real executor backs FR-023/FR-026 — defect absent, fix present
+FAIL
+FAIL	github.com/HelixDevelopment/skills/pkg/skills	0.005s
+FAIL
+EXIT=1
