@@ -109,6 +109,30 @@ and a gate collecting every `module` line in the repo reports zero duplicates.
 **Acceptance evidence**: `qa-results/hxc159/module_paths/<run-id>/`.
 **Risks**: R-26, `03` §7.4. **Blocks**: P4's seam choice.
 
+**CORRECTION (T-P9.01 F-12, 2026-09-23):** the "zero duplicates" runtime
+signature above was FALSE on the live tree from T-P0.03.5's original landing
+through this correction — `scripts/gates/unique_module_paths_gate.sh` was
+authored but never actually run clean; live it reported 16 duplicate-module-
+path groups (measured 2026-09-23), not zero, and its own header candidly
+said "Deliberately NOT wired into any pre-build sweep yet: it currently
+FAILS (by design ...)". This entry's `[x]`/PASS status pre-dated that
+measurement and was never corrected — a §11.4.226 evidence-class-at-closure
+violation (source-authored ≠ runtime-verified). F-12 fixed the ROOT cause:
+`helix_code/tests/e2e/orchestrator/tests/e2e/orchestrator/` was an accidental
+byproduct of the D3.7 rename sweep (commit `cc339fc0`), removed after a
+§11.4.124 git-history investigation (commit `87a6ef35`); the remaining 15
+groups are pre-existing `submodules/claude-toolkit/**` double-vendored
+copies of already-tracked own-org submodules (not this project's to
+restructure) and are now GRANDFATHERED via
+`scripts/gates/unique_module_paths_grandfathered.tsv`, mirroring the RS-13
+`CM-NO-NESTED-OWN-ORG-CHAIN` precedent (line 509 below). The gate now
+genuinely passes — `PASS CM-UNIQUE-MODULE-PATHS — 155 live modules; 15
+pre-existing duplicate(s) grandfathered, zero NEW duplicates` — with a
+non-regression guarantee: a NEW duplicate anywhere else in the tree is never
+covered by the grandfather list and still fails the gate (proven by
+`scripts/tests/unique_module_paths_grandfather_red_test.sh`, both polarities
+GREEN). See `qa-results/hxc159/f12_module_paths/<run-id>/`.
+
 - T-P0.03.1 Capture every `module` line repo-wide with its path.
 - T-P0.03.2 Decide: rename the thin root module, **or** bind the skills library to the
   inner module only. Record the decision and its reason.

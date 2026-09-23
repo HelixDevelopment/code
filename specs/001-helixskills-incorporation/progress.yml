@@ -6,6 +6,15 @@ gates:
   T-P0.01: PASS  # qa-results/hxc159/env_facts/probe1/facts.json
   T-P0.02: PASS  # no competing abstraction; D-3 stands
   T-P0.03: PASS  # decision recorded; replace-key fixed; CM-UNIQUE-MODULE-PATHS + mutation
+  # CORRECTED 2026-09-23 (F-12/T-P9.01): the CM-UNIQUE-MODULE-PATHS clause of this
+  # PASS was FALSE on the live tree from landing until this correction (gate
+  # authored T-P0.03.5 but never actually run clean; live it reported 16
+  # duplicate-module-path groups, not zero). F-12 fixed the root cause (removed
+  # commit 87a6ef35, grandfathered the remaining 15 pre-existing
+  # submodules/claude-toolkit/** double-vendor copies per
+  # scripts/gates/unique_module_paths_grandfathered.tsv) and the gate now
+  # genuinely passes: 155 live modules, 15 grandfathered, zero NEW duplicates.
+  # See specs/001-helixskills-incorporation/tasks.md T-P0.03 CORRECTION note.
   T-P0.04: PASS  # packet + operator answers D1=A D2=A D3=A
   T-P0.05: PASS  # qa-results/hxc159/const040/probe1/verifier_response.json; premise stale, schema HAS booleans
 operator_decisions: {D1: A-approve-extraction, D2: A-skills-model, D3: A-track-claude-skills}

@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 # CM-UNIQUE-MODULE-PATHS — no two LIVE Go modules may declare the same module path.
 #
-# Authored in T-P0.03.5. Deliberately NOT wired into any pre-build sweep yet:
-# it currently FAILS (by design — it detects the real R-26 collision), and six
-# agents are working concurrently in this checkout. Wiring it is a later-phase
-# step, to be done in the same change that lands the D-7 rename. Run it by hand:
+# Authored in T-P0.03.5. Wired into the pre-build sweep as of HXC-159 F-12
+# (T-P9.01) via a GRANDFATHERED-ALLOWLIST (scripts/gates/unique_module_paths_grandfathered.tsv),
+# mirroring the RS-13 CM-NO-NESTED-OWN-ORG-CHAIN precedent
+# (specs/001-helixskills-incorporation/tasks.md:509-512): every duplicate this
+# gate finds is checked against that list; a module path whose EVERY declaring
+# file is grandfathered is reported informationally and does NOT fail the
+# gate; a module path with ANY non-grandfathered declarer still FAILs. The
+# grandfather list shrinks only (§11.4.135 ratchet) — a NEW duplicate anywhere
+# in the tree is never covered by it and always fails.
 #
 #   scripts/gates/unique_module_paths_gate.sh          # gate
 #   scripts/gates/unique_module_paths_gate.sh --list   # show the live module set
@@ -65,9 +70,45 @@ if [[ -z "$dupes" ]]; then
   exit 0
 fi
 
-echo "FAIL CM-UNIQUE-MODULE-PATHS — duplicate module path(s) among ${#live_paths[@]} live modules:"
+# Split the duplicate set into GRANDFATHERED (every declarer of this module
+# path is a pre-existing, allowlisted collision — see the header) and NEW
+# (at least one declarer is not covered by the allowlist). Only NEW dupes
+# fail the gate; grandfathered ones are reported informationally so the
+# allowlist can never silently hide the class.
+GRANDFATHER="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/unique_module_paths_grandfathered.tsv"
+is_grandfathered_path() {
+  local p="$1"
+  [[ -f "$GRANDFATHER" ]] || return 1
+  awk -F'\t' -v p="$p" '!/^#/ && NF && $1==p {found=1} END{exit !found}' "$GRANDFATHER"
+}
+
+declare -a new_dupes=() grandfathered_dupes=()
 while IFS= read -r d; do
   [[ -n "$d" ]] || continue
+  if is_grandfathered_path "$d"; then
+    grandfathered_dupes+=("$d")
+  else
+    new_dupes+=("$d")
+  fi
+done <<< "$dupes"
+
+if [[ "${#grandfathered_dupes[@]}" -gt 0 ]]; then
+  echo "INFO CM-UNIQUE-MODULE-PATHS — ${#grandfathered_dupes[@]} duplicate module path(s) grandfathered per scripts/gates/unique_module_paths_grandfathered.tsv (HXC-159 F-12; not caused by this repo, tracked, never silently expanded):"
+  for d in "${grandfathered_dupes[@]}"; do
+    echo "  '$d' (grandfathered) declared by:"
+    for i in "${!live_paths[@]}"; do
+      [[ "${live_paths[$i]}" == "$d" ]] && echo "    - ${live_files[$i]}"
+    done
+  done
+fi
+
+if [[ "${#new_dupes[@]}" -eq 0 ]]; then
+  echo "PASS CM-UNIQUE-MODULE-PATHS — ${#live_paths[@]} live modules; ${#grandfathered_dupes[@]} pre-existing duplicate(s) grandfathered, zero NEW duplicates"
+  exit 0
+fi
+
+echo "FAIL CM-UNIQUE-MODULE-PATHS — ${#new_dupes[@]} NEW (non-grandfathered) duplicate module path(s) among ${#live_paths[@]} live modules:"
+for d in "${new_dupes[@]}"; do
   echo "  '$d' declared by:"
   for i in "${!live_paths[@]}"; do
     [[ "${live_paths[$i]}" == "$d" ]] && echo "    - ${live_files[$i]}"
@@ -80,7 +121,11 @@ while IFS= read -r d; do
       echo "      colliding import candidate: $d/internal/$(basename "$sub")  <- ${base:-<root>}"
     done
   done
-done <<< "$dupes"
+done
 echo
 echo "Fix per spec.md D-7: rename the thin root module; bind nothing new to it."
+echo "If this NEW duplicate is a genuine pre-existing own-org double-vendor (mirroring"
+echo "the known submodules/claude-toolkit/** class), add it to"
+echo "scripts/gates/unique_module_paths_grandfathered.tsv with a cited reason instead"
+echo "of silently ignoring this failure."
 exit 1
