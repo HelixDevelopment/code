@@ -1749,6 +1749,32 @@ if want_gate G56; then
 fi
 
 # ---------------------------------------------------------------------------
+# G57 — CM-NO-NESTED-MARKDOWN-FENCE-LEAK (HXC-159 T-P9.03 F-19: promote the
+# round-1/round-3 one-off fence auditor into a permanent §11.4.135 regression
+# guard for the nested-Markdown-fence §11.4.168 defect class — "finally
+# fixed" four separate times (B3/T-P8.01/T-P8.04/F-10) with no standing
+# guard until this registration).
+# ---------------------------------------------------------------------------
+#   G57 CM-NO-NESTED-MARKDOWN-FENCE-LEAK asserts every file in the
+#     round-3-validated 18-file corpus (the 8 Bridge design docs under
+#     constitution/docs/research/extensions/speckit_superpowers/
+#     implementation/ + the other HXC-159-relevant docs) has zero
+#     nested-fence / leaked-diagram-directive / unclosed-fence / mermaid-
+#     imbalance findings (constitution/scripts/gates/
+#     cm_no_nested_markdown_fence_leak.sh, self-validated per §11.4.107(10)
+#     by its own paired mutation test).
+if want_gate G57; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G57 — CM-NO-NESTED-MARKDOWN-FENCE-LEAK"
+    if bash "$ROOT/constitution/scripts/gates/cm_no_nested_markdown_fence_leak.sh" --quiet >/tmp/g57-fenceleak.out 2>&1; then
+        gate_pass G57 "$(tail -1 /tmp/g57-fenceleak.out)"
+    else
+        gate_fail G57 "a nested-fence / leaked-directive / unclosed-fence / mermaid-imbalance finding was detected (see /tmp/g57-fenceleak.out)" \
+            "$(tail -6 /tmp/g57-fenceleak.out)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo
