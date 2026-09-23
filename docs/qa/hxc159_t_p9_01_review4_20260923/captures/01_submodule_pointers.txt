@@ -1,0 +1,3 @@
+ e72175f905278505bb1cfd08253b0a82376f9156 constitution (helixconstitution-v68-88-ge72175f)
+ 5afc7d3081f460b37ec4f1812161079e92f915ef submodules/helix_agent (helix-code-1.0.0-dev-0.0.1-131-g5afc7d30)
+ b165b9f6fc81f4540290f0feede6a0d850bb3513 submodules/skills (heads/main)

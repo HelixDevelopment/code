@@ -1,0 +1,9 @@
+=== [skills_pkg] cd /home/milosvasic/Projects/helix_code/submodules/skills && go test -count=1 -race ./pkg/skills/...
+EXIT[skills_pkg]=0
+=== [agent_skills] cd /home/milosvasic/Projects/helix_code/submodules/helix_agent && go test -count=1 -race ./internal/skills/... ./internal/skillconformance/... ./tests/compliance/...
+EXIT[agent_skills]=0
+=== [hc_agent] cd /home/milosvasic/Projects/helix_code/helix_code && go test -count=1 -tags nogui ./internal/agent/
+EXIT[hc_agent]=0
+=== [hc_commands] cd /home/milosvasic/Projects/helix_code/helix_code && go test -count=1 -tags nogui ./internal/commands/
+EXIT[hc_commands]=0
+ALL_DONE

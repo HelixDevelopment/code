@@ -1,0 +1,36 @@
+=== Wed Sep 23 04:20:29 PM UTC 2026 REBUILD from FIXED source (uncommitted) then re-observe
+build exit=0 sha256=11725715ff5ef109
+
+--- GREEN on the SAME RED fixture /tmp/claude-1000/hxc159_r4_red.5UY6 (HELIXCODE_EXTERNAL_SKILLS_DIR)
+2026/09/23 18:20:47 ⚠️  skill activation: external tier "/tmp/claude-1000/hxc159_r4_red.5UY6": skills: "external.Zeta Beta Title" exclud
+2026/09/23 18:20:47 ⚠️  skill activation: external tier "/tmp/claude-1000/hxc159_r4_red.5UY6": skills: "external.zz-gamma" excluded — 
+zz-alpha                  reconcile ledger balance entries nightly batch                                                                    
+zz-delta                  compress seismic waveform telemetry for archival storage                                                          
+--- skills show zz-beta (expected: not found)
+Error: skills show: "zz-beta" not found
+exit=1
+--- skills invoke zz-beta (expected: not found, exit 1)
+Error: skills invoke: "zz-beta" not found
+exit=1
+--- skills show zz-alpha (expected: present)
+Name: zz-alpha
+Source: /tmp/claude-1000/hxc159_r4_red.5UY6/zz-alpha/SKILL.md
+
+--- LIVE TREE .claude/skills after fix: skills list (SOURCE column) + exclusions
+2026/09/23 18:20:47 ⚠️  skill activation: external tier ".claude/skills": skills: "external.Reporting Workable Items" excluded — scores 0.1045 above simil
+2026/09/23 18:20:47 ⚠️  skill activation: external tier ".claude/skills": skills: "external.session-sync" excluded — scores 0.0794 above similarity thresh
+NAME                      SOURCE
+action-prefix-system      builtin:action-prefix-system/SKILL.md
+conventional-commit       builtin:conventional-commit/SKILL.md
+media-validator           builtin:media-validator/SKILL.md
+multitrack                builtin:multitrack/SKILL.md
+reporting-workable-items  builtin:reporting-workable-items/SKILL.md
+scheduled-work-queue      builtin:scheduled-work-queue/SKILL.md
+session-sync              builtin:session-sync/SKILL.md
+skill-catalog             .claude/skills/skill-catalog/SKILL.md
+speckit-analyze           .claude/skills/speckit-analyze/SKILL.md
+workable-item-lifecycle   builtin:workable-item-lifecycle/SKILL.md
+--- RS-01/RS-08: skills invoke skill-catalog
+# Skill catalogue — see and activate what is not loaded
+
+exit=0

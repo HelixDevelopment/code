@@ -1,0 +1,92 @@
+=== pkg/skills similarity-probe on REAL helix_code external tier (.claude/skills, 9 dirs)
+{
+  "admitted": [
+    "Action Prefix System",
+    "Multitrack",
+    "Workable Item Lifecycle",
+    "media-validator",
+    "scheduled-work-queue",
+    "skill-catalog",
+    "speckit-analyze"
+  ],
+  "excluded": [
+    {
+      "excluded": "Reporting Workable Items",
+      "conflicts_with": "Action Prefix System",
+      "score": 0.1044776119402985,
+      "threshold": 0.0709
+    },
+    {
+      "excluded": "session-sync",
+      "conflicts_with": "Multitrack",
+      "score": 0.07936507936507936,
+      "threshold": 0.0709
+    }
+  ],
+  "refusal": ""
+}
+exit=0
+
+=== pkg/skills similarity-probe on constitution/skills
+{
+  "admitted": [
+    "Action Prefix System",
+    "Multitrack",
+    "Workable Item Lifecycle",
+    "media-validator",
+    "scheduled-work-queue",
+    "skill-catalog"
+  ],
+  "excluded": [
+    {
+      "excluded": "Reporting Workable Items",
+      "conflicts_with": "Action Prefix System",
+      "score": 0.1044776119402985,
+      "threshold": 0.0709
+    },
+    {
+      "excluded": "session-sync",
+      "conflicts_with": "Multitrack",
+      "score": 0.07936507936507936,
+      "threshold": 0.0709
+    }
+  ],
+  "refusal": ""
+}
+exit=0
+
+=== helix_agent similarity-probe on constitution/skills (helix_agent's real source dir)
+{
+  "admitted": [
+    "Action Prefix System",
+    "Multitrack",
+    "Workable Item Lifecycle",
+    "media-validator",
+    "scheduled-work-queue",
+    "skill-catalog"
+  ],
+  "excluded": [
+    {
+      "excluded": "Reporting Workable Items",
+      "conflicts_with": "Action Prefix System",
+      "score": 0.1044776119402985,
+      "threshold": 0.0709
+    },
+    {
+      "excluded": "session-sync",
+      "conflicts_with": "Multitrack",
+      "score": 0.07936507936507936,
+      "threshold": 0.0709
+    }
+  ],
+  "refusal": ""
+}
+exit=0
+
+=== helix_agent similarity-probe on .claude/skills
+{
+  "admitted": [],
+  "excluded": null,
+  "refusal": ""
+}
+exit=0

@@ -1,0 +1,15 @@
+=== --check
+[generate-builtin-skills] SKIP conventional-commit (no constitution/skills/conventional-commit — not constitution-sourced)
+[generate-builtin-skills] PASS — 0 drifted, 1 skipped (non-constitution-sourced)
+EXIT=0
+=== byte-diff builtin vs constitution (independent of the script)
+action-prefix-system: IDENTICAL (9fed26b0b40f)
+conventional-commit: not constitution-sourced (skip)
+media-validator: IDENTICAL (7c80fffbd640)
+multitrack: IDENTICAL (e6e126db6ca8)
+reporting-workable-items: IDENTICAL (c2a2c14d27d9)
+scheduled-work-queue: IDENTICAL (35617faf6d5c)
+session-sync: IDENTICAL (3af0f3493d9c)
+workable-item-lifecycle: IDENTICAL (1fe6a9586c08)
+=== regenerate into temp copy + diff (real generator run, not --check)
+REGEN-TO-TEMP: byte-identical to committed

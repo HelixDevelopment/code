@@ -1,0 +1,3 @@
+ok  	dev.helix.agent/internal/skills	1.446s
+ok  	dev.helix.agent/internal/skillconformance	1.107s
+ok  	dev.helix.agent/tests/compliance	1.400s

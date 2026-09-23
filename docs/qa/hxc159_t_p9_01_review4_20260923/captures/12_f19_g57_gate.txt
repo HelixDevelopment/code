@@ -1,0 +1,15 @@
+      "/home/milosvasic/Projects/helix_code/constitution/docs/research/extensions/speckit_superpowers/implementation/APPENDIX.md": 0,
+      "/home/milosvasic/Projects/helix_code/helix_code/docs/architecture/skills_architecture.md": 0,
+      "/home/milosvasic/Projects/helix_code/helix_code/docs/CAPABILITIES.md": 0,
+      "/home/milosvasic/Projects/helix_code/helix_code/docs/guides/skills_user_manual.md": 0,
+      "/home/milosvasic/Projects/helix_code/helix_code/docs/guides/skills_faq.md": 0,
+      "/home/milosvasic/Projects/helix_code/docs/extensions/EXTENSIONS_CATALOG.md": 0,
+      "/home/milosvasic/Projects/helix_code/submodules/helix_agent/docs/skills/SKILLS_SYSTEM.md": 0,
+      "/home/milosvasic/Projects/helix_code/README.md": 0,
+      "/home/milosvasic/Projects/helix_code/specs/001-helixskills-incorporation/tasks.md": 0,
+      "/home/milosvasic/Projects/helix_code/specs/001-helixskills-incorporation/plan.md": 0,
+      "/home/milosvasic/Projects/helix_code/specs/001-helixskills-incorporation/spec.md": 0
+     }
+    }
+== CM-NO-NESTED-MARKDOWN-FENCE-LEAK: PASS (18 file(s), 0 findings) ==
+EXIT=0

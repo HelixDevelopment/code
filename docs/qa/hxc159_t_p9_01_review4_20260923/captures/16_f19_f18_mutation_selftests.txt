@@ -1,0 +1,15 @@
+=== F-19 mutation self-test
+  PASS  [CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation] golden-good: correctly-nested document → gate PASSes (rc=0)
+  PASS  [CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation] golden-bad-1: same-run-length nested mermaid block → gate FAILs (rc=1), reporting S1 + S3
+  PASS  [CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation] golden-bad-2: unfenced diagram directive → gate FAILs (rc=1), reporting S2
+  PASS  [CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation] golden-bad-3: mermaid opener never closed by a matching-char fence → gate FAILs (rc=1), reporting S4
+  PASS  [CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation] negative control: innocuous prose + normal fenced block → gate still PASSes (rc=0), proving no false-positive
+== CM-NO-NESTED-MARKDOWN-FENCE-LEAK mutation: PASS (5/5 cases) ==
+EXIT=0
+
+=== F-18 RED/guard test
+unique_module_paths_gate.sh
+unique_module_paths_grandfathered.tsv
+test=scripts/tests/unique_module_paths_grandfather_red_test.sh
+RED not reproduced: a grandfather list already exempts the known claude-toolkit duplicates (fixed).
+EXIT=1

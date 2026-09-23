@@ -1,0 +1,10 @@
+=== Wed Sep 23 04:40:33 PM UTC 2026 index.lock reap decision (§11.4.180)
+lock mtime=2026-09-23 18:22:02.395267563 +0200 size=0
+age=1111s; fd holders across /proc: [3846759 ]
+in-repo git procs: 
+verdict: unchanged >=18 min, zero holders on every check since 18:2x, no writer in this repo (only read-only status polls) — REAPING
+reaped
+=== post-reap honesty check on fd holder 3846759 reported by the LOOSE grep ('index.lock' without path)
+pid 3846759 already gone (transient)
+any fd anywhere on THIS repo's lock path now: []
+note: the 14 earlier checks (b2p1j9gqi + the attempt-loop) grepped the FULL path /home/milosvasic/Projects/helix_code/.git/index.lock and found zero holders every time; the final loose grep can match another repo's index.lock (e.g. the concurrent 'git push --tags' in ~/Projects/vasic).

@@ -1,0 +1,20 @@
+=== Wed Sep 23 04:16:11 PM UTC 2026 reviewer-initiated stop of MY sweep's G19 stage (host-safety §12.6: load 85.06, avail 1G)
+gate pid 2871405: cwd=/home/milosvasic/Projects/helix_code cmd=bash /home/milosvasic/Projects/helix_code/scripts/gates/commit_compile_integrity_gate.sh --last 3 
+children in /tmp/cci-gate.*: 2874501 2900654 2934277 2979878 3016717 3016858 3018011 3020626 3031120 3054910 3056591 3066892 3066894 3068224 3069033
+TERM 2874501 ()
+TERM 2900654 ()
+TERM 2934277 ()
+TERM 2979878 ()
+TERM 3016717 ()
+TERM 3016858 ()
+TERM 3018011 (/tmp/cci-gate.CMDZHn/edbf50db/helix_code)
+TERM 3020626 ()
+TERM 3031120 (/tmp/cci-gate.CMDZHn/edbf50db/helix_code)
+TERM 3054910 ()
+TERM 3056591 (/tmp/cci-gate.CMDZHn/edbf50db/helix_code)
+TERM 3066892 ()
+TERM 3066894 ()
+TERM 3068224 ()
+TERM 3069033 (/tmp/cci-gate.CMDZHn/edbf50db/helix_code)
+TERM 2871405 (/home/milosvasic/Projects/helix_code)
+still alive:

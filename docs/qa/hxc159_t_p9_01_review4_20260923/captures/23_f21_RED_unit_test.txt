@@ -1,0 +1,10 @@
+=== RED run on PRE-FIX code: 8bdb46ac + uncommitted test only
+2026/09/23 17:57:16 ⚠️  skill activation: external tier "/tmp/TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFro1061775946/001": skills: "external.Zeta Alpha Title" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.Linked Title" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+2026/09/23 17:57:16 ⚠️  skill activation: external tier "/tmp/TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFro1061775946/001": skills: "external.Zeta Beta Title" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.Linked Title" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+2026/09/23 17:57:16 ⚠️  skill activation: external tier "/tmp/TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFro1061775946/001": skills: "external.zz-gamma" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.Linked Title" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+--- FAIL: TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName (0.00s)
+    skill_external_policy_test.go:322: F-21: "zz-alpha" was EXCLUDED by the similarity gate but is still registered (source "/tmp/TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFro1061775946/001/zz-alpha/SKILL.md") — the prune keyed on the front-matter name, not the directory identity the registry uses
+FAIL
+FAIL	dev.helix.code/internal/agent	0.054s
+FAIL
+EXIT=1

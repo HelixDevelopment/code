@@ -1,0 +1,16 @@
+=== constitution ===
+e72175f 2026-09-23 14:52:10 +0200 HXC-159 F-13: extend skill frontmatter to a superset schema (Option C)
+35413ac 2026-09-23 11:30:03 +0200 HXC-159 F-17: add real YAML frontmatter to 3 nameless constitution skills
+24ae426 2026-09-23 11:12:54 +0200 HXC-159 F-19: promote nested-Markdown-fence auditor to a permanent CM-NO-NESTED-MARKDOWN-FENCE-LEAK gate
+HEAD=e72175f branch=main
+=== submodules/helix_agent ===
+5afc7d30 2026-09-23 17:18:02 +0200 HXC-159 F-17: mirror per-skill (partial) admission redesign (Option A)
+15cc2fcf 2026-09-23 11:30:53 +0200 HXC-159 F-17: recalibrate nativeSimilarityThreshold to mirror pkg/skills
+5f3124aa 2026-09-23 09:44:55 +0200 HXC-159 T-P9.01 F-16: surface nameless (front-matter-less) skills in the load report instead of silently dropping them
+4cbadfb4 2026-09-23 09:05:44 +0200 HXC-159 F-11: qualify skills by stable directory identity, not front-matter title
+ab529d95 2026-09-23 09:00:41 +0200 HXC-159 F-01: native (non-importing) policy gate for the external skill source
+HEAD=5afc7d30 branch=main
+=== submodules/skills ===
+b165b9f 2026-09-23 17:17:41 +0200 HXC-159 F-17: per-skill (partial) admission redesign (Option A)
+941f1d4 2026-09-23 11:30:18 +0200 HXC-159 F-17: recalibrate SimilarityThreshold against the real corpus
+HEAD=b165b9f branch=HEAD

@@ -1,0 +1,8 @@
+  'llmsverifier' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/go.mod
+    - submodules/llms_verifier/go.mod
+  'scoring-example' (grandfathered) declared by:
+    - submodules/claude-toolkit/submodules/LLMsVerifier/examples/scoring/go.mod
+    - submodules/llms_verifier/examples/scoring/go.mod
+PASS CM-UNIQUE-MODULE-PATHS — 155 live modules; 15 pre-existing duplicate(s) grandfathered, zero NEW duplicates
+EXIT=0

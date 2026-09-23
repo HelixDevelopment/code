@@ -1,0 +1,36 @@
+=== RED reproduction of the suspected F-17 call-site prune defect (front-matter name != dir name)
+fixture=/tmp/claude-1000/hxc159_r4_red.5UY6
+--- zz-alpha:
+name: Zeta Alpha Title
+description: reconcile ledger balance entries nightly batch
+--- zz-beta:
+name: Zeta Beta Title
+description: reconcile ledger balance entries nightly batch
+--- zz-delta:
+name: zz-delta
+description: compress seismic waveform telemetry for archival storage
+--- zz-gamma:
+name: zz-gamma
+description: reconcile ledger balance entries nightly batch
+
+--- expected by policy: sorted Qualified() = external.Zeta Alpha Title, external.Zeta Beta Title, external.zz-delta, external.zz-gamma -> admit Alpha; EXCLUDE Beta (conflict Alpha); admit delta; EXCLUDE gamma (conflict Alpha)
+--- so a CORRECT prune leaves zz-alpha + zz-delta registered; zz-beta and zz-gamma must be ABSENT
+
+--- HELIXCODE_EXTERNAL_SKILLS_DIR=/tmp/claude-1000/hxc159_r4_red.5UY6 skills list
+2026/09/23 17:31:20 ⚠️  skill activation: external tier "/tmp/claude-1000/hxc159_r4_red.5UY6": skills: "external.Zeta Beta Title" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.Zeta Alpha Title" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+2026/09/23 17:31:20 ⚠️  skill activation: external tier "/tmp/claude-1000/hxc159_r4_red.5UY6": skills: "external.zz-gamma" excluded — scores 1.0000 above similarity threshold 0.0709 against already-admitted "external.Zeta Alpha Title" (see threshold.json for the current calibration); the alphabetically-later member of a confusable pair is excluded so the earlier one may still load
+zz-alpha                  reconcile ledger balance entries nightly batch                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 /tmp/claude-1000/hxc159_r4_red.5UY6/zz-alpha/SKILL.md
+zz-beta                   reconcile ledger balance entries nightly batch                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 /tmp/claude-1000/hxc159_r4_red.5UY6/zz-beta/SKILL.md
+zz-delta                  compress seismic waveform telemetry for archival storage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       /tmp/claude-1000/hxc159_r4_red.5UY6/zz-delta/SKILL.md
+
+--- skills show zz-beta (MUST be 'not found' if the prune works)
+Name: zz-beta
+Source: /tmp/claude-1000/hxc159_r4_red.5UY6/zz-beta/SKILL.md
+exit=0
+--- skills show zz-gamma (name==dir control: prune expected to work)
+Error: skills show: "zz-gamma" not found
+exit=1
+--- skills invoke zz-beta
+# zz-beta body
+exit=0
+FIXTURE_DIR=/tmp/claude-1000/hxc159_r4_red.5UY6

@@ -1,0 +1,21 @@
+=== action-prefix-system
+triggers: IDENTICAL (3 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== media-validator
+triggers: IDENTICAL (2 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== multitrack
+triggers: IDENTICAL (2 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== reporting-workable-items
+triggers: IDENTICAL (2 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== scheduled-work-queue
+triggers: IDENTICAL (2 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== session-sync
+triggers: IDENTICAL (2 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
+=== workable-item-lifecycle
+triggers: IDENTICAL (3 regex(es))
+requires_isolation old=[requires_isolation: false] new=[requires_isolation: false]
