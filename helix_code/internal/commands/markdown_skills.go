@@ -23,6 +23,26 @@ import (
 // the built-in (see SkillLoader.Reload). The embedded tree always ships with
 // the binary, so built-in skills work out of the box with no on-disk files.
 //
+// The SKILL.md content under builtin_skills/ is a COPY, not a symlink
+// (//go:embed cannot follow a link outside the module tree). 7 of these 8
+// entries share a directory name with a constitution/skills/<name>/ entry
+// but are NOT copies of it — investigated under HXC-159 T-P9.01 finding
+// F-13 (2026-09-23): the constitution side is a Claude-Code-native Agent
+// Skill doc; the builtin side is a HelixCode-internal regex-triggered
+// REPL completion-prompt template (`description`/`triggers`/
+// `requires_isolation` frontmatter this loader itself parses — see
+// skillFrontmatter below). Running scripts/generate_builtin_skills.sh in
+// its regenerate mode overwrites the builtin format with the constitution
+// one and PROVABLY breaks TestGovernanceSkills_RegisteredAndInvocable (the
+// regex triggers this loader's auto-trigger matcher depends on are lost) —
+// do NOT run it in regenerate mode without first reconciling the two
+// formats. `scripts/generate_builtin_skills.sh --check` is safe and
+// reports drift for visibility only (§11.4.77 regeneration-mechanism
+// declaration, detection-only pending that reconciliation).
+// `conventional-commit` has no constitution/skills/ counterpart at all and
+// is HelixCode's own built-in skill unconditionally.
+//
+//go:generate bash ../../scripts/generate_builtin_skills.sh --check
 //go:embed builtin_skills
 var builtinSkillsFS embed.FS
 
