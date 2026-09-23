@@ -1458,6 +1458,297 @@ if want_gate G36; then
 fi
 
 # ---------------------------------------------------------------------------
+# G37-G56 — HXC-159 T-P9.01 finding F-09: register the ~20 gates this feature
+# built (skill registrar, extensions catalogue, provenance/skill-capability,
+# workable-items/module-path hygiene) into the pre-build sweep. Before this
+# block every one of them existed as a real, working, tested script that
+# NOTHING ever invoked — "named by the task, authored during review, never
+# wired" (skill_manifest_complete_gate.sh's own header, T-P9.01 finding
+# ledger). A gate that only runs when a human remembers to run it by hand is
+# not a gate — it is documentation with a shebang line.
+#
+# HONEST BOUNDARY (§11.4.6) — two gates below are wired as honest SKIP, not a
+# PASS, because the thing they need does not exist yet and inventing it is
+# out of this task's authorized scope:
+#   G39 CM-CONSTITUTION-AUTO-PROPAGATION has no dedicated gate script anywhere
+#     in this tree (searched scripts/gates/ + grepped every *.sh and *.md for
+#     the literal string; the only hits are the general §11.4.164 prose and
+#     this task's own description). constitution/scripts/post_update_hook.sh
+#     does real work on a pull (installs skills to ${PROJECT_ROOT}/skills,
+#     calls install_cli_agent_plugins.sh + skill_activate.sh session-init) but
+#     never calls register_skills.sh / register_mcp.sh by name — the literal
+#     wiring §11.4.164's text implies. Fixing that hook is a different, larger
+#     task than registering an existing gate into this sweep; SKIP-with-reason
+#     here so the gap is visible rather than silently absent from the sweep.
+#   G43 CM-CROSS-CONSUMER-PARITY needs two pre-generated capability-manifest
+#     JSON files (helix_code/scripts/gate_cross_consumer_parity.sh takes them
+#     as positional args) and nothing in the tree generates them — the two
+#     skillconformance binaries exist (helix_code/cmd/skillconformance,
+#     submodules/helix_agent/cmd/skillconformance) but no wrapper runs them
+#     and feeds their output to the gate. Authoring that wrapper touches
+#     helix_code/internal/agent/ and submodules/helix_agent/, which is the
+#     concurrent F-01/F-11 sibling's EXCLUSIVE scope this round per the launch
+#     brief — SKIP-with-reason rather than reach into forbidden territory.
+# Both SKIPs are tracked follow-ups, never a silent absence from GATE_RESULTS.
+# ---------------------------------------------------------------------------
+
+# G37 — CM-ACTIVE-SKILL-CEILING
+if want_gate G37; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G37 — CM-ACTIVE-SKILL-CEILING"
+    if [[ ! -f "$ROOT/scripts/benchmark_skills/threshold.json" ]]; then
+        GATE_RESULTS+=("G37|SKIP|scripts/benchmark_skills/threshold.json absent — SKIP-OK: calibration file not yet produced")
+        [[ "$QUIET" -eq 0 ]] && echo "  SKIP (G37): threshold.json absent — §11.4.3"
+    elif [[ ! -f /tmp/g37-active-skills.json ]]; then
+        # No generator in-tree produces the required --skills-json snapshot of
+        # the CURRENTLY active skill set; honest SKIP rather than fabricate one.
+        GATE_RESULTS+=("G37|SKIP|no in-tree generator produces the required --skills-json active-skill snapshot — SKIP-OK: §11.4.197 follow-up")
+        [[ "$QUIET" -eq 0 ]] && echo "  SKIP (G37): no --skills-json generator — §11.4.3"
+    else
+        if bash "$ROOT/scripts/gates/cm_active_skill_ceiling_gate.sh" --skills-json /tmp/g37-active-skills.json >/tmp/g37-ceiling.out 2>&1; then
+            gate_pass G37 "active-skill count within calibrated ceiling"
+        else
+            gate_fail G37 "active-skill ceiling exceeded (see /tmp/g37-ceiling.out)" \
+                "$(tail -6 /tmp/g37-ceiling.out)"
+        fi
+    fi
+fi
+
+# G38 — CM-BRIDGE-LAYER-PRESENCE
+if want_gate G38; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G38 — CM-BRIDGE-LAYER-PRESENCE"
+    if bash "$ROOT/constitution/scripts/gates/cm_bridge_layer_presence.sh" --root "$ROOT" >/tmp/g38-bridge.out 2>&1; then
+        gate_pass G38 "every declared phase->layer dependency is WIRED"
+    else
+        gate_fail G38 "a declared phase->layer dependency is NOT wired (see /tmp/g38-bridge.out)" \
+            "$(tail -6 /tmp/g38-bridge.out)"
+    fi
+fi
+
+# G39 — CM-CONSTITUTION-AUTO-PROPAGATION (honest SKIP — see block header above)
+if want_gate G39; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G39 — CM-CONSTITUTION-AUTO-PROPAGATION"
+    GATE_RESULTS+=("G39|SKIP|no dedicated gate script exists; constitution/scripts/post_update_hook.sh does real skill/plugin install work on pull but never calls register_skills.sh/register_mcp.sh by name — SKIP-OK: §11.4.197 follow-up, out of F-09 scope")
+    [[ "$QUIET" -eq 0 ]] && echo "  SKIP (G39): §11.4.164 wiring gap, no gate script authored yet — §11.4.3"
+fi
+
+# G40 — CM-CONSTITUTION-PIN-SINGLE
+if want_gate G40; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G40 — CM-CONSTITUTION-PIN-SINGLE"
+    if bash "$ROOT/scripts/gates/constitution_pin_single_gate.sh" >/tmp/g40-pin.out 2>&1; then
+        gate_pass G40 "$(tail -1 /tmp/g40-pin.out)"
+    else
+        gate_fail G40 "constitution pin is stale or multiple (see /tmp/g40-pin.out)" \
+            "$(tail -6 /tmp/g40-pin.out)"
+    fi
+fi
+
+# G41 — CM-CONSUMER-VERSION-PARITY (submodules/skills — ROOT arg required,
+# the gate resolves via `git rev-parse --show-toplevel` from invocation cwd
+# by default and would wrongly target this meta-repo if not passed explicitly)
+if want_gate G41; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G41 — CM-CONSUMER-VERSION-PARITY (submodules/skills)"
+    if bash "$ROOT/submodules/skills/gates/cm-consumer-version-parity.sh" "$ROOT/submodules/skills" >/tmp/g41-parity.out 2>&1; then
+        gate_pass G41 "$(tail -1 /tmp/g41-parity.out)"
+    else
+        gate_fail G41 "pkg/skills dependency graph is not stdlib-only (see /tmp/g41-parity.out)" \
+            "$(tail -6 /tmp/g41-parity.out)"
+    fi
+fi
+
+# G42 — CM-COVERAGE-LEDGER-NO-BLANK (two-step: generate then validate)
+if want_gate G42; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G42 — CM-COVERAGE-LEDGER-NO-BLANK"
+    _g42_out="/tmp/g42-coverage-ledger"
+    rm -rf "$_g42_out" && mkdir -p "$_g42_out"
+    if python3 "$ROOT/helix_code/scripts/coverage_ledger/generate_ledger.py" \
+            "$ROOT/specs/001-helixskills-incorporation/spec.md" \
+            "$ROOT/helix_code/scripts/coverage_ledger/evidence_map.json" \
+            "$_g42_out" >/tmp/g42-generate.out 2>&1 && \
+       python3 "$ROOT/helix_code/scripts/coverage_ledger/validate_ledger.py" \
+            "$_g42_out/ledger.json" >/tmp/g42-validate.out 2>&1; then
+        gate_pass G42 "$(tail -1 /tmp/g42-validate.out)"
+    else
+        gate_fail G42 "coverage ledger missing/blank rows (see /tmp/g42-generate.out, /tmp/g42-validate.out)" \
+            "$(tail -6 /tmp/g42-validate.out)"
+    fi
+fi
+
+# G43 — CM-CROSS-CONSUMER-PARITY (honest SKIP — see block header above)
+if want_gate G43; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G43 — CM-CROSS-CONSUMER-PARITY"
+    GATE_RESULTS+=("G43|SKIP|no wrapper generates the two skillconformance capability-manifest JSON args gate_cross_consumer_parity.sh requires; authoring one touches helix_code/internal/agent + submodules/helix_agent, the concurrent F-01/F-11 sibling's exclusive scope this round — SKIP-OK: §11.4.197 follow-up")
+    [[ "$QUIET" -eq 0 ]] && echo "  SKIP (G43): no report-generation wrapper, forbidden-scope dependency — §11.4.3"
+fi
+
+# G44 — CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE
+if want_gate G44; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G44 — CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE"
+    if bash "$ROOT/helix_code/scripts/gate_extensions_catalog.sh" >/tmp/g44-extcat.out 2>&1; then
+        gate_pass G44 "$(tail -1 /tmp/g44-extcat.out)"
+    else
+        gate_fail G44 "extensions catalog missing or incomplete (see /tmp/g44-extcat.out)" \
+            "$(tail -6 /tmp/g44-extcat.out)"
+    fi
+fi
+
+# G45 — CM-HXC159-SOURCE-CONSUMABLE (submodules/skills)
+if want_gate G45; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G45 — CM-HXC159-SOURCE-CONSUMABLE (submodules/skills)"
+    if bash "$ROOT/submodules/skills/gates/cm-hxc159-source-consumable.sh" "$ROOT/submodules/skills" >/tmp/g45-consumable.out 2>&1; then
+        gate_pass G45 "$(tail -1 /tmp/g45-consumable.out)"
+    else
+        gate_fail G45 "submodules/skills is not consumable at HEAD (see /tmp/g45-consumable.out)" \
+            "$(tail -6 /tmp/g45-consumable.out)"
+    fi
+fi
+
+# G46 — CM-MCP-ENTRIES-GENERATED
+if want_gate G46; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G46 — CM-MCP-ENTRIES-GENERATED"
+    if bash "$ROOT/scripts/gates/mcp_entries_generated_gate.sh" >/tmp/g46-mcpgen.out 2>&1; then
+        gate_pass G46 "$(tail -1 /tmp/g46-mcpgen.out)"
+    else
+        gate_fail G46 ".mcp.json has drifted from scripts/mcp_manifest.tsv (see /tmp/g46-mcpgen.out)" \
+            "$(tail -6 /tmp/g46-mcpgen.out)"
+    fi
+fi
+
+# G47 — CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS
+if want_gate G47; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G47 — CM-NO-ABSOLUTE-OR-BROKEN-SYMLINKS"
+    if bash "$ROOT/scripts/gates/no_absolute_or_broken_symlinks_gate.sh" >/tmp/g47-symlinks.out 2>&1; then
+        gate_pass G47 "$(tail -1 /tmp/g47-symlinks.out)"
+    else
+        gate_fail G47 "an absolute or broken symlink is tracked (see /tmp/g47-symlinks.out)" \
+            "$(tail -6 /tmp/g47-symlinks.out)"
+    fi
+fi
+
+# G48 — CM-NO-NESTED-OWN-ORG-CHAIN
+if want_gate G48; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G48 — CM-NO-NESTED-OWN-ORG-CHAIN"
+    if bash "$ROOT/scripts/gates/no_nested_own_org_chain_gate.sh" >/tmp/g48-nested.out 2>&1; then
+        gate_pass G48 "$(tail -1 /tmp/g48-nested.out)"
+    else
+        gate_fail G48 "a nested own-org submodule chain was found (see /tmp/g48-nested.out)" \
+            "$(tail -6 /tmp/g48-nested.out)"
+    fi
+fi
+
+# G49 — CM-SKILL-CAPABILITY-DECLARED (submodules/skills)
+if want_gate G49; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G49 — CM-SKILL-CAPABILITY-DECLARED (submodules/skills)"
+    if bash "$ROOT/submodules/skills/gates/cm-skill-capability-declared.sh" "$ROOT/submodules/skills" >/tmp/g49-capdecl.out 2>&1; then
+        gate_pass G49 "$(tail -1 /tmp/g49-capdecl.out)"
+    else
+        gate_fail G49 "capability-declaration refusal is not typed/audited/fail-closed (see /tmp/g49-capdecl.out)" \
+            "$(tail -6 /tmp/g49-capdecl.out)"
+    fi
+fi
+
+# G50 — CM-SKILL-MANIFEST-COMPLETE
+if want_gate G50; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G50 — CM-SKILL-MANIFEST-COMPLETE"
+    if bash "$ROOT/scripts/gates/skill_manifest_complete_gate.sh" "$ROOT" >/tmp/g50-manifest.out 2>&1; then
+        gate_pass G50 "$(tail -1 /tmp/g50-manifest.out)"
+    else
+        gate_fail G50 "skills_manifest.tsv is incomplete (see /tmp/g50-manifest.out)" \
+            "$(tail -6 /tmp/g50-manifest.out)"
+    fi
+fi
+
+# G51 — CM-SKILL-NAMESPACE-DISJOINT
+if want_gate G51; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G51 — CM-SKILL-NAMESPACE-DISJOINT"
+    if bash "$ROOT/scripts/gates/skill_namespace_disjoint_gate.sh" --root "$ROOT" >/tmp/g51-namespace.out 2>&1; then
+        gate_pass G51 "$(tail -1 /tmp/g51-namespace.out)"
+    else
+        gate_fail G51 "a skill name collides across sources (see /tmp/g51-namespace.out)" \
+            "$(tail -6 /tmp/g51-namespace.out)"
+    fi
+fi
+
+# G52 — CM-SKILLS-LOADER-HEADLESS (submodules/skills)
+if want_gate G52; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G52 — CM-SKILLS-LOADER-HEADLESS (submodules/skills)"
+    if bash "$ROOT/submodules/skills/gates/cm-skills-loader-headless.sh" "$ROOT/submodules/skills" >/tmp/g52-headless.out 2>&1; then
+        gate_pass G52 "$(tail -1 /tmp/g52-headless.out)"
+    else
+        gate_fail G52 "pkg/skills pulls a GUI/display dependency into its closure (see /tmp/g52-headless.out)" \
+            "$(tail -6 /tmp/g52-headless.out)"
+    fi
+fi
+
+# G53 — CM-SUBMODULE-ONBOARDING-COMPLETE
+# HONEST BOUNDARY: this gate is a genuine, pre-existing FAIL (73 of 118
+# checked own-org submodules missing one or more onboarding invariants —
+# worktree/helix-deps.yaml/upstreams/carrier per its own PASS-line format).
+# Registering it here makes the debt visible in every sweep, per §11.4.6 —
+# fixing 73 submodules' onboarding is not in scope for this finding.
+if want_gate G53; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G53 — CM-SUBMODULE-ONBOARDING-COMPLETE"
+    if bash "$ROOT/scripts/gates/submodule_onboarding_gate.sh" >/tmp/g53-onboard.out 2>&1; then
+        gate_pass G53 "$(tail -1 /tmp/g53-onboard.out)"
+    else
+        gate_fail G53 "one or more owned submodules are missing onboarding invariants (pre-existing, see /tmp/g53-onboard.out)" \
+            "$(tail -2 /tmp/g53-onboard.out)"
+    fi
+fi
+
+# G54 — CM-SUBMODULE-PIN-ON-MAIN (submodules/skills)
+if want_gate G54; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G54 — CM-SUBMODULE-PIN-ON-MAIN (submodules/skills)"
+    if bash "$ROOT/submodules/skills/gates/cm-submodule-pin-on-main.sh" "$ROOT/submodules/skills" >/tmp/g54-pinmain.out 2>&1; then
+        gate_pass G54 "$(tail -1 /tmp/g54-pinmain.out)"
+    else
+        gate_fail G54 "submodules/skills PIN.md is not an ancestor-or-equal of main tip (see /tmp/g54-pinmain.out)" \
+            "$(tail -6 /tmp/g54-pinmain.out)"
+    fi
+fi
+
+# G55 — CM-UNIQUE-MODULE-PATHS (HXC-159 F-12: grandfather-aware since 8d48a71b)
+if want_gate G55; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G55 — CM-UNIQUE-MODULE-PATHS"
+    if bash "$ROOT/scripts/gates/unique_module_paths_gate.sh" >/tmp/g55-modpaths.out 2>&1; then
+        gate_pass G55 "$(tail -1 /tmp/g55-modpaths.out)"
+    else
+        gate_fail G55 "a NEW (non-grandfathered) duplicate module path was found (see /tmp/g55-modpaths.out)" \
+            "$(tail -6 /tmp/g55-modpaths.out)"
+    fi
+fi
+
+# G56 — CM-WORKABLE-ITEMS-SSOT-UNFORKED
+if want_gate G56; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G56 — CM-WORKABLE-ITEMS-SSOT-UNFORKED"
+    if bash "$ROOT/scripts/gates/workable_items_ssot_unforked_gate.sh" >/tmp/g56-ssot.out 2>&1; then
+        gate_pass G56 "$(tail -1 /tmp/g56-ssot.out)"
+    else
+        gate_fail G56 "a competing workable-items registration was found (see /tmp/g56-ssot.out)" \
+            "$(tail -6 /tmp/g56-ssot.out)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 echo
