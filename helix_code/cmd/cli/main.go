@@ -1070,13 +1070,25 @@ func (c *CLI) buildSubsystems(ctx context.Context) error {
 	// reproducing [legacy, canonical, external, project] precedence — see
 	// agent.AllSkillsDirs's doc comment and
 	// docs/guides/skills_directory_migration.md.
-	for _, extraDir := range []string{agent.LegacyUserSkillsDir(), agent.ExternalSkillsDir()} {
-		if extraDir == "" {
-			continue
-		}
-		extraLoader := commands.NewSkillLoader(skillReg, extraDir, "")
+	// HXC-159 T-P9.01/F-01: the legacy-user tier is this consumer's OWN
+	// authored/installed content and loads unconditionally; the external
+	// tier (agent.ExternalSkillsDir()) is populated by something else
+	// (scripts/register_skills.sh or any other installer) and MUST cross
+	// agent.LoadExternalTierIntoRegistry's shared pkg/skills policy gate
+	// (allowlist + activation ceiling + description-similarity + C5
+	// sandbox precondition) — this call site previously loaded it via the
+	// same unconditional commands.NewSkillLoader path as every other
+	// directory, silently implying activation for whatever the external
+	// tier happened to contain (measured live: an over-ceiling synthetic
+	// external tier was fully activated through THIS exact code path with
+	// zero refusal before this fix).
+	if extraErr := agent.LoadExternalTierIntoRegistry(skillReg, agent.ExternalSkillsDir()); extraErr != nil {
+		log.Printf("skills: extra tier %q load failed: %v", agent.ExternalSkillsDir(), extraErr)
+	}
+	if legacyDir := agent.LegacyUserSkillsDir(); legacyDir != "" {
+		extraLoader := commands.NewSkillLoader(skillReg, legacyDir, "")
 		if extraErr := extraLoader.Load(); extraErr != nil {
-			log.Printf("skills: extra tier %q load failed: %v", extraDir, extraErr)
+			log.Printf("skills: extra tier %q load failed: %v", legacyDir, extraErr)
 		}
 	}
 	skillLoader := commands.NewSkillLoader(skillReg, skillProjectDir, skillUserDir)
@@ -3358,13 +3370,19 @@ func main() {
 		// `helixcode skills list` sees a skill installed under the
 		// TUI/desktop's pre-unification convention, or provisioned
 		// externally (e.g. scripts/register_skills.sh), too.
-		for _, extraDir := range []string{agent.LegacyUserSkillsDir(), agent.ExternalSkillsDir()} {
-			if extraDir == "" {
-				continue
-			}
-			extraLoader := commands.NewSkillLoader(skillReg, extraDir, "")
+		// HXC-159 T-P9.01/F-01: same fix as buildSubsystems above — the
+		// external tier MUST cross agent.LoadExternalTierIntoRegistry's
+		// shared pkg/skills policy gate, never the raw unconditional
+		// commands.NewSkillLoader this dispatcher used before (this was
+		// the exact code path `helixcode skills list`/`skills invoke` run
+		// through, so it was directly, live, end-to-end unrefused).
+		if extraErr := agent.LoadExternalTierIntoRegistry(skillReg, agent.ExternalSkillsDir()); extraErr != nil {
+			log.Printf("skills dispatcher: extra tier %q load failed: %v", agent.ExternalSkillsDir(), extraErr)
+		}
+		if legacyDir := agent.LegacyUserSkillsDir(); legacyDir != "" {
+			extraLoader := commands.NewSkillLoader(skillReg, legacyDir, "")
 			if extraErr := extraLoader.Load(); extraErr != nil {
-				log.Printf("skills dispatcher: extra tier %q load failed: %v", extraDir, extraErr)
+				log.Printf("skills dispatcher: extra tier %q load failed: %v", legacyDir, extraErr)
 			}
 		}
 		loader := commands.NewSkillLoader(skillReg, projDir, userDir)

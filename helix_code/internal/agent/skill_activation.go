@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"dev.helix.code/internal/commands"
 )
@@ -23,6 +24,16 @@ import (
 func LoadSkillsAndDispatcher(skillsDirs []string) (*commands.SkillRegistry, *SkillDispatcher, error) {
 	reg := commands.NewSkillRegistry()
 
+	// HXC-159 T-P9.01/F-01: the external tier (ExternalSkillsDir) is
+	// populated by something OTHER than this consumer's own project/user
+	// authoring, so — unlike the legacy/canonical user and project
+	// directories — it MUST cross the shared pkg/skills policy engine
+	// (allowlist + activation ceiling + description-similarity + C5
+	// sandbox precondition) before any of its skills are exposed to this
+	// consumer's SkillRegistry/dispatcher. Resolved once, compared by
+	// value against each directory in the ordered list below.
+	externalDir := ExternalSkillsDir()
+
 	// SkillLoader's two-slot (userDir, projectDir) contract overrides user with
 	// project on collision. Generalise to an arbitrary ordered list by reloading
 	// once per directory with the SAME registry: each Reload reconciles the
@@ -31,6 +42,21 @@ func LoadSkillsAndDispatcher(skillsDirs []string) (*commands.SkillRegistry, *Ski
 	// skills contributed by earlier directories.
 	for _, dir := range skillsDirs {
 		if dir == "" {
+			continue
+		}
+		if dir == externalDir {
+			// A malformed skill anywhere in the external tier (pkg/skills'
+			// Load is fail-closed over the WHOLE source, T-P6.04's
+			// operator-visible-failures direction) or a genuine policy
+			// refusal MUST NOT abort loading the legacy/canonical/project
+			// tiers — this consumer's pre-existing, documented contract
+			// ("a single broken skill file never blocks the front-end")
+			// applies across tiers, not only within one. Log and continue,
+			// matching the existing per-directory WARN-and-skip philosophy
+			// commands.SkillLoader already uses for every other tier.
+			if err := LoadExternalTierIntoRegistry(reg, dir); err != nil {
+				log.Printf("⚠️  skill activation: external tier %q load failed: %v", dir, err)
+			}
 			continue
 		}
 		loader := commands.NewSkillLoader(reg, dir, "")
