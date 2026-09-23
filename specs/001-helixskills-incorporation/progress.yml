@@ -51,3 +51,16 @@ p9_01_review_20260923:
     - {repo: meta, commit: 8d4d5b09, what: docs/qa/p2_shadowing_20260914 committed (T-P2.02.4 claimed committed; was untracked)}
   fence_leak_recheck: 0 findings across all 8 Bridge docs + 7 HXC-159 docs (independent CommonMark fence-state auditor, golden-good/bad self-validated)
   evidence: qa-results/hxc159/review/20260923T_review1/ + docs/qa/hxc159_t_p9_01_review_20260923/
+p9_02_followup_20260923:
+  # F-04/F-09/F-10/F-12 fully closed; F-13 investigated + honestly re-scoped (see
+  # tasks.md T-P9.01 finding ledger for full narrative). F-01/F-11 out of scope
+  # for this round (concurrent sibling agent, helix_code/internal/agent + skills).
+  closed:
+    - {finding: F-04, repo: meta, commit: 545ebe1a, what: registrar coexists with unmanaged names + self-heals unmarked-but-correct links; RS-01/02/03 proven live for the first time}
+    - {finding: F-09, repo: meta, commit: 1acb113f, what: all 20 HXC-159 gates registered as G37-G56 in verify-all-constitution-rules.sh; full 56-gate sweep green (16 PASS/2 honest SKIP/2 real pre-existing FAIL)}
+    - {finding: F-10, repo: constitution, commit: b1303c2, what: superbridge-mcp references locally marked HISTORICAL, 4-format exports regenerated + §11.4.168-validated (NOT yet pushed to constitution upstreams)}
+    - {finding: F-12, repo: meta, commit: "8d48a71b (grandfather+correction), 87a6ef35 (genuine-defect removal)", what: split genuine defect (removed, git-history-investigated per §11.4.124) from legitimate claude-toolkit debt (grandfathered, shrink-only allowlist); false T-P0.03 PASS claim corrected}
+  investigated_not_simple_fix:
+    - {finding: F-13, repo: meta, commit: 18ea70e5, what: "proved byte-identical generation breaks real tests (TestGovernanceSkills_RegisteredAndInvocable x7); the two SKILL.md sets are structurally different artifact types, not drifted copies; delivered safe drift-detection-only tooling; reconciliation decision remains a tracked follow-up requiring operator/architectural input"}
+  also:
+    - {task: catalogue_regen, repo: meta, commit: c3622f7e, what: "regenerated docs/extensions/EXTENSIONS_CATALOG.md post F-03 fix (321dca40); confirmed genuine improvement, 5 skills flip CONFIG-ONLY->SUPPORTED, 16 vs 6 SUPPORTED cells"}
