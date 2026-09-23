@@ -1,0 +1,24 @@
+placeholders left: 0
+=== helix_agent pointer to be recorded:
+5f3124aa
+=== stage by explicit path
+index.lock contention, retry 1
+=== staged (must NOT include submodules/helix_qa):
+ .../captures/28_commit_helix_agent_f16.txt         |  14 ++
+ .../captures/29_commit_meta_f18.txt                |  17 +++
+ .../captures/fence_scan2.py                        |  41 ++++++
+ specs/001-helixskills-incorporation/tasks.md       |  34 ++++-
+ submodules/helix_agent                             |   2 +-
+ 33 files changed, 1216 insertions(+), 4 deletions(-)
+0
+=== END STATE
+770c87ae HXC-159 T-P9.01 round-3 review: NOT-GO — F-17 blocking (live external tier refused at both consumers), F-16 + F-18 fixed, ledger Rev 5, bump helix_agent pointer
+fc056c6a HXC-159 T-P9.01 F-18: CM-UNIQUE-MODULE-PATHS grandfather ratchet pins the declarer SET, not just the module path
+6b05ee4e HXC-159: bump constitution pointer (F-10 complete)
+meta ahead of origin/main: 44
+helix_agent: 5f3124aa HXC-159 T-P9.01 F-16: surface nameless (front-matter-less) skills in the load report instead of silently dropping them ahead=12
+constitution: b1303c2 ahead=9 behind=11
+skills: 83d5bfa ahead=8
+=== working tree leftovers (only helix_qa pointer, not ours, expected):
+ M submodules/helix_qa
+=== unpushed? (git log @{u}..HEAD count per repo already above); no push performed: 44 meta commits local-only
