@@ -157,25 +157,51 @@ SORTED="$(mktemp)"; sort -t "$(printf '\t')" -k1,1 "$ROWS" > "$SORTED"; rm -f "$
 
 is_managed() { grep -q "$(printf '^%s\t' "$1")" "$SORTED"; }
 
+# True iff symlink $2 (basename $1, a manifest-owned name) already resolves
+# to exactly the target this registrar would itself write for that name.
+# Used to silently adopt a pre-existing correct link left by another
+# mechanism (e.g. the §11.4.272 activation engine) instead of treating it
+# as a foreign writer — it IS what we would write, marker or not.
+target_matches() {
+  name="$1"; entry="$2"
+  src="$(grep "$(printf '^%s\t' "$name")" "$SORTED" | cut -f2)"
+  [ -n "$src" ] || return 1
+  resolved="$(cd -- "$SKILLS_DST" >/dev/null 2>&1 && cd -- "$(dirname "$(readlink "$entry")")" >/dev/null 2>&1 && pwd)/$(basename "$(readlink "$entry")")" 2>/dev/null || resolved="UNRESOLVABLE"
+  [ "$resolved" = "$root/$src" ]
+}
+
 # ── Tree enumeration (read-only; shared by --check and register) ─────────────
-# Prints FOREIGN entries (present without our marker) — empty means clean.
+# Prints FOREIGN entries: names this registrar itself is trying to manage
+# that are occupied by something other than what it would write itself.
+# A name NEVER in our manifest is another tool's/the operator's — per
+# T-P1.04.3 (other tools/prefixes own their own reserved names) it is never
+# our concern: we coexist peacefully, we never touch it and never complain
+# about it (F-04 fix — T-P1.04.4 as originally implemented contradicted
+# T-P1.04.3 by aborting on ANY unmanaged name merely being present).
 find_foreign() {
   [ -d "$SKILLS_DST" ] || return 0
   for entry in "$SKILLS_DST"/* "$SKILLS_DST"/.*; do
     base="$(basename "$entry")"
     case "$base" in .|..|.manifest|.register.lock|.tmp.register.*) continue ;; esac
     [ -e "$entry" ] || [ -L "$entry" ] || continue
-    # Foreign = unmanaged name, missing marker, or a non-symlink shadowing a
-    # managed name (NEVER overwrite — abort instead, even for our own names).
-    # EXEMPT: a symlink carrying our marker whose name left the manifest
-    # (stale own entry) — the marker proves we wrote it, so the removal loop
-    # below reaps the pair deterministically instead of aborting (F1 fix).
-    if [ -L "$entry" ] && [ -f "$MARK_DIR/$base" ]; then
-      is_managed "$base" || continue
+    # Not one of our own manifest names — not our concern, never foreign.
+    is_managed "$base" || continue
+    # `base` IS a name we ourselves intend to write. It is a genuine
+    # collision UNLESS it is already exactly what we would write ourselves:
+    #   (a) already carries our marker and is a symlink (steady state), or
+    #   (b) is an unmarked symlink that already resolves to our intended
+    #       target (a pre-existing correct link from elsewhere, silently
+    #       adopted rather than treated as a foreign writer).
+    # A non-symlink, or a symlink pointing anywhere else, is a real
+    # collision and MUST still abort — NEVER overwritten.
+    if [ -f "$MARK_DIR/$base" ]; then
+      [ -L "$entry" ] || printf '%s\n' "$base"
+      continue
     fi
-    if ! is_managed "$base" || [ ! -f "$MARK_DIR/$base" ] || [ ! -L "$entry" ]; then
-      printf '%s\n' "$base"
+    if [ -L "$entry" ] && target_matches "$base" "$entry"; then
+      continue
     fi
+    printf '%s\n' "$base"
   done
 }
 
