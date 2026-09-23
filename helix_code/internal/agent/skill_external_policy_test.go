@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"dev.helix.code/internal/commands"
@@ -133,10 +134,14 @@ func TestPolicyGateExternalTier_SimilarityConflictExcludesOnlyThePair(t *testing
 // TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded
 // is the PRODUCTION-ENTRY-POINT proof that LoadExternalTierIntoRegistry
 // (not merely the policy-gate helper) correctly implements partial
-// admission end-to-end: commands.SkillLoader unconditionally loads the
-// WHOLE directory, so this function MUST prune the excluded name back out
-// afterward — proving that prune actually happens, not merely that the
-// gate computed the right verdict in isolation.
+// admission end-to-end. Name retained across the N1/N2 fix (2026-09-23) for
+// history/searchability; the MECHANISM it proves changed: this function no
+// longer loads the whole directory and prunes exclusions back out — it
+// converts ONLY the pkg/skills-admitted set directly into registry entries
+// (see LoadExternalTierIntoRegistry's doc comment), so an excluded skill is
+// simply never Added in the first place. This test still proves the
+// end-to-end OUTCOME (exactly the admitted pair registered, the excluded
+// member absent) regardless of which mechanism produces it.
 func TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded(t *testing.T) {
 	dir := t.TempDir()
 	writeExternalSkillWithDescription(t, dir, "alpha-skill", "validate recording screenshot capture evidence pipeline")
@@ -155,8 +160,207 @@ func TestLoadExternalTierIntoRegistry_SimilarityConflictPrunesOnlyTheExcluded(t 
 	}
 	if _, ok := reg.Get("beta-skill"); ok {
 		t.Fatal("beta-skill (excluded by the similarity gate) must NOT be registered — " +
-			"commands.SkillLoader loads the whole directory unconditionally, so LoadExternalTierIntoRegistry " +
-			"must prune excluded names back out, not merely compute the correct verdict without acting on it")
+			"a policy-excluded skill must never be added to the registry")
+	}
+}
+
+// writeExternalFlatSkill writes dir/<name>.md — the LEGACY FLAT skill form
+// commands.SkillLoader has always recognised (markdown_skills.go's
+// skillManifestName doc comment), directly under dir (no subdirectory, no
+// SKILL.md manifest). pkg/skills' Loader (loader.go's walkForManifests) only
+// ever discovers an exact-case SKILL.md — a flat "<name>.md" file is
+// STRUCTURALLY INVISIBLE to it, at any directory depth, by construction.
+func writeExternalFlatSkill(t *testing.T, dir, name string) {
+	t.Helper()
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := fmt.Sprintf("---\ndescription: flat fixture skill %s\n---\nBody for flat %s.\n", name, name)
+	if err := os.WriteFile(filepath.Join(dir, name+".md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestLoadExternalTierIntoRegistry_FlatMdFilesNeverBypassPolicyCeiling is the
+// HXC-159 T-P9.01 round-4 finding N1 reproduction (2026-09-23, found during
+// the F-21 independent review): commands.SkillLoader (the loader
+// LoadExternalTierIntoRegistry used to hand the WHOLE external-tier directory
+// to unconditionally) registers both packaged `*/SKILL.md` skills AND legacy
+// flat `<name>.md` files from the same directory — but pkg/skills' policy
+// engine (ceiling/similarity/capability/provenance/C5 sandbox) only ever
+// scans `*/SKILL.md`, so a flat file was NEVER presented to it at all. Once
+// at least one packaged skill is admitted through the gate, this let EVERY
+// flat `.md` file in the directory register with ZERO ceiling or similarity
+// check — the exact reproduction the independent reviewer captured on a real
+// binary with fixture `fx4` (one packaged skill + 25 flat files, all 25
+// registered, DefaultCeiling=20 exceeded, 0 refusal log lines).
+//
+// RED on the pre-fix code: every flat-N file below is present in reg
+// alongside the packaged skill, with LoadExternalTierIntoRegistry returning
+// no error and PolicyGateExternalTier never having refused anything (its own
+// ceiling count was 1, since pkg/skills never saw the flat files to count
+// them). GREEN post-fix: the packaged skill (genuinely policy-evaluated,
+// genuinely within ceiling) is admitted; NOT ONE flat file — of any count,
+// including well past DefaultCeiling — is EVER registered from the external
+// tier, because commands.SkillLoader's directory scan is no longer used to
+// populate the external tier at all; only pkg/skills' own admitted set is
+// (see LoadExternalTierIntoRegistry's rewritten doc comment).
+func TestLoadExternalTierIntoRegistry_FlatMdFilesNeverBypassPolicyCeiling(t *testing.T) {
+	dir := t.TempDir()
+	writeExternalSkill(t, dir, "packaged-skill")
+	const flatCount = skillslib.DefaultCeiling + 5
+	for i := 0; i < flatCount; i++ {
+		writeExternalFlatSkill(t, dir, fmt.Sprintf("flat-%02d", i))
+	}
+
+	reg := commands.NewSkillRegistry()
+	if err := LoadExternalTierIntoRegistry(reg, dir); err != nil {
+		t.Fatalf("LoadExternalTierIntoRegistry returned an unexpected error: %v", err)
+	}
+
+	if _, ok := reg.Get("packaged-skill"); !ok {
+		t.Fatal("packaged-skill (the one genuinely policy-evaluated skill, within ceiling) must be registered")
+	}
+	var leaked []string
+	for i := 0; i < flatCount; i++ {
+		name := fmt.Sprintf("flat-%02d", i)
+		if _, ok := reg.Get(name); ok {
+			leaked = append(leaked, name)
+		}
+	}
+	if len(leaked) > 0 {
+		t.Fatalf("N1: %d/%d flat-file skills bypassed the external-tier policy gate entirely and were registered "+
+			"without ever being ceiling/similarity/capability/sandbox-checked by pkg/skills: %v", len(leaked), flatCount, leaked)
+	}
+}
+
+// TestLoadExternalTierIntoRegistry_NestedSkillThatWinsSimilarityBecomesLoadable
+// is the HXC-159 T-P9.01 round-4 finding N2 reproduction (2026-09-23, found
+// during the F-21 independent review, fixture `fx2`): pkg/skills' Loader
+// (loader.go's walkForManifests) recurses arbitrarily deep and gates
+// `<dir>/<group>/<skill>/SKILL.md` exactly like a top-level one, but
+// commands.SkillLoader only ever reads ONE level (`<dir>/<name>/SKILL.md`)
+// and never loads a nested skill at all. A nested skill can still WIN a
+// similarity conflict against a real top-level skill — pruning the top-level
+// loser — while the nested winner itself was, pre-fix, never actually
+// registered (commands.SkillLoader's shallow directory scan never found it),
+// stranding BOTH: neither skill ends up available.
+//
+// This fixture reproduces exactly that shape: "aa-nested" (two levels deep,
+// under group/) and "bb-toplevel" (one level deep) share an identical
+// description, so pkg/skills' deterministic ascending-Qualified() tie-break
+// (external.aa-nested < external.bb-toplevel) admits aa-nested and excludes
+// bb-toplevel.
+//
+// RED on the pre-fix code: reg.Get("aa-nested") is NOT ok (commands.SkillLoader
+// never discovered the nested manifest) AND reg.Get("bb-toplevel") is also
+// NOT ok (pruned as the similarity loser) — both unavailable. GREEN post-fix:
+// aa-nested (the genuine policy-admitted winner) is registered with its real
+// rendered body; bb-toplevel (the correctly-excluded loser) stays absent —
+// exactly one of the confusable pair is ever available, never zero.
+func TestLoadExternalTierIntoRegistry_NestedSkillThatWinsSimilarityBecomesLoadable(t *testing.T) {
+	dir := t.TempDir()
+	const clique = "reconcile ledger balance entries nightly batch"
+	writeExternalSkillWithDescription(t, dir, "bb-toplevel", clique)
+
+	nestedDir := filepath.Join(dir, "group", "aa-nested")
+	if err := os.MkdirAll(nestedDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := fmt.Sprintf("---\ndescription: %s\n---\nBody for aa-nested.\n", clique)
+	if err := os.WriteFile(filepath.Join(nestedDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	reg := commands.NewSkillRegistry()
+	if err := LoadExternalTierIntoRegistry(reg, dir); err != nil {
+		t.Fatalf("LoadExternalTierIntoRegistry returned an unexpected error: %v", err)
+	}
+
+	s, ok := reg.Get("aa-nested")
+	if !ok {
+		t.Fatal("N2: aa-nested (the similarity tie-break WINNER, a nested skill) must be registered end-to-end — " +
+			"a policy-admitted skill must never be structurally unloadable")
+	}
+	if s.Body() == "" {
+		t.Fatal("aa-nested must carry its real rendered body, not an empty stand-in")
+	}
+	if _, ok := reg.Get("bb-toplevel"); ok {
+		t.Fatal("N2: bb-toplevel (the similarity tie-break LOSER) must NOT be registered — " +
+			"exactly one of a confusable pair may ever be available")
+	}
+}
+
+// TestLoadSkillsAndDispatcher_ExcludedExternalSkillSharingBuiltinNameNeverDeletesBuiltin
+// answers the F-21 reviewer's related, unverified concern from round-4
+// (2026-09-23): "if an excluded nested skill's directory name COINCIDES
+// with a builtin skill's name, the F-21-fixed prune-by-Dir step could
+// delete the builtin's registry entry instead of (or as well as) the
+// intended nested one — order-dependent on whether the external tier is
+// the LAST entry in skillsDirs when LoadSkillsAndDispatcher runs".
+//
+// Under the OLD (pre-N1/N2-fix) implementation this concern was REAL in the
+// worst case: LoadExternalTierIntoRegistry's OWN internal sequence loaded
+// the WHOLE external directory via a fresh commands.SkillLoader (which
+// unconditionally re-Added every builtin into the SAME reg), then pruned
+// every policy-excluded skill back out via reg.Remove(dirName) — so an
+// excluded external skill sharing its directory name with a real builtin
+// left reg[name] DELETED at the end of that one function call, with
+// nothing to restore it if external was the LAST (or only) directory
+// LoadSkillsAndDispatcher processed (AllSkillsDirs' production ordering
+// always puts projectDir after external, which happened to paper over
+// this in the one call site that used it, but the two hand-rolled
+// sequences in cmd/cli/main.go and any caller passing external alone were
+// exposed).
+//
+// This test drives the worst case directly: an external-tier skill whose
+// DIRECTORY NAME is a real builtin name ("conventional-commit"), made to
+// LOSE a similarity conflict (so policy excludes it), with the external
+// tier as the ONLY (hence trivially "last") directory passed to
+// LoadSkillsAndDispatcher. Post N1/N2 fix, LoadExternalTierIntoRegistry
+// never re-scans the directory via commands.SkillLoader and never calls
+// reg.Remove at all — a policy-excluded skill was simply never Added — so
+// the real builtin's registry entry is structurally untouched regardless
+// of directory-list ordering. GREEN: the builtin survives with its ORIGINAL
+// embedded body, not the excluded external skill's content and not deleted.
+func TestLoadSkillsAndDispatcher_ExcludedExternalSkillSharingBuiltinNameNeverDeletesBuiltin(t *testing.T) {
+	isolateHomeAndConfig(t) // keep legacy/canonical dirs empty and irrelevant here
+
+	dir := t.TempDir()
+	const clique = "reconcile ledger balance entries nightly batch"
+	// Admitted first alphabetically: "aaa-winner" < "conventional-commit".
+	writeExternalSkillWithDescription(t, dir, "aaa-winner", clique)
+	// This directory's NAME COLLIDES with a real embedded builtin
+	// ("conventional-commit") and is made to LOSE the similarity conflict
+	// against aaa-winner, so policy excludes it.
+	writeExternalSkillWithDescription(t, dir, "conventional-commit", clique)
+
+	// dir must be recognised as THE (policy-gated) external tier for this
+	// scenario to test what it claims to test — without this, dir would be
+	// treated as an ORDINARY directory (bypassing the policy gate entirely,
+	// a different bug class this test is not about).
+	t.Setenv(externalSkillsDirEnvVar, dir)
+
+	reg, _, err := LoadSkillsAndDispatcher([]string{dir})
+	if err != nil {
+		t.Fatalf("LoadSkillsAndDispatcher returned an unexpected error: %v", err)
+	}
+
+	s, ok := reg.Get("conventional-commit")
+	if !ok {
+		t.Fatal("the real builtin \"conventional-commit\" must still be registered — " +
+			"an excluded external skill sharing its directory name must never delete the builtin's registry entry")
+	}
+	if !strings.HasPrefix(s.SourcePath(), "builtin:") {
+		t.Fatalf("conventional-commit must remain the REAL builtin (source %q), never the excluded external skill's content", s.SourcePath())
+	}
+	if s.Description() == clique {
+		t.Fatal("the excluded external skill's description must never have replaced the builtin's own")
+	}
+
+	// Sanity: the tie-break winner is genuinely admitted alongside it.
+	if _, wok := reg.Get("aaa-winner"); !wok {
+		t.Fatal("aaa-winner (the similarity tie-break winner) must be registered")
 	}
 }
 
@@ -172,12 +376,19 @@ func TestPolicyGateExternalTier_AbsentDirIsNotAnError(t *testing.T) {
 
 // TestLoadSkillsAndDispatcher_ExternalTierCeilingRefusesEndToEnd is the
 // PRODUCTION-ENTRY-POINT proof: LoadSkillsAndDispatcher is the exact
-// function both cmd/cli/main.go and internal/clientcore's
-// LoadSkillsAndPlugins call. Before this fix it loaded every directory
-// (including the external tier) unconditionally via commands.SkillLoader —
-// this test drives THAT function, not just the policy-gate helper, so a
-// regression that re-introduces implied activation at the real call site
-// (rather than merely in the helper) is caught.
+// function internal/clientcore's LoadSkillsAndPlugins and
+// applications/terminal_ui/main.go call. (cmd/cli/main.go does NOT call
+// LoadSkillsAndDispatcher — it hand-rolls an equivalent [external, legacy,
+// project+canonicalUser] sequence directly in buildSubsystems and the
+// "skills" subcommand dispatcher; both go through
+// agent.LoadExternalTierIntoRegistry for their external-tier step and are
+// covered by the same policy engine and the same builtin-shadow fix — see
+// commands.SkillLoader.SkipBuiltins's call sites in cmd/cli/main.go.)
+// Before the F-01 fix this function loaded every directory (including the
+// external tier) unconditionally via commands.SkillLoader — this test
+// drives THAT function, not just the policy-gate helper, so a regression
+// that re-introduces implied activation at the real call site (rather than
+// merely in the helper) is caught.
 func TestLoadSkillsAndDispatcher_ExternalTierCeilingRefusesEndToEnd(t *testing.T) {
 	externalDir := t.TempDir()
 	for i := 0; i < skillslib.DefaultCeiling+1; i++ {
@@ -283,10 +494,14 @@ func writeExternalSkillNamed(t *testing.T, dir, dirName, frontMatterName, descri
 // "excluded" — reproduced on the real binary in
 // qa-results/hxc159/review/20260923T_review4/22_RED_prune_name_mismatch_real_cli.txt.
 //
-// RED on the pre-fix code: zz-beta (name "Zeta Beta Title") is present.
-// GREEN post-fix: every policy-excluded skill is pruned under the identity
-// the registry actually uses, regardless of what its front-matter says,
-// including the registrar's symlinked-directory shape (`zz-link`).
+// RED on the F-21-era pre-fix code: zz-beta (name "Zeta Beta Title") was
+// present. GREEN: every policy-excluded skill stays absent under the
+// identity the registry actually uses, regardless of what its front-matter
+// says, including the registrar's symlinked-directory shape (`zz-link`).
+// Since the N1/N2 fix (2026-09-23) this is no longer a PRUNE (LoadExternalTierIntoRegistry
+// never loads-then-removes) — it is a direct-conversion NON-ADD of the
+// policy-excluded set — but the observable end state this test proves is
+// identical: an excluded name is never present in the registry.
 func TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterName(t *testing.T) {
 	dir := t.TempDir()
 	const clique = "reconcile ledger balance entries nightly batch"
@@ -325,9 +540,11 @@ func TestLoadExternalTierIntoRegistry_PrunesByDirectoryIdentityNotFrontMatterNam
 		}
 	}
 	// Of the fixture's own skills, exactly the admitted pair may remain.
-	// (commands.SkillLoader.Load also registers the embedded builtin tier
-	// on every load, so the registry legitimately holds more than the
-	// fixture's names — only the zz-* set is this test's subject.)
+	// (LoadExternalTierIntoRegistry only ever Adds the pkg/skills-admitted
+	// set directly — since the N1/N2 fix it no longer re-registers the
+	// embedded builtin tier as a side effect — so filtering by the "zz-"
+	// prefix below is this test's own defensive convention, not a
+	// necessity against builtin-name noise.)
 	var fixtureNames []string
 	for _, s := range reg.List() {
 		if len(s.Name()) >= 3 && s.Name()[:3] == "zz-" {

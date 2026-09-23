@@ -1092,6 +1092,18 @@ func (c *CLI) buildSubsystems(ctx context.Context) error {
 		}
 	}
 	skillLoader := commands.NewSkillLoader(skillReg, skillProjectDir, skillUserDir)
+	// HXC-159 T-P9.01 round-4 investigation (2026-09-23, N2 pass): this is
+	// the SECOND independently constructed commands.SkillLoader feeding
+	// skillReg in this sequence (the legacy-dir load above is the first).
+	// commands.SkillLoader.Reload() unconditionally re-Adds the WHOLE
+	// embedded built-in tier on every call, so without SkipBuiltins this
+	// second instance would silently REVERT any builtin-named-skill
+	// override the legacy-dir load just registered — see
+	// commands.SkillLoader.SkipBuiltins's doc comment for the full
+	// mechanism and agent.LoadSkillsAndDispatcher for the generalised fix
+	// this call site mirrors by hand (it does not go through
+	// LoadSkillsAndDispatcher itself).
+	skillLoader.SkipBuiltins(true)
 	if loadErr := skillLoader.Load(); loadErr != nil {
 		log.Printf("skills: load failed: %v", loadErr)
 	}
@@ -3386,6 +3398,13 @@ func main() {
 			}
 		}
 		loader := commands.NewSkillLoader(skillReg, projDir, userDir)
+		// HXC-159 T-P9.01 round-4 investigation (2026-09-23, N2 pass): same
+		// builtin-shadow-reversion fix as buildSubsystems above — this is
+		// the SECOND independently constructed commands.SkillLoader feeding
+		// skillReg in this sequence (the legacy-dir load above is the
+		// first), so it must not re-touch builtin names the legacy-dir load
+		// already overrode.
+		loader.SkipBuiltins(true)
 		if err := loader.Load(); err != nil {
 			log.Printf("skills dispatcher: load failed: %v", err)
 		}

@@ -367,12 +367,13 @@ const skillManifestName = "SKILL.md"
 // per-file parse errors are logged at WARN and do not cause Load/Reload to
 // fail.
 type SkillLoader struct {
-	registry   *SkillRegistry
-	projectDir string
-	userDir    string
-	mu         sync.Mutex
-	loaded     map[string]string // skill name → source path
-	log        *zap.Logger
+	registry     *SkillRegistry
+	projectDir   string
+	userDir      string
+	mu           sync.Mutex
+	loaded       map[string]string // skill name → source path
+	log          *zap.Logger
+	skipBuiltins bool
 }
 
 // NewSkillLoader constructs a loader. Either dir may be empty or
@@ -390,6 +391,37 @@ func NewSkillLoader(reg *SkillRegistry, projectDir, userDir string) *SkillLoader
 // SetLogger installs a non-noop logger.
 func (l *SkillLoader) SetLogger(log *zap.Logger) { l.log = log }
 
+// SkipBuiltins configures whether Reload registers the embedded built-in
+// skill tier (builtin_skills/*, loadBuiltinSkills). Defaults to false —
+// builtins ARE registered — matching every pre-existing caller's
+// expectation of a single, self-sufficient SkillLoader instance.
+//
+// Set true when this loader instance is one of SEVERAL independently
+// constructed SkillLoaders that each scan a DIFFERENT directory into the
+// SAME shared SkillRegistry in sequence (the exact shape
+// agent.LoadSkillsAndDispatcher uses to generalise this loader's built-in
+// two-directory-slot precedence to an arbitrary ordered directory list).
+//
+// Reload() unconditionally re-Adds the WHOLE built-in tier on every call
+// (loadBuiltinSkills(want) runs first; the final "for name, s := range want
+// { l.registry.Add(s) }" step then Adds every builtin name unconditionally,
+// regardless of what the registry already held for that name). That is
+// correct and intended for a SINGLE loader instance managing its own two
+// slots (built-in < user < project). It is NOT correct across MULTIPLE
+// independently constructed instances sharing one registry: each fresh
+// instance's own removal-tracking (l.loaded) starts empty, so its
+// unconditional builtin re-Add silently REVERTS any EARLIER, higher-
+// precedence loader instance's override of that same builtin-named skill —
+// even when the later instance's own directory does not mention that name
+// at all (HXC-159 T-P9.01 round-4 investigation, 2026-09-23: proven live
+// against the real embedded builtin corpus before this fix landed).
+//
+// A caller driving a multi-directory sequence into one shared registry MUST
+// call SkipBuiltins(true) on every loader instance AFTER the first, so the
+// built-in tier is registered exactly once — at the lowest-precedence
+// position — and never re-touched by a later directory's independent pass.
+func (l *SkillLoader) SkipBuiltins(v bool) { l.skipBuiltins = v }
+
 // Load is a synonym for Reload. Provided for clarity at startup.
 func (l *SkillLoader) Load() error { return l.Reload() }
 
@@ -406,7 +438,12 @@ func (l *SkillLoader) Reload() error {
 	// They are written into `want` before the on-disk passes, so a user or
 	// project skill of the same name overrides the built-in (later writes to
 	// `want[name]` win). Precedence: project > user > built-in.
-	l.loadBuiltinSkills(want)
+	// Skipped entirely when this loader instance is a NON-FIRST member of a
+	// multi-directory sequence sharing one registry (see SkipBuiltins) — the
+	// built-in tier must be registered exactly once across such a sequence.
+	if !l.skipBuiltins {
+		l.loadBuiltinSkills(want)
+	}
 	// Then user, then project (project overrides user, both override built-in).
 	for _, dir := range []string{l.userDir, l.projectDir} {
 		if dir == "" {

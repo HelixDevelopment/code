@@ -4,10 +4,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"dev.helix.code/internal/commands"
 	skillslib "github.com/HelixDevelopment/skills/pkg/skills"
 )
+
+// externalTierSkillManifestName mirrors commands.skillManifestName (unexported
+// in that package): the exact-case packaged-manifest filename, "SKILL.md".
+// Duplicated here as a literal (with this cross-reference comment) rather
+// than exporting the other package's internal constant just for this one
+// diagnostic check.
+const externalTierSkillManifestName = "SKILL.md"
 
 // HXC-159 T-P9.01 finding F-01 remediation.
 //
@@ -218,25 +226,72 @@ func policyGateExternalTierDetailed(dir string, trust skillslib.TrustTier) (acti
 // adds NOTHING when the whole tier is refused (ceiling/sandbox) or the
 // directory is absent/empty.
 //
-// HXC-159 F-17 (2026-09-23): PolicyGateExternalTier now performs PER-SKILL
-// (partial) admission on a similarity conflict — active may be a STRICT
-// SUBSET of everything dir contains. commands.SkillLoader has no
-// directory-scoped filtered-load primitive of its own (Reload() walks and
-// registers the WHOLE directory unconditionally, T1.6), so after the
-// unconditional load this function PRUNES every policy-excluded skill back
-// out of reg via SkillRegistry.Remove — a confusable, policy-refused skill
-// is never left silently registered just because it shares a directory
-// with an admitted one.
+// HXC-159 T-P9.01 round-4 findings N1/N2 remediation (2026-09-23): this
+// function used to hand dir's ENTIRE contents to a fresh
+// commands.SkillLoader (commands.NewSkillLoader(reg, dir, "").Load()) after
+// computing the policy verdict, then prune the policy-excluded names back
+// out of reg. That second, independent scan does NOT evaluate the same
+// scope pkg/skills does:
+//   - commands.SkillLoader ALSO registers legacy flat "<name>.md" files
+//     (markdown_skills.go's skillManifestName doc comment) — a form
+//     pkg/skills' Loader (loader.go's walkForManifests) never discovers at
+//     all, at any directory depth, because it only ever looks for an
+//     exact-case SKILL.md. Once ANY packaged skill was admitted, every flat
+//     file in the directory registered with ZERO ceiling/similarity check
+//     (N1 — a policy-gate bypass).
+//   - commands.SkillLoader ONLY reads ONE level deep
+//     ("<dir>/<name>/SKILL.md"); pkg/skills' Loader recurses arbitrarily
+//     deep. A nested skill pkg/skills genuinely admitted (and that could WIN
+//     a similarity conflict against a real top-level skill, pruning it) was
+//     therefore never actually registered by the shallow rescan — stranding
+//     BOTH the nested winner and the top-level loser (N2).
 //
-// The prune is keyed on the skill's DIRECTORY basename (the identity
-// commands.SkillRegistry uses), NOT on pkg/skills' Qualified() front-matter
-// name — see policyGateExternalTierDetailed / round-4 finding F-21 for why
-// the two differ on the real corpus.
+// The general fix: this function no longer re-scans dir at all. It converts
+// the ALREADY-LOADED, ALREADY-POLICY-EVALUATED `active` set pkg/skills
+// itself returns directly into *commands.Skill values (via
+// commands.NewSkill, the construction seam built for exactly this) and adds
+// ONLY those to reg. This makes pkg/skills' evaluated scope and this
+// consumer's loaded scope agree BY CONSTRUCTION — there is no second scanner
+// whose scope can drift out of sync with the first, and no post-hoc prune
+// step is needed (a policy-excluded skill was never Added in the first
+// place, so it can never be pruned from — or accidentally left in, or
+// accidentally delete something else out of — the registry). This also
+// answers the F-21 reviewer's related, unverified
+// builtin-shadow-prune-ordering concern for THIS call site: since no prune
+// (reg.Remove) ever runs here any more, a policy-excluded skill sharing a
+// name with a builtin can no longer cause this function to delete the
+// builtin's registry entry — that removal mechanism no longer exists.
+//
+// Flat "<name>.md" files anywhere under the external tier are therefore
+// NEVER registered from this tier — not merely "evaluated and possibly
+// refused": pkg/skills has no concept of that HelixCode-specific legacy
+// format at all (it is the Agent Skills open standard, deliberately
+// project-not-aware per CONST-051(B); baking a helix_code-only legacy
+// convention into the shared library would violate that decoupling
+// mandate), and the real external-tier provisioner
+// (scripts/register_skills.sh, T-P1.04) only ever produces packaged
+// "<name>/SKILL.md" directories (including as symlinks) — flat-file support
+// was never a deliberate external-tier capability, it was an incidental
+// side effect of reusing the general-purpose commands.SkillLoader
+// unconditionally. This function logs (at WARN) any flat "*.md" file it
+// finds directly under dir so the drop is loud and diagnosable, never
+// silent (§11.4.6) — never a silently-dropped capability.
+//
+// Registry identity: every admitted skill is keyed by its skillslib.Skill.Dir
+// (the skill's own directory basename) — the SAME identity
+// commands.SkillRegistry has always used for packaged skills — never by
+// pkg/skills' Qualified() front-matter name, which can legitimately differ
+// from the directory (round-4 finding F-21). Two admitted skills that would
+// collide on that Dir identity (possible in principle: pkg/skills' Dir is a
+// bare basename, not a full relative path, so two skills at different
+// nesting depths COULD share a leaf directory name) is treated as a fail-
+// closed load error rather than letting one silently clobber the other in
+// reg (§11.4.6 / §11.4.201) — see dedupeByDirOrError below.
 func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error {
 	if dir == "" {
 		return nil
 	}
-	active, exclusions, excludedDirs, refusal, err := policyGateExternalTierDetailed(dir, externalTierTrust)
+	active, exclusions, _, refusal, err := policyGateExternalTierDetailed(dir, externalTierTrust)
 	if err != nil {
 		return fmt.Errorf("skill activation: external tier policy gate %q: %w", dir, err)
 	}
@@ -244,16 +299,96 @@ func LoadExternalTierIntoRegistry(reg *commands.SkillRegistry, dir string) error
 		log.Printf("⚠️  skill activation: external tier %q refused by policy: %v", dir, refusal)
 		return nil
 	}
+	warnAboutFlatSkillFiles(dir)
+	for _, ex := range exclusions {
+		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
+	}
 	if len(active) == 0 {
 		return nil
 	}
-	loader := commands.NewSkillLoader(reg, dir, "")
-	if loadErr := loader.Load(); loadErr != nil {
-		return fmt.Errorf("skill activation: load %q: %w", dir, loadErr)
+	skills, dupErr := skillsFromPolicySet(dir, active)
+	if dupErr != nil {
+		return dupErr
 	}
-	for i, ex := range exclusions {
-		log.Printf("⚠️  skill activation: external tier %q: %s", dir, ex.String())
-		reg.Remove(excludedDirs[i])
+	for _, s := range skills {
+		reg.Add(s)
 	}
 	return nil
+}
+
+// skillsFromPolicySet converts pkg/skills' policy-admitted set into
+// *commands.Skill values, keyed by directory identity, failing closed on a
+// Dir collision within the admitted set rather than silently letting one
+// clobber another in the caller's registry.
+func skillsFromPolicySet(dir string, active []skillslib.Skill) ([]*commands.Skill, error) {
+	seen := make(map[string]skillslib.Skill, len(active))
+	out := make([]*commands.Skill, 0, len(active))
+	for _, s := range active {
+		if s.Dir == "" {
+			// pkg/skills always sets Dir from filepath.Base of a real,
+			// walked directory (loader.go's LoadOne); an empty value here
+			// would mean the shared library's identity contract changed
+			// beneath this consumer — fail closed rather than register
+			// under an empty registry key (§11.4.6, §11.4.201).
+			return nil, fmt.Errorf("skill activation: external tier %q: admitted skill %q carries an empty directory identity", dir, s.Qualified())
+		}
+		if prior, ok := seen[s.Dir]; ok {
+			return nil, fmt.Errorf(
+				"skill activation: external tier %q: two admitted skills share directory identity %q (%q and %q) — "+
+					"commands.SkillRegistry keys by directory basename, so this consumer cannot represent both; refusing rather than silently dropping one",
+				dir, s.Dir, prior.Qualified(), s.Qualified())
+		}
+		seen[s.Dir] = s
+
+		var vars map[string]string
+		var triggers []string
+		var requiresIsolation bool
+		if s.XHelixCode != nil {
+			vars = s.XHelixCode.Variables
+			triggers = s.XHelixCode.Triggers
+			requiresIsolation = s.XHelixCode.RequiresIsolation
+		}
+		sourcePath := s.RelPath
+		if sourcePath == "" {
+			sourcePath = s.Dir
+		}
+		skill, newErr := commands.NewSkill(commands.SkillOptions{
+			Name:              s.Dir,
+			Description:       s.Description,
+			Body:              s.Body,
+			Variables:         vars,
+			TriggerPatterns:   triggers,
+			RequiresIsolation: requiresIsolation,
+			SourcePath:        fmt.Sprintf("external:%s/%s/SKILL.md", dir, sourcePath),
+		})
+		if newErr != nil {
+			// commands.NewSkill only errors on an empty Name, already
+			// guarded above — unreachable in practice, but never assume.
+			return nil, fmt.Errorf("skill activation: external tier %q: build skill %q: %w", dir, s.Qualified(), newErr)
+		}
+		out = append(out, skill)
+	}
+	return out, nil
+}
+
+// warnAboutFlatSkillFiles logs (at WARN) every legacy flat "<name>.md" file
+// found directly under dir — the on-disk form the external tier no longer
+// registers at all (see LoadExternalTierIntoRegistry's doc comment). A
+// read error here is not itself fatal to loading the tier's genuinely
+// evaluated skills; it is logged and the function returns, matching the
+// existing per-directory WARN-and-continue philosophy used throughout this
+// package.
+func warnAboutFlatSkillFiles(dir string) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".md") || entry.Name() == externalTierSkillManifestName {
+			continue
+		}
+		log.Printf("⚠️  skill activation: external tier %q: legacy flat skill file %q is NOT supported in the policy-gated external tier "+
+			"(pkg/skills only evaluates packaged \"<name>/SKILL.md\" directories) — this file will NOT be loaded; "+
+			"convert it to the packaged form if it needs to be active", dir, entry.Name())
+	}
 }

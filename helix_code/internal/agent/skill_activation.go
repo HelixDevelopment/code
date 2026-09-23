@@ -34,12 +34,41 @@ func LoadSkillsAndDispatcher(skillsDirs []string) (*commands.SkillRegistry, *Ski
 	// value against each directory in the ordered list below.
 	externalDir := ExternalSkillsDir()
 
+	// The embedded built-in tier is registered EXPLICITLY, exactly once,
+	// UP FRONT — regardless of what skillsDirs contains (including the
+	// degenerate case where skillsDirs holds ONLY the external tier, or is
+	// entirely empty/nonexistent). Built-in skills are "always present
+	// regardless of the on-disk dirs" (see
+	// TestLoadSkillsAndDispatcher_EmptyAndMissingDirsAreSafe) — a contract
+	// this explicit up-front load makes unconditional rather than an
+	// incidental side effect of however the loop below happens to be
+	// structured.
+	builtinLoader := commands.NewSkillLoader(reg, "", "")
+	if err := builtinLoader.Load(); err != nil {
+		return nil, nil, fmt.Errorf("skill activation: load built-in tier: %w", err)
+	}
+
 	// SkillLoader's two-slot (userDir, projectDir) contract overrides user with
 	// project on collision. Generalise to an arbitrary ordered list by reloading
 	// once per directory with the SAME registry: each Reload reconciles the
 	// registry for that directory's files, and because each loader tracks only
 	// the files IT loaded, later directories add/override without removing the
 	// skills contributed by earlier directories.
+	//
+	// Every per-directory loader below calls SkipBuiltins(true): the
+	// built-in tier was already registered above, and
+	// commands.SkillLoader.Reload() would otherwise unconditionally re-Add
+	// the WHOLE built-in tier on EVERY call — a fresh loader instance per
+	// directory (as this loop constructs) would let each directory AFTER
+	// the first one silently REVERT any earlier directory's override of a
+	// builtin-named skill back to the builtin value, even when that later
+	// directory does not itself mention the overridden name at all (HXC-159
+	// T-P9.01 round-4 investigation, 2026-09-23; the general form of the
+	// F-21 reviewer's unverified "builtin-shadow-prune-ordering" concern).
+	// The external tier never participates in this at all:
+	// LoadExternalTierIntoRegistry registers ONLY the pkg/skills-admitted
+	// skill set directly (see its doc comment) and never re-invokes
+	// commands.SkillLoader, so it can never re-touch a builtin name either.
 	for _, dir := range skillsDirs {
 		if dir == "" {
 			continue
@@ -60,6 +89,7 @@ func LoadSkillsAndDispatcher(skillsDirs []string) (*commands.SkillRegistry, *Ski
 			continue
 		}
 		loader := commands.NewSkillLoader(reg, dir, "")
+		loader.SkipBuiltins(true)
 		if err := loader.Load(); err != nil {
 			return nil, nil, fmt.Errorf("skill activation: load %q: %w", dir, err)
 		}
