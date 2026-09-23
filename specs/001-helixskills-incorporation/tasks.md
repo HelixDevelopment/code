@@ -1132,7 +1132,31 @@ symbol — checked mechanically, not by eye.
 - T-P8.01.3 Author the skills user manual and FAQ.
 - T-P8.01.4 Update the upstream Bridge design corpus to the corrected 6-layer form (B3).
 
-### - [ ] T-P8.02 [P] Extensions catalogue
+### - [x] T-P8.02 [P] Extensions catalogue — DONE 2026-09-23, evidence:
+`qa-results/hxc159/extensions_catalog/20260923T000000Z/` (01_red_gate_before_catalog.txt
+exit_code=1, 02_generate_run.txt, 03_green_gate_after_generate.txt exit_code=0,
+04_paired_mutation_test.txt 3/3 cases PASS, 05_pandoc_html.txt, 06_weasyprint_pdf.txt,
+07_pdf_text_spotcheck.txt, 08_RS21_runtime_signature.txt VERDICT=PASS). Generator +
+gate + paired-mutation harness at `helix_code/scripts/extensions_catalog/` (
+`generate_catalog.py`, `validate_catalog.py`, `test_gate_paired_mutation.sh`) +
+`helix_code/scripts/gate_extensions_catalog.sh`; docs-chain context at
+`.docs_chain/contexts/extensions.yaml`. Catalogue covers all 8 rows of
+`scripts/skills_manifest.tsv` across the 5 mandated platforms = 40 cells, zero blank
+(6 SUPPORTED, 18 CONFIG-ONLY, 16 UNTESTED — the finding below). **Real finding this
+task surfaced**: `scripts/register_skills.sh --check` (live-probed, not assumed) shows
+only 3 of 8 manifest skills currently wired into `.claude/skills/`
+(`action-prefix-system`, `skill-catalog`, `workable-item-lifecycle`); the other 5
+(`media-validator`, `multitrack`, `reporting-workable-items`, `scheduled-work-queue`,
+`session-sync`) are CONFIG-ONLY — declared in the manifest but not currently present —
+a genuine wiring gap this catalogue makes visible (tracked per §11.4.197, not fixed by
+this subtask per its no-`.claude/skills`-mutation scope). **OpenCode / Gemini CLI /
+Qwen Code have zero registrar in this repo** (only unrelated `commands/` dirs exist
+under `.opencode/` `.gemini/` `.qwen/`) — classified UNTESTED, not CONFIG-ONLY, since
+nothing declares intent to wire skills there at all (the exact §11.4.228 G1 gap).
+HelixCode is SUPPORTED for the 3 currently-wired skills via its external tier
+(`agent.ExternalSkillsDir()` defaults to `.claude/skills`), citing the real T-P5.05
+e2e binary evidence at `qa-results/hxc159/helixcode_wire/20260922T190852Z/`, with the
+T-P5.05.4 activation-ceiling honest boundary carried forward verbatim.
 
 **Scope**: `docs/extensions/EXTENSIONS_CATALOG.md` with per-platform compatibility
 (Claude Code / OpenCode / HelixCode / Gemini CLI / Qwen Code) — §11.4.228 mandates it and
@@ -1143,11 +1167,21 @@ per-platform columns.
 **Acceptance evidence**: `qa-results/hxc159/extensions_catalog/<run-id>/`.
 **Risks**: R-10.
 
-- T-P8.02.1 Generate rows from the manifest, not by hand.
-- T-P8.02.2 Record which platform loads each skill **and by what path**.
-- T-P8.02.3 Register in the docs-chain so it re-syncs mechanically (§11.4.106).
-- T-P8.02.4 Gate `CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE` + paired mutation
-  (register a skill with no row → FAIL).
+- [x] T-P8.02.1 Generate rows from the manifest, not by hand. — DONE
+  (`generate_catalog.py` parses `scripts/skills_manifest.tsv` directly; zero
+  hand-transcription).
+- [x] T-P8.02.2 Record which platform loads each skill **and by what path**. — DONE
+  (real live filesystem probe per skill × platform; per-skill detail table cites the
+  literal loading path + symlink/copy provenance + byte count).
+- [x] T-P8.02.3 Register in the docs-chain so it re-syncs mechanically (§11.4.106). — DONE
+  (`.docs_chain/contexts/extensions.yaml`; export-only edges per the
+  features.yaml/issues.yaml precedent — generation stays an explicit command, never an
+  automatic derive-from, to avoid the recorded clobbering risk).
+- [x] T-P8.02.4 Gate `CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE` + paired mutation
+  (register a skill with no row → FAIL). — DONE (`gate_extensions_catalog.sh` +
+  `validate_catalog.py`; `test_gate_paired_mutation.sh` self-validates with a
+  golden-good case (real catalogue PASSes) + two golden-bad cases (missing row FAILs
+  naming the skill; blanked cell FAILs naming the blank) — 3/3 as expected).
 
 ### - [ ] T-P8.03 [P] Diagrams and illustrations
 

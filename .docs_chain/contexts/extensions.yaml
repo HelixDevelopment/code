@@ -1,0 +1,44 @@
+context: extensions
+description: >-
+  HXC-159 T-P8.02 Extensions Catalog chain (§11.4.106 docs_chain,
+  §11.4.228(B)(3)/(C)(4) — the catalog "auto-syncs via the §11.4.106
+  docs-chain engine or equivalent").
+  docs/extensions/EXTENSIONS_CATALOG.md and its docs/extensions/catalog.json
+  sidecar are SCRIPT-GENERATED, NOT hand-authored — but, following the SAME
+  data-loss lesson already recorded in .docs_chain/contexts/features.yaml and
+  .docs_chain/contexts/issues.yaml (a lossy/partial generator wired as an
+  automatic `derive-from` transform can CLOBBER a richer artefact the moment
+  `docs_chain sync` runs), they are declared `kind: markdown` / `kind: json`
+  SOURCES at THIS layer rather than derive-from targets. Regeneration is the
+  explicit, operator/CI-invoked command:
+      python3 helix_code/scripts/extensions_catalog/generate_catalog.py \
+        <repo-root> scripts/skills_manifest.tsv docs/extensions
+  which reads scripts/skills_manifest.tsv (the T-P1.04.2 manifest,
+  ITSELF the real dependency this catalogue tracks) and performs a REAL,
+  LIVE per-platform filesystem probe per skill — a filesystem probe has no
+  well-defined docs_chain `derive-from` shape (unlike a pure text transform),
+  so wiring it as an automatic edge would either be unverifiable or would
+  silently re-run stale probes on every `sync` regardless of whether the
+  manifest changed. docs_chain therefore regenerates ONLY the .html/.pdf
+  exports from the checked-in .md — the ONLY mechanically safe, already-
+  proven-pattern edge — and the JSON->MD->HTML->PDF pipeline for the
+  manifest-driven regeneration itself stays an explicit, separately-invoked
+  step (mirrors helix_code/scripts/coverage_ledger's generate/validate split,
+  §11.4.106(D): "NOT a replacement for authoring discipline").
+  Gate: helix_code/scripts/gate_extensions_catalog.sh
+  (CM-EXTENSIONS-CATALOG-PRESENT-AND-COMPLETE, T-P8.02.4).
+nodes:
+  catalog_json: { kind: json,     path: docs/extensions/catalog.json }
+  catalog_md:   { kind: markdown, path: docs/extensions/EXTENSIONS_CATALOG.md }
+  catalog_html: { kind: html,     path: docs/extensions/EXTENSIONS_CATALOG.html }
+  catalog_pdf:  { kind: pdf,      path: docs/extensions/EXTENSIONS_CATALOG.pdf }
+edges:
+  # Export-only edges (same builtins already proven by governance.yaml /
+  # issues.yaml / features.yaml). NO derive-from edge from the manifest or
+  # catalog_json into catalog_md — regeneration is the explicit command
+  # documented above, never an automatic docs_chain transform.
+  - { type: derive-from, from: catalog_md, to: catalog_html, transform: md-to-html }
+  - { type: derive-from, from: catalog_html, to: catalog_pdf, transform: html-to-pdf }
+transforms:
+  md-to-html:  { builtin: pandoc-html }
+  html-to-pdf: { builtin: weasyprint-pdf }

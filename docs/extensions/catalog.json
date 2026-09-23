@@ -1,0 +1,270 @@
+{
+  "generated_at": "2026-09-23T00:35:58Z",
+  "manifest": "scripts/skills_manifest.tsv",
+  "platforms": [
+    "claude_code",
+    "opencode",
+    "helixcode",
+    "gemini_cli",
+    "qwen_code"
+  ],
+  "total_rows": 8,
+  "rows": [
+    {
+      "name": "action-prefix-system",
+      "source": "constitution/skills/action-prefix-system",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/action-prefix-system",
+          "note": "symlink, SKILL.md read 6515 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T00:35:58Z."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/action-prefix-system (external tier)",
+          "note": "via external tier -> .claude/skills/action-prefix-system. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "media-validator",
+      "source": "constitution/skills/media-validator",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/media-validator",
+          "note": "declared in scripts/skills_manifest.tsv; not present at .claude/skills/media-validator this run (live probe, 2026-09-23T00:35:58Z)."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/media-validator (external tier)",
+          "note": "external tier defaults to .claude/skills/media-validator (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory does not currently carry this skill (declared in scripts/skills_manifest.tsv; not present at .claude/skills/media-validator this run (live probe, 2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "multitrack",
+      "source": "constitution/skills/multitrack",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/multitrack",
+          "note": "declared in scripts/skills_manifest.tsv; not present at .claude/skills/multitrack this run (live probe, 2026-09-23T00:35:58Z)."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/multitrack (external tier)",
+          "note": "external tier defaults to .claude/skills/multitrack (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory does not currently carry this skill (declared in scripts/skills_manifest.tsv; not present at .claude/skills/multitrack this run (live probe, 2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "reporting-workable-items",
+      "source": "constitution/skills/reporting-workable-items",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/reporting-workable-items",
+          "note": "declared in scripts/skills_manifest.tsv; not present at .claude/skills/reporting-workable-items this run (live probe, 2026-09-23T00:35:58Z)."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/reporting-workable-items (external tier)",
+          "note": "external tier defaults to .claude/skills/reporting-workable-items (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory does not currently carry this skill (declared in scripts/skills_manifest.tsv; not present at .claude/skills/reporting-workable-items this run (live probe, 2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "scheduled-work-queue",
+      "source": "constitution/skills/scheduled-work-queue",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/scheduled-work-queue",
+          "note": "declared in scripts/skills_manifest.tsv; not present at .claude/skills/scheduled-work-queue this run (live probe, 2026-09-23T00:35:58Z)."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/scheduled-work-queue (external tier)",
+          "note": "external tier defaults to .claude/skills/scheduled-work-queue (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory does not currently carry this skill (declared in scripts/skills_manifest.tsv; not present at .claude/skills/scheduled-work-queue this run (live probe, 2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "session-sync",
+      "source": "constitution/skills/session-sync",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/session-sync",
+          "note": "declared in scripts/skills_manifest.tsv; not present at .claude/skills/session-sync this run (live probe, 2026-09-23T00:35:58Z)."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "CONFIG-ONLY",
+          "path": ".claude/skills/session-sync (external tier)",
+          "note": "external tier defaults to .claude/skills/session-sync (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); that directory does not currently carry this skill (declared in scripts/skills_manifest.tsv; not present at .claude/skills/session-sync this run (live probe, 2026-09-23T00:35:58Z).). helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "skill-catalog",
+      "source": "constitution/skills/skill-catalog",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/skill-catalog",
+          "note": "symlink, SKILL.md read 2328 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T00:35:58Z."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/skill-catalog (external tier)",
+          "note": "via external tier -> .claude/skills/skill-catalog. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    },
+    {
+      "name": "workable-item-lifecycle",
+      "source": "constitution/skills/workable-item-lifecycle",
+      "owner": "constitution",
+      "cells": {
+        "claude_code": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/workable-item-lifecycle",
+          "note": "symlink, SKILL.md read 4648 bytes (resolves to the manifest-declared source). Live-probed 2026-09-23T00:35:58Z."
+        },
+        "opencode": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .opencode/skills/ directory exists in this checkout and no registrar (scripts/register_skills.sh only ever writes .claude/skills/) targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197. .opencode/ here carries only SpecKit *commands* (.opencode/commands/), not skills."
+        },
+        "gemini_cli": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .gemini/skills/ directory exists in this checkout (only .gemini/commands/, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "qwen_code": {
+          "status": "UNTESTED",
+          "path": "N/A",
+          "note": "No .qwen/skills/ directory exists in this checkout (only .qwen/commands/ + .qwen/settings.json, unrelated to the Agent-Skill format) and no registrar targets one \u2014 zero recorded loading path this cycle, tracked per \u00a711.4.197 (the exact G1 gap the constitution's own \u00a711.4.228 forensic anchor names for this platform)."
+        },
+        "helixcode": {
+          "status": "SUPPORTED",
+          "path": ".claude/skills/workable-item-lifecycle (external tier)",
+          "note": "via external tier -> .claude/skills/workable-item-lifecycle. helix_code/internal/agent/skill_dirs.go ExternalSkillsDir() defaults to '.claude/skills' (config-injectable via HELIXCODE_EXTERNAL_SKILLS_DIR); the external tier's end-to-end load+list+invoke path is REAL-BINARY verified at qa-results/hxc159/helixcode_wire/20260922T190852Z/ (green_cli_e2e.txt). Honest boundary (\u00a711.4.6, T-P5.05.4 in specs/001-helixskills-incorporation/tasks.md): the per-skill activation-allowlist/ceiling mechanism was NOT verifiable from within helix_code/'s own file scope this cycle \u2014 grep-confirmed zero Go implementation of a per-skill activation ceiling in this module."
+        }
+      }
+    }
+  ]
+}
