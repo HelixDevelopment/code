@@ -165,7 +165,19 @@ type RedisConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
 	Password string `mapstructure:"password"`
-	Database int    `mapstructure:"database"`
+
+	// Database is the Redis logical database number, passed straight to
+	// redis.Options.DB by internal/redis.NewClient.
+	//
+	// The key is `db`, NOT `database`. It was `database` until the strict
+	// key-check work exposed the mismatch: setDefaultsOn has always written
+	// v.SetDefault("redis.db", 0), and every shipped config file under
+	// config/ spells it `db` — so with the old tag NOTHING ever populated
+	// this field. `redis.db: 3` was silently discarded and every deployment
+	// connected to database 0 whatever the operator wrote. Zero configs in
+	// this repo used `redis.database`, so `database` was never a working
+	// spelling and is deliberately not kept as an alias.
+	Database int `mapstructure:"db"`
 }
 
 // WorkersConfig represents worker configuration
@@ -184,10 +196,45 @@ type TasksConfig struct {
 
 // LLMConfig represents LLM configuration
 type LLMConfig struct {
-	DefaultProvider string  `mapstructure:"default_provider"`
-	DefaultModel    string  `mapstructure:"default_model"`
-	MaxTokens       int     `mapstructure:"max_tokens"`
-	Temperature     float64 `mapstructure:"temperature"`
+	DefaultProvider string      `mapstructure:"default_provider"`
+	DefaultModel    string      `mapstructure:"default_model"`
+	MaxTokens       int         `mapstructure:"max_tokens"`
+	Temperature     float64     `mapstructure:"temperature"`
+	Cloud           CloudConfig `mapstructure:"cloud"`
+
+	// Timeout is the per-request LLM call budget in SECONDS (int, not
+	// time.Duration — the shipped configs write a bare `timeout: 30`, which
+	// a time.Duration field would decode as 30 *nanoseconds*; the sibling
+	// ServerConfig timeouts use the same int-seconds convention).
+	//
+	// MaxRetries is the retry budget for a failed LLM call.
+	//
+	// Both keys have been present in config/config.yaml since long before
+	// this struct declared them, and were therefore silently discarded by
+	// viper. They are declared here so the values survive the load and are
+	// available to the LLM layer.
+	//
+	// HONEST STATUS (§11.4.6): declaring them is only half the fix. No
+	// caller reads LLM.Timeout or LLM.MaxRetries yet — the provider
+	// construction path in internal/llm does not consume cfg.LLM beyond
+	// DefaultProvider — so setting them still does not change request
+	// behaviour. Until a consumer exists they stay listed in
+	// inertConfigKeys, which makes Load() warn at startup that the value is
+	// parsed but not applied. Delete those two entries in the same change
+	// that wires them into the LLM client, not before.
+	Timeout    int `mapstructure:"timeout"`
+	MaxRetries int `mapstructure:"max_retries"`
+}
+
+// CloudConfig gates hosted (cloud) LLM provider usage. Operator mandate
+// 2026-09-05 (spec 002 local-only adaptive serving): llm.cloud.enabled
+// DEFAULTS TO FALSE — cloud provider construction must refuse with a clear
+// error even when API keys are present. Local routes (the helixllm coder
+// sidecar, llama.cpp, Ollama) are exempt from the gate; the gate is wired
+// into internal/llm via llm.SetCloudEnabled at process startup
+// (internal/server.New, cmd's generate path).
+type CloudConfig struct {
+	Enabled bool `mapstructure:"enabled"`
 }
 
 // QAConfig holds HelixQA-specific configuration injected into HelixCode.
@@ -225,6 +272,11 @@ type Config struct {
 	Cognee      *CogneeConfig     `mapstructure:"cognee"`
 	Verifier    *VerifierConfig   `mapstructure:"verifier"`
 	QA          QAConfig          `mapstructure:"qa"`
+
+	// Notifications carries the `notifications:` block. Declared so viper stops
+	// discarding it; consumed by internal/notification.NewEngineFromConfig.
+	// See notifications_config.go.
+	Notifications NotificationsConfig `mapstructure:"notifications"`
 }
 
 // HelixConfig is an alias for Config
@@ -415,11 +467,33 @@ func Load() (*Config, error) {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("failed to read config file: %v", err)
 		}
-		// Config file not found, but we can continue with defaults
-		fmt.Println(tr(context.Background(), "internal_config_warn_no_config_file_using_defaults", nil))
+		// Config file not found, but we can continue with defaults.
+		// Diagnostics go to STDERR, never stdout: stdout is a machine
+		// protocol for several callers (the subagent helper writes its
+		// SubagentResult JSON there and the parent unmarshals the WHOLE
+		// buffer; `helixcode acp` wires stdout as the line-delimited ACP
+		// JSON-RPC transport). A single informational line on stdout
+		// corrupts those streams. Operators still see this on stderr.
+		fmt.Fprintln(os.Stderr, tr(context.Background(), "internal_config_warn_no_config_file_using_defaults", nil))
 	} else {
 		atomic.AddInt64(&readInConfigCount, 1)
-		fmt.Println(tr(context.Background(), "internal_config_info_using_config_file", map[string]any{"Path": v.ConfigFileUsed()}))
+		// STDERR, not stdout — see the stderr rationale above.
+		fmt.Fprintln(os.Stderr, tr(context.Background(), "internal_config_info_using_config_file", map[string]any{"Path": v.ConfigFileUsed()}))
+
+		// Strict key check. Viper would silently discard any key the Config
+		// struct does not declare, so a typo (`llm.temperture`) or a key left
+		// behind by removed code reads as configuration while doing nothing.
+		// Reject the unknown ones outright; warn about the known-inert ones.
+		// See strict.go for why this reads the file itself rather than using
+		// mapstructure's ErrorUnused.
+		inert, err := checkConfigKeys(v.ConfigFileUsed())
+		if err != nil {
+			return nil, err
+		}
+		for _, msg := range inert {
+			// STDERR, not stdout — see the stderr rationale above.
+			fmt.Fprintln(os.Stderr, msg)
+		}
 	}
 
 	// Unmarshal config
@@ -442,6 +516,22 @@ func Load() (*Config, error) {
 	return &cfg, nil
 }
 
+// shellPlaceholder matches exactly the three placeholder shapes this loader
+// documents: ${VAR}, ${VAR:default} and ${VAR:-default}. Group 1 is the
+// variable name, group 2 the separator (":" or ":-") when present, group 3 the
+// default token.
+//
+// It deliberately does NOT match a bare $VAR. os.Expand — which this function
+// used to be built on — expands that form too, and also eats a literal "$$",
+// so a value that merely CONTAINS a dollar sign was silently mangled: an SMTP
+// password of "pa$$word" came out as "pa". That was tolerable while the
+// expanded set was five hostname-ish fields where a literal '$' is
+// implausible, and is not tolerable now that the set includes credentials.
+// Matching only the braced form also makes this agree with
+// secret_placeholder.go, which already states that a bare $VAR "is not a
+// placeholder this loader ever expands".
+var shellPlaceholder = regexp.MustCompile(`\$\{([A-Za-z_][A-Za-z0-9_]*)(?:(:-|:)([^}]*))?\}`)
+
 // expandShellDefaults expands ${VAR:default} and ${VAR:-default} shell-style
 // placeholders in config string fields.  Viper does NOT perform this expansion
 // itself: when HELIX_REDIS_HOST is unset, BindEnv falls through to the YAML
@@ -454,31 +544,94 @@ func Load() (*Config, error) {
 //
 // Only fields that may legitimately contain ${…} placeholders are expanded;
 // all other string config fields are left untouched.
+//
+// WHICH FIELDS, AND WHY THOSE
+// ---------------------------
+// The set was DERIVED, not guessed: every Config-shaped file under config/ was
+// read for values containing the ${…} form, and each such value mapped to the
+// dotted key it sets. That enumeration divides into four groups.
+//
+//  1. ALREADY EXPANDED — redis.host, database.user, database.dbname. These are
+//     the shipped uses of the form that this function has always covered, and
+//     they behave exactly as before. database.host and server.address carry no
+//     ${…} in any shipped file but are kept: removing coverage is not this
+//     change's business.
+//
+//  2. CREDENTIALS THAT MUST *NOT* BE EXPANDED — auth.jwt_secret,
+//     database.password, redis.password. checkSecretPlaceholders REFUSES an
+//     unexpanded placeholder in these, and that refusal is the whole point:
+//     they fail OPEN. Expanding ${HELIX_AUTH_JWT_SECRET} to "" when the
+//     variable is unset would sign every JWT with an empty secret while
+//     startup reported success. A hard refusal is correct; silent expansion
+//     would defeat it. They stay out.
+//
+//  3. UNREACHABLE — llm.providers.*.endpoint and llm.providers.*.api_key.
+//     LLMConfig declares no `providers` field, so viper discards that whole
+//     subtree before expansion could ever see it (strict.go lists llm.providers
+//     as inert for exactly this reason). Expanding a field that does not exist
+//     is not possible; declaring the block is a separate change.
+//
+//     This item previously cited config/config.yaml writing
+//     "${HELIX_LLM_ENDPOINT:...}" as the worked example. That block was removed
+//     (gap-ledger HXC-002-F3-02, guarded by dead_providers_gate_test.go), so
+//     config.yaml no longer contains it and the citation would now be false.
+//     The REASONING above is unaffected — it turns on LLMConfig's shape, not on
+//     any particular yaml file happening to carry such a key.
+//
+//  4. NEWLY EXPANDED — the notifications block. Its channel settings are the
+//     one group that both uses the form and now reaches a Config field:
+//     config/production-config.yaml writes ${HELIX_SLACK_WEBHOOK_URL},
+//     ${HELIX_TELEGRAM_BOT_TOKEN}, ${HELIX_EMAIL_*} and friends, and every
+//     comment beside the empty-string equivalents in config/config.yaml tells
+//     the operator to "Set via HELIX_…". The whole block is covered rather
+//     than a per-field allowlist because every value in it is documented as
+//     environment-sourced.
+//
+// Expanding the notification CREDENTIALS is safe in a way group 2 is not:
+// they fail CLOSED. NewSlackChannel/NewTelegramChannel/NewEmailChannel/
+// NewDiscordChannel each mark the channel disabled when its credential is
+// empty, so an unset variable means "that channel is off", never "authenticate
+// with a value published in a git-tracked file". It is also strictly better
+// than the status quo, in which the literal "${HELIX_EMAIL_PASSWORD}" would be
+// handed to the SMTP server as the password.
 func expandShellDefaults(cfg *Config) {
-	expand := func(s string) string {
-		return os.Expand(s, func(key string) string {
-			// Strip the optional ":-" or ":" separator and default token.
-			// Find the first ':' that is the separator (not part of the var name).
-			sep := strings.Index(key, ":")
-			if sep == -1 {
-				// Plain ${VAR}
-				return os.Getenv(key)
-			}
-			varName := key[:sep]
-			// Support both ${VAR:-default} and ${VAR:default}.
-			defaultVal := strings.TrimPrefix(key[sep+1:], "-")
-			if val := os.Getenv(varName); val != "" {
-				return val
-			}
-			return defaultVal
-		})
-	}
+	cfg.Redis.Host = expandShellString(cfg.Redis.Host)
+	cfg.Database.Host = expandShellString(cfg.Database.Host)
+	cfg.Database.User = expandShellString(cfg.Database.User)
+	cfg.Database.DBName = expandShellString(cfg.Database.DBName)
+	cfg.Server.Address = expandShellString(cfg.Server.Address)
 
-	cfg.Redis.Host = expand(cfg.Redis.Host)
-	cfg.Database.Host = expand(cfg.Database.Host)
-	cfg.Database.User = expand(cfg.Database.User)
-	cfg.Database.DBName = expand(cfg.Database.DBName)
-	cfg.Server.Address = expand(cfg.Server.Address)
+	ch := &cfg.Notifications.Channels
+	ch.Slack.WebhookURL = expandShellString(ch.Slack.WebhookURL)
+	ch.Slack.Channel = expandShellString(ch.Slack.Channel)
+	ch.Slack.Username = expandShellString(ch.Slack.Username)
+	ch.Telegram.BotToken = expandShellString(ch.Telegram.BotToken)
+	ch.Telegram.ChatID = expandShellString(ch.Telegram.ChatID)
+	ch.Email.SMTP.Server = expandShellString(ch.Email.SMTP.Server)
+	ch.Email.SMTP.Username = expandShellString(ch.Email.SMTP.Username)
+	ch.Email.SMTP.Password = expandShellString(ch.Email.SMTP.Password)
+	ch.Email.SMTP.From = expandShellString(ch.Email.SMTP.From)
+	ch.Discord.WebhookURL = expandShellString(ch.Discord.WebhookURL)
+	for i, r := range ch.Email.Recipients.Default {
+		ch.Email.Recipients.Default[i] = expandShellString(r)
+	}
+}
+
+// expandShellString resolves every ${…} placeholder in s, leaving every other
+// character — including a lone or doubled '$' — exactly as written.
+func expandShellString(s string) string {
+	return shellPlaceholder.ReplaceAllStringFunc(s, func(match string) string {
+		m := shellPlaceholder.FindStringSubmatch(match)
+		varName, sep, defaultVal := m[1], m[2], m[3]
+		if val := os.Getenv(varName); val != "" {
+			return val
+		}
+		if sep == "" {
+			// Plain ${VAR} with no default: an unset variable yields "".
+			return ""
+		}
+		return defaultVal
+	})
 }
 
 // setDefaultsOn sets default configuration values on the given viper
@@ -546,10 +699,30 @@ func setDefaultsOn(v *viper.Viper) {
 	v.SetDefault("tasks.cleanup_interval", 600)
 
 	// LLM defaults
-	v.SetDefault("llm.default_provider", "local")
+	// Deliberately EMPTY, not "local" (operator decision 2026-09-05).
+	// This is the BUILT-IN default, applied when nothing else sets the key --
+	// i.e. the genuine zero-config case. The shipped config/config.yaml sets
+	// `default_provider: "local"` explicitly, so a normal deployment still
+	// routes a provider-less request to the local helixllm coder (:18434) via
+	// the CONFIG precedence slot (HXC-002-F3-01).
+	//
+	// Why not default it to "local" here: resolveLLMProvider consults this
+	// value in its lowest-precedence CONFIG slot, so a built-in "local" would
+	// apply even with NO config file at all -- making the zero-config Ollama
+	// fallback (:11434) unreachable in every process where config loads, and
+	// silently retiring a shipped capability (§11.4.122). Both routes are
+	// local, so the local-only-serving mandate does not choose between them;
+	// the operator does, by writing the key.
+	v.SetDefault("llm.default_provider", "")
 	v.SetDefault("llm.default_model", "llama-3.2-3b")
 	v.SetDefault("llm.max_tokens", 4096)
 	v.SetDefault("llm.temperature", 0.7)
+	// Cloud gate (W2c-1, operator mandate 2026-09-05 local-only serving):
+	// hosted providers refuse construction unless explicitly enabled.
+	v.SetDefault("llm.cloud.enabled", false)
+	// Seconds. Matches the value shipped in config/config.yaml.
+	v.SetDefault("llm.timeout", 30)
+	v.SetDefault("llm.max_retries", 3)
 
 	// Logging defaults
 	v.SetDefault("logging.level", "info")
@@ -622,6 +795,12 @@ func findConfigFile() string {
 
 // validateConfig validates the configuration
 func validateConfig(cfg *Config) error {
+	// Credentials first: an unexpanded ${...} in a secret is a published
+	// constant, and it must stop startup before anything is built from it.
+	if err := checkSecretPlaceholders(cfg); err != nil {
+		return err
+	}
+
 	// Version validation
 	if cfg.Version == "" {
 		return fmt.Errorf("%s", tr(context.Background(), "internal_config_validate_version_required", nil))
@@ -1396,9 +1575,26 @@ func (v *ConfigurationValidator) Validate(config *Config) ValidationResult {
 		})
 	}
 
-	// Validate LLM provider
+	// Validate LLM provider.
+	//
+	// An EMPTY value is VALID and means "operator did not choose a provider".
+	// It is the built-in default (setDefaultsOn, operator decision 2026-09-05)
+	// and is resolved at request time by resolveLLMProvider's flag > env >
+	// config precedence, which falls back to the local Ollama route. Rejecting
+	// empty here would report a genuinely zero-config Config as invalid and make
+	// the zero-config path unconfigurable -- the exact capability that decision
+	// set out to preserve (§11.4.122).
+	//
+	// KNOWN DEFECT (pre-existing, tracked separately): validProviders below is
+	// STALE. It lists 7 names while internal/llm defines 44 ProviderType
+	// constants; "ollama", "llamacpp", "deepseek", "mistral" and "groq" are all
+	// constructible by the resolver yet rejected here. Do NOT blanket-expand it
+	// from the constant list -- several of those types are vector stores and
+	// frameworks (chroma, clickhouse, llamaindex, crewai), not LLM providers.
+	// The correct membership is the set internal/llm's factory can actually
+	// construct as a default provider.
 	validProviders := []string{"local", "openai", "anthropic", "gemini", "xai", "openrouter", "copilot"}
-	isValidProvider := false
+	isValidProvider := config.LLM.DefaultProvider == ""
 	for _, provider := range validProviders {
 		if config.LLM.DefaultProvider == provider {
 			isValidProvider = true

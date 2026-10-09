@@ -1,0 +1,50 @@
+=== LIVE PRUNE RUN (helix_code) ===
+2026-09-07T12:19:21Z
+
+/home/milosvasic/Projects/helix_code/constitution/scripts/skill_activation/skill_activation_lib.sh: line 127: /proc/2363/environ: Permission denied
+skill-activation: PRUNED: reporting-workable-items (link removed; target untouched, still activatable)
+skill-activation: PRUNED: speckit-analyze (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-checklist (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-clarify (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-constitution (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-converge (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-implement (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-plan (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-specify (moved to attic; content preserved, still listed + activatable)
+skill-activation: WARN: KEPT ACTIVE: speckit-superspec-brainstorm — demotion to attic failed; the skill is UNCHANGED and still active.
+skill-activation: WARN: KEPT ACTIVE: speckit-superspec-execute — demotion to attic failed; the skill is UNCHANGED and still active.
+skill-activation: WARN: KEPT ACTIVE: speckit-superspec-review — demotion to attic failed; the skill is UNCHANGED and still active.
+skill-activation: WARN: KEPT ACTIVE: speckit-superspec-status — demotion to attic failed; the skill is UNCHANGED and still active.
+skill-activation: WARN: KEPT ACTIVE: speckit-superspec-tasks — demotion to attic failed; the skill is UNCHANGED and still active.
+skill-activation: PRUNED: speckit-tasks (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-taskstoissues (moved to attic; content preserved, still listed + activatable)
+skill-activation: prune complete: pruned=11 kept-for-other-session=0 refused=5
+skill-activation: Every pruned skill is still listed by 'skill_activate.sh list' and returns with 'activate <name>'. Nothing was deleted.
+skill-activation: WARN: source not found, skipped: /home/milosvasic/Projects/helix_code/.helix/skills
+skill-activation: WARN: source not found, skipped: /home/milosvasic/Projects/helix_code/.helix/skills
+skill-activation: WARN: source not found, skipped: /home/milosvasic/Projects/helix_code/.helix/skills
+skill-activation: WARN: source not found, skipped: /home/milosvasic/Projects/helix_code/.helix/skills
+manifest        : /home/milosvasic/Projects/helix_code/constitution/scripts/skill_activation/skill-manifest.default.yaml
+active dir      : /home/milosvasic/Projects/helix_code/.claude/skills
+session id      : claude-claude5
+pool skills     : 972
+ACTIVE skills   : 8
+render bytes    : name-only=204  name+description=1754
+approx tokens   : name-only=51  name+description=438
+=== LIVE PRUNE RUN 2 (after relocation-safety fix) ===
+2026-09-07T12:21:29Z
+
+skill-activation: PRUNED: speckit-superspec-brainstorm (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-superspec-execute (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-superspec-review (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-superspec-status (moved to attic; content preserved, still listed + activatable)
+skill-activation: PRUNED: speckit-superspec-tasks (moved to attic; content preserved, still listed + activatable)
+skill-activation: prune complete: pruned=5 kept-for-other-session=0 refused=0
+skill-activation: Every pruned skill is still listed by 'skill_activate.sh list' and returns with 'activate <name>'. Nothing was deleted.
+manifest        : /home/milosvasic/Projects/helix_code/constitution/scripts/skill_activation/skill-manifest.default.yaml
+active dir      : /home/milosvasic/Projects/helix_code/.claude/skills
+session id      : claude-claude5
+pool skills     : 977
+ACTIVE skills   : 3
+render bytes    : name-only=65  name+description=1336
+approx tokens   : name-only=16  name+description=334

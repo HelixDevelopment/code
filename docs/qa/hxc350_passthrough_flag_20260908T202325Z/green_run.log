@@ -1,0 +1,49 @@
+### HXC-350 GREEN run — current (fixed) tree
+### date_utc=2026-09-08T20:23:36Z
+### helix_agent HEAD=b4033a6966be6ac29a0b0322d203a08cc1ca3f71
+### RED_MODE unset  => standing GREEN regression guard
+### cmd: make test TEST_PACKAGES=./internal/handlers/ GO_TEST_FLAGS='-p 1 -count=1 -run TestPassthroughFlag'
+###
+🧪 Running tests...
+⚠️  Infrastructure not available - running unit tests only
+   Run './bin/helixagent' first for proper container orchestration
+
+=== RUN   TestPassthroughFlag_SingleUserMessage
+time="2026-09-08T22:23:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:23:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:23:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:23:53+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-08T22:23:53+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+--- PASS: TestPassthroughFlag_SingleUserMessage (0.00s)
+=== RUN   TestPassthroughFlag_DefaultStillDebates
+time="2026-09-08T22:23:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:23:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:23:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:23:53+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-08T22:23:53+02:00" level=error msg="[CODE PATH] orchestratorIntegration is NIL - using OLD ensemble service (NOT using new debate system!)"
+--- PASS: TestPassthroughFlag_DefaultStillDebates (0.00s)
+=== RUN   TestPassthroughFlag_ExplicitFalseStillDebates
+time="2026-09-08T22:23:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:23:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:23:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:23:53+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-08T22:23:53+02:00" level=error msg="[CODE PATH] orchestratorIntegration is NIL - using OLD ensemble service (NOT using new debate system!)"
+--- PASS: TestPassthroughFlag_ExplicitFalseStillDebates (0.00s)
+=== RUN   TestPassthroughFlag_MultiTurnBypassPreserved
+time="2026-09-08T22:23:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:23:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:23:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:23:53+02:00" level=info msg="Multi-turn request - routing to provider chain (debate doesn't carry conversation history; see drainage Finding #19)" user_message_count=2
+time="2026-09-08T22:23:53+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+--- PASS: TestPassthroughFlag_MultiTurnBypassPreserved (0.00s)
+=== RUN   TestPassthroughFlag_ToolsBypassPreserved
+time="2026-09-08T22:23:53+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-08T22:23:53+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-08T22:23:53+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-08T22:23:53+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-08T22:23:53+02:00" level=info msg="[Smart Routing] Tools detected — routing to direct provider" tool_count=1
+time="2026-09-08T22:23:53+02:00" level=info msg="[Direct Provider] HelixLLM responded successfully"
+--- PASS: TestPassthroughFlag_ToolsBypassPreserved (0.00s)
+PASS
+ok  	dev.helix.agent/internal/handlers	0.019s
+MAKE_EXIT=0

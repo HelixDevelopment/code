@@ -1,6 +1,7 @@
 package llm
 
 import (
+	"errors"
 	"net/url"
 	"strings"
 	"testing"
@@ -162,6 +163,18 @@ func TestNewHostedOpenAICompatibleProvider_RejectsPlaceholder(t *testing.T) {
 }
 
 func TestNewHostedOpenAICompatibleProvider_BuildsProviderWhenKeyPresent(t *testing.T) {
+	// §11.4.120: NewHostedOpenAICompatibleProvider builds through
+	// NewOpenAICompatibleProvider, which now gates on endpoint locality
+	// (openai_compatible_provider.go) — a remote https:// BaseURL like
+	// fireworks's is refused while the W2c-1 cloud gate is closed (the
+	// default). This test's subject is the catalogue/builder wiring, not
+	// gate policy — the gate's own closed/open behavior is covered by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go /
+	// cloud_gate_endpoint_locality_test.go — so it opens the gate to reach
+	// the assertion it actually tests: successful construction when a
+	// present, non-placeholder key exists.
+	openCloudGateForTest(t)
+
 	h := HostedOpenAICompatible{
 		Name:          "fireworks",
 		BaseURL:       "https://api.fireworks.ai/inference/v1",
@@ -182,10 +195,65 @@ func TestNewHostedOpenAICompatibleProvider_BuildsProviderWhenKeyPresent(t *testi
 	}
 }
 
+// TestNewHostedOpenAICompatibleProvider_RefusedWhenCloudGateClosed is the
+// negative counterpart §11.4.120 requires alongside the reconciled positive
+// test above: with the W2c-1 cloud gate CLOSED (the default), the hosted
+// catalogue constructor MUST refuse a real, remote catalogue entry with an
+// error wrapping ErrCloudDisabled — proving the gate-closed path this test
+// file's subject (NewHostedOpenAICompatibleProvider) actually reaches is
+// still correctly enforced, not merely bypassed by the positive test's
+// gate-open helper. This does not duplicate
+// TestCloudGateClosed_RemoteOpenAICompatibleRefused in
+// cloud_gate_endpoint_locality_test.go, which exercises the shared
+// constructor NewOpenAICompatibleProvider directly with hand-built configs;
+// this test exercises the catalogue-specific WRAPPER
+// (NewHostedOpenAICompatibleProvider) that is this file's subject.
+//
+// Mutation that would make this test FAIL: remove the endpoint-locality gate
+// check in NewOpenAICompatibleProvider (openai_compatible_provider.go), or
+// change NewHostedOpenAICompatibleProvider to bypass it — either would let a
+// hosted, remote catalogue entry construct with the gate closed, and this
+// test's err == nil / errors.Is(err, ErrCloudDisabled) assertion would fail.
+func TestNewHostedOpenAICompatibleProvider_RefusedWhenCloudGateClosed(t *testing.T) {
+	closeCloudGateForTest(t) // shared helper, cloud_gate_endpoint_locality_test.go
+
+	h := HostedOpenAICompatible{
+		Name:          "fireworks",
+		BaseURL:       "https://api.fireworks.ai/inference/v1",
+		KeyEnvAliases: []string{"FIREWORKS_API_KEY"},
+	}
+	t.Setenv("FIREWORKS_API_KEY", "fw-dummy-real-looking-value-12345")
+
+	p, err := NewHostedOpenAICompatibleProvider(h)
+	if err == nil {
+		if p != nil {
+			_ = p.Close()
+		}
+		t.Fatalf("hosted catalogue provider %q constructed although the cloud gate "+
+			"is closed — the catalogue wrapper must refuse a remote endpoint exactly "+
+			"like the underlying constructor", h.Name)
+	}
+	if !errors.Is(err, ErrCloudDisabled) {
+		t.Fatalf("refusal error = %v, want it to wrap ErrCloudDisabled so callers "+
+			"can branch on one sentinel", err)
+	}
+	if p != nil {
+		t.Fatalf("hosted catalogue provider %q returned non-nil alongside the gate "+
+			"refusal — a refused construction must yield nothing usable", h.Name)
+	}
+}
+
 // TestHostedProvider_GetTypeDistinctAcrossCatalogue is the load-bearing
 // GetType-collision guard: two different catalogue providers must NOT report the
 // same ProviderType, and neither may report the generic "local" type.
 func TestHostedProvider_GetTypeDistinctAcrossCatalogue(t *testing.T) {
+	// §11.4.120: both entries below use real, remote https:// BaseURLs and
+	// build through NewHostedOpenAICompatibleProvider →
+	// NewOpenAICompatibleProvider, which is now gated on endpoint locality.
+	// This test's subject is GetType() distinctness across the catalogue,
+	// not gate policy, so it opens the gate to reach construction.
+	openCloudGateForTest(t)
+
 	fw := HostedOpenAICompatible{Name: "fireworks", BaseURL: "https://api.fireworks.ai/inference/v1", KeyEnvAliases: []string{"FIREWORKS_API_KEY"}}
 	ds := HostedOpenAICompatible{Name: "deepseek-fake", BaseURL: "https://api.deepseek.com/v1", KeyEnvAliases: []string{"FIREWORKS_API_KEY"}}
 	t.Setenv("FIREWORKS_API_KEY", "fw-dummy-real-looking-value-12345")

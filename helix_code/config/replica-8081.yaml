@@ -174,11 +174,16 @@ llm:
     #   HelixCode LLM provider types.
     #
     # DEFECT 2 — the endpoints below were wrong AND never expanded.
-    #   helix_code/internal/config/config.go:456-481 (expandShellDefaults)
-    #   expands `${VAR:default}` for EXACTLY five fields — Redis.Host,
-    #   Database.Host, Database.User, Database.DBName, Server.Address. LLM
-    #   provider endpoints are NOT in that list, so a `${...}` value here is
-    #   consumed as a RAW LITERAL string, not as a URL.
+    #   helix_code/internal/config/config.go (expandShellDefaults) expands
+    #   `${VAR:default}` for a named set of fields only. That set was five
+    #   — Redis.Host, Database.Host, Database.User, Database.DBName,
+    #   Server.Address — and now also covers the notifications channel
+    #   settings. LLM provider endpoints are in neither group.
+    #   The reason is worse than "not on the list": LLMConfig declares no
+    #   `providers` field at all, so viper DISCARDS this whole block on load
+    #   (see the `llm.providers` entry in internal/config/strict.go, and the
+    #   warning it prints at startup). The value here never reaches a Config
+    #   field, expanded or otherwise.
     #   Even had it expanded, both defaults pointed at the wrong process:
     #     - helix-llm  -> :8081 is helixcode-server ITSELF (self-referential).
     #                     The real HelixLLM gateway is https://localhost:8443
@@ -244,9 +249,10 @@ verifier:
   # :8100 is llmsverifier per the platform port table in setup.sh:161
   # ("llmsverifier :8100 LLMsVerifier model/provider scoring API").
   # Verified live: GET http://localhost:8100/api/scores -> 200 with real data.
-  # A plain literal, NOT "${VAR:default}" — expandShellDefaults
-  # (config.go:456-481) only expands 5 fields and verifier.endpoint is not one
-  # of them, so a ${...} value here would be consumed as a raw literal string.
+  # A plain literal, NOT "${VAR:default}" — expandShellDefaults (config.go)
+  # expands only a named set of fields (the original five, plus the
+  # notifications channel settings) and verifier.endpoint is not among them,
+  # so a ${...} value here would be consumed as a raw literal string.
   # Per-environment override is via the env binding at config.go:394
   # (HELIX_VERIFIER_ENDPOINT), which takes precedence over this file.
   endpoint: "http://localhost:8100"

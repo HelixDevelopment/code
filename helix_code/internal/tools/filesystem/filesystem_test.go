@@ -1004,7 +1004,13 @@ func TestBackupManager(t *testing.T) {
 			if err != nil {
 				t.Fatalf("CreateBackup() error = %v", err)
 			}
-			time.Sleep(10 * time.Millisecond)
+			// No sleep between iterations: CreateBackup names each backup
+			// with a SECOND-resolution timestamp ("20060102-150405", see
+			// editor.go CreateBackup), so backups 10ms apart collided on
+			// the same filename and simply overwrote each other — the
+			// sleep bought no distinct timestamps and no extra backups.
+			// ListBackups below only asserts len(backups) != 0, which the
+			// first CreateBackup already satisfies synchronously.
 		}
 
 		backups, err := bm.ListBackups("listtest.txt")

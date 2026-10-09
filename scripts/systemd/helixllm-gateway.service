@@ -7,6 +7,14 @@ Documentation=file://@HELIX_ROOT@/docs/SYSTEMD.md
 # gateway must still start and route if the verifier is down.
 After=network-online.target helixcode-infra.service llmsverifier.service
 Wants=network-online.target llmsverifier.service
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
 PartOf=helix.target
 
 [Service]
@@ -39,6 +47,13 @@ Environment=HELIX_VECTOR_DB_PORT=6333
 #   "downloader: create models dir /models: mkdir /models: permission denied"
 # for every auto-download. %h/models is the host's existing model store.
 Environment=HELIX_MODELS_DIR=%h/models
+# CONSEQUENCE OF THE LINE ABOVE, measured 2026-09-03: with HELIX_MODELS_DIR
+# unset the default is the CONTAINER path /models, which is unwritable here, so
+# every auto-download failed instantly and the gateway bound within seconds.
+# Pointing it at a writable directory is correct — and it means the first cold
+# boot now performs a real multi-GB download before binding. That is why the
+# start budgets below are large. Set HELIX_MODELS_AUTO_DOWNLOAD=false in .env to
+# opt out of local models entirely (cloud providers are unaffected).
 # LLMsVerifier is the single source of truth for provider/model scoring
 # (CONST-036); llmsverifier.service binds this address.
 Environment=HELIX_LLM_VERIFIER_URL=http://localhost:8100
@@ -61,6 +76,14 @@ Environment=HELIX_LLM_VERIFIER_URL=http://localhost:8100
 #
 # Deliberately placed BEFORE EnvironmentFile= so an operator can still override
 # it to "debug" in .env for a debugging session (later assignments win).
+# HELIX_MODE selects the run mode. config.go:16 declares `default:"full"`, so
+# "full" is already the compiled-in default — it is set EXPLICITLY here because
+# this deployment depends on full mode (it is the mode the process proven to
+# serve :8443 on this host was started with), and an explicit unit-level
+# declaration keeps that dependency from silently changing if the library's
+# default ever moves. Placed BEFORE EnvironmentFile= so an operator .env can
+# still override it.
+Environment=HELIX_MODE=full
 Environment=GIN_MODE=release
 
 # HXC-233 (routing half). The local provider is the gateway's ONLY completion
@@ -85,10 +108,38 @@ EnvironmentFile=-@HELIX_ROOT@/.env
 WorkingDirectory=@HELIX_ROOT@/submodules/helix_llm
 ExecStart=@HELIXLLM_BIN@
 ExecReload=/bin/kill -HUP $MAINPID
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple reports "active" at fork. Gate on a real response so "active"
+# means "serving" (§11.4.108).
+#
+# /v1/models is the probe target, not /internal/health: measured 2026-09-03 the
+# live gateway answers /v1/models with HTTP 200 while /internal/health returns
+# 503 because it aggregates the Redis and LLMsVerifier backends, neither of
+# which is enabled in this deployment. Both prove the port is bound (the probe
+# accepts any HTTP status), but gating on the endpoint that is genuinely healthy
+# keeps a routine boot from logging an alarming 503.
+#
+# BUDGET (measured 2026-09-03, first cold boot under systemd): 120s FAILED by
+# ~2 seconds. In mode=full the gateway selects models for the detected hardware
+# and DOWNLOADS any it lacks from HuggingFace BEFORE it binds; the journal shows
+# it logged `server listening addr=0.0.0.0:8443` at 17:41:12 while systemd had
+# already declared the 120s timeout at 17:41:12. The service was correct; the
+# gate was too impatient.
+#
+# 1100s (inside TimeoutStartSec=1200) follows the precedent already set by
+# helixllm-coder.service, whose TimeoutStartSec=650 exists for exactly this
+# reason ("Model load from cold cache is slow"). Only the FIRST cold boot pays
+# this: once the GGUF files are cached under HELIX_MODELS_DIR, startup is fast.
+ExecStartPost=@HELIX_ROOT@/scripts/systemd/wait-http-ready.sh https://localhost:8443/v1/models 1100 5
 Restart=on-failure
 RestartSec=10
-TimeoutStartSec=120
+# 1200s: must exceed the ExecStartPost budget above, which must in turn exceed a
+# cold-cache model download. See the note on ExecStartPost.
+TimeoutStartSec=1200
 LimitNOFILE=65536
 
 [Install]
-WantedBy=helix.target
+# default.target is what makes this start at BOOT; helix.target keeps it in the
+# umbrella group for `systemctl --user start|stop helix.target`.
+WantedBy=default.target helix.target

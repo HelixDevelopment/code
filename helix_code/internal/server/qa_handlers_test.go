@@ -46,7 +46,7 @@ func setupQATestServer(t *testing.T) (*Server, *httptest.ResponseRecorder, *gin.
 	rds, err := redis.NewClient(&config.RedisConfig{Host: "", Port: 0, Password: ""})
 	require.NoError(t, err)
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 	require.NotNil(t, server)
 	require.NotNil(t, server.qaEngine)
 	require.True(t, server.qaEngine.Enabled())
@@ -69,7 +69,7 @@ func TestStartQASession_Disabled(t *testing.T) {
 		Auth:   config.AuthConfig{JWTSecret: "test-secret", TokenExpiry: 3600},
 		QA:     config.QAConfig{Enabled: false},
 	}
-	server := New(cfg, nil, nil)
+	server := newTestServer(t, cfg, nil, nil)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 

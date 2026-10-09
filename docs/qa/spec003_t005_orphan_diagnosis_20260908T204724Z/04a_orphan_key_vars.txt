@@ -1,0 +1,31 @@
+=== 04a: key-var NAMES the 20 .env-carrying orphans reference (§11.4.10 names only) ===
+chutes               ENV=no  KEY_VAR=<status-only>
+deepseek             ENV=yes KEY_VAR=<none>
+fireworks-ai         ENV=no  KEY_VAR=<status-only>
+huggingface          ENV=yes KEY_VAR=<none>
+hyper                ENV=yes KEY_VAR=<none>
+inference            ENV=no  KEY_VAR=<status-only>
+kc-for-coding        ENV=yes KEY_VAR=<none>
+kc-for-coding2       ENV=yes KEY_VAR=<none>
+kilo                 ENV=yes KEY_VAR=<none>
+novita-ai            ENV=no  KEY_VAR=<status-only>
+nvidia               ENV=yes KEY_VAR=<none>
+nvidia2              ENV=yes KEY_VAR=<none>
+nvidia3              ENV=yes KEY_VAR=<none>
+nvidia4              ENV=yes KEY_VAR=<none>
+opencode             ENV=yes KEY_VAR=<none>
+openrouter           ENV=yes KEY_VAR=<none>
+openrouter2          ENV=yes KEY_VAR=<none>
+openrouter3          ENV=yes KEY_VAR=<none>
+openrouter4          ENV=yes KEY_VAR=<none>
+openrouter5          ENV=yes KEY_VAR=<none>
+poe                  ENV=yes KEY_VAR=<none>
+sarvam               ENV=yes KEY_VAR=<none>
+siliconflow          ENV=no  KEY_VAR=<status-only>
+tencent-tokenhub     ENV=no  KEY_VAR=<status-only>
+upstage              ENV=no  KEY_VAR=<status-only>
+xiaomi               ENV=no  KEY_VAR=<status-only>
+zai                  ENV=yes KEY_VAR=<none>
+zai-coding-plan      ENV=yes KEY_VAR=<none>
+--- distinct key-var names across the .env-carrying orphans ---
+distinct_key_var_count=0

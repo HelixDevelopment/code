@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://helix.dev/schemas/006/model-name-parse.schema.json",
+  "title": "ModelNameParseResult",
+  "description": "Delta payload for the arbitrary upstream model-name parser (A2). Total function: any input yields a result or a typed error, never a panic.",
+  "type": "object",
+  "required": ["raw", "clean_name", "derived_id"],
+  "additionalProperties": false,
+  "properties": {
+    "raw": {
+      "type": "string",
+      "description": "Original upstream name, e.g. helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190",
+      "minLength": 1
+    },
+    "clean_name": {
+      "type": "string",
+      "description": "Human-readable name with no provider prefix, hash suffix, or quantization token, e.g. qwen2-5-coder-3b-instruct",
+      "minLength": 1
+    },
+    "vendor_prefix": { "type": "string", "description": "Stripped prefix retained for provenance" },
+    "quantization": { "type": "string", "description": "Recovered quantization token, e.g. q4_k_m (preserved, not discarded)" },
+    "variant_hash": { "type": "string", "description": "Recovered trailing build hash" },
+    "derived_id": { "type": "string", "description": "Collision-safe identifier from the existing naming.Registry", "minLength": 1 }
+  }
+}

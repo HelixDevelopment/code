@@ -28,37 +28,62 @@ print_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 print_error() { echo -e "${RED}❌ $1${NC}"; }
 print_debug() { echo -e "${CYAN}🐛 $1${NC}"; }
 
-# Function to check if Docker is running
+# Resolve the OCI container runtime ONCE, by capability rather than by a
+# hardcoded tool name. Podman is preferred: CONST-§11.4.161 mandates rootless
+# podman for this project, and this host ships podman with no docker at all.
+# Docker remains a fallback so the facade still works on docker-only hosts.
+CONTAINER_CLI=""
+
+detect_container_runtime() {
+    [ -n "$CONTAINER_CLI" ] && return 0
+    for candidate in podman docker; do
+        if command -v "$candidate" &> /dev/null; then
+            CONTAINER_CLI="$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Function to check the container runtime is installed and responding
 check_docker() {
-    if ! command -v docker &> /dev/null; then
-        print_error "Docker is not installed or not in PATH"
+    if ! detect_container_runtime; then
+        print_error "No container runtime found (looked for: podman, docker)"
         exit 1
     fi
-    
-    if ! docker info &> /dev/null; then
-        print_error "Docker daemon is not running"
+
+    if ! "$CONTAINER_CLI" info &> /dev/null; then
+        print_error "$CONTAINER_CLI is installed but not responding to: $CONTAINER_CLI info"
         exit 1
     fi
 }
 
 # Function to check if Docker Compose is available
 check_docker_compose() {
-    if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-        print_error "Docker Compose is not available"
+    if [ -z "$(get_compose_cmd 2>/dev/null)" ]; then
+        print_error "No compose implementation found (looked for: podman-compose, podman compose, docker-compose, docker compose)"
         exit 1
     fi
 }
 
 # Function to get docker compose command
 get_compose_cmd() {
-    if command -v docker-compose &> /dev/null; then
-        echo "docker-compose"
-    elif docker compose version &> /dev/null; then
-        echo "docker compose"
-    else
-        print_error "Docker Compose is not available"
-        exit 1
+    detect_container_runtime || true
+    # Prefer the compose implementation that matches the resolved runtime, so a
+    # podman host never shells out to a docker-only compose and vice versa.
+    if [ "$CONTAINER_CLI" = "podman" ]; then
+        if command -v podman-compose &> /dev/null; then
+            echo "podman-compose"; return 0
+        elif podman compose version &> /dev/null; then
+            echo "podman compose"; return 0
+        fi
     fi
+    if command -v docker-compose &> /dev/null; then
+        echo "docker-compose"; return 0
+    elif command -v docker &> /dev/null && docker compose version &> /dev/null; then
+        echo "docker compose"; return 0
+    fi
+    return 1
 }
 
 # Function to load environment variables
@@ -77,14 +102,14 @@ load_env() {
 
 # Function to check if container is running
 is_container_running() {
-    docker ps --format "table {{.Names}}" | grep -q "^helixcode$"
+    "$CONTAINER_CLI" ps --format "table {{.Names}}" | grep -q "^helixcode$"
 }
 
 # Function to get container status
 get_container_status() {
     if is_container_running; then
         echo "running"
-    elif docker ps -a --format "table {{.Names}}" | grep -q "^helixcode$"; then
+    elif "$CONTAINER_CLI" ps -a --format "table {{.Names}}" | grep -q "^helixcode$"; then
         echo "stopped"
     else
         echo "not_created"
@@ -223,10 +248,10 @@ exec_in_container() {
     
     if [ "$non_interactive" = true ]; then
         # Use non-interactive mode (no -t flag)
-        docker exec -i helixcode /app/cli "$@"
+        "$CONTAINER_CLI" exec -i helixcode /app/cli "$@"
     else
         # Use interactive mode (with -t flag)
-        docker exec -it helixcode /app/cli "$@"
+        "$CONTAINER_CLI" exec -it helixcode /app/cli "$@"
     fi
 }
 
@@ -370,7 +395,7 @@ main() {
                 print_error "No command specified for exec"
                 exit 1
             fi
-            docker exec -it helixcode "${@:2}"
+            "$CONTAINER_CLI" exec -it helixcode "${@:2}"
             ;;
         "help"|"--help"|"-h")
             show_help

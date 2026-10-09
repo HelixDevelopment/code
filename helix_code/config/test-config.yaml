@@ -1,4 +1,4 @@
-# HelixCode Server Configuration - FIXED
+# HelixCode Server Configuration
 
 server:
   address: "0.0.0.0"
@@ -9,22 +9,22 @@ server:
   shutdown_timeout: 30
 
 database:
-  host: ""  # Empty for testing without database
+  host: ""
   port: 5432
-  user: "helix_test"
-  password: "helix_test_password"  # TEST ONLY - safe for testing environments
-  dbname: "helixcode_test"  # TEST database - never use production database names
+  user: "helix"
+  password: ""
+  dbname: "helixcode_prod"
   sslmode: "disable"
 
 redis:
-  host: "localhost"
+  host: ""
   port: 6379
-  password: "redis_test_password"  # TEST ONLY - safe for testing environments
-  db: 15  # Use high DB number for test isolation
-  enabled: false  # Disabled by default for unit tests
+  password: ""
+  db: 0
+  enabled: false
 
 auth:
-  jwt_secret: "test-secret-do-not-use-in-production-minimum-32-bytes"  # TEST ONLY - use env var in production
+  jwt_secret: "mysecret123"
   token_expiry: 86400
   session_expiry: 604800
   bcrypt_cost: 12
@@ -44,103 +44,15 @@ llm:
   max_tokens: 4096
   temperature: 0.7
   timeout: 30
-  max_retries: 3
   
   providers:
-    # Local providers with proper structure
     local:
       type: local
       endpoint: "http://localhost:11434"
-      enabled: true
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        
-    ollama:
-      type: ollama
-      endpoint: "http://localhost:11434"
-      enabled: true  # Enable for testing
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        
-    llamacpp:
-      type: llamacpp
-      endpoint: "http://localhost:8080"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-    
-    # Cloud providers with proper structure
-    openai:
-      type: openai
-      endpoint: "https://api.openai.com/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via OPENAI_API_KEY
-        
-    anthropic:
-      type: anthropic
-      endpoint: "https://api.anthropic.com/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via ANTHROPIC_API_KEY
-        
-    gemini:
-      type: gemini
-      endpoint: "https://generativelanguage.googleapis.com/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via GEMINI_API_KEY
-        
-    xai:
-      type: xai
-      endpoint: "https://api.x.ai/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via XAI_API_KEY
-        
-    copilot:
-      type: copilot
-      endpoint: "https://api.githubcopilot.com/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via GITHUB_TOKEN
-        
-    openrouter:
-      type: openrouter
-      endpoint: "https://openrouter.ai/api/v1"
-      enabled: false
-      parameters:
-        timeout: 30.0
-        max_retries: 3
-        streaming_support: true
-        api_key: "" # Set via OPENROUTER_API_KEY
   
-  # Provider selection preferences
   selection:
-    strategy: "performance"  # performance, cost, availability, round-robin
-    fallback_enabled: true
-    health_check_interval: 30
+    strategy: "performance"
+    fallback_enabled: false
 
 logging:
   level: "info"
@@ -148,57 +60,4 @@ logging:
   output: "stdout"
 
 notifications:
-  enabled: true
-
-  # Notification rules - map events to channels
-  rules:
-    - name: "Critical Task Failures"
-      condition: "type==error"
-      channels: ["slack", "email", "telegram"]
-      priority: urgent
-      enabled: true
-
-    - name: "Worker Health Alerts"
-      condition: "type==alert"
-      channels: ["slack", "telegram"]
-      priority: high
-      enabled: true
-
-    - name: "Workflow Completions"
-      condition: "type==success"
-      channels: ["slack"]
-      priority: medium
-      enabled: true
-
-  # Channel configurations
-  channels:
-    slack:
-      enabled: false  # Set to true and configure webhook to enable
-      webhook_url: ""  # Set via HELIX_SLACK_WEBHOOK_URL environment variable
-      channel: "#helix-notifications"
-      username: "HelixCode Bot"
-      timeout: 10
-
-    telegram:
-      enabled: false  # Set to true and configure bot to enable
-      bot_token: ""  # Set via HELIX_TELEGRAM_BOT_TOKEN environment variable
-      chat_id: ""  # Set via HELIX_TELEGRAM_CHAT_ID environment variable
-      timeout: 10
-
-    email:
-      enabled: false  # Set to true and configure SMTP to enable
-      smtp:
-        server: ""  # Set via HELIX_EMAIL_SMTP_SERVER
-        port: 587  # Set via HELIX_EMAIL_SMTP_PORT
-        username: ""  # Set via HELIX_EMAIL_USERNAME
-        password: ""  # Set via HELIX_EMAIL_PASSWORD
-        from: ""  # Set via HELIX_EMAIL_FROM
-        tls: true
-      recipients:
-        default: []  # Set via HELIX_EMAIL_RECIPIENTS (comma-separated)
-      timeout: 30
-
-    discord:
-      enabled: false  # Set to true and configure webhook to enable
-      webhook_url: ""  # Set via HELIX_DISCORD_WEBHOOK_URL environment variable
-      timeout: 10
+  enabled: false

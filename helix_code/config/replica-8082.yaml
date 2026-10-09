@@ -136,21 +136,34 @@ llm:
         streaming_support: true
         api_key: "" # Set via OPENROUTER_API_KEY
     
-    # HelixAgent providers
+    # HelixAgent providers — DEAD CONFIG, RETAINED PENDING OPERATOR DECISION EX-22.
+    #
+    # DEFECT 1 (why these are inert): internal/config.LLMConfig declares no
+    #   `providers` field, so this entire `llm.providers` subtree decodes into
+    #   nothing. Neither "helix-llm" nor "helix-debate" exists as a
+    #   ProviderType constant or as a case in the internal/llm factory switch.
+    # DEFECT 2 (why the endpoints are gone rather than "corrected"): both
+    #   former defaults pointed at the wrong process — :8081 is
+    #   helixcode-server itself, and :8082 is ChromaDB, a vector database.
+    #   There is no debate service in the platform port table at all. With the
+    #   type unsupported, a plausible-looking URL implies a working route that
+    #   does not exist.
+    #
+    # NOT DELETED (§11.4.122 / §11.4.124): see EX-22 in
+    # docs/operator_decisions_20260903.md — investigated, NOT resolved.
+    # Matches the treatment in replica-8081.yaml and config.yaml.
     helix-llm:
       type: helix-llm
-      endpoint: "${HELIX_LLM_ENDPOINT:http://localhost:8081}"
-      enabled: true
+      enabled: false
       parameters:
         timeout: 60.0
         max_retries: 3
         streaming_support: true
         api_key: "" # Set via HELIX_LLM_API_KEY
-      
+
     helix-debate:
       type: helix-debate
-      endpoint: "${HELIX_DEBATE_ENDPOINT:http://localhost:8082}"
-      enabled: true
+      enabled: false
       parameters:
         timeout: 120.0
         max_retries: 3

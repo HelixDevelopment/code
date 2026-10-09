@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 // TestDeviceManager_ListDevices tests device enumeration
@@ -133,8 +135,15 @@ func TestAudioRecorder_StartStop(t *testing.T) {
 		t.Error("expected recorder to be recording")
 	}
 
-	// Simulate recording time
-	time.Sleep(100 * time.Millisecond)
+	// Wait until the mock recording goroutine has genuinely produced
+	// audio. LevelMonitor seeds currentPeak at -100.0 dB and only moves
+	// it from recordMockAudio's tick, so Peak > -100.0 is a real
+	// happens-after signal rather than a guess about elapsed time.
+	// Generous ceiling + tiny interval: a fast machine exits on the
+	// first check, a 100x-slow one still passes.
+	require.Eventually(t, func() bool {
+		return recorder.GetLevels().Peak > -100.0
+	}, 30*time.Second, 5*time.Millisecond, "mock recorder never produced audio levels")
 
 	// Test stopping recording
 	filePath, err := recorder.Stop(ctx)
@@ -413,8 +422,14 @@ func TestVoiceInputManager_Integration(t *testing.T) {
 		t.Error("expected recorder to be active")
 	}
 
-	// Wait a bit
-	time.Sleep(100 * time.Millisecond)
+	// Wait until the mock recording goroutine has genuinely produced
+	// audio before reading levels: LevelMonitor seeds currentPeak at
+	// -100.0 dB and only moves it from recordMockAudio's tick. The
+	// assertion is the predicate, never elapsed time. Generous ceiling
+	// + tiny interval: a fast machine exits on the first check.
+	require.Eventually(t, func() bool {
+		return recorder.GetLevels().Peak > -100.0
+	}, 30*time.Second, 5*time.Millisecond, "mock recorder never produced audio levels")
 
 	// Get audio levels via the recorder directly (manager removed; see
 	// platform-decoupling rationale above).
@@ -480,13 +495,14 @@ func TestAudioRecorder_RealMode_NoPlatformBridge(t *testing.T) {
 		t.Fatalf("Start() should not return immediate error; got %v", err)
 	}
 
-	// Give the goroutine a moment to flip a.recording=false through
-	// recordRealAudio's loud-fail path.
-	time.Sleep(50 * time.Millisecond)
-
-	if recorder.IsRecording() {
-		t.Fatal("expected recorder to have flipped recording=false via recordRealAudio's loud-fail path, but it is still recording (§11.4 PASS-bluff regression)")
-	}
+	// Wait for the goroutine to flip a.recording=false through
+	// recordRealAudio's loud-fail path. Polling the exported getter is
+	// correct at any speed; the assertion is the predicate, never
+	// elapsed time. Generous ceiling + tiny interval: a fast machine
+	// exits on the first check.
+	require.Eventually(t, func() bool {
+		return !recorder.IsRecording()
+	}, 30*time.Second, 5*time.Millisecond, "expected recorder to have flipped recording=false via recordRealAudio's loud-fail path, but it is still recording (§11.4 PASS-bluff regression)")
 
 	// Stop should now report ErrNotRecording — the honest signal that
 	// no platform bridge captured anything.

@@ -2,7 +2,7 @@
 
 **Feature**: `001-helixskills-incorporation` | **Work item**: HXC-159
 **Spec**: [`spec.md`](spec.md) · **Plan**: [`plan.md`](plan.md)
-**Revision**: 1 · **Last modified**: 2026-07-29 · **Author**: `(T1/main - claude1 - opus - xhigh)`
+**Revision**: 2 · **Last modified**: 2026-09-02 · **Author**: `(T1/main - claude1 - opus - xhigh)`
 
 **Status**: PLAN ONLY — no task below has been started. `T-P1.06` is the sole
 exception and is marked `[x]` with its disclosure.
@@ -269,7 +269,11 @@ pointer to `constitution/Constitution.md`. The unmodified template remains at
 **Test types**: unit (gate).
 **Runtime signature**: the file opens with `## INHERITED FROM constitution/Constitution.md`
 and contains no independent principles.
-**Acceptance evidence**: the file itself; gate pending T-P1.06.4.
+**Acceptance evidence**: the file itself; gate `scripts/gates/canonical_root_clarity_gate.sh`
+(PASS on the real tree, 12 items checked), paired mutation
+`scripts/tests/canonical_root_clarity_meta_test.sh` (8 mutations, all flip the gate),
+and a runner-level wired-proof: `verify-all-constitution-rules.sh --gate=G33` exits 1 with
+the heading stripped and 0 once restored.
 **Risks**: R-23.
 
 - [x] T-P1.06.1 Read the stock template and confirm it is unmodified boilerplate.
@@ -277,8 +281,13 @@ and contains no independent principles.
   Constitution Check gate must evaluate against.
 - [x] T-P1.06.3 State explicitly that running `/speckit-constitution` against this file
   would re-open R-23.
-- [ ] T-P1.06.4 Extend gate `CM-CANONICAL-ROOT-CLARITY` to `.specify/memory/` + paired
-  mutation (strip the heading → FAIL).
+- [x] T-P1.06.4 Extend gate `CM-CANONICAL-ROOT-CLARITY` to `.specify/memory/` + paired
+  mutation (strip the heading → FAIL). — **DONE 2026-09-02**. The gate did not previously
+  exist in any form: CONST-059 named it across six carriers while nothing implemented it
+  (§11.4.227). Built with all four clauses — (a) five-carrier canonical root present,
+  (b) consumer `CLAUDE.md` inherits, (c) canonical carriers inherit from nothing,
+  (d) `.specify/memory/constitution.md` keeps its pointer heading and declares no
+  principles — and registered as **G33** in `scripts/verify-all-constitution-rules.sh`.
 
 > **Disclosure**: this is the only file outside `specs/` and the research tree written
 > during planning. Rationale: it is a governance pointer, not production code, and the

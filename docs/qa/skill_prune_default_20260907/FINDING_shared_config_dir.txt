@@ -1,0 +1,53 @@
+=== FINDING: the active surface grew back 3 -> 12 after session-init ===
+Recorded 2026-09-07. Investigated per §11.4.102, reported per §11.4.6.
+
+WHAT HAPPENED (FACT)
+  12:21:30Z  session-init pruned to 3 (core only). Measured: 65 B name-only.
+  12:23:50Z  9 speckit skills were RE-ACTIVATED, as engine-shaped relative
+             symlinks pointing INTO the attic
+             (.claude/skills/X -> ../.skill-activation/pool/X).
+  12:28:xx   budget gate measured 12 active / 248 B.
+
+ESTABLISHED AS FACT
+  * The links are engine-shaped and target the attic, so they were created by
+    `skill_activate.sh activate` -- nothing else produces that shape.
+  * The claim files for all 9 record claimant `claude-claude5`, i.e. the
+    basename of the SHARED config dir.
+  * TWO live `claude --resume` processes share
+    CLAUDE_CONFIG_DIR=/home/milosvasic/.claude-claude5:
+      pid 2234949  claude --resume d16d2eb1-...   (this session)
+      pid 720411   claude --resume be287450-...   (a different session)
+  * No Bash tool call in this session's transcripts invoked `activate` at that
+    time, and no project-level or user-level hook invokes skill-activate
+    (.claude/settings.json + .claude/settings.local.json + the two user-level
+    settings files were all read: hooks are only guard-track-branch-label.sh
+    and action_prefix_expand.sh).
+
+UNCONFIRMED (§11.4.6 -- stated as unknown, not guessed)
+  The exact trigger of those 9 activations. The claim identity is the shared
+  config-dir basename, which by the engine's own documented limitation CANNOT
+  distinguish two sessions sharing one config dir, so the record cannot
+  attribute them.
+
+WHY THIS IS NOT A DEFECT IN PRUNING
+  The re-activation SUCCEEDED, from the attic, with content intact. That is
+  the design working: property (2) ACTIVATABLE and property (3) NOT DELETED
+  were exercised in the wild by a party other than the pruner. Nothing was
+  lost; a demoted skill came back on demand, which is exactly the contract.
+
+WHAT IT DOES MEAN (the honest nuance)
+  "3 active" is the SESSION-INIT BASELINE, not a steady state. The design is
+  a minimal baseline PLUS on-demand growth (§11.4.272(A)/(E)); the surface is
+  expected to grow within a session as skills are activated, and to return to
+  the baseline at the next session-init.
+
+KNOWN LIMITATION THIS INHERITS (pre-existing, now also on the prune path)
+  Reference counting protects a skill only when the two sessions have DISTINCT
+  claim identities. Sessions sharing one CLAUDE_CONFIG_DIR share one identity,
+  so `sa_live_claimants` excludes them as "me" and prune will demote a skill
+  the other session holds. This is the engine's already-documented limitation
+  (README "Known limitations"); the mitigation is to give each session a
+  distinct HELIX_SKILL_SESSION. The refcount mechanism itself is proven to
+  work when identities ARE distinct -- test 17 ("CONCURRENCY: prune KEPT a
+  skill another live session holds") and its paired mutation 18 cover exactly
+  that, both GREEN.

@@ -106,7 +106,14 @@ func TestMCPServer_Chaos_ToolHandlerPanicIsolation(t *testing.T) {
 		rec.Record(stresschaos.Recovered, "panicking tool dispatch returned without crashing the process")
 	}()
 	dispatchWG.Wait()
-	time.Sleep(30 * time.Millisecond) // let any inner dispatch goroutine settle
+	// The server may isolate the panicking handler in its OWN goroutine, so
+	// panicHits can land after handleMessage returns. Wait for the predicate
+	// with a generous ceiling instead of sleeping a guessed 30ms: on an idle
+	// box this exits on the first check, and it stays correct on a loaded one.
+	settleDeadline := time.Now().Add(15 * time.Second)
+	for atomic.LoadInt64(&panicHits) == 0 && time.Now().Before(settleDeadline) {
+		time.Sleep(time.Millisecond)
+	}
 
 	if atomic.LoadInt64(&panicHits) == 0 {
 		rec.Record(stresschaos.Fatal, "panic tool handler never ran — dispatch path not exercised")

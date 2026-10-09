@@ -1,0 +1,39 @@
+== mechanical-tools acceptance (tools: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical) ==
+
+  • all three tools are present and executable
+    [32m[PASS][0m executable: census_query.sh
+    [32m[PASS][0m executable: await_condition.sh
+    [32m[PASS][0m executable: mutation_harness.sh
+
+  • census_query REFUSES a count when its positive control cannot be found
+    [32m[PASS][0m blind instrument exits CANNOT_RUN (2)
+    [32m[PASS][0m no count emitted when the instrument is unproven
+
+  • census_query REFUSES a count when its negative control IS found
+    [32m[PASS][0m too-broad matcher exits CANNOT_RUN (2)
+    [32m[PASS][0m no count emitted when the negative control fired
+
+  • census_query still reports an HONEST zero when both controls hold
+    [32m[PASS][0m a proven instrument finding nothing exits OK (0)
+    [32m[PASS][0m the honest zero is reported: CENSUS zero: matches=0 files=0 positive=1/1 negative=0/1 [OK]
+
+  • await_condition cannot report a timeout as success
+    [32m[PASS][0m expired wait exits with its own distinct code (3)
+    [32m[PASS][0m the outcome it exited on is named: TIMEOUT
+    [32m[PASS][0m a satisfied wait exits OK (0)
+    [32m[PASS][0m the outcome it exited on is named: SATISFIED
+
+  • mutation_harness REFUSES to report a suite result for an unapplied mutation
+    [32m[PASS][0m unapplied mutation exits CANNOT_RUN (2)
+    [32m[PASS][0m no suite verdict reported for an unapplied mutation
+
+  • mutation_harness measures a real suite it CAN apply a mutation to
+    [32m[PASS][0m an applied mutation that breaks its suite is reported as expected-fail (0)
+    [32m[PASS][0m the mutated suite's real counts are reported
+
+  • ACCEPTANCE: the harness reproduces this repository's measured outcome
+    [INFO] not run — set CMA_MECH_ACCEPTANCE=1 to include it.
+    [INFO]   CMA_MECH_ACCEPTANCE=1 bash /home/milosvasic/Projects/claude_toolkit/scripts/tests/test_mechanical_tools_acceptance.sh
+    [INFO] measured 2026-09-08: BASELINE 58 passed/0 failed; D5e EXPECTED-FAIL [OK].
+
+[32m✓ 17 passed, 0 failed[0m

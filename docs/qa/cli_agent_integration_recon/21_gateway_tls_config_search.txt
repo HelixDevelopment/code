@@ -1,0 +1,63 @@
+=== searching for TLS cert config keys (HELIX_TLS_* / CERT / SSL) in helix_llm config docs (read-only) ===
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/API_CONTRACT.md:38:| TLSCert | `HELIX_TLS_CERT` | `./certs/cert.pem` |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/API_CONTRACT.md:39:| TLSKey  | `HELIX_TLS_KEY`  | `./certs/key.pem`  |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/API_CONTRACT.html:370:<td><code>HELIX_TLS_CERT</code></td>
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/API_CONTRACT.html:375:<td><code>HELIX_TLS_KEY</code></td>
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/manual/security.md:10:HELIX_TLS_CERT=./certs/cert.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/manual/security.md:11:HELIX_TLS_KEY=./certs/key.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/manual/security.md:14:For local development, `make certs` generates a self-signed certificate:
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/manual/security.md:293:- [ ] Use certificates from a trusted CA (not self-signed)
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/manual/development.md:190:| `make certs` | Generate self-signed TLS certificates |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7_testing_monitoring_deployment.md:479:# Generate self-signed certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:512:generate_self_signed_cert() {
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:513:    log "Generating self-signed SSL certificate..."
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:526:    success "Self-signed certificate generated"
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:731:  --generate-certs     Generate self-signed SSL certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:751:    generate_self_signed_cert
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/specs/Kimi_Agent_Enterprise AI System Blueprint/phase7/security/security-hardening.sh:776:            generate_self_signed_cert
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/research/tooling/full_plan/ALL_FILES/Kimi_Agent_HelixLLM Integration Expansion/helixllm_api/nginx/nginx.conf:78:        ssl_certificate /etc/nginx/ssl/cert.pem;
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/research/tooling/full_plan/ALL_FILES/Kimi_Agent_HelixLLM Integration Expansion/helixllm_api/nginx/nginx.conf:79:        ssl_certificate_key /etc/nginx/ssl/key.pem;
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/configuration.md:55:| `HELIX_TLS_CERT` | `./certs/cert.pem` | Path to PEM-encoded TLS certificate. |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/configuration.md:56:| `HELIX_TLS_KEY` | `./certs/key.pem` | Path to PEM-encoded TLS private key. |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/configuration.md:58:TLS is required. For local development, `make certs` (or `make dev`) generates a self-signed certificate.
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/configuration.md:280:- `HELIX_TLS_CERT`, `HELIX_TLS_KEY` -- TLS certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/plans/2026-04-04-phase1-foundation.md:138:HELIX_TLS_CERT=./certs/cert.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/plans/2026-04-04-phase1-foundation.md:139:HELIX_TLS_KEY=./certs/key.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/plans/2026-04-04-phase1-foundation.md:620:	TLSCert string `env:"HELIX_TLS_CERT" default:"./certs/cert.pem"`
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/plans/2026-04-04-phase1-foundation.md:621:	TLSKey  string `env:"HELIX_TLS_KEY" default:"./certs/key.pem"`
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/05-production/lesson-04-security.md:15:**Narration:** "HelixLLM requires TLS for all connections. There is no plaintext HTTP option. In development we use self-signed certificates, but production deployments need certificates from a trusted certificate authority."
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/05-production/lesson-04-security.md:20:# Development: self-signed certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/05-production/lesson-04-security.md:33:HELIX_TLS_CERT=/etc/ssl/helixllm/cert.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/05-production/lesson-04-security.md:34:HELIX_TLS_KEY=/etc/ssl/helixllm/key.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/05-production/lesson-04-security.md:40:- Self-signed for development, trusted CA for production
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/qa/jwt_auth_20260903/repro.sh:50:  HELIX_TLS_CERT="$CERTDIR/cert.pem" HELIX_TLS_KEY="$CERTDIR/key.pem" \
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/diagrams/security-layers.mmd:24:    TLS -.- TLS_NOTE["TLS 1.3 minimum<br/>ALPN: h3, h2, http/1.1<br/>Self-signed or CA cert"]
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:15:This creates self-signed certificates in `./certs/`. Alternatively, point to your own certificates:
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:18:HELIX_TLS_CERT=/path/to/cert.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:19:HELIX_TLS_KEY=/path/to/key.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:68:### "curl: (60) SSL certificate problem: self-signed certificate"
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:70:Expected with self-signed certs. Use `-k` to skip verification:
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/troubleshooting.md:76:For OpenAI/Anthropic SDK clients, configure them to skip TLS verification or add your self-signed CA to the system trust store.
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:8:- **openssl** -- used to generate self-signed TLS certificates for local development
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:41:For a minimal local setup, the defaults work out of the box. The system starts in `full` mode with all subsystems active, listening on port 8443 with self-signed TLS.
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:61:1. Creates self-signed TLS certificates in `./certs/` (if not already present)
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:75:The server is now running at `https://localhost:8443`. Since it uses a self-signed certificate, use `-k` with curl to skip verification.
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:421:| `TLS handshake error` | Missing or expired certificates | Run `make certs` to regenerate self-signed certificates |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/user-guide/getting-started.md:428:| `certificate signed by unknown authority` | Using self-signed cert without `-k` flag | Add `-k` to curl commands, or import the cert into your system trust store |
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/specs/2026-04-04-helixllm-master-design.md:276:- TLS required for HTTP/3; self-signed certs for local development, configurable for production
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/specs/2026-04-04-helixllm-master-design.md:620:HELIX_TLS_CERT=./certs/server.crt
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/superpowers/specs/2026-04-04-helixllm-master-design.md:621:HELIX_TLS_KEY=./certs/server.key
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/02-api-deep-dive/lesson-01-openai-compat.md:122:**Narration:** "For self-signed certificates in development, you may need to disable SSL verification."
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/02-api-deep-dive/lesson-01-openai-compat.md:127:# Development only: skip TLS verification for self-signed certs
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/02-api-deep-dive/lesson-01-openai-compat.md:154:- Self-signed certificates require disabling TLS verification in development
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/02-api-deep-dive/lesson-02-anthropic-compat.md:255:- Disable TLS verification in development for self-signed certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-04-configuration.md:86:HELIX_TLS_CERT=./certs/cert.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-04-configuration.md:87:HELIX_TLS_KEY=./certs/key.pem
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-04-configuration.md:95:- `make certs` generates self-signed certificates for development
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-01-introduction.md:118:**Narration:** "The server starts in full mode on port 8443 with self-signed TLS. Let me open a second terminal and make some requests."
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-02-installation.md:22:- **OpenSSL** -- used to generate self-signed TLS certificates for local development
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-02-installation.md:112:**Narration:** "HelixLLM requires TLS for all connections. For local development, we generate a self-signed certificate using an elliptic curve key."
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-02-installation.md:117:# Generate self-signed TLS certificates
+/home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/courses/01-getting-started/lesson-02-installation.md:178:- The `-k` flag tells curl to accept the self-signed certificate
+---.env keys (names only, no values, for TLS/cert-related) ---
+22:# HELIX_DATABASE_URL=<redacted>

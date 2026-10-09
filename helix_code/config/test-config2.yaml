@@ -1,0 +1,63 @@
+# HelixCode Server Configuration
+
+server:
+  address: "0.0.0.0"
+  port: 8080
+  read_timeout: 30
+  write_timeout: 30
+  idle_timeout: 300
+  shutdown_timeout: 30
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "helix"
+  password: ""
+  dbname: "helixcode_prod"
+  sslmode: "disable"
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+  enabled: false
+
+auth:
+  jwt_secret: "mysecret123"
+  token_expiry: 86400
+  session_expiry: 604800
+  bcrypt_cost: 12
+
+workers:
+  health_check_interval: 30
+  health_ttl: 120
+  max_concurrent_tasks: 10
+
+tasks:
+  max_retries: 3
+  checkpoint_interval: 300
+  cleanup_interval: 3600
+
+llm:
+  default_provider: "local"
+  max_tokens: 4096
+  temperature: 0.7
+  timeout: 30
+  
+  providers:
+    local:
+      type: local
+      endpoint: "http://localhost:11434"
+  
+  selection:
+    strategy: "performance"
+    fallback_enabled: false
+
+logging:
+  level: "info"
+  format: "text"
+  output: "stdout"
+
+notifications:
+  enabled: false

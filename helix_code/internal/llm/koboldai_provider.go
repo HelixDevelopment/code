@@ -80,15 +80,93 @@ type KoboldAIModel struct {
 	Modified string `json:"modified"`
 }
 
+// koboldAIDefaultBaseURL is the endpoint KoboldAI is reached on when the
+// caller supplies none. It is a CONSTANT rather than a literal repeated at each
+// use site because two places must agree on it exactly: getAPIURL, which dials
+// it, and the W2c-1 cloud-gate check in NewKoboldAIProvider, which judges it.
+// If those two ever disagreed, the gate would be judging a URL the provider
+// does not actually use — the class of defect where a check passes while the
+// real request goes somewhere else.
+const koboldAIDefaultBaseURL = "http://localhost:5001"
+
+// effectiveBaseURL returns the base URL this config will ACTUALLY dial: the
+// configured BaseURL when one is set, otherwise KoboldAI's own localhost
+// default. The emptiness test is deliberately `== ""` and not a trimmed
+// comparison, so that this resolution is byte-for-byte the one getAPIURL
+// performs; a whitespace-only BaseURL therefore stays whitespace-only here and
+// is judged REMOTE by the gate (fail-closed), exactly as it would produce a
+// malformed request URL downstream.
+func (c KoboldAIConfig) effectiveBaseURL() string {
+	if c.BaseURL == "" {
+		return koboldAIDefaultBaseURL
+	}
+	return c.BaseURL
+}
+
 // NewKoboldAIProvider creates a new KoboldAI provider
 func NewKoboldAIProvider(config KoboldAIConfig) (*KoboldAIProvider, error) {
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only adaptive
+	// serving) — keyed on endpoint LOCALITY, the same rule
+	// NewOpenAICompatibleProvider applies, and deliberately NOT on provider
+	// identity.
+	//
+	// KoboldAI was previously exempt BY IDENTITY in factory.go's
+	// isCloudGateExemptProviderType, listed alongside Ollama and llama.cpp as
+	// "a local inference server". That reasoning does not survive contact with
+	// this file. Ollama and llama.cpp carry NO credential path whatsoever —
+	// neither provider contains a single occurrence of APIKey, Authorization
+	// or Bearer — so exempting them by name leaks nothing regardless of the
+	// endpoint a caller supplies, and their exemption remains sound. This
+	// provider is the opposite: it attaches `Authorization: Bearer <APIKey>`
+	// to every one of its four outbound requests, and both the endpoint and
+	// the key arrive from caller-supplied configuration. Identity-exemption
+	// plus a credential path plus a caller-chosen endpoint meant that, with
+	// the gate CLOSED (the mandated default), a KoboldAI provider aimed at an
+	// arbitrary public host constructed happily and shipped the bearer token
+	// there. Being "the kind of software people usually run locally" is not a
+	// property of the endpoint actually configured.
+	//
+	// The check lives in this CONSTRUCTOR rather than only in the factory arm
+	// so that direct callers of this exported symbol are covered too: gating
+	// one call site would protect that call site, not the provider.
+	//
+	// Checked FIRST, before the HTTP client is built and before discoverModels
+	// makes any request, so a refusal costs no outbound traffic. The sentinel
+	// is shared with every other gate refusal so callers branch on one error
+	// identity (errors.Is(err, ErrCloudDisabled)).
+	if endpoint := config.effectiveBaseURL(); !cloudGate.Load() && !isLocalEndpointURL(endpoint) {
+		// A whitespace-only endpoint is refused for the same fail-closed
+		// reason as a remote one, but reporting it as `endpoint "  " is not
+		// local` reads as though some host had been examined and judged
+		// foreign. Naming it as blank says what an operator actually has to
+		// fix, without changing which inputs are refused.
+		// CONST-042 / Article XII §12.1: the endpoint is quoted through
+		// RedactEndpointForMessage, NEVER verbatim. This refusal reaches an
+		// HTTP response body (llm_generate.go renders a resolver error's
+		// text into the 500 it returns), so an operator who points KoboldAI
+		// at "https://svc:pw@kobold.example.com/api" would otherwise hand
+		// "pw" to whoever can reach the endpoint. Redaction keeps scheme,
+		// host and port, so the message still names WHICH endpoint is wrong.
+		detail := fmt.Sprintf("endpoint %q is not local",
+			RedactEndpointForMessage(endpoint))
+		if strings.TrimSpace(endpoint) == "" {
+			detail = "endpoint is blank (whitespace-only), so it cannot be verified local"
+		}
+		return nil, fmt.Errorf("%w: llm.cloud.enabled is false (default) and the "+
+			"KoboldAI %s; refusing to construct a provider that would send an "+
+			"Authorization: Bearer credential to a remote host. Point KoboldAI at "+
+			"a local endpoint, or set llm.cloud.enabled: true to permit remote "+
+			"endpoints",
+			ErrCloudDisabled, detail)
+	}
+
 	provider := &KoboldAIProvider{
 		config: config,
 		// Shared tuned HTTP/2 transport (speed programme P1-T01,
 		// R1 B03 / R3 §4.7) — connection pooling only; request
 		// behaviour is unchanged.
 		httpClient: httpclient.NewHTTPClient(config.Timeout),
-		isRunning: true,
+		isRunning:  true,
 		lastHealth: &ProviderHealth{
 			Status:    "unknown",
 			LastCheck: time.Now(),
@@ -158,7 +236,7 @@ func (p *KoboldAIProvider) Generate(ctx context.Context, request *LLMRequest) (*
 	startTime := time.Now()
 	response, err := p.makeAPIRequest(ctx, apiRequest)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %w", err)
+		return nil, fmt.Errorf("generate: %w", err)
 	}
 
 	processingTime := time.Since(startTime)
@@ -241,7 +319,7 @@ func (p *KoboldAIProvider) GetHealth(ctx context.Context) (*ProviderHealth, erro
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		p.updateHealth("unhealthy", 0, p.lastHealth.ErrorCount+1)
-		return p.lastHealth, fmt.Errorf("failed to create health check request: %v", err)
+		return p.lastHealth, fmt.Errorf("failed to create health check request: %v", RedactEndpointsInError(err))
 	}
 
 	// Set headers
@@ -257,7 +335,7 @@ func (p *KoboldAIProvider) GetHealth(ctx context.Context) (*ProviderHealth, erro
 
 	if err != nil {
 		p.updateHealth("unhealthy", latency, p.lastHealth.ErrorCount+1)
-		return p.lastHealth, fmt.Errorf("health check failed: %v", err)
+		return p.lastHealth, fmt.Errorf("health check failed: %v", RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -305,7 +383,7 @@ func (p *KoboldAIProvider) discoverModels() error {
 	url := p.getAPIURL("/api/v1/model")
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return fmt.Errorf("failed to create models request: %w", err)
+		return fmt.Errorf("failed to create models request: %w", RedactEndpointsInError(err))
 	}
 
 	// Set headers
@@ -318,7 +396,7 @@ func (p *KoboldAIProvider) discoverModels() error {
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to fetch models: %w", err)
+		return fmt.Errorf("failed to fetch models: %w", RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -408,7 +486,7 @@ func (p *KoboldAIProvider) makeAPIRequest(ctx context.Context, request *KoboldAI
 	url := p.getAPIURL("/api/v1/generate")
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, fmt.Errorf("failed to create request: %w", RedactEndpointsInError(err))
 	}
 
 	// Set headers
@@ -422,7 +500,7 @@ func (p *KoboldAIProvider) makeAPIRequest(ctx context.Context, request *KoboldAI
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %w", err)
+		return nil, fmt.Errorf("API request failed: %w", RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -448,7 +526,7 @@ func (p *KoboldAIProvider) makeStreamingRequest(ctx context.Context, request *Ko
 	url := p.getAPIURL("/api/v1/generate")
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
+		return fmt.Errorf("failed to create request: %w", RedactEndpointsInError(err))
 	}
 
 	// Set headers
@@ -464,7 +542,7 @@ func (p *KoboldAIProvider) makeStreamingRequest(ctx context.Context, request *Ko
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("API request failed: %w", err)
+		return fmt.Errorf("API request failed: %w", RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -538,10 +616,9 @@ func (p *KoboldAIProvider) getModelName(requestedModel string) string {
 }
 
 func (p *KoboldAIProvider) getAPIURL(endpoint string) string {
-	baseURL := p.config.BaseURL
-	if baseURL == "" {
-		baseURL = "http://localhost:5001"
-	}
+	// Single source of truth shared with the cloud-gate check in
+	// NewKoboldAIProvider, so the URL the gate judged is the URL dialled.
+	baseURL := p.config.effectiveBaseURL()
 
 	return strings.TrimSuffix(baseURL, "/") + endpoint
 }

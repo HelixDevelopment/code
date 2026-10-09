@@ -1,0 +1,2 @@
+{"id":"","object":"chat.completion","created":1788886581,"model":"helix-llm","choices":[{"index":0,"message":{"role":"assistant","content":"NONCE_7QX41"},"finish_reason":""}],"usage":{"prompt_tokens":46,"completion_tokens":9,"total_tokens":55},"system_fingerprint":"fp_helixllm_v1"}
+[HTTP:200 TIME:0.843372]

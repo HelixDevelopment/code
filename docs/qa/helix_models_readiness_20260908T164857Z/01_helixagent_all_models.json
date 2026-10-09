@@ -1,0 +1,108 @@
+{
+  "provider_id": "helixagent",
+  "endpoint": "http://127.0.0.1:7061/v1",
+  "verified_count": 0,
+  "failed_count": 5,
+  "total_tested": 5,
+  "free_only": false,
+  "skipped_count": 0,
+  "skipped_models": [],
+  "tested_at": "2026-09-08T16:49:50.785791+00:00",
+  "models": [
+    {
+      "model_id": "helix-llm",
+      "provider_id": "helixagent",
+      "score": 35,
+      "capabilities": {
+        "chat": true,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 3285,
+      "verified": false,
+      "failure_reason": "tool calling unsupported (required by Claude Code)",
+      "tested_at": "2026-09-08T16:48:57.822048+00:00",
+      "credit_tier": "free"
+    },
+    {
+      "model_id": "helixagent-llm",
+      "provider_id": "helixagent",
+      "score": 35,
+      "capabilities": {
+        "chat": true,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 3255,
+      "verified": false,
+      "failure_reason": "tool calling unsupported (required by Claude Code)",
+      "tested_at": "2026-09-08T16:48:57.818340+00:00",
+      "credit_tier": "free"
+    },
+    {
+      "model_id": "helix-debate",
+      "provider_id": "helixagent",
+      "score": 5,
+      "capabilities": {
+        "chat": false,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 30730,
+      "verified": false,
+      "failure_reason": "sentinel VERIFY_OK missing from response",
+      "tested_at": "2026-09-08T16:48:57.821311+00:00",
+      "credit_tier": "free"
+    },
+    {
+      "model_id": "helixagent-debate",
+      "provider_id": "helixagent",
+      "score": 5,
+      "capabilities": {
+        "chat": false,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 52965,
+      "verified": false,
+      "failure_reason": "sentinel VERIFY_OK missing from response",
+      "tested_at": "2026-09-08T16:48:57.819623+00:00",
+      "credit_tier": "free"
+    },
+    {
+      "model_id": "helixagent-ensemble",
+      "provider_id": "helixagent",
+      "score": 5,
+      "capabilities": {
+        "chat": false,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 33395,
+      "verified": false,
+      "failure_reason": "sentinel VERIFY_OK missing from response",
+      "tested_at": "2026-09-08T16:48:57.820491+00:00",
+      "credit_tier": "free"
+    }
+  ]
+}

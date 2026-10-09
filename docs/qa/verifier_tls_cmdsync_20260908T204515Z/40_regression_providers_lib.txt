@@ -1,0 +1,2411 @@
+
+==> test_providers.sh
+/tmp/cma-test.uOwdD8/.claude-acct1
+/tmp/cma-test.uOwdD8/.claude-acct2
+
+  • real accounts are still detected
+    [PASS] acct1 detected (0)
+    [PASS] acct2 detected (0)
+
+  • provider-alias dirs are excluded from detection
+    [PASS] prov-deepseek excluded (1)
+    [PASS] prov-groq excluded (1)
+
+  • detection count is exactly the real accounts (no provider leakage)
+    [PASS] exactly 2 detected accounts (2)
+
+  • shared dir is never counted as an account
+    [PASS] shared excluded (1)
+
+  • resolver runs and emits valid JSON
+    [PASS] resolver exit 0 (0)
+    [PASS] output is valid JSON (0)
+
+  • native transport detected from @ai-sdk/anthropic npm
+    [PASS] acme native (native)
+    [PASS] acme resolved (resolved)
+
+  • strong model = reasoning/newest; fast model = lowest input cost
+    [PASS] strong=reasoning model (acme-big)
+    [PASS] fast=cheapest model (acme-small)
+
+  • openai-compatible npm => router transport
+    [PASS] beta router (router)
+    [PASS] beta base_url from catalog (https://api.beta.ai/v1)
+
+  • key-aliases.json normalizes a differently-named key var
+    [PASS] LEGACY_BETA_KEY -> beta (beta)
+
+  • zai-coding-plan resolves from env key match on ZAI_API_KEY
+    [PASS] zai-coding-plan provider_id (zai-coding-plan)
+    [PASS] zai-coding-plan resolved (resolved)
+
+  • zai-coding-plan uses coding paas endpoint and router transport
+    [PASS] coding endpoint (https://api.z.ai/api/coding/paas/v4)
+    [PASS] zai-coding-plan router (router)
+
+  • zai-coding-plan strong model = glm-5.2 (newest+reasoning), fast model = glm-4.7
+    [PASS] strong=glm-5.2 (glm-5.2)
+    [PASS] fast=glm-4.7 (glm-4.7)
+
+  • xiaomi resolves from the key-alias mapping on XIAOMI_MIMO_API_KEY
+    [PASS] xiaomi provider_id (xiaomi)
+    [PASS] xiaomi resolved (resolved)
+
+  • xiaomi override forces native transport (beats openai-compatible npm)
+    [PASS] xiaomi native (native)
+
+  • xiaomi override sets the /anthropic base_url (beats catalog /v1)
+    [PASS] xiaomi /anthropic base (https://api.xiaomimimo.com/anthropic)
+
+  • xiaomi strong=mimo-v2.5-pro, fast=mimo-v2-flash (override beats stale ultraspeed)
+    [PASS] strong=mimo-v2.5-pro (mimo-v2.5-pro)
+    [PASS] fast=mimo-v2-flash (mimo-v2-flash)
+
+  • the stale mimo-v2.5-pro-ultraspeed id is never selected
+    [PASS] ultraspeed not strong (0)
+    [PASS] ultraspeed not fast (0)
+
+  • xai override provides the base_url the null-api catalog lacks (v1.12.1 resolve-gap fix)
+    [PASS] overrides.json xai base_url present + correct (https://api.x.ai/v1)
+
+  • opencode resolves from the key-alias mapping on ZEN_API_KEY
+    [PASS] opencode provider_id (opencode)
+    [PASS] opencode resolved (resolved)
+
+  • ApiKey_Opencode_Zen also resolves to opencode via secondary key-alias
+    [PASS] ApiKey_Opencode_Zen -> opencode (opencode)
+    [PASS] ApiKey_Opencode_Zen resolved (resolved)
+
+  • opencode uses router transport (openai-compatible npm)
+    [PASS] opencode router (router)
+
+  • opencode base_url from catalog (zen/v1 endpoint)
+    [PASS] opencode zen/v1 base (https://opencode.ai/zen/v1)
+
+  • opencode override forces big-pickle as strong (beats nemotron-3-ultra-free auto-selection)
+    [PASS] strong=big-pickle (big-pickle)
+    [PASS] nemotron not strong (0)
+
+  • opencode override forces deepseek-v4-flash-free as fast (beats trinity auto-selection)
+    [PASS] fast=deepseek-v4-flash-free (deepseek-v4-flash-free)
+    [PASS] trinity not fast (0)
+
+  • strong_model pin re-derives the limits from the PINNED model
+    [PASS] pin applied (lc-pinned)
+    [PASS] context from pinned model (256000)
+    [PASS] max_output from pinned model (65536)
+
+  • the auto-picked model's limits do NOT leak through a strong_model pin
+    [PASS] context is not lc-newest's 1000000 (0)
+    [PASS] max_output is not lc-newest's 131072 (0)
+
+  • a pinned model the catalog does not know still gets a GUARD, not silence
+    [PASS] pin applied (oc-provider-only-model)
+    [PASS] unknown pin still emits a context (no unguarded launch) (0)
+    [PASS] unknown pin still emits an output cap (no unguarded launch) (0)
+
+  • the unknown-model fallback is bounded by the provider's OWN published window
+    [PASS] min(default, published) (128000)
+    [PASS] output carved from it (8192)
+
+  • the unknown pin does NOT inherit the catalogued model's limits
+    [PASS] context is not oc-catalogued's 900000 (0)
+    [PASS] max_output is not oc-catalogued's 99000 (0)
+
+  • explicit context_limit/max_output overrides are honored (were silently ignored)
+    [PASS] stated context wins (262144)
+    [PASS] stated max_output wins (8192)
+
+  • no resolved provider is launchable with an unguarded (empty) limit pair
+    [PASS] resolved providers with a missing guard: 'resolved=6 unguarded=' (resolved=6 unguarded=)
+
+  • every emitted pair satisfies output < context
+    [PASS] pairs violating output<context: 'pairs=6 inverted=' (pairs=6 inverted=)
+
+  • the fallback is capped by the provider's own ceiling when that is narrower
+    [PASS] provider ceiling binds (60000)
+    [PASS] cap fits inside it (8192)
+
+  • a wide-topped provider's fallback is bounded by its OWN 10th percentile
+    [PASS] fallback follows the provider's typical model, floored at a usable window ((65536, 8192)
+(65536, 8192))
+
+  • limit.input below limit.context caps the emitted window (ATM-853 opencode compaction loop)
+    [PASS] context_limit = min(limit.context, limit.input) with the output carve re-applied against the REAL window; controls unchanged ((160000, 8192)
+(100000, 8192)
+(100000, 8192))
+
+  • model_verify: an UNCATALOGUED live-proven model is not demoted for an UNKNOWN context (ATM-860)
+    [PASS] unknown context stays verified (live probe is ground truth); known-small still demotes (True
+False)
+
+  • a context narrower than the 8192 output floor does not invert the pair
+    [PASS] context kept (8000)
+    [PASS] floor halved to fit (4000)
+
+  • a catalogued model with no limit block at all still yields a guard
+    [PASS] conservative default (128000)
+    [PASS] carved from it (8192)
+
+  • a context_limit override re-carves the cap instead of keeping a stale one
+    [PASS] stated context (262144)
+    [PASS] re-carved, not stale 8192 (102144)
+
+  • an operator max_output >= their own context_limit is corrected, not shipped
+    [PASS] override pair corrected to output(8192) < context(32000) (0)
+
+  • a malformed operator override is rejected AND reported, never fail-open
+    [PASS] context_limit=true does not crash the resolver (0)
+    [PASS] context_limit=true still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=true rejection is surfaced, not silent (0)
+    [PASS] context_limit=-1 does not crash the resolver (0)
+    [PASS] context_limit=-1 still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=-1 rejection is surfaced, not silent (0)
+    [PASS] context_limit=0 does not crash the resolver (0)
+    [PASS] context_limit=0 still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=0 rejection is surfaced, not silent (0)
+    [PASS] context_limit=50000.5 does not crash the resolver (0)
+    [PASS] context_limit=50000.5 still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=50000.5 rejection is surfaced, not silent (0)
+    [PASS] context_limit="abc" does not crash the resolver (0)
+    [PASS] context_limit="abc" still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit="abc" rejection is surfaced, not silent (0)
+    [PASS] context_limit=null does not crash the resolver (0)
+    [PASS] context_limit=null still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=[] does not crash the resolver (0)
+    [PASS] context_limit=[] still yields a complete guard pair (got 700000/70000) (1)
+    [PASS] context_limit=[] rejection is surfaced, not silent (0)
+
+  • a digit-string override is honored instead of being silently dropped
+    [PASS] digit string coerced (200000)
+    [PASS] cap re-carved from it (40000)
+
+  • an override too small to carve a cap from is refused, not shipped unguarded
+    [PASS] refused context_limit=1; derived pair stands (got 700000/70000) (1)
+
+  • a malformed catalog row degrades to 'no limits', it does not crash the sync
+    [PASS] malformed catalog resolves without a traceback (0)
+    [PASS] malformed rows still yield a valid guard pair (got 262144/8192) (1)
+
+  • derive_limits emits a COMPLETE, valid guard pair for ANY input
+    [PASS] derive_limits invariant over all 2363 shapes (incl. correction branch): 'cases=2363 violations=' (cases=2363 violations=)
+
+  • EVERY row of the real models.dev catalog satisfies the guard contract
+    [PASS] live-catalog contract: 'swept>=1000 True violations=' (swept>=1000 True violations=)
+
+  • an output slot of 0 is UNKNOWN, never a binding cap of zero
+    [PASS] zero limits fall back to a real guard pair ([('context', 262144), ('output', 0)]->(262144, 102144) [('context', 0), ('output', 0)]->(128000, 8192) [('context', 0), ('output', 65536)]->(128000, 8192))
+
+  • the out>=context shape resolves identically with or without a pre-detector
+    [PASS] carve already subsumes out>=context: '' ()
+
+  • shipped overrides.json: nvidia strong slot holds the flagship, not the nano
+    [PASS] nvidia strong = ultra-550b (nvidia/nemotron-3-ultra-550b-a55b)
+    [PASS] nvidia fast = nano-omni-30b (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)
+
+  • VCS token is skipped, unknown llm key is unmapped
+    [PASS] GITHUB_TOKEN skipped (skipped)
+    [PASS] GITHUB_TOKEN vcs (vcs)
+    [PASS] FOO_API_KEY unmapped (unmapped)
+
+  • sync exits cleanly
+    [PASS] sync rc (0)
+
+  • cmd_sync heals a stale/outdated cma_run_provider wrapper (final-review I-2)
+    [PASS] wrapper is stale before re-sync (no _cma_force) (0)
+    [PASS] cmd_sync healed the stale wrapper (_cma_force restored) (0)
+
+  • present_key_vars dies clearly when CMA_KEYS_FILE is a directory (v1.12.1 5a)
+    [PASS] directory keys-file -> clear 'is a directory' die (0)
+    [PASS] directory keys-file -> non-zero exit (not silent 0 key vars) (0)
+
+  • cmd_sync_multi ALSO dies clearly on a directory keys-file (v1.12.1 5a, --multi path)
+    [PASS] --multi directory keys-file -> clear die (0)
+    [PASS] --multi directory keys-file -> non-zero exit (not silent 0 key vars) (0)
+
+  • sync persists per-provider verification status (--no-verify -> unverified)
+    [PASS] status cache written by sync: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/status.json
+    [PASS] acme status persisted (unverified)
+    [PASS] mistral status persisted (unverified)
+    [PASS] opencode status persisted (unverified)
+    [PASS] no dummy key values leaked into status cache: 'dummy-' absent from status.json
+
+  • env files created for each resolved provider
+    [PASS] acme env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/acme.env
+    [PASS] beta env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/beta.env
+    [PASS] mistral env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/mistral.env
+
+  • provider aliases written via cma_run_provider
+    [PASS] acme alias (0)
+    [PASS] beta alias (0)
+
+  • CODESTRAL_API_KEY + MISTRAL_API_KEY dedupe to ONE mistral alias
+    [PASS] exactly one mistral alias (1)
+
+  • native vs router transport recorded in env file
+    [PASS] acme native (0)
+    [PASS] beta router (0)
+
+  • zai-coding-plan env file created with coding endpoint and strong/fast overrides
+    [PASS] zai-coding-plan env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/zai-coding-plan.env
+    [PASS] coding endpoint (0)
+    [PASS] strong model glm-5.2 (0)
+    [PASS] fast model glm-4.7 (0)
+    [PASS] zai-coding-plan router (0)
+
+  • zai-coding-plan alias written via cma_run_provider
+    [PASS] zai-coding-plan alias (0)
+
+  • xiaomi env file created with router transport + /v1 base + pinned models
+    [PASS] xiaomi env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/xiaomi.env
+    [PASS] xiaomi router transport (0)
+    [PASS] xiaomi /v1 base (0)
+    [PASS] xiaomi strong model mimo-v2.5-pro (0)
+    [PASS] xiaomi fast model mimo-v2.5 (0)
+    [PASS] xiaomi keyvar pinned (0)
+
+  • xiaomi alias written via cma_run_provider
+    [PASS] xiaomi alias (0)
+
+  • config dir created and shared items symlinked
+    [PASS] acme config dir: /tmp/cma-test.uOwdD8/.claude-prov-acme
+    [PASS] plugins linked: /tmp/cma-test.uOwdD8/.claude-prov-acme/plugins -> /tmp/cma-test.uOwdD8/.claude-shared/plugins
+
+  • xiaomi config dir created and shared items symlinked
+    [PASS] xiaomi config dir: /tmp/cma-test.uOwdD8/.claude-prov-xiaomi
+    [PASS] xiaomi plugins linked: /tmp/cma-test.uOwdD8/.claude-prov-xiaomi/plugins -> /tmp/cma-test.uOwdD8/.claude-shared/plugins
+
+  • xiaomi provider dir excluded from account detection
+    [PASS] prov-xiaomi excluded from detection (1)
+
+  • opencode env file created with router transport + zen/v1 base + pinned models
+    [PASS] opencode env: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/opencode.env
+    [PASS] opencode router transport (0)
+    [PASS] opencode zen/v1 base (0)
+    [PASS] opencode strong model big-pickle (0)
+    [PASS] opencode fast model deepseek-v4-flash-free (0)
+    [PASS] opencode keyvar ApiKey_Opencode_Zen (0)
+
+  • opencode alias written via cma_run_provider
+    [PASS] opencode alias (0)
+
+  • opencode config dir created and shared items symlinked
+    [PASS] opencode config dir: /tmp/cma-test.uOwdD8/.claude-prov-opencode
+    [PASS] opencode plugins linked: /tmp/cma-test.uOwdD8/.claude-prov-opencode/plugins -> /tmp/cma-test.uOwdD8/.claude-shared/plugins
+
+  • opencode provider dir excluded from account detection
+    [PASS] prov-opencode excluded from detection (1)
+
+  • the existing claudeN alias is untouched
+    [PASS] claude1 still present (0)
+
+  • provider dirs remain excluded from account detection after sync
+    [PASS] prov-acme excluded (1)
+
+  • no secret values leaked into env files or alias file
+    [PASS] no key values present (1)
+
+  • sync is idempotent — second run does not duplicate aliases
+    [PASS] still one acme alias after re-sync (1)
+    [PASS] still one xiaomi alias after re-sync (1)
+    [PASS] still one opencode alias after re-sync (1)
+
+  • list family splits by status: list=verified, list-all=all, list-faulty=faulty
+    [PASS] list-all shows unverified acme (0)
+    [PASS] list-faulty shows unverified acme (0)
+    [PASS] list (verified-only) hides unverified acme (0)
+    [PASS] list shows acme once verified (0)
+    [PASS] list-faulty hides acme once verified (0)
+
+  • remove deletes alias + env, backs up config dir
+    [PASS] beta env gone (0)
+    [PASS] beta alias gone (1)
+
+  • zsh smoke test (skipped — zsh not installed)
+    [PASS] zsh not present; bash path covered elsewhere
+/tmp/cma-test.uOwdD8/.claude-xacct1
+/tmp/cma-test.uOwdD8/.claude-xacct2
+
+  • sync-state merge includes provider dirs
+    [PASS] sync-state all exit 0 (0)
+
+  • session from account1 is visible in account2 after sync
+    [PASS] acct2 sees sess-a1 (True)
+
+  • session from provider dir is visible in account1 after sync
+    [PASS] acct1 sees sess-cz (True)
+
+  • session from provider dir is visible in account2 after sync
+    [PASS] acct2 sees sess-cz (True)
+
+  • session from account1 is visible in provider dir after sync
+    [PASS] prov-zen sees sess-a1 (True)
+
+  • session from account2 is visible in provider dir after sync
+    [PASS] prov-zen sees sess-b2 (True)
+
+  • cma_run_provider wrapper has sync-state pull+push in alias file
+    [PASS] pull present in wrapper (0)
+    [PASS] push present in wrapper (0)
+
+  • cma_run wrapper also has sync-state pull+push
+    [PASS] cma_run pull (0)
+    [PASS] cma_run push (0)
+
+  • cma_run has provider-env isolation (clears leaked ANTHROPIC_* before native launch)
+    [PASS] cma_run unsets ANTHROPIC_BASE_URL (0)
+
+  • migration regenerating cma_run does NOT drop it (BRE empty-group \(\) bug regression)
+    [PASS] cma_run re-appended after migration (not dropped) (1)
+    [PASS] cma_run_provider preserved (1)
+    [PASS] claudeN alias preserved through migration (1)
+    [PASS] regenerated cma_run carries the env-isolation fix (1)
+
+  • emitted cma_run_provider exports CLAUDE_CODE_AUTO_COMPACT_WINDOW from CMA_PROVIDER_CONTEXT_LIMIT (input token-limit guard)
+    [PASS] auto-compact-window exported from the derived window (0)
+    [PASS] the derived window's input is CMA_PROVIDER_CONTEXT_LIMIT (0)
+    [PASS] window seeded from the sanitized context limit (0)
+
+  • cma_run_provider does NOT export the window when CMA_PROVIDER_CONTEXT_LIMIT is empty/unknown
+    [PASS] export CLAUDE_CODE_AUTO_COMPACT_WINDOW is inside the known-context guard (0)
+
+  • migration regenerates an outdated cma_run_provider that lacks the auto-compact cap guard
+    [PASS] old-format alias file parses (bash -n) (0)
+    [PASS] old body lacks _cma_compact_cap guard marker (pre-migration) (1)
+    [PASS] exactly one cma_run_provider() after migration (1)
+    [PASS] kimi-for-coding alias preserved through migration (1)
+    [PASS] regenerated cma_run_provider restores the _cma_compact_cap guard (1)
+
+  • migration regenerates an outdated cma_run_provider lacking the Kimi markers (v1.15.0)
+    [PASS] old-format alias file parses (bash -n) (0)
+    [PASS] old body lacks proxy-discovery marker (pre-migration) (1)
+    [PASS] old body lacks OAuth freshness marker (pre-migration) (1)
+    [PASS] regenerated body carries cma-proxy discovery (0)
+    [PASS] regenerated body carries OAuth token freshness (0)
+    [PASS] kimi-for-coding alias preserved through migration (1)
+
+  • claude-providers list-all does NOT abort on a provider with no alias line
+    [PASS] list-all exits 0 (no abort on the alias-less provider) (0)
+    [PASS] list-all still shows the alias-less provider (0)
+
+  • claude-providers remove does NOT abort on a provider with no alias line
+    [PASS] remove exits 0 (no abort before deleting the env) (0)
+    [PASS] remove actually deleted the provider env file (0)
+
+  • cma_provider_write_env: a 'null' model/transport/base is normalized to empty
+    [PASS] null strong_model normalized to empty (not 'null') (0)
+    [PASS] null transport normalized to empty (0)
+    [PASS] null base_url normalized to empty (0)
+    [PASS] no provider field contains the literal string 'null' (0)
+
+  • cma_run_provider router-config write is noclobber-safe (>| not bare >)
+    [PASS] router jq write uses force-clobber >| (0)
+    [PASS] no bare '> $tmp' write remains in cma_run_provider (0)
+
+  • noclobber proof: bare > is blocked on an existing mktemp file, >| succeeds
+    [PASS] bare '>' blocked by noclobber (1)
+    [PASS] '>|' force-clobber works under noclobber (1)
+
+  • unknown provider id reads as 'pending'
+    [PASS] unknown id -> pending (pending)
+
+  • cma_status_write persists a status readable by cma_status_read
+    [PASS] wrote + read verified (verified)
+    [PASS] model persisted (.st_deepseek.model = deepseek-chat)
+    [PASS] verified has empty failing_layer (.st_deepseek.failing_layer = )
+
+  • cma_status_write upserts (overwrites same id, no duplicate record)
+    [PASS] upsert changed status (unverified)
+    [PASS] failing_layer recorded (.st_deepseek.failing_layer = semantic)
+    [PASS] still exactly one record (upsert, not append) (. | length = 1)
+
+  • cma_status_all lists every record as tab-separated rows
+    [PASS] two records listed (2)
+    [PASS] groq row present with fields (0)
+
+  • no secret/key material is ever written into the status cache
+    [PASS] no bearer-token prefix in cache: 'sk-' absent from status.json
+    [PASS] no Authorization header in cache: 'Bearer' absent from status.json
+
+  • gate subshells load cma_run_provider from the sandbox alias file, not the host
+    [PASS] gate subshell wrapper provenance: cma_run_provider came from /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/aliases.sh
+
+  • activation gate: unverified alias refuses to launch (rc 3, actionable message)
+    [PASS] unverified alias returns 3 (gate refused) (3)
+    [PASS] gate prints 'not launching' (0)
+    [PASS] gate suggests re-verify via sync (0)
+
+  • activation gate: failed alias also refuses
+    [PASS] failed alias returns 3 (3)
+
+  • activation gate: pending (no cache entry) refuses
+    [PASS] pending alias returns 3 (3)
+
+  • activation gate: verified alias launches (CLAUDE_BIN=/usr/bin/true -> rc 0)
+    [PASS] verified alias launches (0)
+
+  • activation gate: --force overrides a non-verified status (both arg positions)
+    [PASS] --force after id launches (0)
+    [PASS] --force before id launches (0)
+
+  • activation gate is present in the emitted cma_run_provider body
+    [PASS] emitted body carries the --force/gate marker (0)
+
+  • env files persist CMA_PROVIDER_ALIAS (the no-network refresh source)
+    [PASS] acme env carries its alias name: 'CMA_PROVIDER_ALIAS='acme'' in acme.env
+
+  • --refresh-aliases rebuilds a removed alias line from cache (no network)
+    [PASS] acme alias line removed (precondition) (0)
+    [PASS] acme alias restored by refresh (0)
+
+  • --refresh-aliases is idempotent
+    [PASS] second refresh yields an identical alias file (# cma-managed BEGIN — regenerated by claude-multi-account; do not edit inside
+# Managed by claude-multi-account. Do not edit by hand; use
+# ~/.local/bin/claude-add-account to add accounts.
+export CLAUDE_BIN="/usr/bin/true"
+
+# True when $1 is a URL pointing at the LOCAL ccr gateway (port $2, default
+# $CMA_CCR_PORT or 3456). Such a base_url has no upstream: routing through it
+# means serving whatever provider ccr last routed to, with no error anywhere.
+# Matches the whole 127/8 range, 0.0.0.0, `localhost` in any case, and IPv6
+# loopback in every spelling (::1, 0:0:0:0:0:0:0:1, ::ffff:127.0.0.1, …),
+# tolerating userinfo, path, query and fragment. A different port, a
+# non-loopback host, or a remote https base is NOT a match.
+_cma_is_ccr_gateway() {
+  local url="${1:-}" want="${2:-${CMA_CCR_PORT:-3456}}" hp host port v4 squash
+  [[ -n "$url" ]] || return 1
+  hp="${url#*://}"          # drop the scheme
+  hp="${hp%%/*}"            # drop the path
+  hp="${hp%%\?*}"           # drop a query that followed no path
+  hp="${hp%%#*}"            # drop a fragment that followed no path
+  hp="${hp##*@}"            # drop userinfo (greedy: the LAST '@' wins)
+  case "$hp" in
+    \[*\]:*) host="${hp%]:*}"; host="${host#[}"; port="${hp##*]:}" ;;
+    *:*)     host="${hp%%:*}"; port="${hp##*:}" ;;
+    *)       return 1 ;;    # no explicit port -> not the gateway
+  esac
+  [[ "$port" == "$want" ]] || return 1
+  host="$(printf '%s' "$host" | tr '[:upper:]' '[:lower:]')"
+  case "$host" in
+    localhost|localhost.localdomain) return 0 ;;
+    0.0.0.0) return 0 ;;
+    # 127/8, but only as a real dotted quad: `127.example.com` is a hostname.
+    127.*) case "$host" in *[!0-9.]*) return 1 ;; *) return 0 ;; esac ;;
+    # IPv4-mapped/compatible IPv6 (::ffff:127.0.0.1): grade the embedded v4.
+    *:*.*.*.*)
+      v4="${host##*:}"
+      case "$v4" in
+        *[!0-9.]*) return 1 ;;
+        127.*|0.0.0.0) return 0 ;;
+        *) return 1 ;;
+      esac ;;
+    # Pure IPv6: loopback (::1) and unspecified (::) in any zero-compression.
+    *:*)
+      squash="${host//:/}"; squash="${squash//0/}"
+      [[ -z "$squash" || "$squash" == "1" ]] && return 0
+      return 1 ;;
+  esac
+  return 1
+}
+
+# Wrapper: keeps .claude.json projects/session index synced across every
+# logged-in account. Pulls merged state from every account into the launching
+# one before claude runs; pushes the post-session state back out after exit.
+# Cheap (jq deep-merge of one ~50KB file per account), runs unconditionally.
+cma_run() {
+  # Self-heal CLAUDE_BIN: the alias file normally exports it at the top, but if
+  # that header line is missing (corrupted or hand-edited alias file) every
+  # invocation would silently expand to an empty command ("-bash: : command
+  # not found"). Mirrors cma_resolve_claude_bin inline so the function body is
+  # self-contained regardless of the header state. §11.4.185.
+  if ! command -v "${CLAUDE_BIN:-}" >/dev/null 2>&1; then
+    if command -v claude >/dev/null 2>&1; then
+      CLAUDE_BIN="$(command -v claude)"
+    else
+      for _cma_cb in "$HOME/.local/bin/claude" "$HOME/.npm-global/bin/claude" \
+                     /opt/homebrew/bin/claude /usr/local/bin/claude; do
+        [ -x "$_cma_cb" ] && { CLAUDE_BIN="$_cma_cb"; break; }
+      done
+      if ! command -v "${CLAUDE_BIN:-}" >/dev/null 2>&1; then
+        printf 'cma_run: claude binary not found — check PATH or re-run install.sh\n' >&2
+        return 127
+      fi
+    fi
+  fi
+  # Provider-env isolation: native claudeN must talk to the real Anthropic API.
+  # A provider alias run earlier in THIS shell exports ANTHROPIC_BASE_URL etc.;
+  # those persist and would otherwise leak into this native launch (claude1
+  # silently using a provider's endpoint). Clear them so native is always clean.
+  # The 4 ANTHROPIC_DEFAULT_*_MODEL tier-map vars are exported by
+  # cma_run_provider (native transport) and PERSIST after that alias returns; a
+  # subsequent native claudeN launch MUST clear them too, else the opus/sonnet/
+  # haiku/fable tier resolution silently points at the previous provider's
+  # serving model instead of the real Anthropic tier.
+  unset ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL ANTHROPIC_SMALL_FAST_MODEL
+  unset ANTHROPIC_DEFAULT_OPUS_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_FABLE_MODEL
+  # Token-guard isolation: cma_run_provider exports CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  # (output cap, clamped <=128000), CLAUDE_CODE_AUTO_COMPACT_WINDOW (input
+  # compact trigger) and CLAUDE_CODE_MAX_CONTEXT_TOKENS (the provider's real
+  # context size for client-side accounting) for every provider alias; ALL
+  # persist in this shell after that alias returns. A subsequent native claudeN
+  # launch MUST clear them, else native inherits a provider's (possibly small)
+  # output cap, compact window, or context size instead of the real Anthropic
+  # per-model defaults — silently capping native's output or early-compacting
+  # its context. Parallels the ANTHROPIC_DEFAULT_* tier-map isolation above.
+  unset CLAUDE_CODE_MAX_OUTPUT_TOKENS CLAUDE_CODE_AUTO_COMPACT_WINDOW CLAUDE_CODE_MAX_CONTEXT_TOKENS
+  # Working-dir hook (opt-in; no-op when absent). Resolution order:
+  #   1. CMA_CWD_HOOK env var               — explicit user override
+  #   2. <git-toplevel>/.claude-cwd-hook     — per-project hook (each repo
+  #      gets its own multitrack resolver, preventing a single global hook
+  #      from hijacking every project’s sessions)
+  #   3. ~/.local/bin/claude-cwd-hook        — global fallback
+  # The hook runs before claude-session (below) so auto-session keys to the
+  # resolved worktree root. Escape hatch: MULTITRACK_DISABLE=1 (honored
+  # inside the hook itself; the toolkit does not check it).
+  local _cma_cwd_hook _cma_cwd_label _cma_cwd_target
+  if [[ -n "${CMA_CWD_HOOK:-}" ]]; then
+    _cma_cwd_hook="$CMA_CWD_HOOK"
+  else
+    local _cma_hook_root
+    _cma_hook_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+    if [[ -x "$_cma_hook_root/.claude-cwd-hook" ]]; then
+      _cma_cwd_hook="$_cma_hook_root/.claude-cwd-hook"
+    else
+      _cma_cwd_hook="$HOME/.local/bin/claude-cwd-hook"
+    fi
+  fi
+  if [[ -x "$_cma_cwd_hook" ]] && ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    _cma_cwd_label="$(basename "${CLAUDE_CONFIG_DIR:-claude}")"; _cma_cwd_label="${_cma_cwd_label#.claude-}"
+    _cma_cwd_target="$("$_cma_cwd_hook" "$_cma_cwd_label" 2>/dev/null || true)"
+    if [[ -n "$_cma_cwd_target" && -d "$_cma_cwd_target" ]]; then cd "$_cma_cwd_target" 2>/dev/null || true; fi
+  fi
+  if [[ -x "$HOME/.local/bin/claude-sync-state" ]]; then
+    "$HOME/.local/bin/claude-sync-state" pull "$CLAUDE_CONFIG_DIR" 2>/dev/null || true
+  fi
+  # Auto session-per-project: when launched with NO args, resume (or create) the
+  # one long-lived session for this project root, name it after the root dir,
+  # trust the workspace, and hint the alias color. Only when bare so explicit
+  # user flags (-p, --resume, a prompt, …) are always respected verbatim.
+  # claude-session emits only "--resume <uuid>" or "--session-id <uuid> --name
+  # <kebab>" (no shell metacharacters), so eval-splitting is safe and works in
+  # both bash and zsh (zsh does not word-split unquoted expansions).
+  local _cma_label=""
+  if [[ $# -eq 0 && -x "$HOME/.local/bin/claude-session" ]]; then
+    local _cma_sf
+    _cma_sf="$("$HOME/.local/bin/claude-session" flags "$CLAUDE_CONFIG_DIR" 2>/dev/null || true)"
+    _cma_label="$(basename "${CLAUDE_CONFIG_DIR:-claude}")"; _cma_label="${_cma_label#.claude-}"
+    "$HOME/.local/bin/claude-session" hint "$_cma_label" 2>/dev/null || true
+    eval "set -- $_cma_sf"
+    # Auto-apply the per-alias color: a resumable session's jsonl exists now, so
+    # colour it before launch; a brand-new session's file appears during launch,
+    # so we colour it again after exit (see post-launch call below).
+    "$HOME/.local/bin/claude-session" apply-color "$CLAUDE_CONFIG_DIR" "$_cma_label" 2>/dev/null || true
+  fi
+  "$CLAUDE_BIN" "$@"
+  local rc=$?
+  if [[ -x "$HOME/.local/bin/claude-sync-state" ]]; then
+    "$HOME/.local/bin/claude-sync-state" push "$CLAUDE_CONFIG_DIR" 2>/dev/null || true
+  fi
+  [[ -n "$_cma_label" && -x "$HOME/.local/bin/claude-session" ]] && \
+    "$HOME/.local/bin/claude-session" apply-color "$CLAUDE_CONFIG_DIR" "$_cma_label" 2>/dev/null || true
+  return $rc
+}
+
+cma_run_provider() {
+  # Self-heal CLAUDE_BIN (same as cma_run — §11.4.185). Prevents "-bash: : command
+  # not found" when the alias-file header export line is missing. Also resolves
+  # the binary for the native-transport path ("$CLAUDE_BIN" "$@") below.
+  if ! command -v "${CLAUDE_BIN:-}" >/dev/null 2>&1; then
+    if command -v claude >/dev/null 2>&1; then
+      CLAUDE_BIN="$(command -v claude)"
+    else
+      for _cma_cb in "$HOME/.local/bin/claude" "$HOME/.npm-global/bin/claude" \
+                     /opt/homebrew/bin/claude /usr/local/bin/claude; do
+        [ -x "$_cma_cb" ] && { CLAUDE_BIN="$_cma_cb"; break; }
+      done
+    fi
+  fi
+  if ! command -v "${CLAUDE_BIN:-}" >/dev/null 2>&1; then
+    printf 'claude-providers: claude binary not found — check PATH or re-run install.sh\n' >&2
+    return 127
+  fi
+  # --force bypasses the activation gate (operator override). Accepted BOTH as
+  # the very first arg (direct call: cma_run_provider --force <id>) and as the
+  # first arg after the id (alias path: `<alias> --force` expands to
+  # cma_run_provider <id> --force). Either way it is consumed, not forwarded.
+  local _cma_force=0
+  if [[ "${1:-}" == "--force" ]]; then _cma_force=1; shift; fi
+  local id="$1"; shift 2>/dev/null || true
+  if [[ "${1:-}" == "--force" ]]; then _cma_force=1; shift; fi
+  local pdir="$HOME/.local/share/claude-multi-account/providers"
+  local envf="$pdir/$id.env"
+  if [[ ! -f "$envf" ]]; then
+    printf 'claude-providers: unknown provider %s (missing %s)\n' "$id" "$envf" >&2
+    return 1
+  fi
+  # shellcheck disable=SC1090
+  source "$envf"
+  # Cross-alias env isolation: unset any ANTHROPIC_*/CLAUDE_CODE_* vars that
+  # leaked from a PREVIOUS cma_run_provider invocation in this shell. The
+  # transport-specific branches below re-export them from this provider's
+  # CMA_PROVIDER_* vars (fresh from source "$envf"), so the unset here is
+  # only clearing the leftover from the previous alias — identical to how
+  # cma_run (the native claudeN wrapper) isolates its ANTHROPIC_* vars.
+  unset ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL ANTHROPIC_SMALL_FAST_MODEL
+  # The 4 tier-default-model vars this same wrapper exports (native branch below)
+  # also persist into a following alias invocation; clear the previous run's
+  # values so this provider re-exports its own from CMA_PROVIDER_MODEL below.
+  unset ANTHROPIC_DEFAULT_OPUS_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_FABLE_MODEL
+  unset CLAUDE_CODE_AUTO_COMPACT_WINDOW CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  # Working-dir hook (same 3-tier resolution as cma_run). This must run
+  # BEFORE sync-state pull + session flags so the resolved directory is the
+  # session's canonical cwd. Without this, provider aliases ignore the
+  # multitrack resolver and launch in whatever $PWD the user happened to be in.
+  local _cma_cwd_hook _cma_cwd_label _cma_cwd_target
+  if [[ -n "${CMA_CWD_HOOK:-}" ]]; then
+    _cma_cwd_hook="$CMA_CWD_HOOK"
+  else
+    local _cma_hook_root
+    _cma_hook_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+    if [[ -x "$_cma_hook_root/.claude-cwd-hook" ]]; then
+      _cma_cwd_hook="$_cma_hook_root/.claude-cwd-hook"
+    else
+      _cma_cwd_hook="$HOME/.local/bin/claude-cwd-hook"
+    fi
+  fi
+  if [[ -x "$_cma_cwd_hook" ]] && ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    _cma_cwd_label="$(basename "${CLAUDE_CONFIG_DIR:-claude}")"; _cma_cwd_label="${_cma_cwd_label#.claude-}"
+    _cma_cwd_target="$("$_cma_cwd_hook" "$_cma_cwd_label" 2>/dev/null || true)"
+    if [[ -n "$_cma_cwd_target" && -d "$_cma_cwd_target" ]]; then cd "$_cma_cwd_target" 2>/dev/null || true; fi
+  fi
+  # Activation gate: only a 'verified' alias launches Claude Code. A non-verified
+  # alias (unverified / failed / pending) prints a clear, actionable message and
+  # refuses to launch, so a broken provider never surfaces as a confusing
+  # in-session error. Status comes from the non-secret status cache; this body is
+  # self-contained (no cma_* helpers) so it reads status.json with jq inline.
+  if (( ! _cma_force )); then
+    local _cma_sf="$pdir/status.json" _cma_st="pending"
+    if command -v jq >/dev/null 2>&1 && [[ -s "$_cma_sf" ]]; then
+      _cma_st="$(jq -r --arg i "$CMA_PROVIDER_ID" '.[$i].status // "pending"' "$_cma_sf" 2>/dev/null)"
+      [[ -n "$_cma_st" && "$_cma_st" != "null" ]] || _cma_st="pending"
+    fi
+    if [[ "$_cma_st" != "verified" ]]; then
+      printf 'claude-providers: alias %s is %s — not launching.\n' "$CMA_PROVIDER_ID" "$_cma_st" >&2
+      printf '  Re-verify: claude-providers sync   (re-runs verification for %s)\n' "$CMA_PROVIDER_ID" >&2
+      printf '  Override (operator): run the alias with --force\n' >&2
+      return 3
+    fi
+  fi
+  local keysf="${CMA_KEYS_FILE:-$HOME/api_keys.sh}"
+  # Disable nounset while sourcing the user-controlled keys file: it may have
+  # dangling refs (e.g. `export X=$UNSET`) that would abort the source under a
+  # caller's `set -u`, leaving the token empty. Save/restore so we never change
+  # the user's interactive shell options.
+  if [[ -f "$keysf" ]]; then
+    case $- in *u*) local _cma_had_u=1 ;; *) local _cma_had_u=0 ;; esac
+    set -a +u; source "$keysf"; set +a
+    (( _cma_had_u )) && set -u
+  fi
+  # Indirect-expand the key var name. ${!var} is bash-only and a fatal error in
+  # zsh (the default macOS interactive shell this alias file is sourced into),
+  # so use eval, which works in both. CMA_PROVIDER_KEYVAR is a validated env
+  # var name ([A-Za-z_][A-Za-z0-9_]*), so this eval is safe.
+  local token="" _cma_xt=""
+  # Suppress xtrace around the indirect key read so an active `set -x` in the
+  # user's shell can't echo the secret to the terminal or a redirected log.
+  case $- in *x*) _cma_xt=1; set +x ;; esac
+  # Kimi Code OAuth sentinel: the OAuth token is SHORT-LIVED (~15 min), so a
+  # sync-time snapshot is stale by the next launch. Freshness order:
+  #  1. the LIVE kimi-code credentials file, when unexpired (60s skew);
+  #  2. a CLI-triggered refresh (kimi -p hi) followed by a re-read of 1;
+  #  3. the token-file snapshot written at sync (last resort only).
+  if [[ "$CMA_PROVIDER_KEYVAR" == "_CMA_KIMICODE_OAUTH_" ]]; then
+    local _cma_kcred="$HOME/.kimi-code/credentials/kimi-code.json"
+    if [[ -f "$_cma_kcred" ]] && command -v jq >/dev/null 2>&1; then
+      local _cma_kexp; _cma_kexp="$(jq -r '.expires_at // 0' "$_cma_kcred" 2>/dev/null || echo 0)"
+      if (( _cma_kexp > $(date +%s) + 60 )); then
+        token="$(jq -r '.access_token // ""' "$_cma_kcred" 2>/dev/null)"
+      fi
+    fi
+    if [[ -z "$token" && -f "$_cma_kcred" ]] && command -v kimi >/dev/null 2>&1; then
+      timeout 20 kimi -p "hi" --output-format text >/dev/null 2>&1 || true
+      token="$(jq -r '.access_token // ""' "$_cma_kcred" 2>/dev/null)"
+    fi
+    if [[ -z "$token" ]]; then
+      local _cma_ktok="$pdir/${CMA_PROVIDER_ID}.token"
+      [[ -f "$_cma_ktok" ]] && token="$(cat "$_cma_ktok" 2>/dev/null)" || token=""
+    fi
+  else
+    eval "token="\${$CMA_PROVIDER_KEYVAR:-}""
+  fi
+  [[ -n "$_cma_xt" ]] && set -x
+  if [[ -z "$token" ]]; then
+    printf 'claude-providers: $%s is empty (set it in %s)\n' "$CMA_PROVIDER_KEYVAR" "$keysf" >&2
+    return 1
+  fi
+  export CLAUDE_CONFIG_DIR="$CMA_PROVIDER_CONFIG_DIR"
+  # Input-context guard (fixes "400 exceeded model token limit: 262144
+  # (requested: 311786)"): tell Claude Code this provider's REAL context window
+  # so it auto-compacts (at window-13000) before a request overshoots the
+  # provider's hard input limit. Without this, Claude Code assumes Anthropic's
+  # own large (~1M) window and lets the prompt grow past a smaller provider's
+  # cap. Fully dynamic — the value is CMA_PROVIDER_CONTEXT_LIMIT, resolved from
+  # the models.dev catalog (limit.context) per selected model. Applies to BOTH
+  # transports (native + router), so every provider alias is protected.
+  # NOTE: this caps INPUT context; CLAUDE_CODE_MAX_OUTPUT_TOKENS (set just
+  # below, before the transport branch, BOTH transports, clamped <=128000)
+  # caps OUTPUT — the two are independent halves of the guard.
+  # Auto-compact cap: only lower the window; never raise it above ~200K.
+  # Providers with >200K context (DeepSeek 1M, Xiaomi 1M) do not need the full
+  # window — exporting it disables auto-compaction until ~987K, filling the
+  # session before compacting. CMA_AUTO_COMPACT_CAP overrides.
+  #
+  # _cma_in_guard (v1.24.0): the input guard is exported for EVERY provider
+  # with a known context, CLAMPED — never skipped. The previous gate
+  # ("export only when CONTEXT_LIMIT <= cap") was FAIL-OPEN and backwards: a
+  # provider whose context was LARGER than the cap got no input guard at all,
+  # which is precisely the case that needs one. openrouter (catalog context
+  # 1000000) therefore ran unguarded on the input side while the output side
+  # reserved 128000, and the request overshot the endpoint's real 262144
+  # window: 33796 + 103687 + 128000 = 265483. See _cma_out_guard below for the
+  # matching output half; the window is computed AFTER it, from ctx - out, so
+  # the two halves cannot sum past the context.
+  # --- cma-token-guards:begin --- (extracted verbatim by test_providers.sh;
+  # the guards are pure arithmetic over CMA_PROVIDER_{CONTEXT_LIMIT,MAX_OUTPUT},
+  # so the suite can exercise the SHIPPED source without launching anything.)
+  local _cma_compact_cap="${CMA_AUTO_COMPACT_CAP:-200000}"
+  # _cma_out_guard (v1.16.0) + <=128000 clamp (§11.4.108/§11.4.111): output-
+  # token cap for BOTH transports, not just native. Without it, router
+  # providers run with Claude Code's generic default output cap (128000 for
+  # models it does not know) and long reasoning responses die with "Claude's
+  # response exceeded the 128000 output token maximum". The value starts from
+  # the provider model's REAL output limit (models.dev limit.output via
+  # CMA_PROVIDER_MAX_OUTPUT); proxies may clamp further API-side
+  # (sarvam_proxy's tier clamp). Exported ONCE here, before the transport
+  # branch, so router AND native behave identically (previously only the
+  # native branch re-exported it — an unclamped, transport-asymmetric raw
+  # value).
+  # Catalog caveat (live-proven on nvidia5): when limit.output >=
+  # limit.context the "output" number is really the context size — exporting
+  # it makes Claude Code request that many completion tokens, and
+  # input+request overshoots the shared window (400 "maximum context length
+  # is N … you requested M"). Only a genuinely separate output budget
+  # (output < context) is exported.
+  # Clamp caveat (live-proven, 128k Tier-1): exporting the model's THEORETICAL
+  # limit.output when it exceeds the CLI's own custom-model ceiling (deepseek
+  # 384000, xiaomi 131072) makes Claude Code request its OWN unknown-model
+  # ceiling (128000) and then FATALLY abort any length-truncated response:
+  # "…exceeded the 128000 output token maximum… set
+  # CLAUDE_CODE_MAX_OUTPUT_TOKENS". The CLI hard-caps custom models to 128000
+  # regardless, so any value >128000 is pointless — clamp to
+  # min(CMA_PROVIDER_MAX_OUTPUT, 128000).
+  # Sanitize-then-decide order is load-bearing (POSIX-shape so it behaves
+  # identically whether this body is sourced by bash or zsh), and NO
+  # arithmetic ever runs on an unsanitized value ([ N -gt .. ] errors past
+  # 2^63-1, and (( )) errors on non-integers — CMA_PROVIDER_MAX_OUTPUT traces
+  # to the user-settable CMA_HELIXAGENT_MAX_OUTPUT, fed via 'jq --argjson'
+  # which preserves huge-int digits verbatim, so both shapes are reachable):
+  #   1. empty / non-plain-integer (negatives, "1e6", "12.5") / zero -> NO
+  #      export: no real output budget is known, and the CLI's own
+  #      unknown-model default (128000) applies exactly as if the catalog had
+  #      no entry. (The pre-merge always-export-128000 default was
+  #      effect-equivalent for known models but could resurrect the nvidia5
+  #      overshoot on small-context catalog-gap models — the conditional
+  #      no-export subsumes it safely.)
+  #   2. >18 digits: past intmax — no test/(( )) arithmetic is safe. Any real
+  #      context (<=18 digits) is smaller, so with a usable context this is
+  #      the mislabel shape (-> NO export); with no usable context it
+  #      collapses to the 128000 cap WITHOUT arithmetic on the raw value.
+  #   3. <=18 digits (test-safe): floor 0/00/000 to no-export, apply the
+  #      nvidia5 mislabel skip (output >= context -> NO export), then the
+  #      128000 clamp. A leading-zero form like 007 tests as 7 here, stays
+  #      <=128000, and exports as "007" (Claude Code parses it as decimal 7 —
+  #      min-semantics); a leading-zero 19+ digit form was already collapsed
+  #      by rule 2, so it is NEVER re-read as octal.
+  local _cma_out="${CMA_PROVIDER_MAX_OUTPUT:-}" _cma_octx="${CMA_PROVIDER_CONTEXT_LIMIT:-}"
+  case "$_cma_octx" in
+    ''|*[!0-9]*) _cma_octx="" ;;
+    *) [ "${#_cma_octx}" -le 18 ] || _cma_octx="" ;;
+  esac
+  case "$_cma_out" in
+    ''|*[!0-9]*) _cma_out="" ;;
+    *) if [ "${#_cma_out}" -gt 18 ]; then
+         # Past intmax no test/(( )) arithmetic is safe. With a known context
+         # the carve-out below supplies the cap; with none, fall back to the
+         # CLI ceiling WITHOUT arithmetic on the raw value (F2: never leak it
+         # unclamped).
+         if [ -n "$_cma_octx" ]; then _cma_out=""; else _cma_out=128000; fi
+       elif [ "$_cma_out" -lt 1 ]; then _cma_out=""
+       elif [ -n "$_cma_octx" ] && [ "$_cma_out" -ge "$_cma_octx" ]; then _cma_out=""
+       fi ;;
+  esac
+  # Carve the output cap OUT of the context instead of trusting it alongside
+  # the context (v1.24.0). Leaving it unset is NOT the safe fallback it looks
+  # like: Claude Code's own default for an unknown model is 128000, so "no
+  # export" IS a request for 128000 output tokens. kilo proves the point — its
+  # catalog row is the impossible ctx==out==262144, the mislabel branch above
+  # blanks the value, and the CLI default then reserves 128000 against a 262144
+  # window that must also carry Claude Code's ~137K system-prompt + tool-schema
+  # floor. Whenever the context is known we therefore always emit a cap that
+  # provably fits: min(catalog output, context - input floor), bounded by the
+  # CLI's own 128000 ceiling and floored at 8192.
+  # Keep this in lockstep with CLAUDE_CODE_INPUT_FLOOR / MIN_SAFE_OUTPUT /
+  # CLI_MAX_OUTPUT_TOKENS in providers_resolve.py: the resolver bakes these
+  # numbers into the .env, and this block is the last line of defence for a
+  # stale or hand-edited one.
+  local _cma_in_floor="${CMA_INPUT_FLOOR:-160000}" _cma_cap=""
+  if [ -n "$_cma_octx" ]; then
+    _cma_cap=$(( _cma_octx - _cma_in_floor ))
+    if [ "$_cma_cap" -gt 128000 ]; then _cma_cap=128000; fi
+    if [ "$_cma_cap" -lt 8192 ]; then _cma_cap=8192; fi
+    if [ -z "$_cma_out" ] || [ "$_cma_out" -gt "$_cma_cap" ]; then _cma_out="$_cma_cap"; fi
+  elif [ -n "$_cma_out" ] && [ "$_cma_out" -gt 128000 ]; then
+    _cma_out=128000
+  fi
+  if [ -n "$_cma_out" ]; then
+    export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$_cma_out"
+  fi
+  # Input half, computed from what the output half actually reserved so the two
+  # can never sum past the context. Clamped to the auto-compact cap, and
+  # exported for every known context — including the >cap ones the old gate
+  # silently skipped. This also closes the 200K-270K "dead zone", where a real
+  # window sat above the cap yet below cap+output and so got no guard at all.
+  #
+  # TOOL-SCHEMA BUDGET (live defect 2026-07-26, openrouter3): the old
+  # co-derivation window = context - output pretended the request is only
+  # text + output. The endpoint counts tools too — the provider's own 400
+  # named it: "maximum context length is 262144 … you requested about 371727
+  # tokens (199347 of text input, 70236 of tool input, 102144 in the output)".
+  # With window = 262144 - 102144 = 160000 the compact trigger sat at ~147000,
+  # and 147000 + 70236 tools + 102144 output = 319380 > 262144 — the endpoint
+  # rejected BEFORE compaction could ever help, on the FIRST request. The
+  # trigger must reserve for the tool payload as well:
+  #   window = context - output - CMA_TOOL_TOKEN_BUDGET (default 80000).
+  # BE EXACT ABOUT WHICH DIRECTION IS DANGEROUS — the earlier note here had it
+  # backwards. An UNDERestimate does NOT merely "compact earlier": because the
+  # output cap is derived as ctx - min_win - budget, too small a budget INFLATES
+  # the output cap, and the request then overflows and the launch dies with a
+  # 400. Measured live 2026-07-27 on a host with 227 enabled plugins: real tool
+  # input 158112 against this 80000 default gave
+  #   46536 text + 158112 tools + 62144 output = 266792  on a 262144 window.
+  # Note further that 158112 + 120000 (min window) already exceeds 262144, so on
+  # such a host NO output cap makes a 262144-context provider fit: the enabled
+  # plugin surface has to shrink, or a wider-context provider must be used
+  # (nvidia 1000000 and xiaomi 1048576 fit it comfortably). Override per host
+  # via CMA_TOOL_TOKEN_BUDGET in the provider env or the shell. A context too
+  # small to reserve the budget yields no window at all: that provider cannot
+  # serve Claude Code's tool prefix regardless, and the launch must fail
+  # loudly upstream (the proof's context-inadequate class) rather than be
+  # lied to by a guard that cannot hold.
+  if [ -n "$_cma_octx" ]; then
+    local _cma_win="$_cma_octx" _cma_tool_budget="${CMA_TOOL_TOKEN_BUDGET:-80000}"
+    local _cma_min_win="${CMA_MIN_COMPACT_WINDOW:-120000}"
+    if [ -n "$_cma_out" ]; then _cma_win=$(( _cma_octx - _cma_out )); fi
+    _cma_win=$(( _cma_win - _cma_tool_budget ))
+    # Compression-loop guard: if the window is below the minimum viable size,
+    # Claude Code triggers compaction on every request (system prompt + tool
+    # schemas alone exceed the window), enters an infinite compression loop,
+    # and never gets any work done. Raise the window by reducing the output
+    # cap when possible, rather than exporting a window that cannot hold the
+    # static overhead.
+    if [ "$_cma_win" -lt "$_cma_min_win" ] && [ -n "$_cma_out" ] && [ "$_cma_out" -gt 8192 ]; then
+      local _cma_new_out=$(( _cma_octx - _cma_min_win - _cma_tool_budget ))
+      if [ "$_cma_new_out" -ge 8192 ]; then
+        _cma_out="$_cma_new_out"
+        _cma_win="$_cma_min_win"
+        export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$_cma_out"
+      fi
+    fi
+    if [ "$_cma_win" -gt "$_cma_compact_cap" ]; then _cma_win="$_cma_compact_cap"; fi
+    # Autocompact thrashing guard (v1.26.8): the raw window above consumes every
+    # token the model can hold (text + tools + output = context). That leaves
+    # zero headroom for the compacted summary itself, so after Claude Code
+    # compacts the conversation the next large file read or tool output can
+    # refill the context to the limit within a few turns — the exact "Autocompact
+    # is thrashing" failure. Reserve a safety margin from the window so compaction
+    # fires earlier and the post-compact context has meaningful breathing room.
+    # The margin is applied ONLY when the provider can afford it without dropping
+    # below the minimum viable window; tight providers keep their existing window
+    # rather than trade one failure mode for another.
+    local _cma_safety_margin="${CMA_AUTO_COMPACT_SAFETY_MARGIN:-24000}"
+    case "$_cma_safety_margin" in
+      ''|0|*[!0-9]*) _cma_safety_margin=0 ;;
+    esac
+    if [ "$_cma_safety_margin" -gt 0 ] && [ "$_cma_win" -gt "$_cma_min_win" ]; then
+      local _cma_max_margin=$(( _cma_win - _cma_min_win ))
+      if [ "$_cma_safety_margin" -gt "$_cma_max_margin" ]; then
+        _cma_safety_margin="$_cma_max_margin"
+      fi
+      _cma_win=$(( _cma_win - _cma_safety_margin ))
+    fi
+    if [ "$_cma_win" -gt 0 ]; then
+      export CLAUDE_CODE_AUTO_COMPACT_WINDOW="$_cma_win"
+    fi
+  fi
+  # --- cma-token-guards:end ---
+  # Sync .claude.json projects/session index across ALL accounts and providers
+  # so sessions created under any alias are visible from every other alias.
+  # Pull merged state before launch; push post-session state after exit.
+  if [[ -x "$HOME/.local/bin/claude-sync-state" ]]; then
+    "$HOME/.local/bin/claude-sync-state" pull "$CLAUDE_CONFIG_DIR" 2>/dev/null || true
+  fi
+  # _cma_session_flags (v1.17.0): per-project session resolution applies to
+  # BOTH transports — previously the flags block lived only in the native
+  # branch, so every router alias (kimi-*, poe, openrouter, …) always opened
+  # a FRESH session and could never see the project session another alias
+  # left behind. It also now covers conversation args: `alias -p "…"` used to
+  # skip resolution entirely (verbatim-args rule) and start a new session
+  # every time. Explicit session selectors and non-conversation subcommands
+  # are always left verbatim.
+  local _cma_psf=""
+  if [[ -x "$HOME/.local/bin/claude-session" ]]; then
+    if [[ $# -eq 0 ]]; then
+      # TRIM providers skip the stored session flags here too: `flags` emits
+      # `--resume <id> …` for an existing project session, which drags the
+      # synced history into the INTERACTIVE path just like the auto-resume
+      # below does for conversation args (live issue 2026-07-22 — both seams
+      # must stay history-free or a local model's window overflows).
+      if [[ "${CMA_PROVIDER_TRIM:-}" != "bare" ]]; then
+        _cma_psf="$("$HOME/.local/bin/claude-session" flags "$CLAUDE_CONFIG_DIR" 2>/dev/null || true)"
+      fi
+      "$HOME/.local/bin/claude-session" hint "$CMA_PROVIDER_ID" 2>/dev/null || true
+      eval "set -- $_cma_psf"
+      # Auto-apply this provider alias's color to the session (idempotent).
+      "$HOME/.local/bin/claude-session" apply-color "$CLAUDE_CONFIG_DIR" "$CMA_PROVIDER_ID" 2>/dev/null || true
+      _cma_pcolor=1
+    else
+      case "$1" in
+        --resume|--session-id|--continue|--fork-session|-c) ;;
+        agents|mcp|export|doctor|install|update|config|plugin|setup|acp|server|web|provider) ;;
+        *)
+          # existing-id (NOT latest-id): latest-id falls back to the
+          # deterministic UUID for never-used projects, and injecting --resume
+          # with a session that was never created fails hard ("No conversation
+          # found with session ID"). Inject only for a session that EXISTS.
+          # TRIM providers (CMA_PROVIDER_TRIM=bare) SKIP the auto-resume: a
+          # fresh session per launch keeps the synced session history out of
+          # the request (live issue 2026-07-22: a 229,376-token local-model
+          # window refused every helixagent launch under ~330k tokens of
+          # resumed history — history must not ride along by default).
+          if [[ "${CMA_PROVIDER_TRIM:-}" != "bare" ]]; then
+            _cma_psf="$("$HOME/.local/bin/claude-session" existing-id "$CLAUDE_CONFIG_DIR" 2>/dev/null || true)"
+            [[ -n "$_cma_psf" ]] && set -- --resume "$_cma_psf" "$@"
+          fi
+          ;;
+      esac
+    fi
+  fi
+  # TRIM providers launch MINIMAL: --bare skips the hook/plugin/MCP/CLAUDE.md
+  # surface (~110k tokens of fixed tool schemas on a plugin-heavy host) so a
+  # session actually fits a local model's context window. Conversation
+  # launches only — non-conversation subcommands are left untouched.
+  if [[ "${CMA_PROVIDER_TRIM:-}" == "bare" ]]; then
+    case "${1:-}" in
+      agents|mcp|export|doctor|install|update|config|plugin|setup|acp|server|web|provider) ;;
+      *) set -- --bare "$@" ;;
+    esac
+  fi
+  local rc
+  local _proxy_pid=""
+  # Model + tier maps for BOTH transports (live defect 2026-07-26, Claude Code
+  # 2.1.220): these used to be exported only in the native branch below, so a
+  # ROUTER-transport alias launched with no ANTHROPIC_MODEL and no tier maps.
+  # 2.1.220 then resolves the tiers client-side — the fast/compact tier to
+  # "Fable 5", which the binary reports as CURRENTLY UNAVAILABLE ("Claude
+  # Fable 5 is currently unavailable. Please use Opus 4.8 or another available
+  # model."). Auto-compaction runs on that fast tier, so on the first session
+  # whose context crosses the compact trigger the compact call itself fails
+  # client-side: the context is never freed, compaction retries forever, and
+  # the alias is unusable — exactly the operator-reported compact loop, with
+  # ZERO requests reaching the gateway (verified: no /v1/messages in the
+  # per-alias service.log during the loop). Mapping every tier to the
+  # provider's real serving model makes compact/fast/background calls
+  # addressable; the gateway substitutes the route model regardless of the
+  # requested id (proven: bogus ids and literal claude-* ids both get routed
+  # and answered), so these exports change only the CLIENT-side resolution,
+  # never the upstream model.
+  export ANTHROPIC_MODEL="$CMA_PROVIDER_MODEL"
+  [[ -n "${CMA_PROVIDER_FAST_MODEL:-}" ]] && export ANTHROPIC_SMALL_FAST_MODEL="$CMA_PROVIDER_FAST_MODEL"
+  # ...and the REAL context size with it: an id Claude's table does not know
+  # makes its context accounting fall back to a tiny default window, against
+  # which the system+tool prefix alone overflows — "Prompt is too long" on a
+  # 20-character prompt, or the same compact-retry loop on anything larger
+  # (both reproduced live 2026-07-26 against 2.1.220 with ANTHROPIC_MODEL set
+  # and this unset).
+  [[ -n "${CMA_PROVIDER_CONTEXT_LIMIT:-}" ]] && export CLAUDE_CODE_MAX_CONTEXT_TOKENS="$CMA_PROVIDER_CONTEXT_LIMIT"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="$CMA_PROVIDER_MODEL"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="$CMA_PROVIDER_MODEL"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CMA_PROVIDER_FAST_MODEL:-$CMA_PROVIDER_MODEL}"
+  export ANTHROPIC_DEFAULT_FABLE_MODEL="$CMA_PROVIDER_MODEL"
+  if [[ "${CMA_PROVIDER_TRANSPORT:-native}" == "router" ]]; then
+    # Resolve OUR router by its stable install identity, NOT by PATH order
+    # (live issue 2026-07-22, §11.4.111 resolve-by-stable-name): the npm
+    # @musistudio/claude-code-router also installs a `ccr` (nvm's bin dir
+    # precedes ~/.local/bin on PATH) whose --help carries the same
+    # "ccr start" / "ccr serve" fingerprint — it passes the identity gate
+    # below — but has NO `restart` subcommand. Bare PATH resolution picked
+    # it, every route-apply failed exactly like a stale bundled build, and
+    # the self-heal rebuild (which repairs the BUNDLED binary) could never
+    # fix it: a rebuild cannot fix PATH shadowing. claude-ccr-build installs
+    # the bundled router at $HOME/.local/bin/ccr; that symlink IS the stable
+    # identity (same idiom as claude-session above). CMA_CCR_BIN overrides
+    # for tests/power users; PATH is the LAST resort, only when the bundled
+    # install is absent.
+    local _ccr="${CMA_CCR_BIN:-$HOME/.local/bin/ccr}"
+    [[ -x "$_ccr" ]] || _ccr="$(command -v ccr 2>/dev/null || true)"
+    if [[ -z "$_ccr" ]]; then
+      printf 'claude-providers: provider %s needs claude-code-router (the `ccr` gateway).\n  Build the bundled Go router: claude-ccr-build\n' "$id" >&2
+      return 127
+    fi
+    # Identity check: the bundled Go router MUST advertise `ccr restart` in its
+    # --help. `ccr start`/`ccr serve` are CARRIER matches — the npm
+    # @musistudio/claude-code-router also prints them — and the `restart`
+    # subcommand is exactly what the npm build lacks and what makes route-apply
+    # work (§11.4.201(7)(a) match STRUCTURE, not a substring a carrier also
+    # carries). A binary at the stable install path that lacks it is STALE (built
+    # before `restart` existed); trigger a rebuild. A binary found via PATH
+    # fallback that lacks it is NOT ours — refuse cleanly (audit I3, 2026-07-23).
+    local _ccr_help; _ccr_help="$("$_ccr" --help 2>&1 | head -20)"
+    case "$_ccr_help" in
+      *"ccr restart"*) ;;
+      *)
+        if [[ "$_ccr" == "$HOME/.local/bin/ccr" ]] && command -v claude-ccr-build >/dev/null 2>&1; then
+          command -v cma_log >/dev/null 2>&1 \
+            && cma_log "bundled ccr lacks 'ccr restart' in --help — rebuilding via claude-ccr-build …" \
+            || printf 'claude-providers: bundled ccr lacks the required "restart" subcommand — rebuilding …\n' >&2
+          claude-ccr-build >/dev/null 2>&1 || true
+          _ccr_help="$("$_ccr" --help 2>&1 | head -20)"
+          case "$_ccr_help" in
+            *"ccr restart"*) ;; # OK after rebuild
+            *)
+              printf 'claude-providers: the bundled ccr at %s still lacks the "restart" subcommand after a rebuild.\n  Rebuild manually and retry: claude-ccr-build\n' "$_ccr" >&2
+              return 127 ;;
+          esac
+        else
+          printf 'claude-providers: resolved ccr (%s) is not the bundled claude-code-router.\n  Its --help does not show the "ccr restart" subcommand that the bundled Go router has.\n  Fix: claude-ccr-build   (builds and installs the bundled router at %s)\n  If an EARLIER PATH ccr shadows the bundled one, remove it:\n    npm rm -g @musistudio/claude-code-router\n' "$_ccr" "$HOME/.local/bin/ccr" >&2
+          return 127
+        fi
+        ;;
+    esac
+    # Upsert THIS provider into ccr config with the live key (regenerated each
+    # launch, chmod 600 — never stored by the toolkit), set it as the active
+    # route, then launch through ccr.
+    #
+    # Per-alias port isolation (Defect 3 architecture fix): every router-type
+    # provider alias gets its OWN ccr gateway instance on a unique port, so
+    # concurrent aliases never compete for one config.json and no alias
+    # silently inherits another's route.
+    #   - CMA_CCR_PORT in the provider's .env assigns a pinned port.
+    #   - When unset, we allocate a unique port deterministically from the
+    #     provider id (base_port + hash), so the same alias always gets the
+    #     same port and its own ccr instance survives across launches.
+    #   - Per-alias config lives under ~/.claude-code-router/<provider-id>/
+    #     so each alias has its own CCR_HOME with its own pidfile, config.json,
+    #     and service.log — fully isolated from every other alias.
+    local _ccr_port="${CMA_CCR_PORT:-}"
+    # The hash is needed for BOTH ports, so compute it unconditionally: two
+    # disjoint 500-port spaces are derived from it — gateway [3460,3959] and
+    # management [3960,4459]. (Was 100-port spaces [3460,3559]/[3560,3659]:
+    # with ~50 router aliases a birthday collision was not theoretical but
+    # LIVE — xiaomi and opencode2 both hashed to 3519, the second child died
+    # on bind, a foreign /health answer falsely proved it ready (fixed in the
+    # submodule's waitForReady the same day), and the launch fell back to the
+    # shared default ports. 500 slots per space make a collision ~25x rarer;
+    # a surviving collision now fails LOUDLY (rc=78) instead of silently
+    # degrading.)
+    local _ccr_hash=0 _ccr_c _ccr_i=0
+    while (( _ccr_i < ${#CMA_PROVIDER_ID} )); do
+      _ccr_c="$(printf '%d' "'${CMA_PROVIDER_ID:_ccr_i:1}")"; _ccr_hash=$(( (_ccr_hash * 31 + _ccr_c) & 0x7FFFFFFF )); _ccr_i=$((_ccr_i + 1))
+    done
+    if [[ -z "$_ccr_port" ]]; then
+      # Deterministic port from the provider name: hash the id into a port
+      # offset from base 3460, bounded to [3460, 3959] (500 ports).
+      _ccr_port=$(( 3460 + (_ccr_hash % 500) ))
+    fi
+    # Per-alias MANAGEMENT port (live defect 2026-07-25): the gateway port was
+    # isolated per alias but the management port was left at ccr's default
+    # 3458 for EVERY alias, so exactly ONE per-alias gateway could be up at a
+    # time — every second alias's `ccr restart` child died with
+    # "start management interface: listen on 127.0.0.1:3458: bind: address
+    # already in use" and the launch refused with rc=78 (live-captured on
+    # sarvam: 4 child starts, 4 bind failures, "did not become ready within
+    # 15s"). Worse, the child's gateway socket binds BEFORE the management
+    # bind fails, so waitForReady could WIN the race against the dying child —
+    # a launch that "succeeded" against a gateway that was already exiting.
+    # CMA_CCR_MGMT_PORT in the provider's .env pins it; otherwise derive from
+    # the same hash in the disjoint [3960,4459] space.
+    local _ccr_mgmt_port="${CMA_CCR_MGMT_PORT:-$(( 3960 + (_ccr_hash % 500) ))}"
+    local _ccr_dir="$HOME/.claude-code-router"
+    # Per-alias config isolation: each router-type alias gets its OWN
+    # CCR_HOME directory so its pidfile (service.json), config.json, and
+    # service.log live under ~/.claude-code-router/<provider-id>/ instead
+    # of sharing the global ~/.claude-code-router/. This is load-bearing
+    # for concurrent aliases: a `ccr restart` for alias A must never see
+    # alias B's pidfile and kill its gateway. CCR_HOME is the Go router's
+    # override for config.Dir() (added for this fix).
+    local _ccr_home="$_ccr_dir/${CMA_PROVIDER_ID}"
+    local cfg="$_ccr_home/config.json" base="$CMA_PROVIDER_BASE_URL"
+    # Self-reference guard: when THIS provider's base_url IS the ccr gateway
+    # itself, there is no upstream to route to — upserting a provider whose
+    # api_base_url is ccr registers a ccr->ccr self-loop.
+    #
+    # This used to SKIP the upsert+restart and launch anyway, justified by
+    # "under ccr v3.0.6 the live route is app_config (config.json is not
+    # re-imported on restart), so the write is inert-for-routing". That claim
+    # described the RETIRED JS router and is INVERTED for the Go router that now
+    # serves every alias. The Go source documents the opposite —
+    # submodules/claude-code-router/cmd/ccr/service.go, cmdRestart: the toolkit
+    # "rewrites ~/.claude-code-router/config.json before every provider-alias
+    # launch and then runs `ccr restart` to make that rewrite take effect."
+    # Post-ATM-870 (`a6a24e0`) the mechanism is richer than that quote: the
+    # running gateway applies a validated hot-reload IN PLACE via
+    # `gw.SwapConfig` (atomic pointer swap; /health, /ready and routing follow
+    # it per-request — only the startup-built outbound proxy client and
+    # in-flight request snapshots do not follow). `ccr restart` nonetheless
+    # stays on this path: it is the DETERMINISTIC apply-point — the swap's
+    # timing is not observable from outside the process, so only the bounce
+    # gives the launch a provable receipt that the route it wrote is the
+    # route being served.
+    #
+    # So config.json IS the live route (once restarted), and skipping the
+    # rewrite does not make the launch inert — it makes it INHERIT whichever
+    # provider the gateway last served. That is exactly how `helixagent` earned
+    # a `verified` badge on a turn served by `deepseek`: 157,419 tokens through
+    # a nominally 24,576-token alias, with no `helixagent` provider present in
+    # ccr's config at all. The verdict measured whoever ran last.
+    #
+    # There is no honest third state, so REFUSE. A ccr-self base cannot be
+    # routed, and inheriting a foreign route is a silent wrong-model launch.
+    # The provider must be pointed at its REAL backing endpoint (for the
+    # HelixAgent facade that is the HelixLLM server itself, not the ccr gateway
+    # standing in front of it).
+    # _cma_is_ccr_gateway is emitted into this same alias file (see
+    # _cma_emit_ccr_gateway_guard) — ONE definition shared with lib.sh and
+    # providers-verify.sh, so the launch gate and the verify gate cannot drift.
+    if _cma_is_ccr_gateway "$base"; then
+      printf 'claude-providers: refusing to launch %s — its base_url (%s) IS the ccr gateway itself.\n' "$id" "$base" >&2
+      printf '  A provider cannot route through the router it *is*. Skipping the route write (the old behaviour)\n  silently inherited whatever provider the gateway last served: the wrong model, with no error.\n' >&2
+      printf '  Repoint %s at its real backing endpoint (its pins file / CMA_PROVIDER_BASE_URL) and re-run:\n    claude-providers sync\n' "$id" >&2
+      return 78
+    fi
+    # Create the per-alias config dir + config with restrictive perms from the
+    # start: this file will hold the live API key, so it must never be
+    # group/world readable, even transiently or if a later jq rewrite fails.
+    ( umask 077; mkdir -p "$_ccr_home"
+      [[ -f "$cfg" ]] || echo '{"Providers":[],"Router":{}}' > "$cfg" )
+    chmod 600 "$cfg" 2>/dev/null || true
+    case "$base" in
+      */chat/completions|*/v1beta/models/|*/v1beta/models) ;;
+      *) base="${base%/}/chat/completions" ;;
+    esac
+    # Preserve the original CMA_PROVIDER_BASE_URL for the fossil marker.
+    # `base` is mutated above (appends /chat/completions) but the fossil
+    # marker must record the REAL backing endpoint, not the ephemeral proxy
+    # address. RC4 (2026-07-27): the fix was to capture $CMA_PROVIDER_BASE_URL
+    # BEFORE the case statement mutates it.
+    local _real_base="$CMA_PROVIDER_BASE_URL" _eph_base=""
+    local _eph_marker="$HOME/.claude-code-router/.cma-ephemeral.json"
+    local _eph_lock="${_eph_marker}.lock"
+    local _prior_default="" _prior_background=""
+    local _wrote_default="" _wrote_background=""
+    # fd slots for the two launch locks below, filled by bash's dynamic fd
+    # allocation (`exec {var}>>FILE`). Declared here so the nested lock/unlock
+    # helpers assign into THIS scope rather than leaking a global into the
+    # operator's interactive shell.
+    local _cma_eph_fd="" _cma_cfg_fd=""
+    # Mutual exclusion for every read-modify-write touching $_eph_marker below
+    # (reap-on-start here, add-on-launch further down, delete-on-exit inside
+    # _cma_ccr_unfossilise). Two CONCURRENT cma_run_provider launches both
+    # touch this one file; without a lock the classic lost update is live:
+    # launch A reads the marker, adds its own key, and mv's the result in;
+    # launch B — already holding a snapshot read from BEFORE A's write —
+    # computes ITS OWN add against that stale snapshot and mv's it in too,
+    # silently overwriting the whole file and dropping A's entry (the entry
+    # A's own exit repair needs to prove, via CAS, that it still owns the
+    # route it wrote). flock is per-open-file-description and released by the
+    # KERNEL the instant the holding process dies (no stale-lock recovery is
+    # needed here the way the mkdir-based _cma_alias_lock_* fallback
+    # elsewhere in this file requires for its non-flock backend); an absent
+    # `flock` binary (no macOS) degrades to the pre-existing UNLOCKED
+    # behaviour rather than blocking a launch — consistent with this whole
+    # section's best-effort discipline (a missing `jq` is handled the same
+    # way, one line below).
+    _cma_eph_lock() {
+      command -v flock >/dev/null 2>&1 || return 0
+      # The fd is DYNAMICALLY allocated (`exec {var}>>FILE`, bash >= 4.1 /
+      # zsh): the shell picks a guaranteed-free fd and stores the number in
+      # _cma_eph_fd. A HARDCODED fd number here was the defect, twice over:
+      #   (a) `exec 9>>FILE 2>/dev/null` — `exec` without a command applies
+      #       EVERY redirection on the line to the CURRENT SHELL permanently,
+      #       so one provider launch silenced the interactive shell's stderr
+      #       for the rest of its life (the original field failure).
+      #   (b) `{ exec 9>>FILE; } 2>/dev/null` — the "fix" for (a), and itself
+      #       a silent break: hardcoded LOW fds (9/10) collide with the
+      #       shell's OWN redirection bookkeeping (bash saves/restores fds
+      #       around compound-command redirections and command substitutions
+      #       onto low free fds), so the fd the inner exec opened did not
+      #       survive the group — proven live on bash 5.2.37: the very next
+      #       `flock -w 5 9` failed "Bad file descriptor" (hidden by the
+      #       group's own 2>/dev/null), and EVERY critical section below ran
+      #       UNLOCKED while claiming mutual exclusion.
+      # Dynamic allocation avoids both: no hardcoded number to collide, no
+      # stderr redirection to leak. It only ever runs where `flock` exists
+      # (the guard above), which is exactly the set of platforms where the
+      # lock can exist at all — macOS degrades to the documented unlocked
+      # best-effort path before reaching this line.
+      exec {_cma_eph_fd}>>"$_eph_lock" || return 0
+      # BOUNDED wait. Defensive hardening carried over from an earlier
+      # independent review, NOT a fix for the reported exit-hang (that was
+      # traced to the launch itself, and this lock/unlock pair provably
+      # completes). An unbounded flock can never time out while any process
+      # holds the lock, which on an interactive path is a latent stall by
+      # construction; the guarded critical section is a tiny marker
+      # read-modify-write, so a short bound is ample and a timeout degrades
+      # to the same unlocked best-effort path this section already takes
+      # when `flock` is absent entirely (macOS).
+      # On timeout, SAY SO (§11.4.201(5): a guard reports its resolved
+      # evidence). Swallowing it discards the acquired-vs-timed-out
+      # distinction, leaving a real contention event undiagnosable.
+      flock -w 5 "$_cma_eph_fd" 2>/dev/null || {
+        command -v cma_log >/dev/null 2>&1 \
+          && cma_log "eph-lock: 5s timeout — proceeding unlocked (best-effort)"
+        true
+      }
+      return 0
+    }
+    _cma_eph_unlock() {
+      [[ -n "$_cma_eph_fd" ]] || return 0
+      flock -u "$_cma_eph_fd" 2>/dev/null || true
+      exec {_cma_eph_fd}>&- || true
+      _cma_eph_fd=""
+      return 0
+    }
+    # Mutual exclusion for every read-modify-write touching THIS alias's
+    # config.json below — the stale-fossil reap, the main route upsert, and
+    # _cma_ccr_unfossilise. Two CONCURRENT cma_run_provider launches of the
+    # SAME provider id both touch the same per-alias $cfg; without a lock the
+    # classic lost update is live: launch A rewrites config.json with provider
+    # route A, launch B — already holding a snapshot read BEFORE A's write —
+    # rewrites it with provider route B, silently dropping A's entire config.
+    # This is the race fixed by this lock.
+    _cma_cfg_lock() {
+      local _lock="$1.lock"
+      command -v flock >/dev/null 2>&1 || return 0
+      # Dynamic fd allocation for the same reason as _cma_eph_lock above:
+      # a hardcoded `exec 10>>FILE` collides with the shell's redirection
+      # save slots (live-proven: "flock: 10: Bad file descriptor", lock
+      # silently never held), and any 2>/dev/null ON the exec line itself
+      # would silence this interactive shell's stderr permanently.
+      exec {_cma_cfg_fd}>>"$_lock" || return 0
+      flock -w 5 "$_cma_cfg_fd" 2>/dev/null || {
+        command -v cma_log >/dev/null 2>&1 \
+          && cma_log "cfg-lock: 5s timeout on ${_lock} — proceeding unlocked (best-effort)"
+        true
+      }
+      return 0
+    }
+    _cma_cfg_unlock() {
+      [[ -n "$_cma_cfg_fd" ]] || return 0
+      flock -u "$_cma_cfg_fd" 2>/dev/null || true
+      exec {_cma_cfg_fd}>&- || true
+      _cma_cfg_fd=""
+      return 0
+    }
+    if command -v jq >/dev/null 2>&1; then
+      _prior_default="$(jq -r '.Router.default // ""' "$cfg" 2>/dev/null || printf '')"
+      _prior_background="$(jq -r '.Router.background // ""' "$cfg" 2>/dev/null || printf '')"
+      # (2) stale-fossil reap. Entirely best-effort: any failure here must never
+      # block a launch, so every step is guarded and the loop simply moves on.
+      if [[ -s "$_eph_marker" ]]; then
+        _cma_eph_lock
+        local _rv_dead="[]" _rv_n _rv_pid _rv_tmp
+        # `< <(jq …)` (process substitution) feeding a `while IFS= read -r`,
+        # NOT `for x in $(jq …)` — an unquoted command substitution word-
+        # splits on IFS, so a hypothetical whitespace-bearing provider id
+        # would silently fan out into multiple bogus keys. NOT a trailing
+        # `jq … | while …` pipe either: bash runs the LAST stage of a pipeline
+        # in a subshell, so `_rv_dead` accumulated inside such a loop would
+        # vanish the moment the loop exits and this reap would never see any
+        # dead entry. Process substitution keeps the loop in THIS shell while
+        # still reading one whole line at a time.
+        while IFS= read -r _rv_n; do
+          [[ -n "$_rv_n" ]] || continue
+          _rv_pid="$(jq -r --arg k "$_rv_n" '.[$k].pid // 0' "$_eph_marker" 2>/dev/null || printf '0')"
+          # Liveness PROVEN, never assumed — a live owner keeps its address.
+          # Conservative-by-construction on PID reuse: if the ORIGINAL owner
+          # died and the kernel later hands its pid to some UNRELATED later
+          # process, `kill -0` reads that pid as alive, so this entry is kept
+          # and NOT reaped this cycle. That is the SAFE direction — the worst
+          # outcome is one stale fossil surviving an extra reap cycle, never a
+          # live owner's address being ripped out from under it — and it
+          # self-heals the next time the SAME provider launches: CAS-1 in
+          # _cma_ccr_unfossilise (`_u_addr_now == _u_eph`) still fires on the
+          # marker's own record, and a later reap catches it once the reused
+          # pid itself is gone too.
+          if [[ "$_rv_pid" != "0" ]] && kill -0 "$_rv_pid" 2>/dev/null; then continue; fi
+          _rv_dead="$(jq -c --arg k "$_rv_n" '. + [$k]' <<<"$_rv_dead" 2>/dev/null || printf '%s' "$_rv_dead")"
+        done < <(jq -r 'keys[]?' "$_eph_marker" 2>/dev/null)
+        if [[ "$_rv_dead" != "[]" ]]; then
+          _rv_tmp="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX" 2>/dev/null)" && chmod 600 "$_rv_tmp" 2>/dev/null
+          _cma_cfg_lock "$cfg"
+          if [[ -n "$_rv_tmp" ]] && jq --argjson dead "$_rv_dead" --slurpfile mk "$_eph_marker" '
+                .Providers = [ .Providers[]? as $p
+                  | ($mk[0][$p.name] // null) as $m
+                  | if ($m != null) and ([$p.name] | inside($dead)) and ($p.api_base_url == ($m.eph // ""))
+                      and (($m.real // "") != "")
+                    then $p + {api_base_url: $m.real} else $p end ]
+              ' "$cfg" >| "$_rv_tmp" 2>/dev/null && [[ -s "$_rv_tmp" ]]; then
+            command mv -f "$_rv_tmp" "$cfg" 2>/dev/null && chmod 600 "$cfg" 2>/dev/null
+            command -v cma_log >/dev/null 2>&1 && cma_log "reaped stale cma-proxy fossil(s) from ccr config: $_rv_dead" || true
+          else
+            [[ -n "$_rv_tmp" ]] && rm -f "$_rv_tmp"
+          fi
+          _cma_cfg_unlock
+          _rv_tmp="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX" 2>/dev/null)" && chmod 600 "$_rv_tmp" 2>/dev/null
+          if [[ -n "$_rv_tmp" ]] && jq --argjson dead "$_rv_dead" 'delpaths([$dead[] | [.]])' \
+                "$_eph_marker" >| "$_rv_tmp" 2>/dev/null && [[ -s "$_rv_tmp" ]]; then
+            command mv -f "$_rv_tmp" "$_eph_marker" 2>/dev/null
+          else
+            [[ -n "$_rv_tmp" ]] && rm -f "$_rv_tmp"
+          fi
+        fi
+        _cma_eph_unlock
+      fi
+    fi
+    # (1) Exit repair. Defined here (indented — a `}` at column 0 would end the
+    # function body for _cma_alias_carryover's legacy scanner) so it travels with
+    # this body into the emitted, self-contained alias file. Its inputs arrive as
+    # positional args, with ONE deliberate exception: the resolved router binary
+    # is read from the enclosing `$_ccr` via bash dynamic scoping rather than
+    # being passed in. That is not laziness — test_ccr_conformance.sh derives the
+    # REQUIRED router-subcommand set by scanning this file for `"$_ccr" <word>` at
+    # command position, so passing the binary as an argument would (a) make the
+    # call site read as a bogus invocation `ccr "$_eph_marker"` and (b) hide this
+    # function's REAL `"$_ccr" restart` from the very gate that exists to catch an
+    # unsupported subcommand. Both call sites are inside cma_run_provider, so
+    # `$_ccr` is always in scope.
+    _cma_ccr_unfossilise() {
+      local _u_cfg="$1" _u_n="$2" _u_eph="$3" _u_real="$4" _u_wd="$5" _u_wb="$6"
+      local _u_pd="$7" _u_pb="$8" _u_marker="$9"
+      [[ -n "$_u_eph" ]] || return 0          # no proxy ran => nothing fossilised
+      [[ -f "$_u_cfg" ]] || return 0
+      command -v jq >/dev/null 2>&1 || return 0
+      _cma_cfg_lock "$_u_cfg"
+      local _u_addr_now _u_def_now _u_bg_now _u_mine=0 _u_tmp
+      _u_addr_now="$(jq -r --arg n "$_u_n" \
+        '[.Providers[]?|select(.name==$n)|.api_base_url][0] // ""' "$_u_cfg" 2>/dev/null || printf '')"
+      # CAS-1 — repair ONLY while the stored address is still the one WE wrote.
+      # If a newer launch re-stamped it, that launch owns the entry and will run
+      # its own repair; touching it here would corrupt a live route.
+      # Every early return between _cma_cfg_lock and _cma_cfg_unlock MUST pass
+      # through the unlock: this runs in the operator's INTERACTIVE shell, which
+      # never dies, so the kernel never releases a leaked flock — each leaked
+      # acquisition stalls every later cfg-lock on this config for the full 5s
+      # budget and silently degrades it to unlocked (audit-proven 2026-07-25:
+      # a CAS-1 early return held the lock for the shell's life and stacked
+      # +1 leaked fd per occurrence).
+      if [[ "$_u_addr_now" != "$_u_eph" ]]; then _cma_cfg_unlock; return 0; fi
+      _u_def_now="$(jq -r '.Router.default // ""' "$_u_cfg" 2>/dev/null || printf '')"
+      _u_bg_now="$(jq -r '.Router.background // ""' "$_u_cfg" 2>/dev/null || printf '')"
+      # CAS-2 — the route is still ours only if BOTH halves are unchanged.
+      [[ "$_u_def_now" == "$_u_wd" && "$_u_bg_now" == "$_u_wb" ]] && _u_mine=1
+      _u_tmp="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX" 2>/dev/null)" || { _cma_cfg_unlock; return 0; }
+      chmod 600 "$_u_tmp" 2>/dev/null || true
+      if jq --arg n "$_u_n" --arg eph "$_u_eph" --arg real "$_u_real" \
+             --arg pd "$_u_pd" --arg pb "$_u_pb" --argjson mine "$_u_mine" '
+             .Providers = [ .Providers[]?
+               | if .name == $n and .api_base_url == $eph then .api_base_url = $real else . end ]
+             | if ($mine == 1) and ($pd != "") then .Router.default    = $pd else . end
+             | if ($mine == 1) and ($pb != "") then .Router.background = $pb else . end
+           ' "$_u_cfg" >| "$_u_tmp" 2>/dev/null && [[ -s "$_u_tmp" ]]; then
+        command mv -f "$_u_tmp" "$_u_cfg" 2>/dev/null && chmod 600 "$_u_cfg" 2>/dev/null
+        command -v cma_log >/dev/null 2>&1 && \
+          cma_log "un-fossilised ccr config for $_u_n: api_base_url ephemeral -> real (route_restored=$_u_mine)" || true
+        # Bounce ONLY when the route was still ours: restarting while ANOTHER
+        # launch owns the route would drop that launch's in-flight requests.
+        # (Post-ATM-870 the running gateway also picks the edit up live via
+        # SwapConfig; the bounce remains the deterministic, receipt-provable
+        # apply-point — and here, the repair to an ephemeral address that the
+        # dead proxy no longer serves, it is what makes the restore effective
+        # for in-flight consumers regardless of swap timing.)
+        if [[ "$_u_mine" == "1" && -n "$_ccr" && -x "$_ccr" ]]; then
+          CCR_HOME="$_ccr_home" "$_ccr" restart --gateway-port "$_ccr_port" --port "$_ccr_mgmt_port" >/dev/null 2>&1 || true
+        fi
+      else
+        rm -f "$_u_tmp"
+      fi
+      _cma_cfg_unlock
+      # Drop our marker entry last: until here it is the crash-recovery record.
+      # Locked (§11.4.180/marker-lost-update hardening): _u_marker is derived
+      # from $_eph_marker by the caller and $_eph_lock is visible here via the
+      # SAME bash dynamic-scoping this function already relies on for $_ccr
+      # (see the comment on this function's own definition) — _cma_eph_lock /
+      # _cma_eph_unlock are defined once, before this function's first call
+      # site, alongside $_eph_lock's declaration.
+      if [[ -n "$_u_marker" && -s "$_u_marker" ]]; then
+        _cma_eph_lock
+        local _u_mt; _u_mt="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX" 2>/dev/null)"
+        if [[ -n "$_u_mt" ]]; then
+          chmod 600 "$_u_mt" 2>/dev/null || true
+          if jq --arg k "$_u_n" 'del(.[$k])' "$_u_marker" >| "$_u_mt" 2>/dev/null && [[ -s "$_u_mt" ]]; then
+            command mv -f "$_u_mt" "$_u_marker" 2>/dev/null
+          else
+            rm -f "$_u_mt"
+          fi
+        fi
+        _cma_eph_unlock
+      fi
+      return 0
+    }
+    # Start the Go compatibility proxy (cma-proxy) when it transforms this
+    # provider: helixagent Hermes tool-call recovery, or poe/kimi/sarvam request-
+    # schema fixes (e.g. Poe requires `parameters` in tool definitions; Claude
+    # Code sometimes omits it). cma-proxy resolves the family key itself
+    # (poe2->poe, kimi-*->kimi), so the wrapper just asks `--has-transform`. It
+    # lives in the INSTALLED share dir; this wrapper is self-contained in the
+    # alias file and has NO $LIB_DIR (repo-only), so resolve against SHARED_DIR
+    # with lib.sh's default. (Replaces the former per-provider python proxies.)
+    local _cma_proxy_dir="${SHARED_DIR:-$HOME/.claude-shared}/proxy"
+    local _proxy_bin="$_cma_proxy_dir/cma-proxy"
+    local _proxy_script=""
+    if [[ -x "$_proxy_bin" ]] && "$_proxy_bin" --has-transform "$CMA_PROVIDER_ID" >/dev/null 2>&1; then
+      _proxy_script="$_proxy_bin"
+    elif [[ ! -x "$_proxy_bin" ]]; then
+      # HONEST SKIP-with-reason, never a silent degrade (§11.4.69).
+      # This branch did not exist: with cma-proxy absent, _proxy_script stayed
+      # empty, the whole shim block was skipped WITHOUT A WORD, and the alias
+      # launched against the raw endpoint. The provider then failed in exactly
+      # the ways the shims exist to prevent (helixagent Hermes tool-call
+      # recovery; poe/kimi/sarvam request-schema fixes) with nothing anywhere
+      # saying the shims were off — from the outside, indistinguishable from a
+      # shim that ran and did not help.
+      #
+      # stderr only (never stdout, which is the agent's channel), and only for
+      # providers that actually HAVE a transform: a provider with no shim loses
+      # nothing, so warning there would be a false positive (§11.4.201(1)).
+      # We normally ask the binary via --has-transform, but with no binary we
+      # cannot — cma_proxy_transform_family mirrors the proxy's registry
+      # (prefix-matched: poe2 -> poe, kimi-k2 -> kimi) and test_cma_proxy.sh
+      # asserts the two stay EQUAL in both directions.
+      if cma_proxy_transform_family "$CMA_PROVIDER_ID"; then
+        printf 'claude-providers: cma-proxy is NOT installed (%s) — launching %s WITHOUT its compatibility shims.\n  Tool-call/request-schema fixes for this provider are inactive; failures here are expected until it is built.\n  Fix: claude-proxy-build   (then: claude-install-verify)\n' \
+          "$_proxy_bin" "$CMA_PROVIDER_ID" >&2
+      fi
+    fi
+    if [[ -n "$_proxy_script" ]]; then
+      # HelixAgent pre-flight: check HelixLLM availability and mode.
+      # If HelixLLM is not running and Helix Code is installed, auto-start it
+      # in claude mode (229376-token context). HelixLLM in coder mode has only
+      # 24576-token context; helixagent requires claude mode's 229376 tokens.
+      if [[ "$CMA_PROVIDER_ID" == helixagent* ]]; then
+        # cma_log/cma_warn are lib.sh helpers. THIS BODY IS EMITTED INTO THE
+        # ALIAS FILE by the heredoc below, and that file never sources lib.sh —
+        # so calling them bare prints `cma_warn: command not found` and DESTROYS
+        # the message. Live-proven: providers-helixagent-superpowers.txt carries
+        # exactly that line where the operator should have seen the coder-mode
+        # remedy. Every older call site guards with `command -v cma_log && …`,
+        # but that pattern SILENTLY DROPS the text when the helper is absent,
+        # which is wrong here: for this pre-flight the message IS the feature —
+        # it is the only thing that tells an operator to flip HelixLLM out of
+        # coder mode. So emit either way, through the helper when it exists and
+        # through a plain printf when it does not.
+        _hl_log()  { if command -v cma_log  >/dev/null 2>&1; then cma_log  "$1"; else printf '[cma] %s\n' "$1" >&2; fi; }
+        _hl_warn() { if command -v cma_warn >/dev/null 2>&1; then cma_warn "$1"; else printf '[cma warn] %s\n' "$1" >&2; fi; }
+        local _hl_url="${CMA_PROVIDER_BASE_URL%/v1}" _hl_mode=""
+        local _hl_healthy=0
+        if command -v curl >/dev/null 2>&1; then
+          # Some HelixLLM builds expose context_limit in /health; newer ones only
+          # return {"status":"ok"}. Use /health for liveness and fall back to
+          # /v1/models for the serving context size (n_ctx) when needed.
+          if curl -sf --max-time 3 "${_hl_url}/health" >/dev/null 2>&1; then
+            _hl_healthy=1
+            _hl_mode="$(curl -sf --max-time 3 "${_hl_url}/health" 2>/dev/null | grep -o '"context_limit" *: *[0-9]*' | head -1 | sed 's/.*: *//' || true)"
+          fi
+          if [[ -z "$_hl_mode" ]] && curl -sf --max-time 3 "${_hl_url}/v1/models" >/dev/null 2>&1; then
+            _hl_healthy=1
+            _hl_mode="$(curl -sf --max-time 3 "${_hl_url}/v1/models" 2>/dev/null | grep -o '"n_ctx" *: *[0-9]*' | head -1 | sed 's/.*: *//' || true)"
+          fi
+        fi
+        # Auto-start HelixLLM if not running and Helix Code is installed.
+        #
+        # OPT-IN ONLY (operator mandate 2026-07-27). Booting a Helix service is
+        # a heavyweight, machine-wide side effect: HelixLLM claims the single
+        # GPU, and starting it in claude mode EVICTS whatever HelixCode had
+        # running in coder mode. A provider alias must not do that to a host
+        # merely because someone launched it. Default is therefore FALSE; set
+        # CMA_HELIX_AUTOSTART=1 (or true/yes/on) to allow it. When it is not
+        # enabled we still say so, and still print the exact command to run —
+        # the operator keeps the information and the choice.
+        local _hl_autostart="${CMA_HELIX_AUTOSTART:-0}"
+        case "${_hl_autostart,,}" in
+          1|true|yes|on) _hl_autostart=1 ;;
+          *)             _hl_autostart=0 ;;
+        esac
+        if [[ "$_hl_healthy" -eq 0 && "$_hl_autostart" -ne 1 ]]; then
+          _hl_warn "helixagent: HelixLLM is not answering on ${_hl_url} and auto-start is OFF by default.
+  Start it yourself (it claims the GPU and evicts HelixCode's coder mode):
+    helix_code/scripts/helixllm-mode.sh claude
+  Or opt in for this launch:
+    CMA_HELIX_AUTOSTART=1 <alias>"
+        fi
+        if [[ "$_hl_healthy" -eq 0 && "$_hl_autostart" -eq 1 ]]; then
+          local _hl_mode_script=""
+          # Find helixllm-mode.sh in common locations
+          for _hl_candidate in \
+            "$HOME/projects/helix_code/scripts/helixllm-mode.sh" \
+            "$HOME/helix_code/scripts/helixllm-mode.sh" \
+            "/run/media/milosvasic/DATA4TB/Projects/helix_code/scripts/helixllm-mode.sh" \
+            "${HELIX_CODE_DIR:-}/scripts/helixllm-mode.sh"; do
+            if [[ -x "$_hl_candidate" ]]; then
+              _hl_mode_script="$_hl_candidate"
+              break
+            fi
+          done
+          if [[ -n "$_hl_mode_script" ]]; then
+            _hl_log "helixagent: HelixLLM not running — auto-starting in claude mode via $_hl_mode_script ..."
+            if "$_hl_mode_script" claude 2>&1 | tail -5 >&2; then
+              # Wait for HelixLLM to become healthy (up to 120s)
+              local _hl_wait=0
+              while [[ "$_hl_wait" -lt 24 ]]; do
+                if curl -sf --max-time 5 "${_hl_url}/health" >/dev/null 2>&1; then
+                  _hl_healthy=1
+                  _hl_log "helixagent: HelixLLM started successfully"
+                  break
+                fi
+                sleep 5
+                _hl_wait=$((_hl_wait + 1))
+              done
+              if [[ "$_hl_healthy" -eq 0 ]]; then
+                _hl_warn "helixagent: HelixLLM auto-start timed out after 120s.
+  The container may still be loading the model. Check:
+    podman logs helixllm-coder
+    $_hl_mode_script status"
+              fi
+            else
+              _hl_warn "helixagent: HelixLLM auto-start failed.
+  Fix: manually start HelixLLM:
+    $_hl_mode_script claude"
+            fi
+          else
+            _hl_warn "helixagent: HelixLLM not running and helixllm-mode.sh not found.
+  Install Helix Code or start HelixLLM manually on port 18434."
+          fi
+        fi
+        # Check for coder mode (even if running)
+        if [[ "$_hl_healthy" -eq 1 && "$_hl_mode" -eq 24576 ]] 2>/dev/null; then
+          _hl_warn "helixagent: HelixLLM detected in CODER MODE (context_limit=24576).
+  helixagent REQUIRES CLAUDE MODE (context_limit=229376).
+  The first request (~67K system+tools) will immediately exceed the limit.
+  Fix on the HelixLLM host:
+    helix_code/scripts/helixllm-mode.sh claude
+  Then re-run the alias."
+        fi
+      fi
+      # Port-squatter guard (live-proven 2026-07-19: `poe: FAIL tools-params`).
+      # Find a genuinely free port, then confirm OUR pid owns it — never point
+      # `base` at a squatter (ccr once held 3457 for 21h, silently disabling the
+      # proxy so every request bypassed its shims).
+      local _proxy_port=3457 _pp_try=0
+      while lsof -i ":$_proxy_port" >/dev/null 2>&1 && (( _pp_try < 20 )); do
+        _proxy_port=$((_proxy_port + 1)); _pp_try=$((_pp_try + 1))
+      done
+      # Export the upstream to the proxy child: the env file is sourced WITHOUT
+      # `set -a`, so CMA_PROVIDER_BASE_URL is not otherwise inherited, and
+      # cma-proxy needs it to reach the real backend (a bare --port launch would
+      # fall back to its built-in default).
+      # STDIO REDIRECTION IS LOAD-BEARING, not tidiness. A backgrounded daemon
+      # that inherits the caller's stdout/stderr holds the WRITE END of whatever
+      # pipe the caller installed. Every caller that captures a launch with
+      # command substitution — verify_superpowers_tui.sh, claude-release-gate.sh
+      # — reads until EOF, and EOF never arrives while the proxy is alive: the
+      # capture hangs for the proxy's whole lifetime (measured: 30005ms vs 5ms,
+      # both rc=0). It bites hardest on the SUCCESS path, where `timeout` has
+      # already reaped its own child and can bound nothing, and it is reached
+      # deterministically whenever the proxy is orphaned by the `_proxy_pid=""`
+      # branch below (lsof is an undeclared dependency; absent, that branch is
+      # always taken). Independently and unconditionally, cma-proxy prints a
+      # startup banner to stderr, and callers apply `2>&1` to the whole
+      # cma_run_provider call — so the banner lands INSIDE the captured payload
+      # and breaks `jq` on captured JSON. Both go away by giving the daemon its
+      # own log file and closing its stdin (mirrors the router's own precedent
+      # in cmd/ccr/spawn_unix.go). $_ccr_home is in scope here and already
+      # mkdir -p'd above.
+      CMA_PROVIDER_BASE_URL="$CMA_PROVIDER_BASE_URL" \
+        "$_proxy_bin" --provider "$CMA_PROVIDER_ID" --port "$_proxy_port" \
+        >>"$_ccr_home/cma-proxy.log" 2>&1 </dev/null &
+      _proxy_pid=$!
+      local _waited=0
+      # Wait for OUR process to be listening — not merely for the port to be busy.
+      while ! lsof -a -p "$_proxy_pid" -i ":$_proxy_port" >/dev/null 2>&1 && (( _waited < 25 )); do
+        kill -0 "$_proxy_pid" 2>/dev/null || break   # proxy died: stop waiting
+        sleep 0.2
+        _waited=$((_waited + 1))
+      done
+      if ! lsof -a -p "$_proxy_pid" -i ":$_proxy_port" >/dev/null 2>&1; then
+        # Never point at a foreign listener. Fall back to the provider's direct
+        # endpoint and say so loudly, rather than silently losing the shims.
+        command -v cma_log >/dev/null 2>&1 && \
+          cma_log "WARNING: cma-proxy for $CMA_PROVIDER_ID did not start on port $_proxy_port — using the direct endpoint (compat shims INACTIVE)" || true
+        # REAP BEFORE CLEARING. `_proxy_pid` is the ONLY handle the exit path
+        # (the `kill "$_proxy_pid"` reap further down) is guarded on, so
+        # blanking it here without killing first leaks the child: it survives
+        # the launch, keeps its port, and — pre-redirection — kept the caller's
+        # pipe open forever. This branch is not exotic: `lsof` is an undeclared
+        # dependency of this file, so on any host without it the probe ALWAYS
+        # fails and this orphan is produced on EVERY proxied launch.
+        if [[ -n "$_proxy_pid" ]] && kill -0 "$_proxy_pid" 2>/dev/null; then
+          kill "$_proxy_pid" 2>/dev/null || true
+        fi
+        _proxy_pid=""
+        _proxy_script=""
+      fi
+    fi
+    if [[ -n "$_proxy_script" ]]; then
+      base="http://127.0.0.1:${_proxy_port}/v1/chat/completions"
+      # THE fossil-producing assignment: `base` is now an EPHEMERAL address whose
+      # lifetime is this launch. Record it (and the real endpoint it replaced) so
+      # both the exit repair and the next launch's stale-reap can undo it. The
+      # marker is a sidecar — never a field inside config.json, which the router
+      # parses.
+      _eph_base="$base"
+      # cma_log is a lib.sh helper; the self-contained alias file has no such
+      # function, so guard the call to avoid a 'cma_log: command not found' on
+      # every proxied launch.
+      command -v cma_log >/dev/null 2>&1 && cma_log "started cma-proxy for $CMA_PROVIDER_ID on port $_proxy_port (pid=$_proxy_pid)" || true
+    fi
+    # Route write + apply. EVERY failure here is FATAL, because the failure mode
+    # is silent-and-wrong: the launch below serves whatever route the gateway
+    # currently holds. The old code hid both halves — the jq/mv write ran under
+    # `2>/dev/null` with a bare `else rm -f` (a failed write was
+    # indistinguishable from a successful one) and `ccr restart` ran under
+    # `|| true` (a config written but never applied still launched, serving the
+    # PREVIOUS provider's model). That is what made the helixagent facade
+    # invisible for a whole release. A route we cannot prove we set is a route
+    # we must not launch against.
+    local _route_err=0 _route_msg=""
+    if ! command -v jq >/dev/null 2>&1; then
+      _route_err=1
+      _route_msg="jq is not on PATH, so the ccr route cannot be written"
+    else
+      local tmp; tmp="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX")"; chmod 600 "$tmp" 2>/dev/null || true
+      # Lock the config.json read-modify-write against concurrent launches of
+      # the SAME provider id. Two launches that both read the config before
+      # either writes it will each produce a rewrite from the same stale
+      # snapshot — the second mv silently overwrites the first, and the first
+      # launch's provider route is lost. The per-alias config is isolated
+      # ($cfg = $_ccr_home/config.json, one per provider-id), so the lock
+      # targets only this config's own file.
+      _cma_cfg_lock "$cfg"
+      # Pass the secret through the environment ($ENV.tok), never as a jq argv
+      # argument — argv is visible in ps/proc to other local users.
+      # `>|` (force-clobber), NOT `>`: cma_run_provider runs in the user's
+      # interactive shell, which may have `set -o noclobber`. Plain `>` onto the
+      # just-created mktemp file fails there ("cannot overwrite existing file"),
+      # silently dropping the router-config update so EVERY router provider breaks.
+      local _jq_err _jq_rc _mv_err _mv_rc _rst_out _rst_rc
+      _jq_err="$(CMA_TOK="$token" jq --arg n "$CMA_PROVIDER_ID" --arg u "$base" \
+            --arg s "$CMA_PROVIDER_MODEL" --arg f "${CMA_PROVIDER_FAST_MODEL:-$CMA_PROVIDER_MODEL}" '
+          .Providers = ([{name:$n, api_base_url:$u, api_key:$ENV.CMA_TOK, models:[$s,$f],
+                transformer:{use:["cleancache","streamoptions"]}}])
+          | .Router.default = ($n + "," + $s)
+          | .Router.background = ($n + "," + $f)
+        ' "$cfg" 2>&1 >| "$tmp")"
+      _jq_rc=$?
+      if (( _jq_rc != 0 )) || [[ ! -s "$tmp" ]]; then
+        # An empty output file is a failed rewrite too: mv-ing it would leave an
+        # unparseable config behind and the gateway would keep the old route.
+        rm -f "$tmp"
+        _route_err=1
+        _route_msg="the jq rewrite of $cfg failed (rc=$_jq_rc)${_jq_err:+: $_jq_err}"
+        _cma_cfg_unlock
+      else
+        _mv_err="$(command mv -f "$tmp" "$cfg" 2>&1)"; _mv_rc=$?
+        if (( _mv_rc != 0 )); then
+          rm -f "$tmp"
+          _route_err=1
+          _route_msg="installing the rewritten $cfg failed (mv rc=$_mv_rc)${_mv_err:+: $_mv_err}"
+          _cma_cfg_unlock
+        else
+          chmod 600 "$cfg" 2>/dev/null || true
+          _cma_cfg_unlock
+          # Remember exactly what WE wrote, so the exit repair can compare-and-swap
+          # instead of clobbering a newer launch's route.
+          _wrote_default="$CMA_PROVIDER_ID,$CMA_PROVIDER_MODEL"
+          _wrote_background="$CMA_PROVIDER_ID,${CMA_PROVIDER_FAST_MODEL:-$CMA_PROVIDER_MODEL}"
+          # Crash-recovery marker: written the moment an ephemeral address becomes
+          # durable, so a launch killed before its exit repair (SIGKILL, reboot)
+          # still leaves the next launch enough to reap the fossil. $$ is the
+          # owning shell; the next launch reaps only when `kill -0` proves it dead.
+          # Locked (marker-lost-update hardening — see _eph_lock's declaration
+          # above): read-modify-write against $_eph_marker under the same
+          # cross-launch mutual exclusion as the reap loop and the exit repair.
+          if [[ -n "$_eph_base" ]] && command -v jq >/dev/null 2>&1; then
+            _cma_eph_lock
+            local _mk_tmp
+            [[ -f "$_eph_marker" ]] || ( umask 077; printf '{}\n' > "$_eph_marker" )
+            _mk_tmp="$(mktemp "${TMPDIR:-/tmp}/cma.XXXXXX" 2>/dev/null)" && chmod 600 "$_mk_tmp" 2>/dev/null
+            if [[ -n "$_mk_tmp" ]] && jq --arg k "$CMA_PROVIDER_ID" --arg e "$_eph_base" \
+                  --arg r "$_real_base" --argjson p "$$" \
+                  '.[$k] = {eph:$e, real:$r, pid:$p}' "$_eph_marker" >| "$_mk_tmp" 2>/dev/null \
+                  && [[ -s "$_mk_tmp" ]]; then
+              command mv -f "$_mk_tmp" "$_eph_marker" 2>/dev/null && chmod 600 "$_eph_marker" 2>/dev/null
+            else
+              [[ -n "$_mk_tmp" ]] && rm -f "$_mk_tmp"
+            fi
+            _cma_eph_unlock
+          fi
+           # `ccr restart` is what makes the write LIVE (service.go:cmdRestart).
+           # Its failure means the file is right and the gateway is still wrong —
+           # the most dangerous state of all, and the one `|| true` used to hide.
+           _rst_out="$(CCR_HOME="$_ccr_home" "$_ccr" restart --gateway-port "$_ccr_port" --port "$_ccr_mgmt_port" 2>&1)"; _rst_rc=$?
+          if (( _rst_rc != 0 )); then
+            # SELF-HEAL the commonest cause. A "Profile … not found or is
+            # disabled" reply means ccr parsed 'restart' as a profile NAME — the
+            # installed ccr binary is STALE: it predates the 'restart' subcommand
+            # this launch depends on (a current build lists it in `ccr --help`).
+            # The binary is a gitignored build artifact, so a submodule bump does
+            # NOT rebuild it, and because EVERY router-transport alias hits this
+            # same step, one stale ccr bricks all of them at once. Rebuild once +
+            # retry (bounded: one rebuild, one retry) so a launch cannot be
+            # silently refused for a condition the toolkit can fix itself; if the
+            # rebuild is unavailable or does not help, fall through to the
+            # self-diagnosing error below.
+            case "$_rst_out" in
+              *'not found or is disabled'*)
+                if command -v claude-ccr-build >/dev/null 2>&1; then
+                  command -v cma_log >/dev/null 2>&1 \
+                    && cma_log "bundled ccr is stale (no 'restart' subcommand) — rebuilding once via claude-ccr-build …" \
+                    || printf 'claude-providers: bundled ccr is stale — rebuilding it once (this may take ~30s) …\n' >&2
+                  claude-ccr-build >/dev/null 2>&1 || true
+                  _rst_out="$(CCR_HOME="$_ccr_home" "$_ccr" restart --gateway-port "$_ccr_port" --port "$_ccr_mgmt_port" 2>&1)"; _rst_rc=$?
+                fi ;;
+            esac
+          fi
+          if (( _rst_rc != 0 )); then
+            _route_err=1
+            # Single quotes, not backticks: test_ccr_conformance.sh scans lib.sh
+            # for `ccr <subcommand>` invocations by splitting on shell command
+            # separators — a backtick here reads as a command substitution and
+            # the scanner extracts the bogus subcommand 'restart\'.
+            _route_msg="'ccr restart' failed (rc=$_rst_rc), so the new route was written but never applied${_rst_out:+: $_rst_out}"
+            case "$_rst_out" in
+              *'not found or is disabled'*)
+                _route_msg="$_route_msg
+  ROOT CAUSE: the bundled 'ccr' binary is STALE — it does not recognize the 'restart' subcommand (it read 'restart' as a profile), and an automatic rebuild was unavailable or did not resolve it. Rebuild manually, then retry: claude-ccr-build (needs the Go toolchain)." ;;
+            esac
+          fi
+        fi
+      fi
+    fi
+    if (( _route_err )); then
+      # Defensive scrub: diagnostics are echoed from tool stderr, which must
+      # never be allowed to carry the live key back to the terminal.
+      [[ -n "$token" ]] && _route_msg="${_route_msg//"$token"/<redacted>}"
+      printf 'claude-providers: refusing to launch %s — its ccr route was NOT applied.\n  %s\n' "$id" "$_route_msg" >&2
+      printf '  Launching anyway would serve whichever provider the gateway last routed to (wrong model, no error).\n' >&2
+      if [[ -n "$_proxy_pid" ]]; then
+        kill "$_proxy_pid" 2>/dev/null || true
+        command -v cma_log >/dev/null 2>&1 && cma_log "stopped proxy for $CMA_PROVIDER_ID (pid=$_proxy_pid) after route failure" || true
+      fi
+      # This path can ALSO leave a fossil: the jq+mv may have succeeded and only
+      # `ccr restart` failed, in which case the ephemeral address is already
+      # durable. Repair here too — the proxy we just killed is now dead.
+      _cma_ccr_unfossilise "$cfg" "$CMA_PROVIDER_ID" "$_eph_base" "$_real_base" \
+        "$_wrote_default" "$_wrote_background" "$_prior_default" "$_prior_background" \
+        "$_eph_marker"
+      return 78
+    fi
+    CCR_HOME="$_ccr_home" "$_ccr" default-claude-code -- "$@"; rc=$?
+    # Stop proxy if we started one
+    if [[ -n "$_proxy_pid" ]]; then
+      kill "$_proxy_pid" 2>/dev/null || true
+      command -v cma_log >/dev/null 2>&1 && cma_log "stopped proxy for $CMA_PROVIDER_ID (pid=$_proxy_pid)" || true
+    fi
+    # The proxy is dead as of the line above, so the address written into the
+    # DURABLE config now names nothing. Undo it before returning — compare-and-
+    # swap, so a launch that started after ours keeps its own route untouched.
+    _cma_ccr_unfossilise "$cfg" "$CMA_PROVIDER_ID" "$_eph_base" "$_real_base" \
+      "$_wrote_default" "$_wrote_background" "$_prior_default" "$_prior_background" \
+      "$_eph_marker"
+  else
+    export ANTHROPIC_BASE_URL="$CMA_PROVIDER_BASE_URL"
+    export ANTHROPIC_AUTH_TOKEN="$token"
+    # ANTHROPIC_MODEL + the four ANTHROPIC_DEFAULT_*_MODEL tier maps are
+    # exported ABOVE for BOTH transports (v1.26.1 — the 2.1.220 compact-loop
+    # fix): a tier-pinned subagent dispatch or fast-tier call never leaks a
+    # literal claude-* id to a native provider endpoint (which rejects it —
+    # xiaomi HTTP 400 "Unsupported model" — or silently substitutes — deepseek
+    # 200), and the router transport's client-side tier resolution (fast/
+    # compact = Fable 5, unavailable in 2.1.220) maps to the serving model.
+    # Session flags are applied ABOVE for both transports (v1.17.0) — see
+    # _cma_session_flags. CLAUDE_CODE_MAX_OUTPUT_TOKENS is exported ABOVE too,
+    # before the transport branch, CLAMPED to <=128000 for BOTH transports —
+    # see the _cma_out_guard/output-token-clamp block. (Was formerly
+    # re-exported here as the RAW, unclamped CMA_PROVIDER_MAX_OUTPUT — the
+    # origin of the "128000" fatal.) CLAUDE_CODE_AUTO_COMPACT_WINDOW caps
+    # INPUT — the two are independent halves of the guard.
+    "$CLAUDE_BIN" "$@"; rc=$?
+  fi
+  # Push post-session state back to all accounts/providers for cross-alias visibility.
+  if [[ -x "$HOME/.local/bin/claude-sync-state" ]]; then
+    "$HOME/.local/bin/claude-sync-state" push "$CLAUDE_CONFIG_DIR" 2>/dev/null || true
+  fi
+  # Colour a freshly-created session too (its jsonl exists now), so the colour is
+  # in place on the next resume even on the very first launch.
+  [[ "${_cma_pcolor:-}" == 1 && -x "$HOME/.local/bin/claude-session" ]] && \
+    "$HOME/.local/bin/claude-session" apply-color "$CLAUDE_CONFIG_DIR" "$CMA_PROVIDER_ID" 2>/dev/null || true
+  return $rc
+}
+
+_CMA_ACCOUNT_PREFIX=.claude-
+# True when $1 names a launchable ACCOUNT: a plain command word (no path
+# separator, not an option, not dot-prefixed) whose $HOME/<prefix>$1 config
+# dir exists. Provider config dirs (<prefix>prov-*) and the router's own dir
+# (<prefix>code-router) are NOT accounts — providers launch via
+# cma_run_provider and must never be hijacked by the account fallback.
+_cma_is_account_cmd() {
+  case "${1:-}" in ''|*/*|-*|.*) return 1 ;; esac
+  case "$1" in prov-*|code-router) return 1 ;; esac
+  [ -d "$HOME/${_CMA_ACCOUNT_PREFIX:-.claude-}$1" ]
+}
+_cma_cnf_impl() {
+  if _cma_is_account_cmd "${1:-}"; then
+    local _cma_d="$HOME/${_CMA_ACCOUNT_PREFIX:-.claude-}$1"
+    shift
+    CLAUDE_CONFIG_DIR="$_cma_d" cma_run "$@"
+    return $?
+  fi
+  # Not an account: hand off to whatever handler existed before this file was
+  # sourced (captured below), else reproduce the shell's stock behaviour.
+  if declare -f _cma_prev_cnf_handle >/dev/null 2>&1; then
+    _cma_prev_cnf_handle "$@"
+    return $?
+  fi
+  printf '%s: command not found\n' "${1:-}" >&2
+  return 127
+}
+# Preserve a PRE-EXISTING handler exactly once. Idempotent across re-sources:
+# a definition that already routes through _cma_cnf_impl is OURS and must not
+# be captured as "previous" (that would chain the handler to itself).
+if [ -n "${BASH_VERSION:-}" ]; then
+  _cma_cnf_name=command_not_found_handle
+else
+  _cma_cnf_name=command_not_found_handler
+fi
+_cma_cnf_def="$(declare -f "$_cma_cnf_name" 2>/dev/null || true)"
+case "$_cma_cnf_def" in
+  *_cma_cnf_impl*) : ;;
+  '') : ;;
+  *) eval "_cma_prev_cnf_handle() ${_cma_cnf_def#*'()'}" ;;
+esac
+unset _cma_cnf_def _cma_cnf_name
+# Define BOTH spellings; each shell consults only its own, the other is inert.
+command_not_found_handle()  { _cma_cnf_impl "$@"; }
+command_not_found_handler() { _cma_cnf_impl "$@"; }
+# cma-managed END
+alias claude1="CLAUDE_CONFIG_DIR=/tmp/cma-test.uOwdD8/.claude-acct1 cma_run"
+alias chutes1="cma_run_provider chutes1"
+alias chutes2="cma_run_provider chutes2"
+alias chutes3="cma_run_provider chutes3"
+alias chutes4="cma_run_provider chutes4"
+alias chutes5="cma_run_provider chutes5"
+alias helixagent="cma_run_provider helixagent"
+alias helixagent-native="cma_run_provider helixagent-native"
+alias helixllm-gateway="cma_run_provider helixllm-gateway"
+alias hyper1="cma_run_provider hyper1"
+alias hyper2="cma_run_provider hyper2"
+alias hyper3="cma_run_provider hyper3"
+alias hyper4="cma_run_provider hyper4"
+alias hyper5="cma_run_provider hyper5"
+alias mistral="cma_run_provider mistral"
+alias opencode-zen="cma_run_provider opencode"
+alias opencode-go1="cma_run_provider opencode-go1"
+alias opencode-go2="cma_run_provider opencode-go2"
+alias opencode-go3="cma_run_provider opencode-go3"
+alias opencode-go4="cma_run_provider opencode-go4"
+alias opencode-go5="cma_run_provider opencode-go5"
+alias opencode-zen1="cma_run_provider opencode-zen1"
+alias opencode-zen2="cma_run_provider opencode-zen2"
+alias opencode-zen3="cma_run_provider opencode-zen3"
+alias opencode-zen4="cma_run_provider opencode-zen4"
+alias opencode-zen5="cma_run_provider opencode-zen5"
+alias xiaomi="cma_run_provider xiaomi"
+alias zai-coding-plan="cma_run_provider zai-coding-plan"
+alias acme="cma_run_provider acme"
+alias nulltest="cma_run_provider nulltest")
+
+  • --quiet suppresses the refresh log line (non-quiet emits it)
+    [PASS] non-quiet refresh logs 'refreshed' (0)
+    [PASS] quiet refresh suppresses the log (0)
+
+  • cma_install_session_hook installs a marker-bracketed refresh block
+    [PASS] one BEGIN marker (1)
+    [PASS] one END marker (1)
+    [PASS] hook uses the no-network refresh path: 'list --quiet --refresh-aliases' in aliases.sh
+    [PASS] hook honours the TTL knob: 'CMA_PROVIDERS_SYNC_TTL' in aliases.sh
+
+  • cma_install_session_hook is idempotent (re-install replaces, no duplicate)
+    [PASS] still one BEGIN after re-install (1)
+    [PASS] still one function definition (1)
+
+  • sourcing the alias file fires the hook without error and with no network
+    [PASS] sourcing (hook fires) succeeds offline (0)
+
+  • claude-semantic-visibility.sh builds (cached) + forwards flags to the binary
+    [PASS] driver execs the built binary (0)
+    [PASS] driver forwards flags verbatim (0)
+    [PASS] binary was cached under .local-cache: /tmp/cma-test.uOwdD8/.local-cache/semantic-code-visibility
+
+  • claude-semantic-visibility.sh --help/-h ALWAYS works, even with no built binary (bug fix)
+    [PASS] --help exits 0 with no built binary (0)
+    [PASS] --help prints a usage line with no built binary (0)
+    [PASS] -h exits 0 with no built binary (0)
+    [PASS] -h prints a usage line with no built binary (0)
+
+  • providers-semantic maps overall_pass=true -> 'verified' exit 0
+    [PASS] pass -> verified (verified)
+    [PASS] pass -> exit 0 (0)
+
+  • providers-semantic WARNs when judge endpoint == model-under-test endpoint (v1.12.1 1A independence guard)
+    [PASS] same-endpoint judge -> independence WARNING on stderr (0)
+
+  • providers-semantic does NOT warn when judge endpoint differs (independent judge)
+    [PASS] different-endpoint judge -> NO independence warning (0)
+
+  • providers-semantic maps Go exit 3 (transport/infra) -> 'skip', not 'unverified' (v1.12.1 I-1 no-downgrade)
+    [PASS] Go exit 3 (infra) -> skip (a transient judge/model error must not demote) (skip)
+    [PASS] skip -> adapter exit 2 (2)
+
+  • providers-semantic maps overall_pass=false -> 'unverified' exit 1
+    [PASS] fail -> unverified (unverified)
+    [PASS] fail -> exit 1 (1)
+
+  • providers-semantic SKIPs (exit 2 -> 'skip') when the model key is absent — no downgrade
+    [PASS] no key -> skip (skip)
+    [PASS] skip -> exit 2 (2)
+
+  • providers-semantic reads fixture/rubric from providers/ (CONST-051 boundary), not the submodule
+    [PASS] judge-prompt carries rubric fixture-specific detail (0)
+
+  • providers-semantic writes the driver's JSON evidence to .local-cache/semantic-last.json (bug fix)
+    [PASS] semantic-last.json evidence file written: /home/milosvasic/Projects/helix_code/submodules/claude-toolkit/.local-cache/semantic-last.json
+    [PASS] evidence file carries the driver's overall_pass (0)
+    [PASS] evidence file carries the driver's round1_sentinel (0)
+
+  • providers-semantic normalizes a judge base URL ending in /v1 before passing --judge-base-url (bug fix)
+    [PASS] argv-recorder stub wrote its received args: /tmp/cma-test.uOwdD8/scv-argv.txt
+    [PASS] judge base url has /v1 stripped, no double /v1/v1 (https://api.example.com)
+
+  • cmd_sync: existence=verified + semantic=unverified -> status unverified/semantic
+    [PASS] semantic failure demotes to unverified (unverified)
+    [PASS] failing layer = semantic (.beta.failing_layer = semantic)
+
+  • cmd_sync: existence=verified + semantic=skip -> stays verified (honest SKIP, no downgrade)
+    [PASS] semantic skip does not downgrade verified (verified)
+
+  • cmd_sync: existence=unverified (inconclusive) -> failing_layer=existence (NOT semantic), semantic never invoked
+    [PASS] existence-inconclusive -> status unverified (unverified)
+    [PASS] failing layer = existence, not semantic (.beta.failing_layer = existence)
+    [PASS] semantic layer not invoked when existence is inconclusive (0)
+
+  • cmd_verify: existence=verified + semantic=verified -> prints verified, persists verified with empty failing_layer
+    [PASS] cmd_verify stdout: verified (verified)
+    [PASS] cmd_verify persists status verified (verified)
+    [PASS] cmd_verify verified -> failing_layer empty (.gamma.failing_layer = )
+
+  • cmd_verify: existence probe returns failed -> prints failed, persists failed/existence
+    [PASS] cmd_verify stdout: failed (failed)
+    [PASS] cmd_verify persists status failed (failed)
+    [PASS] cmd_verify failed -> failing_layer existence (.gamma.failing_layer = existence)
+
+  • cmd_verify: existence=verified + semantic=unverified -> prints unverified, persists unverified/semantic
+    [PASS] cmd_verify stdout: unverified (unverified)
+    [PASS] cmd_verify persists status unverified (unverified)
+    [PASS] cmd_verify semantic-fail -> failing_layer semantic (.gamma.failing_layer = semantic)
+
+  • cmd_verify: unknown provider id dies with non-zero exit + message
+    [PASS] cmd_verify unknown id exits 1 (1)
+    [PASS] cmd_verify unknown id emits a die message (0)
+
+  • verify_superpowers_tui SCRUB list mirrors verify_claude_live.sh exactly (session-continuity vars included)
+    [PASS] SCRUB var set identical to verify_claude_live.sh (incl. CLAUDE_CODE_CHILD_SESSION/SESSION_ID govern resume safety) (ANTHROPIC_API_KEY
+ANTHROPIC_AUTH_TOKEN
+ANTHROPIC_BASE_URL
+ANTHROPIC_MODEL
+BASH_ENV
+CLAUDECODE
+CLAUDE_CODE_CHILD_SESSION
+CLAUDE_CODE_ENTRYPOINT
+CLAUDE_CODE_EXECPATH
+CLAUDE_CODE_SESSION_ID
+CLAUDE_CONFIG_DIR
+CLAUDE_EFFORT)
+
+  • verify_superpowers_tui SKIPs (exit 0 + reason) when there is no real claude binary
+    [PASS] SKIP is a non-failure (exit 0) (0)
+    [PASS] prints an honest SKIP reason (0)
+    [PASS] never claims PASS when skipping (0)
+
+  • verify_superpowers_tui SKIPs when the named alias is not installed (genuinely reaches that branch)
+    [PASS] precondition: sandbox alias file exists (so the alias-file check doesn't SKIP first) (0)
+    [PASS] precondition: no_such_alias has no provider env file (0)
+    [PASS] unknown alias -> SKIP exit 0 (0)
+    [PASS] SKIP reason names the alias-not-installed branch specifically (not an earlier precondition) (0)
+
+  • no xAI docs-scrape / hardcoded-model special-case is present in the sources
+    [PASS] xAI is handled by the generic probe path, not a scrape branch (0)
+
+  • providers-verify treats xAI like any OpenAI-shaped provider (sentinel + tool call -> verified)
+    [PASS] xAI chat+tools probes pass -> verified (no special-case) (verified)
+
+  • providers-verify names a context-overflow 400 as context-inadequate (existence layer), distinct from auth/billing
+    [PASS] a context-overflow 400 is still a failed verdict (the alias cannot serve Claude Code) (failed)
+    [PASS] the reason distinctly names context-inadequate (not auth/billing/model-missing) (0)
+    [PASS] and it points the operator at the backend size — the actual fix (0)
+    [PASS] a 401 is still failed (failed)
+    [PASS] a 401 is NOT misnamed context-inadequate (the distinct reason does not over-broaden) (1)
+
+  • providers-verify keeps /anthropic and probes /anthropic/v1/messages for native-transport providers
+    [PASS] native /anthropic base -> verified (prefix kept, /anthropic/v1/messages probed) (verified)
+
+  • emitted cma_run_provider carries env-isolation unset for ANTHROPIC_*
+    [PASS] full ANTHROPIC_* unset line present in alias file (0)
+
+  • emitted cma_run_provider carries env-isolation unset for CLAUDE_CODE_*
+    [PASS] CLAUDE_CODE_* unset line present in alias file (0)
+
+  • env-isolation markers appear in cma_run_provider body before activation gate
+    [PASS] env-isolation unset lines precede the activation gate (0)
+
+  • migration check detects missing env-isolation marker
+    [PASS] bare body without env-isolation triggers missing check (0)
+
+  • cma_status_write works for a multi-alias name (numeric suffix pattern)
+    [PASS] multi-alias acme2 reads as verified (verified)
+    [PASS] multi-alias carries model name (.acme2.model = acme-big)
+    [PASS] verified has empty failing_layer (.acme2.failing_layer = )
+
+  • cma_status_write for multi-alias with low score -> unverified (existence)
+    [PASS] low-score multi-alias -> unverified (unverified)
+    [PASS] low-score -> existence (.acme4.failing_layer = existence)
+
+  • multi-alias gate subshells also load the wrapper from the sandbox alias file
+    [PASS] multi-alias gate subshell wrapper provenance: cma_run_provider came from /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/aliases.sh
+
+  • multi-alias activation gate: verified alias launches (cma_run_provider rc 0)
+    [PASS] multi-alias verified acme2 launches (rc 0) (0)
+
+  • multi-alias activation gate: unverified alias blocks (rc 3)
+    [PASS] unverified multi-alias acme4 blocked by gate (rc 3) (3)
+
+  • cmd_remove clears the status.json entry for the removed provider
+    [PASS] precondition: removeme status verified before remove (verified)
+    [PASS] status reads back as pending (no stale record) after remove (pending)
+    [PASS] removeme key is actually absent from status.json, not just null (0)
+
+  • cmd_remove leaves OTHER status.json entries untouched (no over-broad delete)
+    [PASS] sibling status entry survives an unrelated remove (verified)
+    [PASS] removeme2's own entry is gone (pending)
+
+  • sync demotes an orphaned status.json record instead of leaving it 'verified' forever
+    [PASS] precondition: orphan-alpha marked verified (verified)
+    [PASS] orphan-alpha no longer reports verified after sync (now: orphaned) (0)
+    [PASS] sync emits an orphan warning on stderr (0)
+    [PASS] warning names the specific orphaned id (0)
+
+  • sync's orphan detection also covers a leftover *.env with no prior status.json entry
+    [PASS] precondition: orphan-beta has no status entry yet (env-only orphan) (pending)
+    [PASS] env-only orphan gets an explicit demoted status, not silently left pending/verified (now: orphaned) (0)
+
+  • sync never demotes a provider that still resolves (guard against orphan-detection over-matching)
+    [PASS] acme (still resolves every sync) is never marked orphaned (1)
+    [PASS] acme keeps its normal --no-verify status (not clobbered by orphan demotion) (unverified)
+
+  • prune --dry-run labels orphan-alpha status-only and orphan-beta unresolved, distinctly
+    [PASS] dry-run reports orphan-alpha (0)
+    [PASS] dry-run reports orphan-beta (0)
+    [PASS] orphan-alpha (no .env) is labeled status-only (0)
+    [PASS] orphan-beta (has .env) is labeled unresolved (0)
+    [PASS] status-only orphan is would-prune even without --unresolved (0)
+    [PASS] unresolved orphan is NOT would-prune without --unresolved (1)
+    [PASS] unresolved orphan is explicitly marked NOT pruned (0)
+    [PASS] unresolved orphan's line tells the operator about --unresolved (0)
+
+  • prune --dry-run never flags acme, a provider that still resolves
+    [PASS] acme (still resolves) never appears in prune --dry-run output (1)
+
+  • prune --dry-run: dry-run changes nothing for either class
+    [PASS] dry-run does not change orphan-alpha's status (orphaned)
+    [PASS] dry-run does not remove orphan-beta's env file (1)
+    [PASS] dry-run does not remove orphan-beta's alias line (0)
+
+  • prune --dry-run --unresolved previews pruning BOTH classes together
+    [PASS] status-only still would-prune under --unresolved (0)
+    [PASS] unresolved orphan also would-prune with --unresolved (0)
+    [PASS] acme still never appears, even with --unresolved (1)
+
+  • plain prune removes the status-only orphan for real but leaves the unresolved orphan alone
+    [PASS] orphan-alpha's status record is gone after a plain, real prune (pending)
+    [PASS] orphan-beta's env file SURVIVES a plain prune (needs --unresolved) (1)
+    [PASS] orphan-beta's alias line survives a plain prune (0)
+    [PASS] plain prune's real-run output still calls out the untouched unresolved orphan (0)
+    [PASS] plain prune tells the operator how to remove it (--unresolved) (0)
+
+  • prune --unresolved removes the unresolved orphan for real
+    [PASS] orphan-beta's env file is removed after prune --unresolved (1)
+    [PASS] orphan-beta's alias line is removed after prune --unresolved (1)
+    [PASS] orphan-beta's status record is also gone (cmd_remove clears it) (pending)
+
+  • prune never touches acme when actually removing orphans (healthy provider guard)
+    [PASS] acme's status is untouched by a real prune run (unverified)
+    [PASS] acme env file still present after prune: /tmp/cma-test.uOwdD8/.local/share/claude-multi-account/providers/acme.env
+    [PASS] acme alias still present after prune (0)
+
+  • prune is a no-op (with a clear message) once no orphans remain
+    [PASS] prune reports there is nothing left to prune (0)
+    [PASS] token-guard fixture resolves (0)
+
+  • a :free row contradicted by independent providers has its context corrected
+    [PASS] leaky context corrected to the real 262144 (262144)
+    [PASS] leaky output carved out of the context, not copied from it (102144)
+
+  • a :free row whose context IS corroborated keeps it (the ultra-550b shape)
+    [PASS] context NOT collapsed to the output value 65536 (1000000)
+    [PASS] the genuine 65536 output budget survives, not the 8192 floor (65536)
+
+  • a corroborated :free row keeps a usable output cap (the gemma-4 shape)
+    [PASS] context NOT collapsed to 32768 (262144)
+    [PASS] output stays 32768, not floored to 8192 (32768)
+
+  • with no independent corroboration the catalog context is kept, not guessed away
+    [PASS] uncorroborated context kept (900000)
+    [PASS] the absence of corroboration is stated, not silent: 'credit=unknown(signal=none) policy=auto; credit unknown -> conservative, strongest free; selected tier=free [free=1 paid=1 unknown=0]; limits: limit.output exceeds this model's own paid sibling's budget, but fewer than 3 OTHER providers publish a context for it — no corroboration, catalog context 900000 kept' (0)
+
+  • C1: the accused provider does not vote in its own trial
+    [PASS] one peer cannot sentence a 1M window to 8192 (1000000)
+    [PASS] no correction is claimed when none was earned (no)
+    [PASS] two peers still leave one peer deciding alone — not enough (1000000)
+    [PASS] three independents, a majority low, DO earn the correction (262144)
+    [PASS] the accused cannot make up the quorum that convicts it (1000000)
+    [PASS] nor cast the ballot that acquits it (262144)
+
+  • C2: the vote aggregates by lower median, not by minimum or maximum
+    [PASS] 5-provider pool: lower median 80000, not min 16000 / max 262144 (80000)
+    [PASS] 4-provider pool: LOWER of the two middles, not min 16000 / max 262144 (80000)
+
+  • I1: output==context is the output mislabel, not evidence against the context
+    [PASS] an out==ctx row is not adjudicated even with 4 low peers (131072)
+    [PASS] out<ctx, the shape it was built for, still adjudicates (262144)
+
+  • I2: an output rejected as unusable cannot convict a context
+    [PASS] output=262144.7 is not a cap and not a witness either (1000000)
+
+  • I3: models sharing a last segment across vendors are not the same model
+    [PASS] beta/gamma/delta turbo do not sentence alpha/turbo (1000000)
+    [PASS] a bare id still corroborates a vendored one (262144)
+
+  • I4: corroboration cannot detect a genuinely throttled free tier (known blind spot)
+    [PASS] peers describe the PAID tier, so a real throttle is invisible here (1000000)
+
+  • I5: a context too small to carve a cap from never yields a capless pair
+    [PASS] context=1 falls back to the conservative pair, not (1, None) ((128000, 8192))
+
+  • I6: a corroboration correction to a SUB-VIABLE context never yields a capless pair (round-4 fail-open)
+    [PASS] the resolved pair is NEVER (ctx, None) (no)
+    [PASS] 0 < max_output < context_limit, both positive ints (yes)
+    [PASS] the sub-viable context (1) is recovered to a real window, not kept at 1 (yes)
+    [PASS] it genuinely went THROUGH the corroboration-correction branch (yes)
+    [PASS] and THROUGH the viability fallback, not some unrelated path (yes)
+    [PASS] a small-but-viable correction (32768) is carved, NOT inflated to the floor (yes)
+
+  • Q4: the usability floor never overstates a provider's own distribution
+    [PASS] a narrow provider gets its median, not the 65536 floor (16000)
+    [PASS] a provider whose median clears the floor still gets 65536 (65536)
+    [PASS] a 2-row pool has no median to speak of; the floor stands (65536)
+
+  • a context value never lands in the output slot
+    [PASS] LEAKY_API_KEY: max_output (102144) < context_limit (262144) (1)
+    [PASS] LEAKY_API_KEY: max_output is not the context value verbatim (1)
+    [PASS] TWIN_API_KEY: max_output (102144) < context_limit (262144) (1)
+    [PASS] TWIN_API_KEY: max_output is not the context value verbatim (1)
+    [PASS] HONEST_API_KEY: max_output (128000) < context_limit (1048576) (1)
+    [PASS] HONEST_API_KEY: max_output is not the context value verbatim (1)
+
+  • derived input floor + output cap fits inside the real context window
+    [PASS] LEAKY_API_KEY: 137483+102144 <= 262144 (1)
+    [PASS] TWIN_API_KEY: 137483+102144 <= 262144 (1)
+    [PASS] HONEST_API_KEY: 137483+128000 <= 1048576 (1)
+
+  • the impossible context==output row is repaired rather than trusted
+    [PASS] twin keeps its (correct) context (262144)
+    [PASS] twin's output no longer equals its context (102144)
+
+  • a credible large output budget is NOT collapsed (no over-correction)
+    [PASS] honest keeps its full 1M window (1048576)
+    [PASS] honest output clamped to the CLI ceiling only (128000)
+
+  • the token-guard block is extractable from lib.sh
+    [PASS] guard source found between the sentinels (1)
+
+  • an input guard is ALWAYS exported when the context is known (fail-open regression)
+    [PASS] context=200001 exports an auto-compact window (got '80000') (1)
+    [PASS] context=262144 exports an auto-compact window (got '120000') (1)
+    [PASS] context=1000000 exports an auto-compact window (got '176000') (1)
+    [PASS] context=1048576 exports an auto-compact window (got '176000') (1)
+
+  • an output cap is ALWAYS exported when the context is known
+    [PASS] ctx=262144 out='262144' exports an output cap (got '62144') (1)
+    [PASS] ctx=262144 out='' exports an output cap (got '62144') (1)
+    [PASS] ctx=1000000 out='262144' exports an output cap (got '128000') (1)
+
+  • exported input window + output cap never exceed the context
+    [PASS] ctx=262144 out='102144': window(120000)+cap(62144)=182144 <= 262144 (1)
+    [PASS] ctx=262144 out='262144': window(120000)+cap(62144)=182144 <= 262144 (1)
+    [PASS] ctx=200000 out='32000': window(88000)+cap(32000)=120000 <= 200000 (1)
+    [PASS] ctx=1048576 out='131072': window(176000)+cap(128000)=304000 <= 1048576 (1)
+    [PASS] ctx=131072 out='8192': window(42880)+cap(8192)=51072 <= 131072 (1)
+    [PASS] ctx=262144 out='': window(120000)+cap(62144)=182144 <= 262144 (1)
+
+  • tool-schema budget is reserved: window + tools + output fit the context (openrouter3 live 400, 2026-07-26)
+    [PASS] openrouter3 shape: window raised from 80000 to 120000 by reducing output cap (120000)
+    [PASS] window(120000)+tools(80000)+output(62144)=262144 <= 262144 (1)
+    [PASS] CMA_TOOL_TOKEN_BUDGET=40000 overrides the reserve (120000)
+    [PASS] one field only (the cap) — no window exported for ctx=65536 with an 80000 tool reserve (1)
+    [PASS] the surviving field is the output cap (8192)
+
+  • unknown limits export no guard at all (honest, not invented)
+    [PASS] no context => no auto-compact window ()
+    [PASS] no context => no output cap ()
+
+  • autocompact safety margin lowers the window when the provider can afford it (thrashing guard)
+    [PASS] 1M ctx: 200000 raw window reduced by 24000 safety margin (176000)
+    [PASS] margin-adjusted window(176000)+tools(80000)+output(128000)=384000 <= 1000000 (1)
+
+  • safety margin is capped at min-compact-window floor
+    [PASS] helixagent shape: margin capped at min_win floor (120000)
+
+  • tight providers keep their window unchanged (no margin to give)
+    [PASS] opencode shape: below-min_win window unchanged by margin (71808)
+
+  • CMA_AUTO_COMPACT_SAFETY_MARGIN=0 disables the margin
+    [PASS] margin disabled -> raw capped window restored (200000)
+
+  • invalid safety margin values are treated as 0
+    [PASS] non-numeric margin treated as 0 (200000)
+
+✓ 421 passed, 0 failed
+
+==> test_lib.sh
+
+  • cma_validate_alias accepts well-formed names
+    [PASS] claude3 (0)
+    [PASS] work_acct-1 (0)
+
+  • cma_validate_alias rejects invalid names
+    [PASS] rejects digit-leading (1)
+    [PASS] rejects spaces (1)
+    [PASS] rejects empty (1)
+
+  • cma_suggest_alias starts at claude1 when nothing exists
+    [PASS] first suggestion (claude1)
+
+  • cma_suggest_alias increments past existing claudeN aliases
+    [PASS] skips past highest, not count (claude6)
+
+  • cma_write_alias is idempotent — rewriting same alias doesn't duplicate
+    [PASS] one alias line for claude1 (1)
+
+  • cma_remove_alias removes the line
+    [PASS] claude5 removed: 'alias claude5=' absent from aliases.sh
+
+  • cma_ensure_alias_file sources from the shell rc file
+[cma] added source line to /tmp/cma-test.S29h0h/.bashrc
+    [PASS] alias file created: /tmp/cma-test.S29h0h/.local/share/claude-multi-account/aliases.sh
+    [PASS] rc file gets source line: 'source "/tmp/cma-test.S29h0h/.local/share/claude-multi-account/aliases.sh"' in .bashrc
+
+  • cma_detect_accounts skips the shared store
+    [PASS] finds .claude-acct1 (0)
+    [PASS] excludes .claude-shared (0)
+
+  • cma_detect_accounts excludes non-Claude .claude-* dirs (e.g. .claude-server-commander)
+    [PASS] excludes .claude-server-commander (0)
+    [PASS] still finds the legit empty account (0)
+
+  • cma_detect_accounts includes a populated account dir even if it has foreign config too
+    [PASS] finds .claude-real (0)
+
+  • cma_realpath resolves a symlink chain to its canonical target (no readlink -f)
+    [PASS] cma_realpath follows the symlink chain (/tmp/cma-test.S29h0h/rp/real/file)
+    [PASS] cma_realpath is identity on a real path (/tmp/cma-test.S29h0h/rp/real/file)
+
+  • no runtime script INVOKES 'readlink -f' (absent on BSD/macOS)
+    [PASS] zero 'readlink -f' invocations in runtime scripts (0)
+
+  • no committed proof artifact contains a literal secret
+    [PASS] proof dir free of literal secrets (suspect-line count) (0)
+
+  • proof-secret scanner: boundary-anchored (embedded prefix ignored, real key caught)
+    [PASS] embedded prefixes (retire_/my_secret_) are NOT flagged (0)
+    [PASS] a real boundary-anchored sk-ant- key IS flagged (1)
+
+  • cma_merge_claude_json: private keys stay per-account; projects union (no credential leak)
+    [PASS] account A keeps its OWN userID after merge (UID-A)
+    [PASS] account B keeps its OWN userID after merge (UID-B)
+    [PASS] A sees both projects (union) (["pa","pb"])
+    [PASS] B sees both projects (union) (["pa","pb"])
+    [PASS] no cross-account credential leak in either direction (0)
+
+  • cma_ensure_alias_file generates cma_run with project-scoped cwd-hook resolution
+    [PASS] cma_run has _cma_hook_root marker (project-scoped hook support) (0)
+    [PASS] cma_run resolves git toplevel for project-local hook (0)
+    [PASS] cma_run checks for .claude-cwd-hook in project root (0)
+    [PASS] cma_run respects CMA_CWD_HOOK env var override (0)
+    [PASS] cma_run falls back to global claude-cwd-hook (0)
+
+  • wrapper regeneration has no marker/version-stamp short-circuit
+    [PASS] no version-stamp short-circuit (would skip a needed self-heal) (0)
+    [PASS] wrapper emission is unconditional (not gated on the old body) (0)
+
+  • $ALIAS_FILE has exactly one writer
+    [PASS] exactly one writer of $ALIAS_FILE remains (1)
+
+  • the ccr-gateway guard has exactly one definition (no drifting copy)
+    [PASS] _cma_is_ccr_gateway defined once in lib.sh (1)
+    [PASS] providers-verify.sh does not re-define it (0)
+    [PASS] providers-verify.sh calls the shared helper (0)
+    [PASS] the duplicated literal-spelling case is gone (0)
+
+  • the ccr-gateway guard matches every form that IS the gateway
+    [PASS] no gateway spelling slips through ()
+
+  • the ccr-gateway guard does NOT false-positive on legitimate bases
+    [PASS] no legitimate base is swept up ()
+
+  • the ccr-gateway guard honours a non-default CMA_CCR_PORT
+    [PASS] 9999 is the gateway when CMA_CCR_PORT=9999 (0)
+    [PASS] 3456 is NOT the gateway when CMA_CCR_PORT=9999 (1)
+
+  • cma_detect_accounts ignores archived (.removed.*) and .preunify.* dirs
+    [PASS] only the two live accounts are detected (2)
+    [PASS] no archived dir appears in the detected set (0)
+
+  • _cma_alias_render propagates an output write failure
+    [PASS] an unopenable output path is a failed render (1)
+    [PASS] an ENOSPC write (/dev/full) is a failed render (1)
+    [PASS] CONTROL: a normal render still returns success (0)
+
+  • the alias lock is per-$ALIAS_FILE — two alias files never contend
+    [PASS] a lock on alias file B is unaffected by a holder of alias file A (0)
+    [PASS] CONTROL: the SAME alias file still contends (the lock is real) (1)
+
+✓ 50 passed, 0 failed
+missing: /home/milosvasic/Projects/helix_code/submodules/claude-toolkit/scripts/tests/test_failure_cause.sh
+missing: /home/milosvasic/Projects/helix_code/submodules/claude-toolkit/scripts/tests/test_sync_failing_layer.sh
+
+============================================
+Test files: 4   passed: 2   failed: 2   (skipped-prereq: 0)
+Failed files:
+  - /home/milosvasic/Projects/helix_code/submodules/claude-toolkit/scripts/tests/test_failure_cause.sh
+  - /home/milosvasic/Projects/helix_code/submodules/claude-toolkit/scripts/tests/test_sync_failing_layer.sh
+EXIT=1

@@ -2,8 +2,13 @@
   "exclude": [
     "cli_agents/",
     "cli_agents_resources/",
-    "github_pages_website/",
     "submodules/**/tools/opensource/**",
-    "submodules/helix_agent/external/**"
+    "submodules/helix_agent/external/**",
+    "submodules/claude-toolkit/submodules/go/",
+    "mcp_servers/",
+    "dependencies/colibri/",
+    "submodules/superspec/",
+    "submodules/claude-toolkit/submodules/containers/",
+    "submodules/claude-toolkit/submodules/challenges/"
   ]
 }

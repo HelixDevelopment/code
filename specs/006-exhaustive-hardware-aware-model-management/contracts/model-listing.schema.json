@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://helix.dev/schemas/006/model-listing.schema.json",
+  "title": "ModelListingEntry",
+  "description": "One entry of GET /v1/models as CONSUMED by `helixllm --list-models`. This is a real contract, not a design sketch: cmd/helixllm/list_models.go decodes exactly these fields, and TestModelListingContractMatchesDecoder compares this document's field set against the decoder's JSON tags in both directions (a promised-but-absent field and an undocumented field are both findings).",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The STABLE derived identifier (naming.Derive output, e.g. helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190). Shown in the command's third column so a copy-paste into configuration uses the value whose stability FR-015 relies on."
+    },
+    "model_identity": {
+      "type": "string",
+      "description": "The helixllm/<host>/<model>[:<variant>] identity. brain.ModelOption.DisplayName reads the clean name from it, so a listing shows `qwen2-5-coder-3b-instruct:q4_k_m` rather than the digest. Absent for remote (non-HelixLLM) options."
+    },
+    "owned_by": {
+      "type": "string",
+      "description": "The serving backend, e.g. llamacpp or a vendor name."
+    },
+    "withheld_reason": {
+      "type": "string",
+      "description": "Present when the option is withheld. Rendered as a trailing `(withheld: <reason>)` so 'withheld right now' stays distinguishable from 'does not exist' (FR-019)."
+    }
+  }
+}

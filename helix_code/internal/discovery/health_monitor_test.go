@@ -48,9 +48,8 @@ func TestHealthMonitor_StartStop(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, hm.IsRunning())
 
-	// Wait a moment
-	time.Sleep(100 * time.Millisecond)
-
+	// No sleep needed: Start() does hm.wg.Add(1) synchronously before
+	// `go hm.monitorLoop()`, and Stop() ends in hm.wg.Wait().
 	// Stop
 	err = hm.Stop()
 	require.NoError(t, err)
@@ -536,8 +535,15 @@ func TestHealthMonitor_MonitorLoop(t *testing.T) {
 	err = hm.Start()
 	require.NoError(t, err)
 
-	// Wait for checks to run
-	time.Sleep(300 * time.Millisecond)
+	// Wait for the monitor to actually COMPLETE its checks rather than sleeping
+	// 300ms and hoping. GetSuccessCount is the observable the monitorLoop
+	// increments, so this asserts the predicate the rest of the test depends
+	// on. (Without it, `assert.True(t, service.Healthy)` below is a bluff:
+	// Register sets Healthy=true, so it passes even if zero checks ran.)
+	require.Eventually(t, func() bool {
+		return hm.GetSuccessCount("monitored-service") >= config.HealthyThreshold
+	}, 30*time.Second, 5*time.Millisecond,
+		"health monitor never completed HealthyThreshold successful checks")
 
 	// Stop monitoring
 	err = hm.Stop()

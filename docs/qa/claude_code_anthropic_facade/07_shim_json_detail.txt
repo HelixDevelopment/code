@@ -1,0 +1,22 @@
+### Claude Code, --output-format json (structured result)
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+{"duration_api_ms":1358,"stop_reason":"end_turn","session_id":"5782841f-56c5-48b5-934d-a17656d867e7","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"output_tokens_details":{"thinking_tokens":0},"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{"helix-local":{"inputTokens":0,"outputTokens":0,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0,"contextWindow":200000,"maxOutputTokens":32000,"thinkingTokens":0,"canonicalModel":"helix-local","provider":"firstParty","costBasis":"unknown"}},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","fast_mode_disabled_reason":"sdk_opt_in_required","subagent_stats":{"spawned":0,"requested":{"background":0,"foreground":0,"unset":0},"started_in_background":0,"max_depth":0,"spawned_by_subagents":0,"completed":0,"failed":0,"killed":{"parent":0,"user":0,"system":0},"refused":{"depth_limit":0,"concurrency_limit":0,"budget":0},"by_type":{}},"is_error":false,"num_turns":2,"subtype":"success","api_error_status":null,"result":"","ttft_ms":3385,"type":"result","duration_ms":4056,"uuid":"34a3b6e1-4de2-402f-bc15-0982f2ea2034","ttft_stream_ms":2729,"time_to_request_ms":2690,"first_content_frame_ms":2730,"queued_turn_count":0}
+
+
+### The exact response the facade returned to Claude Code (replayed with the SAME body Claude Code sent)
+{"id":"msg_9636c585-4965-498a-bd06-2cfb0ad377b3","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":164,"output_tokens":5}}
+
+### shim log
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+
+### facade access log
+[GIN] 2026/09/05 - 23:12:01 | 200 | 66.711µs |       127.0.0.1 | GET      "/health"
+[GIN] 2026/09/05 - 23:12:03 | 404 |   3.91µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:12:09 | 200 | 604.06ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:12:09 | 200 | 553.59ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:12:10 | 200 | 358.57ms |       127.0.0.1 | POST     "/v1/messages?beta=true"

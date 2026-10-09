@@ -299,12 +299,12 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=helixcode_test
 POSTGRES_USER=helixcode
-POSTGRES_PASSWORD=helixcode_test_password
+POSTGRES_PASSWORD=CHANGE_ME_local_test_password  # required — docker-compose.yml has no fallback (HXC-168)
 
 # Redis
 REDIS_HOST=localhost
 REDIS_PORT=6379
-REDIS_PASSWORD=helixcode_test_password
+REDIS_PASSWORD=CHANGE_ME_local_test_password  # required — docker-compose.yml has no fallback (HXC-168)
 ```
 
 ## Workflows

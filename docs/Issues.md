@@ -227,15 +227,7 @@ The password used to reach the project database is written in plain text inside 
 **Type:** Bug
 **Severity:** Medium
 
-A complete copy of somebody else's web application sits inside the agent's source tree, and it alone accounts for one hundred and thirty-nine of the two hundred and four reported dependency security warnings, including three of the five most severe. It cannot currently be built or run: the startup configuration points at a build recipe file that does not exist in that folder, and its supporting packages have never been downloaded here. This matters in two opposite ways at once. Because it is not built, those warnings do not describe anything we actually run today, which is why they rank low. But because a startup entry still references it, the setup is broken and misleading, and if anyone ever supplies the missing recipe file, all one hundred and thirty-nine warnings become live at once with no warning to whoever does it. Anyone reading our security reports benefits from removing this distortion, since it currently buries the small number of warnings that genuinely matter. The expected outcome is an explicit decision, recorded in writing: either keep the copy and properly maintain and build it, or remove it and its broken startup entry, or replace it with a reference to the upstream hosted service. Because deleting shipped components requires approval, the decision must be put to the operator rather than taken unilaterally.
-
-## HXC-172 — Three security warnings in a small plugin service we wrote and actually deploy, with no reachability evidence either way
-
-**Status:** Operator-blocked
-**Type:** Task
-**Severity:** High
-
-A small companion service we wrote ourselves is packaged into a container and started as part of the standard deployment, and it carries three known security warnings in its supporting packages, two of them rated high. Unlike the great bulk of the reported warnings, these have no mitigating evidence in either direction: we cannot say the code is unshipped, because it demonstrably ships, and no analysis has been run to establish whether the affected functionality is ever exercised. This matters because it is the one place in the whole review where something we genuinely run carries unassessed risk, which makes it far more deserving of attention than its small count suggests. One of the three is not really an upgrade problem at all: it concerns a protective setting that is switched off unless explicitly enabled, so updating the package without also turning the protection on would leave the exposure in place while appearing to resolve it. Users of any deployment running this service benefit. The expected outcome is a reachability assessment of the three warnings, the two straightforward package updates applied, the protective setting explicitly verified as enabled in our configuration rather than assumed, and the service rebuilt and confirmed working.
+A complete copy of somebody else's web application sits inside the agent's source tree, and it alone accounts for one hundred and thirty-nine of the two hundred and four reported dependency security warnings, including three of the five most severe. It cannot currently be built or run: the startup configuration points at a build recipe file that does not exist in that folder, and its supporting packages have never been downloaded here. This matters in two opposite ways at once. Because it is not built, those warnings do not describe anything we actually run today, which is why they rank low. But because a startup entry still references it, the setup is broken and misleading, and if anyone ever supplies the missing recipe file, all one hundred and thirty-nine warnings become live at once with no warning to whoever does it. Anyone reading our security reports benefits from removing this distortion, since it currently buries the small number of warnings that genuinely matter. The expected outcome is an explicit decision, recorded in writing: either keep the copy and properly maintain and build it, or remove it and its broken startup entry, or replace it with a reference to the upstream hosted service. Because deleting shipped components requires approval, the decision must be put to the operator rather than taken unilaterally. HXC-225 tracked this identical component (submodules/helix_agent/mcp-servers/GitMCP) under a separately-minted ticket id with no Duplicate-of link back to this one — a §11.4.214 recurrence-links-not-mints violation. HXC-225 has been consolidated into this ticket: it is closed Obsolete (reason duplicate-of, superseding item HXC-171) per §11.4.90, citing the investigation evidence at docs/qa/hxc225_gitmcp_investigation_20260807T151320Z/ANALYSIS.md, which identifies both tickets as tracking the same vendored copy of idosal/git-mcp. The operator has approved removal of this vendored copy per §11.4.122 (approval granted 2026-09-02); this item is no longer awaiting an operator decision.
 
 ## HXC-175 — An unreachable safety fallback in the model cache could silently serve stale data forever if edited
 
@@ -408,15 +400,6 @@ A blanket rule excluding log files from version control was also excluding captu
 
 A recent repair changed how the release gate decides whether a piece of recorded test evidence really belongs to the change it claims to document. Evidence must now name its commit on a labelled line rather than merely happening to contain the right code somewhere in the text. That new requirement was never written down for the people who have to follow it: the guide that authors read before recording evidence says nothing about the new labelled field, so a contributor following the current instructions can produce evidence the gate will reject without understanding why. Separately, the reference page describing the gate itself has printable and web copies that were generated well before the page was last edited, so all three versions disagree with each other and with the tool they describe. Fixing this means updating the author-facing guide to describe the labelled citation field and regenerating the exported copies so every version matches. The people who benefit are contributors recording evidence and reviewers reading it, who currently have no accurate written description of the rule being enforced. Success means someone can follow the written guide and produce evidence that passes the gate on the first attempt.
 
-## HXC-225 — One vendored helper server accounts for two thirds of all our reported vulnerabilities
-
-**Status:** Queued
-**Type:** Task
-**Created-By:** Claude
-**Severity:** Medium (direct sibling of HXC-171, same shape and same rating: a vendored component of unverified origin/usage inflates the headline vulnerability count — 140 of roughly 208 — burying the few that matter; not Low because an undiscussed component silently shipping or wired in unnoticed is a real provenance/supply-chain gap requiring an explicit operator decision; not High because HXC-166's independent triage already found 0 of 210 total advisories reachable-and-unmitigated in any shipped helix_agent artifact today)
-
-A single bundled helper component inside the agent project is responsible for 140 of the roughly 208 security advisories reported against the whole project — about two thirds of the total — and it entered the codebase without ever being discussed. Nobody has established what it does, whether we wrote it or copied it in, whether anything we ship actually uses it, or whether removing it would cost us anything. Until those questions are answered the headline advisory count is misleading: it reads as though the agent project carries enormous risk, when in reality the great bulk of it sits in one component that may not even be part of what we deliver. The work is to determine the component's origin and purpose, whether it is reachable from anything we build or run, and then to make a decision about it — keep and maintain, upgrade its dependencies, or remove it — and record which was chosen and why. The decision matters more than the individual advisories, because upgrading dependencies inside a component we do not need would be effort spent on nothing.
-
 ## HXC-224 — Closure-evidence pointers are unchecked free text, so proof of completed work silently becomes unreachable
 
 **Status:** Queued
@@ -464,8 +447,11 @@ The agent project is mirrored to two hosting accounts, and automatic vulnerabili
 
 ## HXC-227 — A working access key for an external service is published in a design document
 
-**Status:** Queued
+**Status:** Reopened
 **Type:** Bug
+**Reopened-Details:** By: User | On: 2026-09-08 | Reason: design-reconsidered | Evidence: operator declined option [A] revoke-at-provider and asked to close as accepted risk; recorded instead as a §11.4.271 waiver (expiry 2026-10-08) because (C) makes expiry mandatory and (D) requires the waiver to name an item that REMAINS OPEN, so the constitution offers no permanent-acceptance path. The block is cleared; the item stays tracked as the named debt. HONEST GAP: no authoriser roster exists, so §11.4.271(B) rostered authorisation could not be satisfied.
+**Operator-Block-Details:** WHAT: A genuine external model-provider access key sits in a tracked design document's API-keys section, published to all four mirrors for forty-eight days. The value must be assumed compromised: anyone with read access to any mirror, or holding a clone or fork made in that window, already has it. WHY: Every in-repository remedy has been exhausted and none withdraws the key. Deleting the line removes it from the current revision only; the history retains it; rewriting that history is forbidden under 11.4.113 with no exception; and rewriting would not reach copies already distributed. Revocation requires access to the provider account, which is outside the repository and cannot be performed by the System (11.4.101 — irreversible, high-blast-radius, external-account state the agent cannot inspect). UNBLOCK: [A] Revoke the key at the provider and issue a replacement — the only action that actually withdraws it. [B] After [A], the System edits the document to reference the credentials file by name instead of quoting its contents. [C] After [A], the System adds a pre-commit check refusing any commit introducing a value of this shape; deliberately sequenced after HXC-282 lands so two streams do not edit pre-commit checking concurrently (11.4.119). WHO: User
+**Severity:** Critical
 **Created-By:** Claude
 
 A design document committed forty-eight days ago contains, in its API-keys section, what appears to be a genuine access key for an external model provider rather than a placeholder. The section is headed as being copied from the machine's own credentials file and described as already configured, and the value carries none of the markers a placeholder would have: it is fifty-one characters long, uses twenty-nine distinct characters, and contains no example or to-be-filled wording. The document is tracked on the main branch and has therefore been published to all four hosting mirrors since the day it was written. Anyone with read access to any mirror, and anyone holding a clone or fork made at any point in those forty-eight days, already has the value. Deleting the line now would remove it from the current revision only; the history retains it, rewriting that history is forbidden, and rewriting would in any case not reach copies already distributed. The only action that actually withdraws the key is revoking it at the provider and issuing a replacement, which requires access to the provider account and cannot be done from within the repository. Until that happens the key must be assumed compromised. Once revoked, the document should be edited to reference the credentials file by name instead of quoting its contents, and a check added that refuses any commit introducing a value of this shape.
@@ -552,7 +538,7 @@ Five checks covering the built-in screenshot and quality-assurance session featu
 
 ## HXC-243 — Some of our own test suites cannot fail, so their passes mean nothing
 
-**Status:** Queued
+**Status:** Ready for testing
 **Type:** Bug
 **Created-By:** Claude
 
@@ -728,7 +714,7 @@ When HelixQA signs in to run an API test bank and the server answers with a succ
 
 ## HXC-268 — Model verifier emits unusable addresses for IPv6 hosts at fifteen capability-config sites that never bracket the literal
 
-**Status:** Queued
+**Status:** Ready for testing
 **Type:** Bug
 **Severity:** Medium
 **Created-By:** Claude
@@ -835,3 +821,115 @@ Before every commit we sweep the working files for leftovers from deliberate bre
 
 Where we take an incoming caller's address apart to decide who is making a request, we split it at the LAST colon rather than using the standard routine for the job. WHY THAT BREAKS: a modern-style numeric address is full of colons and is written wrapped in square brackets, so splitting at the last colon leaves the bracket punctuation attached to the caller's identity for some requests and not others. The consequence is that the same caller can be counted as several different callers, or several different callers counted as one, which is precisely what a request limiter must never do — it either lets an abusive caller through by splitting their requests across identities, or throttles unrelated callers by merging them. WHERE: the request-limiting middleware, at the point it derives a caller key from the remote address. RELATIONSHIP TO OTHER WORK: this is the same family as a sibling item that has just repaired thirty-one places where we BUILD such an address, but it is the opposite direction — this one takes an address APART. That is why no part of the sibling work touched it and why searches shaped by the building sites could not surface it; it was found by a reviewer sweeping from the consuming side rather than the producing side. WHO IS AFFECTED: any caller reaching us over a modern-style numeric address, and anyone relying on request limits to hold. HOW TO REPRODUCE: send requests from a modern-style numeric address and observe the derived caller identity retains bracket punctuation inconsistently across requests. ACCEPTANCE CRITERIA: the caller address is taken apart with the standard routine that understands bracketed numeric addresses; one caller yields exactly one identity across every request shape; and a standing test proves it for old-style, modern-style, bracketed, zone-carrying and hostname callers, proven real by a paired mutation restoring the split-at-last-colon and confirming the test fails.
 
+## HXC-340 — Readiness probe answers HTTP 200 while the server is still starting, so traffic is routed to a server that cannot serve
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+**Assigned-To:** Claude
+
+The agent service publishes three separate health addresses — /health, /readyz and /livez — but all three are wired to the exact same piece of code, so the system cannot distinguish 'the process is alive' from 'the process is ready to take work'. Those are different questions: a server can be running perfectly well and still be several minutes away from being able to answer a request. This matters because load balancers and container orchestrators decide where to send live user traffic based on the readiness answer, and they almost always read the HTTP status code rather than the message body. The code here always returns status 200 (success) even while the body honestly says 'starting', and startup is documented as taking roughly seven minutes. For that whole window the orchestrator believes the server is ready and sends it real user requests, which fail. There is a second problem in the same place: once the server has reported itself ready one time, that answer is latched permanently and never revisited, so if a dependency dies later the server keeps advertising itself as ready forever. Who benefits from fixing it: every end user who would otherwise hit a failed request during a deployment or restart, and the operators who currently have no reliable signal for when a rollout is safe. Expected outcome: readiness returns a failure status code whenever the server genuinely cannot serve, liveness stays separate and always succeeds while the process is alive, and the ready state can go back to false when a dependency is lost.
+
+## HXC-341 — Server health endpoint silently skips every check when no database is configured, while its documentation claims it checks all dependencies
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+**Assigned-To:** Claude
+
+The main server exposes a health endpoint that is supposed to tell operators whether the service and everything it depends on are working. It does perform genuine checks on the database and cache when those are configured, correctly reporting a failure when either is unreachable. However, when no database is wired up at all, the code takes a shortcut and skips the entire checking block, then reports success anyway. It also never checks the language-model providers, even though serving model requests is the product's core purpose. The written documentation for this endpoint states that it checks all dependencies, which is not true in either respect. This is dangerous because the documentation is what an operator reasons from when deciding whether a green health signal means anything: a deployment missing its database entirely will report itself perfectly healthy, and so will one whose model providers are all unreachable. Who benefits: operators and on-call responders who need a health signal they can trust during an incident, and anyone automating deployment gates on that signal. Expected outcome: the endpoint reports an honest failure when a required dependency is absent or unreachable rather than treating absence as success, provider health is included in the verdict, and the documentation is corrected to describe exactly what is and is not covered.
+
+## HXC-342 — Agent basic health endpoint returns a fixed success message and performs no check of any kind
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** Medium
+**Created-By:** Claude
+**Assigned-To:** Claude
+
+The agent service exposes a health endpoint that always returns the same hardcoded success response. It performs no check whatsoever — it does not test any dependency, any provider, any connection, or any internal state, and there is no input or condition under which it could return anything other than success. It is published and documented as a health check, which means anyone reading the documentation or wiring up monitoring reasonably assumes a green result carries information. It does not. A completely broken agent returns exactly the same response as a perfectly working one. The practical effect is that any monitoring, alerting, or automated gate built on this endpoint is decorative: it will stay green through any outage. This is the least severe of the health-endpoint family because a companion endpoint on the same service now performs a real check, but it remains actively misleading while it is labelled a health check. Who benefits: operators building monitoring on this service, and any automated system that gates on the endpoint. Expected outcome: either the endpoint performs a genuine check and can report failure, or it is explicitly relabelled as a liveness-only signal in both the code and the published API documentation so that nobody mistakes it for a dependency check.
+
+## HXC-343 — Fifty-six tracked work items would be silently deleted from the documents if the trackers were regenerated
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+**Assigned-To:** Claude
+
+The project keeps its list of work items in a database, and the human-readable tracker documents are generated from that database. For fifty-six of the items, a required link between the database record and the document layout is missing. The practical effect is severe and silent: if anyone regenerates the tracker documents from the database using the normal supported command, those fifty-six items simply vanish from the documents with no warning, no error, and no indication that anything was lost. The database would still hold them, but every human-readable view of the work would stop showing them, and anyone reading the trackers would reasonably conclude the work does not exist. This has not happened yet only because the regeneration has not been run; the built-in checker does detect and report the problem, which is how it was found. Who benefits from fixing it: everyone who reads the trackers to understand outstanding work, and anyone who needs to regenerate the documents without first proving it is safe to do so. Expected outcome: the missing links are restored for all fifty-six items, the checker reports no such gaps, and a regeneration can be run and verified to produce documents containing every item the database holds.
+
+## HXC-344 — Decide whether an unreferenced frozen test baseline should be wired in or retired
+
+**Status:** Queued
+**Type:** Task
+**Severity:** Medium
+**Created-By:** Claude
+**Assigned-To:** Claude
+
+During the security-hook work a file was produced that appears to be a frozen snapshot of an earlier, deliberately-broken version of a script, kept so a test can prove the current version detects the old fault. Two sibling files of exactly this kind exist and are correctly set up: each carries a header marking it as an intentional test artifact, and each is executed by a named test. This third file has neither. Nothing in the project refers to it, and it carries no such header, so the commit safety check correctly refuses to accept it: from the checker's point of view it is indistinguishable from leftover damage accidentally left behind after an experiment. Two outcomes are possible and the difference matters. Either it is a genuine baseline whose wiring was never finished, in which case the fix is to connect it to a test and add the header its siblings have; or it is genuinely leftover, in which case it should be retired deliberately. Guessing either way is wrong: marking it as intentional to quiet the checker would make the checker agree with a claim nobody has verified, and deleting it without proof risks discarding real work. The file has been copied to a safe location outside the project and removed from the working area so the project is in a clean state while the question is settled. Who benefits: anyone relying on the commit safety check to mean what it says, and whoever next needs that baseline. Expected outcome: the file's origin is traced through project history, a decision is recorded with the evidence behind it, and the file is either restored and properly wired in with a test that exercises it, or retired in its own clearly-labelled change.
+
+## HXC-345 — Word documents are produced outside the export tool, so nothing checks that they still contain their pictures
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Our documentation is published in three forms: the plain-text source, a web page, and a Word document. The export tool that keeps the first two in step does not handle Word documents at all — those are produced by hand, one command at a time. Because nothing checks them, a Word document can silently lose content that the source still has. That happened on 2026-09-08: an architecture document was rebuilt to remove a leaked password, and the rebuild quietly dropped BOTH of its architecture diagrams. The file shrank from 390KB to 22KB, all the words survived, and every automated check stayed green, because no check looks inside a Word document. A reader would have opened the architecture guide and found no architecture picture. The diagrams were restored by hand once an independent reviewer spotted it. The fix is to give the export tool a Word-document step like the two it already has, and to make it compare the pictures referenced by the source against the pictures actually embedded in the output, so a document that loses an image fails the build instead of shipping quietly.
+
+## HXC-346 — The password-in-documentation check can be fooled by common ways of writing the same thing
+
+**Status:** Queued
+**Type:** Task
+**Severity:** Medium
+**Created-By:** Claude
+
+We have a check that stops a real password from being written into our documentation in a form someone could copy and paste. It decides by looking at how a line STARTS, which means it recognises the ordinary way of writing a setting but misses several equally common ways: a password passed on a command line, one written inside a configuration block in a different notation, one sitting in a table cell, or one embedded in a connection address. None of those appear anywhere in our documents today, so nothing is currently leaking, but a future document using any of them would pass unnoticed. The same start-of-line rule also wrongly flags ordinary prose that merely mentions a value while explaining an incident. Both problems disappear if the check judges WHERE the value sits on the line rather than how the line begins. The logic is currently duplicated in two places that have already drifted apart, so this work should also merge them into one shared piece, and it needs its own deliberate break-it test to prove the new rule actually catches what the old one missed.
+
+## HXC-347 — One of our agent instruction manuals has fallen 36 rules behind the others
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** Medium
+**Created-By:** Claude
+
+We keep the same rulebook in several parallel files, one per AI coding tool we use, so whichever tool a person picks reads the same rules. Five of those files are kept in step with each other. A sixth, CRUSH.md, is listed as a peer in our own instructions but has been left out of recent updates: it currently carries rules up to number 238 while the others carry up to 274. That is thirty-six rules a person using that particular tool would never see, including several about not trusting a measurement before checking the measuring instrument, and about not removing things without asking first. Nobody noticed because nothing compares the files against each other. The work is to bring that file up to date with the same thirty-six entries the others already have, and then to add a check that compares the highest rule number across all the parallel files so the next omission is caught the day it happens rather than months later.
+
+## HXC-348 — Our model gateway answers confidently for models it does not have, instead of saying it does not have them
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** Critical
+**Created-By:** Claude
+
+When a program asks our HelixLLM gateway to use a particular AI model, the gateway is supposed to either use that model or refuse. Measured on 2026-09-08, it does neither: it accepts the request, quietly substitutes whatever model it happens to have loaded, and returns a normal success response. A request for a model name that does not exist anywhere — a deliberately invented one — came back successful, and so did requests naming well-known models from other companies entirely. The reply even carries the substituted model's name, which is the only reason anyone noticed. This matters because every place we advertise a model is now a promise the system cannot keep: a caller believes it is talking to the model it asked for, gets a plausible answer, and has no error to alert it. A wrong answer that looks right is harder to catch than an outright failure. The gateway already rejects malformed requests, bad credentials and unsafe names, so the checking machinery exists — only the check for whether a requested model actually exists is missing, and the request then falls through to a default. The gateway's own source comments predict this exact outcome and call it a silent misroute. The fix is for the gateway to refuse a request naming a model it cannot resolve, rather than substituting one, and to keep the fallback only for callers that expressed no preference at all.
+
+## HXC-349 — Tool descriptions sent to HelixAgent are accepted and then silently discarded before the model sees them
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Coding assistants work by telling a model which tools it may call. Our HelixAgent service accepts those tool descriptions, returns a normal success response, and never passes them to the model at all. Measured on 2026-09-08: the same message sent with and without an eight-kilobyte block of tool descriptions produced an identical input-size count, proving the block was dropped rather than merely unused. Asking the service to REQUIRE a tool call returns ordinary prose and a success code, which the industry specification it claims to implement forbids. The upper layer of our own code handles tools correctly and is commented as critical for AI coding assistants; the loss happens one layer below, where the structure used to talk to the backend has no field for tools, so they are dropped in translation. The service is honest about the capability elsewhere — it advertises only streaming — but the request path accepts the input anyway, which is what makes it look supported. Until this is fixed, the two working HelixAgent chat models cannot be used as coding-assistant providers, because tool calling is a hard requirement. Note the fix is only known to be necessary, not yet known to be sufficient: whether the backend behind this layer supports tools at all has not been established.
+
+## HXC-350 — Debate and ensemble routes rewrite the user's message into a topic to write about, and report the wrong model
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Three of the five HelixAgent routes do not answer the message they are given. Measured on 2026-09-08: asked to reply with one specific word, each instead produced a multi-thousand-character essay on a subject it invented from that word. The cause is architectural rather than a fault: those routes take the last thing the user said, treat it as a debate TOPIC, and run an internal multi-agent discussion about it. A route built that way structurally cannot follow a direct instruction, so it is unsuitable as a general assistant provider and should be presented as something else, not repaired into obedience. Two further problems appear in the same replies. All three routes report a single fixed model name regardless of which one was requested, so a caller cannot tell which route answered. And the accounting is wrong: the reported creation time is the year-one placeholder a program produces when a real timestamp was never set, and the reported output size is nine units for a reply of nearly ten thousand characters. Anything relying on those numbers for cost, auditing or capacity planning is being given fiction.
+
+## HXC-351 — Reported token usage on the debate routes is the same fixed number no matter how long the reply is
+
+**Status:** Queued
+**Type:** Bug
+**Severity:** High
+**Created-By:** Claude
+
+Every reply from the three HelixAgent debate routes reports exactly the same usage figures, regardless of what was actually produced. Measured on 2026-09-08 across four replies of roughly 8160, 9465, 6093 and 308 characters: all four reported an identical input, output and total count, and the output figure was nine for replies thousands of characters long. Whatever those numbers are, they are not measurements of those replies. This matters beyond tidiness because usage figures are what anything downstream uses to work out cost, to stay inside a budget, to plan capacity, or to audit what was spent — and all of those are currently being given fiction that looks like data. The same responses also carry a creation time of year one, which is the placeholder a program produces when a real timestamp was never recorded, so the two faults may share a cause in whatever assembles the response. Worth checking whether the constant figure appears on other routes too, since nothing so far establishes that it is limited to the debate paths.

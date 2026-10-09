@@ -1,0 +1,32 @@
+=== 08: restoration proof — UTC 2026-09-08T20:55:07Z ===
+The instrumentation is REMOVED. It is preserved as 08_instrumentation.patch so a
+reviewer can reproduce it; it is deliberately not left in a working tree that
+already carries other people's uncommitted changes (§11.4.84).
+--- sha256 now ---
+7b224789b882f0d8b2a185ef1a374d6e7614772c6b1435a2da723ec44a4e559c  scripts/claude-providers.sh
+--- sha256 recorded BEFORE any change (00_pre_state.txt) ---
+7b224789b882f0d8b2a185ef1a374d6e7614772c6b1435a2da723ec44a4e559c  scripts/claude-providers.sh
+RESTORED BYTE-EXACT
+--- residue scan: no T005 marker may remain in the tree (§11.4.84) ---
+residue_grep_rc=1 (1 = clean)
+--- POSITIVE CONTROL for that residue scan: the same grep against the patch file MUST hit ---
+6
+positive_control_rc=0
+--- git status of the toolkit (must equal the pre-state list) ---
+ M scripts/claude-providers.sh
+ M scripts/model_verify.py
+ M scripts/providers-verify.sh
+ M scripts/tests/proof/93-helixagent-pins-survive-live-sync.txt
+ M scripts/tests/proof/94-dynamic-account-dispatch.txt
+ M scripts/tests/proof/94-helixllm-facade-model-reality.txt
+ M scripts/tests/proof/95-add-account-tmux-notice.txt
+ M scripts/tests/proof/96-free-tier-multi-sync.txt
+ M scripts/tests/proof/97-helixllm-model-export.txt
+ M scripts/tests/proof/98-kimi-wire-and-status-freshness.txt
+ M scripts/tests/test_providers.sh
+?? scripts/tests/test_failing_layer_attribution.sh
+?? scripts/tests/test_mechanical_tools_acceptance.sh
+?? scripts/tests/test_model_verify_tls.sh
+--- diffstat of claude-providers.sh (must equal the pre-state 60 insertions/12 deletions) ---
+ scripts/claude-providers.sh | 72 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 12 deletions(-)

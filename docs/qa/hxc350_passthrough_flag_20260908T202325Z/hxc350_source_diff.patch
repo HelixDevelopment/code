@@ -1,0 +1,43 @@
+diff --git a/internal/handlers/openai_compatible.go b/internal/handlers/openai_compatible.go
+index 0af2177a..dbb5ad8e 100755
+--- a/internal/handlers/openai_compatible.go
++++ b/internal/handlers/openai_compatible.go
+@@ -306,6 +306,17 @@ type OpenAIChatRequest struct {
+ 	// HelixAgent extensions
+ 	EnsembleConfig *models.EnsembleConfig `json:"ensemble_config,omitempty"`
+ 	ForceProvider  string                 `json:"force_provider,omitempty"`
++	// Passthrough (HXC-350) opts this request OUT of the multi-round AI
++	// Debate and routes it verbatim to the provider chain, so the caller
++	// gets the literal answer to the literal instruction instead of a
++	// debated essay. Debate remains the DEFAULT for the debate/ensemble
++	// model aliases — only an explicit `"passthrough": true` bypasses it.
++	//
++	// Two verbatim paths already existed by ACCIDENT (multi-turn requests,
++	// and requests carrying a tools array). This flag makes the behaviour
++	// DELIBERATE and documented so callers depend on a contract rather
++	// than on a quirk of those two heuristics.
++	Passthrough bool `json:"passthrough,omitempty"`
+ }
+ 
+ // OpenAIMessage represents a message in OpenAI chat format
+@@ -651,6 +662,20 @@ func (h *UnifiedHandler) ChatCompletions(c *gin.Context) {
+ 		return
+ 	}
+ 
++	// Explicit pass-through (HXC-350). The caller has opted this request out
++	// of the debate ensemble, so hand the full request to the provider chain
++	// unmodified. Routed to processWithProviderChain — the SAME destination
++	// the multi-turn bypass below uses — because that path reports the
++	// REQUESTED model and a real timestamp, whereas the tools bypass in
++	// processWithEnsemble still stamps the hardcoded "helixagent-ensemble"
++	// label. Placed after the tool-result guard above so that loop-breaking
++	// behaviour is unaffected.
++	if req.Passthrough {
++		logrus.WithField("model", req.Model).Info("Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)")
++		h.processWithProviderChain(c, &req)
++		return
++	}
++
+ 	// Multi-turn detection (drainage iter-2 / Finding #19): the debate
+ 	// orchestrator's DebateConfig only carries a single Topic string —
+ 	// it does NOT carry the full conversation history. So when the

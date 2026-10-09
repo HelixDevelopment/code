@@ -1,0 +1,8 @@
+### §11.4.273 control needles for the PASS-counting instrument
+-- positive control: a line known present ('--- PASS: TestPassthroughFlag_SingleUserMessage') --
+1
+-- negative control: fabricated needle --
+0
+-- total PASS / FAIL --
+14
+0

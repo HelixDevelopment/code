@@ -1,0 +1,23 @@
+[1m== D1: instruction-shaped credential blocks in tracked docs ==[0m
+  [32mclean[0m D1 — no tracked file hands a historical literal over in a config-shaped line
+
+[1m== D2: credential gate wired into the pre-build sweep ==[0m
+  [32mclean[0m D2 — scripts/verify-all-constitution-rules.sh invokes the credential gate
+
+[1m== D3: DB port publishes bind loopback ==[0m
+  [32mclean[0m D3 compose.helixcode-infra.yml — 5433:5432 bound to 127.0.0.1
+  [32mclean[0m D3 helix_code/docker/autoboot/docker-compose.autoboot.yml — 55432:5432 bound to 127.0.0.1
+  [32mclean[0m D3 helix_code/docker/docker-compose.yml — 5432:5432 bound to 127.0.0.1
+
+[1m== D3-runtime: running listener binds ==[0m
+  [1m—[0m D3-runtime :5433 not listening (certifies nothing; SKIP-OK §11.4.3)
+  [1mOPERATOR-BLOCKED[0m D3-runtime :55432 still NON-loopback (*:55432) while the SOURCE already binds 127.0.0.1 — the running container predates the fix. Podman cannot rebind a published port in place, so this closes only on an operator-gated recreate. NOT a regression.
+
+SUMMARY: 5 passed, 0 failed, 1 operator-blocked (guard polarity; RED_MODE=0)
+
+[1m== VERDICT (RED_MODE=0) ==[0m
+[32mGREEN PASS (with 1 OPERATOR-BLOCKED)[0m — no regression, but NOT all clear:
+             the item(s) above are source-fixed and NOT yet live, pending an
+             operator-gated recreate. They are not certified closed (11.4.21).
+             NOTE: the published credential REMAINS VALID until the operator
+             rotates it; this guard does not close that.

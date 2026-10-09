@@ -1,0 +1,16 @@
+HelixAgent / HelixLLM model validation harness
+run started 2026-09-07T12:16:23+0200
+determinism: temperature=0, seed pinned, 3 repeats per verdict; no assertion on model wording
+
+Self-validation: mock server on http://127.0.0.1:44443/v1
+  A harness that PASSES its golden-bad fixtures is a bluff gate.
+
+  [OK]   golden-GOOD  golden-good          failing checks == expected {} (none)
+  [OK]   golden-BAD   bad-dead-pin         failing checks == expected ['A']
+  [OK]   golden-BAD   bad-stub-identical   failing checks == expected ['B', 'C', 'D', 'E']
+  [OK]   golden-BAD   bad-stub-varying     failing checks == expected ['B', 'D', 'E']
+  [OK]   golden-BAD   bad-zero-usage       failing checks == expected ['B', 'D']
+  [OK]   golden-BAD   bad-truncating       failing checks == expected ['D', 'E']
+  [OK]   golden-BAD   bad-needle-dropped   failing checks == expected ['E']
+
+Self-validation: PASS -- harness provably fails broken fixtures and passes the honest one

@@ -1,30 +1,92 @@
 [Unit]
-Description=HelixCode AI Development Server (main binary) on :8081
+Description=HelixCode AI Development Server (main binary) on :8080
 Documentation=file://@HELIX_ROOT@/helix_code/cmd/server/README.md
-# Ordered last: the server's llm.default_provider=local expects the coder lane,
-# and its infraboot expects Postgres/Redis. Wants= (not Requires=) so the server
-# still starts and reports its own health if a backend is degraded -- it has its
-# own infraboot fallback path.
+# Ordered last among the Helix units: the server's llm.default_provider=local
+# expects the coder lane, and its infraboot expects Postgres/Redis. Wants= (not
+# Requires=) throughout so the server still starts and reports its own health
+# when a backend is degraded — it has its own infraboot fallback path, and the
+# units named here are not all enabled in this deployment (After= on a unit that
+# never starts is inert, so this stays correct either way).
 After=network-online.target helixcode-infra.service helixllm-coder.service helixllm-gateway.service
-Wants=network-online.target helixcode-infra.service helixllm-coder.service
+Wants=network-online.target
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
 PartOf=helix.target
 
 [Service]
-# INFRA OWNERSHIP (operator decision, 2026-07-28): helixcode-infra.service is the
-# SOLE owner of this server's datastores. Without this, internal/infraboot
-# EnsureInfra rewrites cfg.Database.*/cfg.Redis.* UNCONDITIONALLY
-# (infraboot.go:247-257) with its own 55432/56379 defaults and boots a SECOND
-# postgres+redis pair -- while this unit declares Wants=helixcode-infra.service
-# and then ignores it, making every DB/Redis line in replica-8081.yaml dead config.
-Environment=HELIX_AUTOBOOT_INFRA=false
-
 Type=simple
 # podman is required by the server's infraboot (auto-boots its Postgres+Redis).
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
-Environment=HELIX_CONFIG=@HELIX_ROOT@/helix_code/config/replica-8081.yaml
+
+# --- INFRA OWNERSHIP (measured 2026-09-03) -----------------------------------
+# HELIX_AUTOBOOT_INFRA is deliberately LEFT AT ITS DEFAULT (true), so
+# internal/infraboot EnsureInfra boots and owns this server's own
+# `helixcode-autoboot-postgres` (:55432) and `helixcode-autoboot-redis`
+# (:56379).
+#
+# An earlier revision set `HELIX_AUTOBOOT_INFRA=false` here, per an operator
+# decision (2026-07-28) making helixcode-infra.service the SOLE datastore owner.
+# That decision is sound for the shared-infra topology — and it is NOT what is
+# deployed. Measured on 2026-09-03: `podman ps -a` showed ZERO
+# `helixcode-infra-*` containers, while both `helixcode-autoboot-*` containers
+# were up and healthy. With autoboot disabled and no infra stack running, this
+# server would start with no datastore at all.
+#
+# The false setting is preserved here so the shared-infra topology stays
+# recoverable rather than silently deleted. To switch:
+#     Environment=HELIX_AUTOBOOT_INFRA=false
+#   + enable helixcode-infra.service
+#   + point HELIX_CONFIG at config/replica-8081.yaml (its DB/Redis stanzas
+#     address :5433/:6380, which is the infra stack)
+#
+# Two orchestrators are NOT contending under either topology: infraboot owns
+# `helixcode-autoboot-*` and compose owns `helixcode-infra-*` — disjoint names
+# AND disjoint ports (55432/56379 vs 5433/6380). What the 2026-07-28 decision
+# actually prevents is DUPLICATION (two Postgres, two Redis, double the RAM),
+# not a name collision. Enabling both is wasteful, not fatal; this unit takes
+# the single-owner path that matches the running stack (§11.4.119).
+
+# --- Config path (load-bearing) ----------------------------------------------
+# Set EXPLICITLY, not left to cwd-relative discovery. The binary's fallback
+# chain ends at ~/.config/helixcode/config.json, and that file is currently
+# INCOMPATIBLE with this build: started from any directory that does not contain
+# `config/config.yaml`, the server aborts with
+#   "Failed to load configuration: unknown configuration in
+#    /home/milosvasic/.config/helixcode/config.json: <75 stale keys>"
+# Reproduced 2026-09-03 by running the binary from the repo root; the identical
+# binary started cleanly from helix_code/ because the cwd-relative YAML won.
+# Relying on WorkingDirectory alone would leave that landmine armed. Both probes
+# with the path set explicitly loaded cleanly.
+#
+# :8080 is the port this config declares (config/config.yaml:6) and the port the
+# service actually serves. replica-8081.yaml is — as its name says — a SECOND
+# instance's config; it is not the primary.
+Environment=HELIX_CONFIG=@HELIX_ROOT@/helix_code/config/config.yaml
+
+# Secrets (HELIX_DATABASE_PASSWORD, HELIX_REDIS_PASSWORD, HELIX_AUTH_JWT_SECRET)
+# live in .env (mode 0600, gitignored per CONST-042/§12.1) and are NEVER inlined
+# into this unit, which is world-readable and version-controlled. The server
+# REFUSES to start when one is missing, naming it — so a missing .env produces a
+# clear error, not a silent insecure default. Verified bare `KEY=value` format,
+# so systemd parses it natively. That file also supplies HELIX_REDIS_HOST=localhost.
 EnvironmentFile=-@HELIX_ROOT@/.env
+
 WorkingDirectory=@HELIX_ROOT@/helix_code
-ExecStart=@HELIX_ROOT@/helix_code/bin/helixcode server
+# Bare invocation, matching the process proven to serve :8080 on this host.
+ExecStart=@HELIX_ROOT@/helix_code/bin/helixcode
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple reports "active" at fork. Gate on the real endpoint so "active"
+# means "serving" (§11.4.108) — and so a config-load abort like the one
+# described above fails the unit LOUDLY instead of leaving a dead-but-green one.
+ExecStartPost=@HELIX_ROOT@/scripts/systemd/wait-http-ready.sh http://localhost:8080/health 150 3
+
 # Mirrors packaging/debian/helixcode.service (Restart=on-failure, RestartSec=10,
 # LimitNOFILE=65536) adapted to user scope.
 Restart=on-failure
@@ -33,4 +95,6 @@ LimitNOFILE=65536
 TimeoutStartSec=180
 
 [Install]
-WantedBy=helix.target
+# default.target is what makes this start at BOOT; helix.target keeps it in the
+# umbrella group for `systemctl --user start|stop helix.target`.
+WantedBy=default.target helix.target

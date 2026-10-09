@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_DB: helixcode_test
       POSTGRES_USER: helixcode
-      POSTGRES_PASSWORD: helixcode_test_password
+      POSTGRES_PASSWORD: ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env.full-test (source it, or run scripts/setup-full-test-env.sh)}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "5432:5432"
@@ -275,7 +275,7 @@ services:
       - COGNEE_API_KEY=test_cognee_key_123
       - COGNEE_MODE=local
       - COGNEE_REDIS_URL=redis://redis:6379
-      - COGNEE_POSTGRES_URL=postgresql://helixcode:helixcode_test_password@postgres:5432/helixcode_test
+      - COGNEE_POSTGRES_URL=postgresql://helixcode:${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env.full-test}@postgres:5432/helixcode_test
       - COGNEE_ENV=development
       - COGNEE_LOG_LEVEL=INFO
     ports:
@@ -470,7 +470,7 @@ services:
       - HELIX_DATABASE_HOST=postgres
       - HELIX_DATABASE_PORT=5432
       - HELIX_DATABASE_USER=helixcode
-      - HELIX_DATABASE_PASSWORD=helixcode_test_password
+      - HELIX_DATABASE_PASSWORD=${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env.full-test}
       - HELIX_DATABASE_NAME=helixcode_test
       - HELIX_DATABASE_ENABLED=true
       - HELIX_REDIS_HOST=redis

@@ -41,6 +41,7 @@ func ProviderEnvAliases() map[ProviderType][]string {
 		ProviderTypeOpenRouter: {"OPENROUTER_API_KEY", "ApiKey_OpenRouter"},
 		ProviderTypeQwen:       {"QWEN_API_KEY", "DASHSCOPE_API_KEY", "ApiKey_Qwen"},
 		ProviderTypeCerebras:   {"CEREBRAS_API_KEY", "ApiKey_Cerebras"},
+		ProviderTypeReplicate:  {"REPLICATE_API_KEY", "REPLICATE_API_TOKEN", "ApiKey_Replicate"},
 		ProviderTypeXiaomi:     {"XIAOMI_MIMO_API_KEY", "ApiKey_Xiaomi_MiMo"},
 		ProviderTypeCopilot:    {"GITHUB_COPILOT_TOKEN", "COPILOT_API_KEY"},
 	}

@@ -46,6 +46,20 @@ func TestDeriveKeyEnvAliases(t *testing.T) {
 // the constructed providers use the EXACT api_url from the verifier records (no
 // hardcoded URL), and only providers whose key is present are built.
 func TestBuildDynamicProviders_UsesVerifierAPIURL(t *testing.T) {
+	// §11.4.120: BuildDynamicOpenAICompatibleProviders builds through
+	// NewOpenAICompatibleProvider, which now gates on endpoint locality
+	// (openai_compatible_provider.go) — the verifier-supplied api_url below
+	// is a remote https:// host, so it is refused while the W2c-1 cloud gate
+	// is closed (the default). This test's subject is the dynamic
+	// builder/catalogue — that it wires the EXACT verifier api_url as the
+	// constructed provider's BaseURL — not gate policy; the gate's own
+	// closed/open behavior for this exact builder is already covered by
+	// TestCloudGateClosed_DynamicCatalogueBuildsNothing /
+	// TestCloudGateOpen_DynamicCatalogueBuildsProvider in
+	// cloud_gate_endpoint_locality_test.go, so this test opens the gate to
+	// reach the assertion it actually tests.
+	openCloudGateForTest(t)
+
 	// cerebras key present, groq key absent → only cerebras is built.
 	t.Setenv("CEREBRAS_API_KEY", "cb-dummy-real-looking-value-123")
 	t.Setenv("GROQ_API_KEY", "")

@@ -1,0 +1,20 @@
+
+=== G35 — HXC-168 no hardcoded DB credential + loopback DB bind (CONST-042) ===
+  PASS: no tracked file hands over a historical DB credential and every scoped DB port publish binds 127.0.0.1 — NOTE: this does not rotate the published value
+
+=== verify-all-constitution-rules.sh summary ===
+Gates run: 1
+Failures:  0
+  G35  PASS  no tracked file hands over a historical DB credential and every scoped DB port publish binds 127.0.0.1 — NOTE: this does not rotate the published value
+
+PASS: every implementable gate green — anti-bluff covenant honoured
+
+=== G36 — HXC-168 standing regression guard (RED_MODE=0) ===
+  PASS: the HXC-168 exposure class has not regressed in source or at runtime — see /tmp/g36-hxc168.out for any OPERATOR-BLOCKED items, which are source-fixed but not yet live and are NOT certified closed
+
+=== verify-all-constitution-rules.sh summary ===
+Gates run: 1
+Failures:  0
+  G36  PASS  the HXC-168 exposure class has not regressed in source or at runtime — see /tmp/g36-hxc168.out for any OPERATOR-BLOCKED items, which are source-fixed but not yet live and are NOT certified closed
+
+PASS: every implementable gate green — anti-bluff covenant honoured

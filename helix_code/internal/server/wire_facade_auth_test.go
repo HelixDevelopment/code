@@ -210,3 +210,87 @@ func TestWireFacadeEndpoints_ValidKeyPassesMiddleware(t *testing.T) {
 		})
 	}
 }
+
+// --- CONST-042: a shipped placeholder must never authenticate ---------------
+//
+// THE DEFECT (found by independent review before it was ever pushed):
+// `.env.example` shipped `HELIX_WIRE_FACADE_API_KEYS=CHANGE_ME_wire_facade_key`
+// as a live value. setup.sh copies .env.example -> .env verbatim and regenerates
+// only HELIX_DATABASE_PASSWORD / HELIX_REDIS_PASSWORD / HELIX_AUTH_JWT_SECRET,
+// so that literal survived into every fresh install. The middleware compared it
+// verbatim, and server.address ships as 0.0.0.0 — so a PUBLISHED credential
+// authenticated routes that drive real LLM calls on a stock deployment. The
+// file's own comment claimed "an unconfigured deployment cannot be driven by
+// anyone who can reach the port", which the shipped value made false.
+//
+// Fixed in three independent layers: .env.example ships the key EMPTY (empty ==
+// no key configured == fail closed), setup.sh generates a unique per-install
+// secret into that empty slot, and the middleware refuses any CHANGE_ME-prefixed
+// value outright. This guard covers the third — the one that still holds for a
+// hand-assembled .env that never runs setup.sh.
+//
+// FALSIFYING MUTATION (§1.1): delete the `strings.HasPrefix(configured,
+// "CHANGE_ME")` guard in wireFacadeAuthMiddleware. The placeholder then matches
+// verbatim, the request is served, and this test FAILS.
+func TestWireFacadeEndpoints_PlaceholderKeyNeverAuthenticates(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	// The exact literal that shipped in .env.example, as an operator with an
+	// older or hand-copied .env would still have it configured.
+	const shippedPlaceholder = "CHANGE_ME_wire_facade_key"
+
+	cfg := &config.Config{
+		Auth: config.AuthConfig{
+			JWTSecret:         "test-secret-key-for-testing-only",
+			TokenExpiry:       3600,
+			BcryptCost:        4,
+			WireFacadeAPIKeys: shippedPlaceholder,
+		},
+		Logging: config.LoggingConfig{Level: "error"},
+	}
+	srv := &Server{config: cfg, router: gin.New()}
+	srv.setupRoutes()
+
+	for _, ep := range wireFacadeEndpoints {
+		for _, hdr := range []struct{ name, key, val string }{
+			{"authorization_bearer", "Authorization", "Bearer " + shippedPlaceholder},
+			{"x_api_key", "x-api-key", shippedPlaceholder},
+		} {
+			t.Run(ep.name+"/"+hdr.name, func(t *testing.T) {
+				w := httptest.NewRecorder()
+				req, _ := http.NewRequest("POST", ep.path, bytes.NewBufferString(ep.body))
+				req.Header.Set("Content-Type", "application/json")
+				req.Header.Set(hdr.key, hdr.val)
+				srv.router.ServeHTTP(w, req)
+
+				require.Equalf(t, http.StatusUnauthorized, w.Code,
+					"the shipped placeholder %q MUST NOT authenticate %s via %s — a published "+
+						"credential driving real LLM calls (got %d, body=%s)",
+					shippedPlaceholder, ep.path, hdr.key, w.Code, w.Body.String())
+			})
+		}
+	}
+}
+
+// A real, operator-configured key must still work — otherwise the guard above
+// could "pass" by rejecting everything, which would be a different bug.
+func TestWireFacadeEndpoints_RealKeyStillAuthenticates(t *testing.T) {
+	srv := wireFacadeAuthFixture(t)
+
+	for _, ep := range wireFacadeEndpoints {
+		t.Run(ep.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("POST", ep.path, bytes.NewBufferString(ep.body))
+			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("Authorization", "Bearer "+wireFacadeTestAPIKey)
+			srv.router.ServeHTTP(w, req)
+
+			// NotEqual(401) rather than Equal(200): passing the auth gate is the
+			// property under test; what happens downstream depends on a live
+			// provider backend this test does not require.
+			require.NotEqualf(t, http.StatusUnauthorized, w.Code,
+				"a genuine configured key must pass the auth gate on %s (got 401, body=%s)",
+				ep.path, w.Body.String())
+		})
+	}
+}

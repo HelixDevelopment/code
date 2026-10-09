@@ -34,20 +34,26 @@ import (
 //     this step-process is running;
 //  2. BUSY-WAITS (bounded by deadlineTicks × 10ms) until at least
 //     `barrierWidth` LIVE markers coexist — the OS step-processes form a barrier;
-//  3. SAMPLES the live-marker count and appends it as a line to samplesFile —
-//     the captured count of steps SIMULTANEOUSLY in-flight at that instant;
+//  3. SAMPLES the live-marker count on EVERY tick of that wait, keeps the
+//     RUNNING MAX, and appends it as a line to samplesFile — the captured peak
+//     count of steps SIMULTANEOUSLY in-flight during this step's lifetime.
+//     Tracking the max (rather than one reading at an arbitrary instant) makes
+//     the measurement independent of WHEN the sample lands, so a loaded host
+//     cannot make real overlap go unobserved;
 //  4. retires its LIVE marker (mv into doneDir) on exit, so the live count
 //     reflects ACTUAL simultaneous in-flight steps, never a stale cumulative
 //     total. doneDir also serves as the permanent "this step ran" record.
 //
 // A genuinely parallel scheduler launches up to `cap` peers whose live markers
-// coexist; each step SAMPLES the live-marker count (the number of steps
-// simultaneously in-flight) and appends that sample as a line to samplesFile.
-// The PEAK of those samples is the captured max-observed concurrency:
+// coexist; each step tracks the PEAK live-marker count it ever saw (the number
+// of steps simultaneously in-flight) and appends that peak as a line to
+// samplesFile. The MAXIMUM over those per-step peaks is the captured
+// max-observed concurrency:
 //   - a SERIAL scheduler only ever has ONE live marker → every sample is 1 →
 //     peak = 1 (parallelism nominal);
 //   - a parallel scheduler bounded by `cap` → samples reach `cap` but NEVER
 //     exceed it → peak = cap (real, bounded parallelism).
+//
 // The barrier (busy-wait until `barrierWidth` live peers coexist) FORCES the
 // overlap to actually happen before the step records its sample, so a correct
 // parallel scheduler deterministically reaches the peak rather than racing past
@@ -56,12 +62,14 @@ import (
 // security filter blocks) to retire a live marker.
 func concurrencyCommand(liveDir, doneDir, samplesFile string, barrierWidth, deadlineTicks int) string {
 	return fmt.Sprintf(
-		`live=$(mktemp %s/live.XXXXXX); i=0; `+
+		`live=$(mktemp %s/live.XXXXXX); i=0; peak=1; `+
 			`while [ "$i" -lt %d ]; do `+
 			`c=$(ls -1 %s/live.* 2>/dev/null | wc -l); `+
+			`if [ "$c" -gt "$peak" ]; then peak=$c; fi; `+
 			`if [ "$c" -ge %d ]; then break; fi; `+
 			`sleep 0.01; i=$((i+1)); done; `+
-			`peak=$(ls -1 %s/live.* 2>/dev/null | wc -l); `+
+			`c=$(ls -1 %s/live.* 2>/dev/null | wc -l); `+
+			`if [ "$c" -gt "$peak" ]; then peak=$c; fi; `+
 			`echo "$peak" >> %s; `+
 			`sleep 0.03; mv "$live" %s/; echo done`,
 		liveDir, deadlineTicks, liveDir, barrierWidth, liveDir, samplesFile, doneDir,
@@ -84,12 +92,12 @@ func countMarkers(doneDir string) int {
 	return n
 }
 
-// peakObservedConcurrency reads the samplesFile (one live-count sample per
-// line, written by each step at the moment it crossed the barrier) and returns
-// the MAXIMUM sample — the captured, MEASURED peak number of steps that were
-// SIMULTANEOUSLY in-flight. Derived from real OS process overlap, not a
-// constant: a serial scheduler yields max 1; a cap-bounded parallel scheduler
-// yields max == cap.
+// peakObservedConcurrency reads the samplesFile (one line per step: that
+// step's own peak live-marker count, tracked across its whole barrier wait) and
+// returns the MAXIMUM over all steps — the captured, MEASURED peak number of
+// steps that were SIMULTANEOUSLY in-flight. Derived from real OS process
+// overlap, not a constant, and independent of host speed: a serial scheduler
+// yields max 1; a cap-bounded parallel scheduler yields max == cap.
 func peakObservedConcurrency(samplesFile string) int {
 	data, err := os.ReadFile(samplesFile)
 	if err != nil {
@@ -122,9 +130,9 @@ func newProbeProject(t testing.TB) (*project.Manager, *project.Project) {
 // bounded by MaxConcurrentSteps. It builds a workflow of `independent` steps
 // with NO dependencies (so the whole set is ready at once) and a cap of
 // `cap`. Each step runs a real OS barrier command (concurrencyCommand) that
-// only completes once `cap` step-processes are concurrently in-flight — so if
-// the scheduler ran them serially the barrier would never release and the
-// per-step bounded deadline + wall-clock would expose it.
+// only releases once `cap` step-processes are concurrently in-flight — so a
+// serial scheduler is caught by the MEASUREMENT (its live count never leaves 1),
+// not by how long the run took. No wall-clock assertion is used here either.
 //
 // Positive evidence captured (and asserted):
 //   - MEASURED peak simultaneous in-flight steps (peakObservedConcurrency) > 1
@@ -209,16 +217,21 @@ func TestDAGStress_ConcurrentContention(t *testing.T) {
 	})
 }
 
-// TestDAGStress_CapHonored_Evidence captures the wall-clock ratio that makes
-// the cap mechanically observable, and is the §1.1 anchor: it proves that with
-// `independent` ready steps each spinning on a barrier requiring exactly the
-// cap to release, the run completes (every barrier released) — which is only
-// possible if the scheduler kept exactly `cap` steps live per batch. If the
-// cap were IGNORED and ALL steps launched at once, the barrier (which requires
-// only `cap` peers) would still release, but the marker count would reveal the
-// over-launch; conversely if parallelism were 1, the barrier would never
-// release and the workflow would FAIL (steps would error/time out). We assert
-// the COMPLETED status as the proof the cap-sized batches genuinely overlapped.
+// TestDAGStress_CapHonored_Evidence proves the cap is honoured from a MEASURED
+// cause, never from the clock. `independent` ready steps each block on an OS
+// barrier that only releases once `cap` step-processes are concurrently live;
+// every step records the peak number of peers it saw simultaneously in-flight.
+// The verdict is that measurement:
+//
+//   - observed > 1    → the steps genuinely overlapped (a serial scheduler can
+//     never put two markers live at once, so it yields exactly 1);
+//   - observed <= cap → MaxConcurrentSteps bounded them (ignoring the cap puts
+//     all `independent` steps in flight and drives the measurement past cap).
+//
+// Both halves are properties of the scheduler, not of how fast the host was:
+// the same numbers come back on an idle box and on a box at load 250. No
+// wall-clock assertion is used — see the note beside the verdict for why one
+// must not be reintroduced.
 func TestDAGStress_CapHonored_Evidence(t *testing.T) {
 	pm, proj := newProbeProject(t)
 	const independent = 8
@@ -229,10 +242,10 @@ func TestDAGStress_CapHonored_Evidence(t *testing.T) {
 
 	liveDir, doneDir, samplesFile := newConcurrencyDirs(t, proj.Path)
 
-	// Deadline 300 ticks (~3s). Serial floor: a parallelism-1 scheduler runs
-	// each step alone, each spinning the full ~3s deadline (never sees capN
-	// live peers) → wall >= independent*3s. A cap-honoring parallel run releases
-	// each cap-sized batch as soon as the peers coexist.
+	// Deadline 300 ticks: a LIVENESS bound only — it lets a serial scheduler
+	// finish and report its (correct) observed==1 rather than spinning forever.
+	// It carries no part of the verdict: how long the run takes is never read as
+	// evidence of whether the steps overlapped.
 	const deadlineTicks = 300
 	steps := make([]Step, independent)
 	for i := 0; i < independent; i++ {
@@ -262,13 +275,22 @@ func TestDAGStress_CapHonored_Evidence(t *testing.T) {
 		t.Fatalf("MEASURED concurrency %d exceeds cap %d", observed, capN)
 	}
 
-	// Serial floor mechanical witness: wall must be far below independent*deadline.
-	serialFloor := time.Duration(independent) * time.Duration(deadlineTicks) * 10 * time.Millisecond
-	if wall >= serialFloor {
-		t.Fatalf("wall-clock %s >= serial floor %s — steps ran serially, cap concurrency absent", wall, serialFloor)
-	}
-	t.Logf("DAGStress cap-honored: steps=%d cap=%d wall=%s serialFloor=%s MEASURED_concurrency=%d (wall << floor proves parallelism)",
-		independent, capN, wall, serialFloor, observed)
+	// DETERMINISM (§11.4.50) — there is deliberately NO wall-clock assertion
+	// here, and none may be reintroduced. Inferring "did the steps overlap?"
+	// from elapsed time is not a proof: on a loaded host genuinely-concurrent
+	// steps take just as long as serial ones, so the inference collapses and
+	// reports a defect that is not there. (Measured on this host: the identical
+	// run took 0.23s idle and 2m18s under synthetic load — same code, same real
+	// concurrency of 4, opposite wall-clock verdicts.)
+	//
+	// The verdict above is CAUSAL instead: `observed` is the peak number of step
+	// processes measured SIMULTANEOUSLY in-flight, sampled from inside the step
+	// bodies themselves. It answers the question the test is named for — did the
+	// steps really overlap, and did the cap bound them — and yields the SAME
+	// value regardless of host load or step ordering. Wall-clock is retained
+	// below purely as telemetry: recorded, never asserted on.
+	t.Logf("DAGStress cap-honored: steps=%d cap=%d MEASURED_concurrency=%d (>1 and <=cap proves real, bounded parallelism); wall=%s (telemetry, not a verdict)",
+		independent, capN, observed, wall)
 
 	writeConcurrencyEvidence(t, "dag_concurrency_cap_honored", concurrencyEvidence{
 		Steps:               independent,
@@ -276,9 +298,8 @@ func TestDAGStress_CapHonored_Evidence(t *testing.T) {
 		RanSteps:            countMarkers(doneDir),
 		ObservedMinParallel: observed,
 		WallClockMs:         float64(wall.Microseconds()) / 1000.0,
-		SerialFloorMs:       float64(serialFloor.Microseconds()) / 1000.0,
 		CapHonored:          observed <= capN,
-		ParallelismReal:     observed > 1 && wall < serialFloor,
+		ParallelismReal:     observed > 1,
 	})
 }
 
@@ -555,7 +576,6 @@ type concurrencyEvidence struct {
 	RanSteps            int     `json:"ran_steps"`
 	ObservedMinParallel int     `json:"observed_min_parallel"`
 	WallClockMs         float64 `json:"wall_clock_ms"`
-	SerialFloorMs       float64 `json:"serial_floor_ms,omitempty"`
 	CapHonored          bool    `json:"cap_honored"`
 	ParallelismReal     bool    `json:"parallelism_real"`
 }
@@ -572,9 +592,9 @@ func writeConcurrencyEvidence(t testing.TB, name string, ev concurrencyEvidence)
 	path := filepath.Join(dir, "concurrency_evidence.json")
 	b := fmt.Sprintf(
 		"{\n  \"name\": %q,\n  \"steps\": %d,\n  \"cap\": %d,\n  \"ran_steps\": %d,\n"+
-			"  \"observed_min_parallel\": %d,\n  \"wall_clock_ms\": %.3f,\n  \"serial_floor_ms\": %.3f,\n"+
+			"  \"observed_min_parallel\": %d,\n  \"wall_clock_ms\": %.3f,\n"+
 			"  \"cap_honored\": %v,\n  \"parallelism_real\": %v\n}\n",
-		name, ev.Steps, ev.Cap, ev.RanSteps, ev.ObservedMinParallel, ev.WallClockMs, ev.SerialFloorMs,
+		name, ev.Steps, ev.Cap, ev.RanSteps, ev.ObservedMinParallel, ev.WallClockMs,
 		ev.CapHonored, ev.ParallelismReal)
 	if err := os.WriteFile(path, []byte(b), 0o644); err != nil {
 		t.Fatalf("write evidence %s: %v", path, err)

@@ -28,6 +28,15 @@ internal_config_warn_no_config_file_using_defaults:
 internal_config_info_using_config_file:
   other: "INFO: Using config file: {{.Path}}"
 
+internal_config_error_unknown_config_keys:
+  other: "unknown configuration in {{.Path}}: {{.Keys}}. These keys are read by nothing, so their values have no effect — they are either a typo or left over from removed code. Correct them to a key that exists, or delete them."
+
+internal_config_warn_inert_config_key:
+  other: "WARN: config key {{.Key}} has no effect in this build — {{.Reason}}. Setting it changes nothing."
+
+internal_config_error_unexpanded_secret_placeholder:
+  other: "{{.Field}} is still the unexpanded placeholder for ${{\"{\"}}{{.Var}}{{\"}\"}} — the environment variable {{.Var}} is not set, so this literal text would be used as the credential itself. Export {{.Var}} and start again."
+
 internal_config_validate_version_required:
   other: "version is required"
 

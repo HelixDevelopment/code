@@ -1,0 +1,4 @@
+=== NEG CONTROL: same run with CMA_PROVIDER_CA_CERT UNSET ===
+unverified
+providers-verify[helix-llm]: chat probe inconclusive (HTTP 000 at https://127.0.0.1:8443/v1/chat/completions) — TLS — https://127.0.0.1:8443/v1/chat/completions IS reachable, but the connection was refused at the TLS layer, which is exactly what an untrusted (e.g. self-signed) certificate does. Point CMA_PROVIDER_CA_CERT at the CA/cert PEM so the probe can trust it
+### exit=0

@@ -1,0 +1,179 @@
+ok  	github.com/HelixDevelopment/HelixLLM/challenges/runner	0.119s
+?   	github.com/HelixDevelopment/HelixLLM/cmd/a2a-server	[no test files]
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=5039MiB storage_available=3635MiB accelerators=1 (measured)
+WITHHELD qwen3-0.6b:q4_0: insufficient_resources — memory short by 1654MiB (needs 2048MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-30b-a3b:q4_k_m: insufficient_resources — memory short by 20086MiB (needs 20480MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-27b:q4_k_m: insufficient_resources — memory short by 19574MiB (needs 19968MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-35b-a3b:q4_k_m: insufficient_resources — memory short by 24182MiB (needs 24576MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-235b-a22b:q4_k_m: insufficient_resources — memory short by 146038MiB (needs 146432MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD glm-5.2:colibri-int4-g64: insufficient_resources — memory short by 15990MiB (needs 16384MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD mistral-nemo-12b:q4_k_m: insufficient_resources — memory short by 9101MiB (needs 9494MiB, 393MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=5028MiB storage_available=3601MiB accelerators=1 (measured)
+WITHHELD qwen3-0.6b:q4_0: insufficient_resources — memory short by 1665MiB (needs 2048MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-30b-a3b:q4_k_m: insufficient_resources — memory short by 20097MiB (needs 20480MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-27b:q4_k_m: insufficient_resources — memory short by 19585MiB (needs 19968MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-35b-a3b:q4_k_m: insufficient_resources — memory short by 24193MiB (needs 24576MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-235b-a22b:q4_k_m: insufficient_resources — memory short by 146049MiB (needs 146432MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD glm-5.2:colibri-int4-g64: insufficient_resources — memory short by 16001MiB (needs 16384MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD mistral-nemo-12b:q4_k_m: insufficient_resources — memory short by 9112MiB (needs 9494MiB, 382MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+--- FAIL: TestEnvironmentDoesNotChangeTheDecision (0.33s)
+    measured_selection_test.go:292: no model could be chosen on this host, so the guard proved nothing: CANNOT-CHOOSE: no text model can run on this measured host.
+          closest reason: insufficient_resources (remedy=change-host-or-pick-smaller)
+          what the candidates lacked: memory
+          No model is started: a model that was not chosen from a measurement may not fit this host.
+IGNORED-CONFIG: AGENTGEN_MODEL_GGUF="statically-named-model.gguf" named a model that no measurement chose; overwritten with the measured choice "Decided-Model-Q4.gguf" (FR-056).
+IGNORED-CONFIG: AGENTGEN_NEED_BYTES="99999999999" is no longer honoured — a static VRAM figure implied a model, and had to be kept in agreement with AGENTGEN_MODEL_GGUF by hand. The admitted figure now comes from the chosen option's recorded requirement (FR-056).
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=5056MiB storage_available=3578MiB accelerators=1 (measured)
+WITHHELD qwen3-0.6b:q4_0: insufficient_resources — memory short by 1637MiB (needs 2048MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-30b-a3b:q4_k_m: insufficient_resources — memory short by 20069MiB (needs 20480MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-27b:q4_k_m: insufficient_resources — memory short by 19557MiB (needs 19968MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-35b-a3b:q4_k_m: insufficient_resources — memory short by 24165MiB (needs 24576MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-235b-a22b:q4_k_m: insufficient_resources — memory short by 146021MiB (needs 146432MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD glm-5.2:colibri-int4-g64: insufficient_resources — memory short by 15973MiB (needs 16384MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD mistral-nemo-12b:q4_k_m: insufficient_resources — memory short by 9084MiB (needs 9494MiB, 410MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+--- FAIL: TestStaticallyNamedFileIsNeverBooted (0.29s)
+    measured_selection_test.go:357: expected a weights-not-present refusal (24), got 22: CANNOT-CHOOSE: no text model can run on this measured host.
+          closest reason: insufficient_resources (remedy=change-host-or-pick-smaller)
+          what the candidates lacked: memory
+          No model is started: a model that was not chosen from a measurement may not fit this host.
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=4976MiB storage_available=3567MiB accelerators=1 (measured)
+WITHHELD qwen3-0.6b:q4_0: insufficient_resources — memory short by 1717MiB (needs 2048MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-30b-a3b:q4_k_m: insufficient_resources — memory short by 20149MiB (needs 20480MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-27b:q4_k_m: insufficient_resources — memory short by 19637MiB (needs 19968MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3.6-35b-a3b:q4_k_m: insufficient_resources — memory short by 24245MiB (needs 24576MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-235b-a22b:q4_k_m: insufficient_resources — memory short by 146101MiB (needs 146432MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD glm-5.2:colibri-int4-g64: insufficient_resources — memory short by 16053MiB (needs 16384MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD mistral-nemo-12b:q4_k_m: insufficient_resources — memory short by 9164MiB (needs 9494MiB, 330MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+--- FAIL: TestProjectorIsNeverMistakenForWeights (0.18s)
+    measured_selection_test.go:378: expected a weights-not-present refusal (24), got 22: CANNOT-CHOOSE: no text model can run on this measured host.
+          closest reason: insufficient_resources (remedy=change-host-or-pick-smaller)
+          what the candidates lacked: memory
+          No model is started: a model that was not chosen from a measurement may not fit this host.
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+PIN: statically-named-model — a constraint on the choice, not a bypass: the host is measured first and the pin is refused if this host cannot run it.
+MEASURED host=anton cpu=16 memory_available=4943MiB storage_available=3540MiB accelerators=1 (measured)
+WITHHELD statically-named-model: unsupported_configuration — this host provides no catalogue-entry (statically-named-model); more memory does not help; remedy=different-approach
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/cmd/agentgen-boot	1.172s
+ok  	github.com/HelixDevelopment/HelixLLM/cmd/helixllm	0.413s
+ok  	github.com/HelixDevelopment/HelixLLM/cmd/imagegen-boot	14.306s
+ok  	github.com/HelixDevelopment/HelixLLM/cmd/laneconfig-validate	0.051s
+?   	github.com/HelixDevelopment/HelixLLM/cmd/mcp-gateway	[no test files]
+ok  	github.com/HelixDevelopment/HelixLLM/cmd/videogen-boot	14.741s
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=4954MiB storage_available=3338MiB accelerators=1 (measured)
+WITHHELD smolvlm2-256m-video-instruct:fp16: insufficient_resources — memory short by 645MiB (needs 953MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD smolvlm2-500m-video-instruct:fp16: insufficient_resources — memory short by 645MiB (needs 953MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD moondream2:int4: insufficient_resources — memory short by 2933MiB (needs 3242MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen2.5-vl-3b-instruct:q4_k_m: insufficient_resources — memory short by 3829MiB (needs 4137MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-4b-instruct:q4_k_m: insufficient_resources — memory short by 5413MiB (needs 5722MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-8b-instruct:q4_k_m: insufficient_resources — memory short by 7320MiB (needs 7629MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD minicpm-v-4.5:q4_k_m: insufficient_resources — memory short by 7320MiB (needs 7629MiB, 308MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=4946MiB storage_available=3395MiB accelerators=1 (measured)
+WITHHELD smolvlm2-256m-video-instruct:fp16: insufficient_resources — memory short by 653MiB (needs 953MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD smolvlm2-500m-video-instruct:fp16: insufficient_resources — memory short by 653MiB (needs 953MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD moondream2:int4: insufficient_resources — memory short by 2942MiB (needs 3242MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen2.5-vl-3b-instruct:q4_k_m: insufficient_resources — memory short by 3837MiB (needs 4137MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-4b-instruct:q4_k_m: insufficient_resources — memory short by 5422MiB (needs 5722MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-8b-instruct:q4_k_m: insufficient_resources — memory short by 7329MiB (needs 7629MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD minicpm-v-4.5:q4_k_m: insufficient_resources — memory short by 7329MiB (needs 7629MiB, 300MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+--- FAIL: TestEnvironmentDoesNotChangeTheDecision (0.28s)
+    measured_selection_test.go:205: no model could be chosen on this host, so the guard proved nothing: CANNOT-CHOOSE: no vision model can run on this measured host.
+          closest reason: insufficient_resources (remedy=change-host-or-pick-smaller)
+          what the candidates lacked: memory
+          No model is started: a model that was not chosen from a measurement may not fit this host.
+IGNORED-CONFIG: VISIONGEN_MODEL_GGUF="statically-named-model.gguf" named a model that no measurement chose; overwritten with the measured choice "Decided-Model-Q4.gguf" (FR-056).
+IGNORED-CONFIG: VISIONGEN_MMPROJ="statically-named-mmproj.gguf" named a model that no measurement chose; overwritten with the measured choice "mmproj-Decided-Model.gguf" (FR-056).
+IGNORED-CONFIG: VISIONGEN_NEED_BYTES="99999999999" is no longer honoured — it implied a model. The admitted figure comes from the chosen option's recorded requirement (FR-056).
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+MEASURED host=anton cpu=16 memory_available=4979MiB storage_available=3421MiB accelerators=1 (measured)
+WITHHELD smolvlm2-256m-video-instruct:fp16: insufficient_resources — memory short by 619MiB (needs 953MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD smolvlm2-500m-video-instruct:fp16: insufficient_resources — memory short by 619MiB (needs 953MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD moondream2:int4: insufficient_resources — memory short by 2908MiB (needs 3242MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen2.5-vl-3b-instruct:q4_k_m: insufficient_resources — memory short by 3804MiB (needs 4137MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-4b-instruct:q4_k_m: insufficient_resources — memory short by 5388MiB (needs 5722MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD qwen3-vl-8b-instruct:q4_k_m: insufficient_resources — memory short by 7295MiB (needs 7629MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+WITHHELD minicpm-v-4.5:q4_k_m: insufficient_resources — memory short by 7295MiB (needs 7629MiB, 333MiB available after 4646MiB held back to keep the host responsive); remedy=change-host-or-pick-smaller
+--- FAIL: TestStaticallyNamedFileIsNeverBooted (0.19s)
+    measured_selection_test.go:272: expected a weights-not-present refusal (24), got 22: CANNOT-CHOOSE: no vision model can run on this measured host.
+          closest reason: insufficient_resources (remedy=change-host-or-pick-smaller)
+          what the candidates lacked: memory
+          No model is started: a model that was not chosen from a measurement may not fit this host.
+DECLARED-USAGE: commercial (default — the narrowest purpose; set HELIXLLM_DECLARED_USAGE to declare another)
+PIN: statically-named-model — a constraint on the choice, not a bypass: the host is measured first and the pin is refused if this host cannot run it.
+MEASURED host=anton cpu=16 memory_available=4982MiB storage_available=3474MiB accelerators=1 (measured)
+WITHHELD statically-named-model: unsupported_configuration — this host provides no catalogue-entry (statically-named-model); more memory does not help; remedy=different-approach
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/cmd/visiongen-boot	0.666s
+?   	github.com/HelixDevelopment/HelixLLM/docs/qa/phase4_imagegen_20260707/harness/genproof	[no test files]
+ok  	github.com/HelixDevelopment/HelixLLM/internal/a2a	0.070s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/agents	0.065s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/agents/tools	9.389s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/auth	0.040s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/brain	4.316s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/brain/models	0.051s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/capability	1.355s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/catalogue	0.324s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/control	0.274s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/discovery	0.049s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/failover	0.048s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/fallback	1.153s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/gateway	1.355s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/gateway/middleware	0.070s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/knowledge	0.854s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/laneboot	0.254s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/lifecycle	0.166s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/mcpgateway	0.032s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/mode	0.061s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/naming	0.294s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/runtime	3.803s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/selection	0.737s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/server	0.533s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/server/middleware	0.065s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/serviceconfig	0.300s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/analytics	0.022s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/config	0.963s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/events	0.133s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/hardware	0.871s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/health	0.301s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/i18n	0.022s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/logging	0.032s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/messaging	0.110s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/metrics	0.147s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/observability	0.096s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/plugins	0.039s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/proxy	0.125s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/shared/rpc	0.233s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/telemetry	0.285s
+--- FAIL: TestBaselineDiscardsConnectionWarmup (0.95s)
+    latency_test.go:221: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_llm/internal/testing/latency_test.go:221
+        	Error:      	Not equal: 
+        	            	expected: "passed"
+        	            	actual  : "failed"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-passed
+        	            	+failed
+        	Test:       	TestBaselineDiscardsConnectionWarmup
+        	Messages:   	setup cost on the first requests leaked into the measured baseline and skipped a step this host could measure perfectly well: assertion #2 (concurrent_latency_ratio): concurrency overhead 17.39x: p99 of 8 concurrent samples is 11.2ms, against 0.6ms for the same 8 served one at a time at the uncontended median of 0.08ms (12 serial samples, spread 2.2x) — over the 12.0x budgetno step produced a result
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/testing	2.559s
+ok  	github.com/HelixDevelopment/HelixLLM/internal/vrambroker	0.214s
+ok  	github.com/HelixDevelopment/HelixLLM/pkg/api	0.016s
+ok  	github.com/HelixDevelopment/HelixLLM/pkg/types	0.034s
+ok  	github.com/HelixDevelopment/HelixLLM/tests/benchmark	0.079s [no tests to run]
+ok  	github.com/HelixDevelopment/HelixLLM/tests/e2e	0.150s
+ok  	github.com/HelixDevelopment/HelixLLM/tests/integration	0.361s
+ok  	github.com/HelixDevelopment/HelixLLM/tests/security	0.065s
+ok  	github.com/HelixDevelopment/HelixLLM/tests/stress	0.062s
+FAIL
+EXIT=1

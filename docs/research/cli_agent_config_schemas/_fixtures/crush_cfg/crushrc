@@ -1,0 +1,10 @@
+provider add helixllm --name "HelixLLM (local)" --type openai-compat \
+  --base-url "http://localhost:18434/v1" \
+  --api-key "local"
+model add helixllm/qwen2.5-coder-3b-instruct-q4_k_m \
+  --name "HelixLLM Local Coder" \
+  --context-window 32768 \
+  --default-max-tokens 4096 \
+  --can-reason false \
+  --supports-images false \
+  --price-input 0 --price-output 0 --price-cache-create 0 --price-cache-hit 0

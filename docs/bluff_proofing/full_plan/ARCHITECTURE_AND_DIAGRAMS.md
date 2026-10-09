@@ -473,7 +473,7 @@ services:
       - "8080:8080"
       - "2222:2222"
     environment:
-      - HELIX_DATABASE_URL=postgres://helix:helixpass@postgres:5432/helixcode_prod
+      - HELIX_DATABASE_URL=postgres://helix:${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}@postgres:5432/helixcode_prod
       - HELIX_REDIS_URL=redis://redis:6379
       - HELIX_AUTH_JWT_SECRET=${HELIX_AUTH_JWT_SECRET}
     depends_on:

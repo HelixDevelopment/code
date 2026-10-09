@@ -3,20 +3,26 @@ Description=HelixAgent (multi-provider AI agent runtime) on :7061
 Documentation=file://@HELIX_ROOT@/submodules/helix_agent/README.md
 # HelixAgent runs a MANDATORY strict dependency verification at boot
 # (-strict-dependencies, default true) covering PostgreSQL, Redis, Cognee and
-# ChromaDB. If those are not reachable it exits non-zero by design, so the
-# infra unit is a hard ordering dependency, not a soft one.
+# ChromaDB. If those are not reachable it exits non-zero by design.
 #
-# HXC-228 — this ordering is only meaningful because helixcode-infra.service now
-# blocks in ExecStartPost until the stack is actually SERVING. Before that,
-# `podman compose up -d` returned at container CREATION, so this After= ordered
-# us after creation, not readiness: on a cold boot all four dependency probes
-# and the fatal exit landed inside the same second this unit started, with
-# Cognee still coming up. Two independent layers now cover it — the infra unit
-# waits for health, and HelixAgent's own verification retries within a bounded
-# budget (HELIXAGENT_DEP_WAIT_SECONDS, default 120 s; 0 restores fail-fast).
+# INFRA OWNERSHIP — see the long note in the [Service] section below. In the
+# active topology HelixAgent owns its own `helixagent-*` container stack, so
+# helixcode-infra.service is NOT a dependency. After= is retained (ordering
+# only, and inert when that unit is not in the transaction) so that if an
+# operator ever does start the shared infra stack, this unit still orders after
+# it rather than racing it. Requires= was deliberately dropped: a hard
+# requirement on a unit this deployment does not enable would make HelixAgent
+# unstartable.
 After=network-online.target helixcode-infra.service
 Wants=network-online.target
-Requires=helixcode-infra.service
+# Restart-loop cap. StartLimitBurst/StartLimitIntervalSec live in [Unit], not
+# [Service]: systemd moved them in v230 and this host's systemd logs
+# "Unknown key 'StartLimitIntervalSec' in section [Service], ignoring" —
+# i.e. in [Service] the cap silently does NOTHING. 5 starts / 10 min, then
+# the unit parks in `failed` where an operator can see it, instead of
+# restarting forever on a shared host.
+StartLimitBurst=5
+StartLimitIntervalSec=600
 PartOf=helix.target
 
 [Service]
@@ -24,53 +30,127 @@ Type=simple
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
 WorkingDirectory=@HELIX_ROOT@/submodules/helix_agent
 
-# --- Dependency wiring -------------------------------------------------------
-# HelixAgent resolves every endpoint from the environment
-# (internal/config/config.go getEnv + internal/ports/ports.go). Its compiled-in
-# defaults (PG :5432, ChromaDB :8001) point at ports this host does NOT serve --
-# :5432 belongs to an unrelated helixterm stack -- which is why the binary could
-# never complete boot verification here. Bind it to the real infra stack:
-Environment=DB_HOST=localhost
-Environment=DB_PORT=5433
-Environment=DB_USER=helixagent
-Environment=DB_NAME=helixagent_db
-Environment=DB_SSLMODE=disable
-Environment=REDIS_HOST=localhost
-Environment=REDIS_PORT=6380
-Environment=HELIXAGENT_PORT_COGNEE=8000
-Environment=HELIXAGENT_PORT_CHROMADB=8082
-Environment=HELIXAGENT_PORT_QDRANT=6333
+# --- INFRA OWNERSHIP (measured 2026-09-03) -----------------------------------
+# Two topologies exist in this repo. THIS UNIT IMPLEMENTS (B).
+#
+# (A) SHARED-INFRA — helixcode-infra.service owns one `helixcode-infra-*` stack
+#     and every consumer is pointed at it. HelixAgent would then need
+#     `-auto-start-docker=false` plus this endpoint wiring, which earlier
+#     revisions of this unit carried and which is PRESERVED HERE so the topology
+#     remains recoverable rather than silently deleted:
+#
+#         Environment=DB_HOST=localhost
+#         Environment=DB_PORT=5433
+#         Environment=DB_USER=helixagent
+#         Environment=DB_NAME=helixagent_db
+#         Environment=DB_SSLMODE=disable
+#         Environment=REDIS_HOST=localhost
+#         Environment=REDIS_PORT=6380
+#         Environment=HELIXAGENT_PORT_COGNEE=8000
+#         Environment=HELIXAGENT_PORT_CHROMADB=8082
+#         Environment=HELIXAGENT_PORT_QDRANT=6333
+#         ExecStart=... -config configs/development.yaml -auto-start-docker=false
+#
+# (B) PER-SERVICE INFRA (ACTIVE) — each service owns a disjointly-named stack.
+#     Chosen because (A) is not deployed: `podman ps -a` on 2026-09-03 showed
+#     ZERO `helixcode-infra-*` containers, so every endpoint in the (A) block
+#     above points at a port nothing serves — :5433 and :6380 are both closed.
+#     Booting this unit under (A) would fail dependency verification outright.
+#
+#     Under (B) HelixAgent's own `helixagent-*` containers ARE running and
+#     healthy, on `network_mode: host` (docker-compose.yml:27,234,433,489), so
+#     they bind the host directly and the binary's COMPILED-IN defaults resolve
+#     correctly. Verified open on 2026-09-03: :5432 (helixagent-postgres),
+#     :8000 (cognee), :8001 (chromadb). That is why no DB_*/HELIXAGENT_PORT_*
+#     override is set here: overriding them would BREAK a working resolution.
+#
+#     `-auto-start-docker` is likewise left at its default (true), matching the
+#     invocation proven to serve :7061 and :8111 on this host. The 2026-07-27
+#     "hung inside compose, never bound :7061" failure was a topology-(A)
+#     collision — two orchestrators over one container set — and cannot recur
+#     under (B), where HelixAgent is the SOLE owner of `helixagent-*`
+#     (§11.4.119). The compose call is idempotent against an already-running
+#     stack. The ExecStartPost readiness gate below is the guard that makes a
+#     regression here fail loudly instead of reporting a false "active".
+#
+# There is no container-name or port overlap between the three stacks on this
+# host — `helixagent-*`, `helixcode-autoboot-*` and (when started)
+# `helixcode-infra-*` are disjoint — so no two orchestrators contend.
 
-# DB_PASSWORD and provider API keys are secrets: they live in .env (mode 0600,
-# gitignored per CONST-042/§12.1) and are NEVER inlined into this unit, which is
-# world-readable and version-controlled. Leading '-' => optional, so a missing
-# .env degrades to a clear dependency-verification failure rather than a
-# confusing unit-file parse error.
-EnvironmentFile=-@HELIX_ROOT@/.env
+# --- Secrets -----------------------------------------------------------------
+# JWT_SECRET lives in the submodule's .env (mode 0600, gitignored per
+# CONST-042/§12.1) and is NEVER inlined into this unit, which is world-readable
+# and version-controlled. Verified bare `KEY=value` format, so systemd parses it
+# natively. Leading '-' => optional.
 EnvironmentFile=-@HELIX_ROOT@/submodules/helix_agent/.env
+EnvironmentFile=-@HELIX_ROOT@/.env
 
-# -auto-start-docker=false is REQUIRED, not an optimisation.
+# --- Provider API keys: sourced by a shell, NOT EnvironmentFile --------------
+# HelixAgent scans ~137 candidate provider env-var names at startup; with none
+# present it discovers 0 providers and every completion returns
+# 503 no_provider_available. The operator's keys live in $HOME/api_keys.sh
+# (override with CMA_KEYS_FILE).
 #
-# The flag defaults to true, which makes HelixAgent run `docker compose up -d`
-# against its OWN submodules/helix_agent/docker-compose.yml, booting a second
-# postgres + redis + chromadb. Those containers are already owned by
-# helixcode-infra.service; a second owner duplicates them and collides on their
-# ports (§11.4.119 single-resource-owner). Observed 2026-07-27: with the flag at
-# its default the unit reported "active (running)" while hung inside compose,
-# never binding :7061 -- active-but-not-listening.
+# That file CANNOT be used as an EnvironmentFile=. Measured 2026-09-03:
+#   * 88 of its lines are `export KEY=value`, 0 are bare `KEY=value`. systemd's
+#     EnvironmentFile parser does not execute shell, so it reads the name as
+#     "export KEY" — not a valid variable name — and DROPS the line.
+#   * 41 lines interpolate another variable (`KEY=$ApiKey_Foo`). systemd does no
+#     shell expansion in EnvironmentFile, so those would arrive as literal
+#     "$ApiKey_Foo" strings even if the names parsed.
+# Pointing EnvironmentFile= at it would therefore fail SILENTLY — the unit would
+# start clean and still discover 0 providers.
 #
-# Infra lifecycle belongs to helixcode-infra.service (see Requires= above);
-# HelixAgent consumes it via the DB_*/HELIXAGENT_PORT_* wiring and must not
-# start it.
-ExecStart=@HELIX_ROOT@/submodules/helix_agent/bin/helixagent \
-    -config configs/development.yaml \
-    -auto-start-docker=false
+# So the file is SOURCED by a shell that then execs the binary. `set -a` exports
+# every assignment; `exec` replaces the shell so systemd still supervises the
+# real process (no stray wrapper PID, MAINPID stays correct). `bash -c` (not
+# `-lc`) avoids pulling in interactive profile side effects. The `[ -f ]` guard
+# keeps a missing keys file from failing the unit — it degrades to zero
+# providers, which the log states plainly.
+#
+# The keys file is NOT modified, NOT copied, and no value is ever logged.
+# exec-with-api-keys.sh sources the keys file, then execs the binary in place
+# (so systemd supervises helixagent directly, MAINPID intact). A tracked
+# script rather than an inline `bash -c` because the inline form needs
+# systemd's `$$` escaping for every literal dollar, which `systemctl show`
+# renders identically whether the escape is right or wrong, and which cannot
+# be tested outside systemd. This script is testable by hand.
+ExecStart=@HELIX_ROOT@/scripts/systemd/exec-with-api-keys.sh @HELIX_ROOT@/submodules/helix_agent/bin/helixagent
+
+# --- Readiness ---------------------------------------------------------------
+# Type=simple makes systemd call this unit "active" the moment the process
+# forks. HelixAgent exposes a real liveness endpoint on :8111 that returns
+# {"status":"ready",...}; gate on it so "active" means "serving" (§11.4.108).
+# Budget sits inside TimeoutStartSec below.
+#
+# GATE ON :7061, NOT :8111 — measured 2026-09-03, and this correction matters.
+# The :8111 liveness endpoint starts answering HTTP 200 while it is still
+# reporting status=STARTING, long before the API is usable. Captured sequence
+# from one real start:
+#   17:53:02  "Liveness probe listening (status=starting)" addr=":8111"
+#   17:53:04  gate on :8111 passed -> systemd declared "Started"   <-- FALSE GREEN
+#   17:53:47  "Liveness probe transitioning to status=ready" (startup_elapsed_ms=45010)
+#   17:53:55  "Starting HTTP/1.1 server on 0.0.0.0:7061"          <-- actually usable
+# Polled from the outside, :7061 returned curl code 000 for 35s after systemd
+# said "Started", then 200 at t+40s. Gating on :8111 therefore reproduced the
+# very active-but-not-serving lie this ExecStartPost exists to prevent
+# (§11.4.108: a readiness signal must track the USER-VISIBLE surface).
+#
+# :7061/v1/models is the port consumers actually call, so a 200 there is proof
+# the service is serving. Budget 300s against ~53s observed.
+ExecStartPost=@HELIX_ROOT@/scripts/systemd/wait-http-ready.sh http://localhost:7061/v1/models 300 3
 
 Restart=on-failure
+# 15s, and RestartSec is what keeps a hard-failing service from hammering the
+# host: dependency verification touches Postgres, Redis, Cognee and ChromaDB on
+# every attempt.
 RestartSec=15
 LimitNOFILE=65536
 # Boot runs a provider-verification pipeline that can take several minutes.
 TimeoutStartSec=600
 
 [Install]
-WantedBy=helix.target
+# default.target is what makes this start at BOOT. WantedBy=helix.target alone
+# would only start it when an operator ran `systemctl --user start helix.target`.
+# Both are declared: boot-start AND membership in the umbrella group.
+WantedBy=default.target helix.target

@@ -1,7 +1,7 @@
 # Helix Platform — systemd Boot Integration
 
-**Revision:** 3
-**Last modified:** 2026-08-06
+**Revision:** 4
+**Last modified:** 2026-09-03
 **Maintainer:** HelixCode platform
 
 The whole Helix platform — HelixCode, HelixAgent, HelixLLM and their
@@ -47,8 +47,26 @@ Prove the platform is actually *serving*, not merely `active` (§11.4.108):
 curl -s      http://localhost:8100/api/scores        # llmsverifier
 curl -sk     https://localhost:8443/internal/health  # helixllm-gateway (TLS)
 curl -s      http://localhost:7061/health            # helixagent
-curl -s      http://localhost:8081/health            # helixcode-server
+curl -s      http://localhost:8080/health            # helixcode-server
 ```
+
+---
+
+## Port note: helixcode-server serves :8080 (corrected revision 4)
+
+Revision 3 of this document recorded `:8081`. The unit now serves **:8080**,
+which is the port `helix_code/config/config.yaml` declares (line 6) and the
+port the running service actually binds. `config/replica-8081.yaml` is — as
+its name says — a SECOND instance's config; its `:8081` and its `:5433`/`:6380`
+datastore stanzas address the `helixcode-infra-*` stack, which is not enabled
+in this deployment. `helixcode-server.service` therefore sets
+`HELIX_CONFIG=config/config.yaml` explicitly.
+
+Setting it explicitly is load-bearing, not tidiness: the binary's fallback
+chain ends at `~/.config/helixcode/config.json`, and that file currently
+carries ~75 keys this build rejects, so a start from any directory without a
+cwd-relative `config/config.yaml` aborts with
+`Failed to load configuration: unknown configuration`.
 
 ---
 
@@ -65,7 +83,7 @@ so enabling a service wires it in automatically.
 | `helixllm-coder.service` | oneshot | 18434 | Local Qwen3-Coder-30B model container |
 | `helixllm-gateway.service` | simple | 8443 (TLS) | HelixLLM multi-provider LLM router |
 | `helixagent.service` | simple | 7061 | HelixAgent runtime (HTTP/1.1+2 on TCP, HTTP/3 on UDP) |
-| `helixcode-server.service` | simple | 8081 | HelixCode API server |
+| `helixcode-server.service` | simple | 8080 | HelixCode API server |
 
 Start ordering: `infra` → `llmsverifier` → `llm-coder` / `llm-gateway` →
 `helixagent` → `helixcode-server`.
@@ -108,14 +126,14 @@ invisible unless the boot itself is watched.
 
 | Port | Service | Notes |
 |---|---|---|
-| 8081 | helixcode-server | `config/replica-8081.yaml` |
+| 8080 | helixcode-server | `config/config.yaml` (primary). `config/replica-8081.yaml` is a SECOND instance's config, not the primary — see note below. |
 | 8443 | helixllm-gateway | **TLS** — use `https://`. Health route is `/internal/health` (registered in `submodules/helix_llm/internal/server/server.go:167`). *Not* `/v1/models` — that is the path the gateway uses to probe **downstream** providers, and it answers `{"object":"list","data":null}` until provider keys are configured, so it is a misleading health signal |
 | 7061 | helixagent | TCP *and* UDP (QUIC) |
 | 8100 | llmsverifier | the address the gateway looks for; the binary's own default is 8080, so the unit passes `--port 8100` explicitly |
 | 18434 | helixllm-coder | local model |
 | 5433 | infra postgres | not 5432 — 5432 belongs to an unrelated stack on this host |
 | 6380 | infra redis | not 6379, same reason |
-| 8083 | infra weaviate | HTTP; moved off 8081, which helixcode-server owns |
+| 8083 | infra weaviate | HTTP; moved off 8081 to avoid the replica config's port |
 | 50051 | infra weaviate | gRPC |
 | 8082 | infra chromadb | |
 | 8000 | infra cognee | |

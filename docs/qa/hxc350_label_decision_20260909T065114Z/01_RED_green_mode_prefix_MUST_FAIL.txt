@@ -1,0 +1,248 @@
+=== RUN   TestPassthroughFlag_SingleUserMessage
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:23+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+    passthrough_flag_red_test.go:418: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:418
+        	Error:      	Not equal: 
+        	            	expected: "helixllm/helixllm-stub-v9"
+        	            	actual  : "helixagent-debate"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-helixllm/helixllm-stub-v9
+        	            	+helixagent-debate
+        	Test:       	TestPassthroughFlag_SingleUserMessage
+        	Messages:   	passthrough must report the provider/model that actually answered
+    passthrough_flag_red_test.go:420: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:420
+        	Error:      	Should not be: "helixagent-debate"
+        	Test:       	TestPassthroughFlag_SingleUserMessage
+        	Messages:   	reporting the requested alias back is exactly the defect the decision fixes
+--- FAIL: TestPassthroughFlag_SingleUserMessage (0.00s)
+=== RUN   TestPassthroughFlag_DefaultStillDebates
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-09T08:54:23+02:00" level=error msg="[CODE PATH] orchestratorIntegration is NIL - using OLD ensemble service (NOT using new debate system!)"
+--- PASS: TestPassthroughFlag_DefaultStillDebates (0.00s)
+=== RUN   TestPassthroughFlag_ExplicitFalseStillDebates
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-09T08:54:23+02:00" level=error msg="[CODE PATH] orchestratorIntegration is NIL - using OLD ensemble service (NOT using new debate system!)"
+--- PASS: TestPassthroughFlag_ExplicitFalseStillDebates (0.00s)
+=== RUN   TestPassthroughFlag_MultiTurnBypassPreserved
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="Multi-turn request - routing to provider chain (debate doesn't carry conversation history; see drainage Finding #19)" user_message_count=2
+time="2026-09-09T08:54:23+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+    passthrough_flag_red_test.go:473: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:473
+        	Error:      	Not equal: 
+        	            	expected: "helixllm/helixllm-stub-v9"
+        	            	actual  : "helixagent-debate"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-helixllm/helixllm-stub-v9
+        	            	+helixagent-debate
+        	Test:       	TestPassthroughFlag_MultiTurnBypassPreserved
+        	Messages:   	multi-turn bypass must still route to the provider chain and report who answered
+--- FAIL: TestPassthroughFlag_MultiTurnBypassPreserved (0.00s)
+=== RUN   TestPassthroughFlag_ToolsBypassPreserved
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="New user request - initiating AI Debate"
+time="2026-09-09T08:54:23+02:00" level=info msg="[Smart Routing] Tools detected — routing to direct provider" tool_count=1
+time="2026-09-09T08:54:23+02:00" level=info msg="[Direct Provider] HelixLLM responded successfully"
+--- PASS: TestPassthroughFlag_ToolsBypassPreserved (0.00s)
+=== RUN   TestPassthroughFlag_StreamingHonoursFlag
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, streaming verbatim from provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:23+02:00" level=info msg="[Provider Chain Stream] helixllm streaming"
+    passthrough_flag_red_test.go:572: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:572
+        	Error:      	"data: {\"id\":\"chatcmpl-678e8bb566aa4073\",\"object\":\"chat.completion.chunk\",\"created\":1788936863,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: [DONE]\n\n" does not contain "\"model\":\"helixllm/helixllm-stub-v9\""
+        	Test:       	TestPassthroughFlag_StreamingHonoursFlag
+        	Messages:   	streaming passthrough must report the provider/model that actually answered
+    passthrough_flag_red_test.go:576: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:576
+        	Error:      	"data: {\"id\":\"chatcmpl-678e8bb566aa4073\",\"object\":\"chat.completion.chunk\",\"created\":1788936863,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: [DONE]\n\n" should not contain "\"model\":\"helixagent-debate\""
+        	Test:       	TestPassthroughFlag_StreamingHonoursFlag
+        	Messages:   	streaming passthrough must NOT echo the requested alias back
+--- FAIL: TestPassthroughFlag_StreamingHonoursFlag (0.00s)
+=== RUN   TestPassthroughFlag_StreamingDefaultStillDebates
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="[STREAMING] Explicit debate-model request — bypassing intent classifier" model=helixagent-debate
+time="2026-09-09T08:54:23+02:00" level=info msg="[STREAMING] Final routing decision" explicit_debate_req=true message="Reply with exactly: ZEBRA_42" requested_model=helixagent-debate use_debate=true
+time="2026-09-09T08:54:23+02:00" level=warning msg="[Streaming] All debate team positions failed, falling back to ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="New streaming request - initiating AI Debate"
+time="2026-09-09T08:54:23+02:00" level=info msg="[Comprehensive Streaming] Starting comprehensive debate stream with real LLM calls"
+time="2026-09-09T08:54:23+02:00" level=warning msg="Failed to generate synthesis" error="no suitable provider found for synthesis"
+time="2026-09-09T08:54:23+02:00" level=info msg="[Comprehensive Streaming] Stream complete with real LLM calls"
+--- PASS: TestPassthroughFlag_StreamingDefaultStillDebates (0.12s)
+=== RUN   TestPassthroughFlag_StreamingExplicitFalseStillDebates
+time="2026-09-09T08:54:23+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:23+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:23+02:00" level=info msg="[STREAMING] Explicit debate-model request — bypassing intent classifier" model=helixagent-debate
+time="2026-09-09T08:54:23+02:00" level=info msg="[STREAMING] Final routing decision" explicit_debate_req=true message="Reply with exactly: ZEBRA_42" requested_model=helixagent-debate use_debate=true
+time="2026-09-09T08:54:23+02:00" level=warning msg="[Streaming] All debate team positions failed, falling back to ensemble"
+time="2026-09-09T08:54:23+02:00" level=info msg="New streaming request - initiating AI Debate"
+time="2026-09-09T08:54:23+02:00" level=info msg="[Comprehensive Streaming] Starting comprehensive debate stream with real LLM calls"
+time="2026-09-09T08:54:24+02:00" level=warning msg="Failed to generate synthesis" error="no suitable provider found for synthesis"
+time="2026-09-09T08:54:24+02:00" level=info msg="[Comprehensive Streaming] Stream complete with real LLM calls"
+--- PASS: TestPassthroughFlag_StreamingExplicitFalseStillDebates (0.14s)
+=== RUN   TestPassthrough_ForceProviderHonoured
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain] force_provider succeeded" provider=hxc350-forced
+--- PASS: TestPassthrough_ForceProviderHonoured (0.00s)
+=== RUN   TestPassthrough_ForceProviderUnknownFallsBackToChain
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=warning msg="[Provider Chain] force_provider not registered — falling back to the normal chain" provider=no-such-provider
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+--- PASS: TestPassthrough_ForceProviderUnknownFallsBackToChain (0.00s)
+=== RUN   TestPassthrough_HelixLLMDisabled_ChainFallsThrough
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="Created HelixLLM provider" endpoint="https://localhost:8443" provider=helixllm use_llamacpp=false
+time="2026-09-09T08:54:24+02:00" level=warning msg="[Provider Chain] helixllm failed, trying fallback providers" error="execute request: Post \"https://localhost:8443/v1/chat/completions\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain] Fallback provider succeeded" provider=hxc350-forced
+--- PASS: TestPassthrough_HelixLLMDisabled_ChainFallsThrough (0.06s)
+=== RUN   TestPassthrough_ToolResultTurnKeepsLoopBreaker
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Processing tool results - synthesizing without new debate"
+time="2026-09-09T08:54:24+02:00" level=info msg="Tool result processed successfully" content_len=12 provider=helixllm
+--- PASS: TestPassthrough_ToolResultTurnKeepsLoopBreaker (0.00s)
+=== RUN   TestPassthrough_StreamingToolResultTurnKeepsLoopBreaker
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="[STREAMING] Explicit debate-model request — bypassing intent classifier" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[STREAMING] Final routing decision" explicit_debate_req=true message="Reply with exactly: ZEBRA_42" requested_model=helixagent-debate use_debate=true
+time="2026-09-09T08:54:24+02:00" level=warning msg="[Streaming] All debate team positions failed, falling back to ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Streaming tool results - synthesizing without new debate"
+time="2026-09-09T08:54:24+02:00" level=info msg="Tool result processed successfully" content_len=12 provider=helixllm
+time="2026-09-09T08:54:24+02:00" level=info msg="Tool results: sent finish_reason:stop chunk"
+time="2026-09-09T08:54:24+02:00" level=info msg="Tool results: sent [DONE] - stream complete"
+--- PASS: TestPassthrough_StreamingToolResultTurnKeepsLoopBreaker (0.00s)
+=== RUN   TestPassthrough_StreamingForceProviderHonoured
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, streaming verbatim from provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain Stream] force_provider streaming" provider=hxc350-forced
+--- PASS: TestPassthrough_StreamingForceProviderHonoured (0.00s)
+=== RUN   TestPassthrough_ModelReportsAnsweringProviderIdentity
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain] helixllm succeeded"
+    passthrough_flag_red_test.go:826: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:826
+        	Error:      	Not equal: 
+        	            	expected: "helixllm/helixllm-stub-v9"
+        	            	actual  : "helixagent-debate"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-helixllm/helixllm-stub-v9
+        	            	+helixagent-debate
+        	Test:       	TestPassthrough_ModelReportsAnsweringProviderIdentity
+        	Messages:   	the response must report the provider/model that actually answered
+    passthrough_flag_red_test.go:828: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:828
+        	Error:      	Should not be: "helixagent-debate"
+        	Test:       	TestPassthrough_ModelReportsAnsweringProviderIdentity
+        	Messages:   	echoing the requested alias back is the defect this decision fixes
+--- FAIL: TestPassthrough_ModelReportsAnsweringProviderIdentity (0.00s)
+=== RUN   TestPassthrough_StreamingModelReportsAnsweringProviderIdentity
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, streaming verbatim from provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain Stream] helixllm streaming"
+    passthrough_flag_red_test.go:855: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:855
+        	Error:      	"data: {\"id\":\"chatcmpl-549412c01ccfd1db\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: [DONE]\n\n" does not contain "\"model\":\"helixllm/helixllm-stub-v9\""
+        	Test:       	TestPassthrough_StreamingModelReportsAnsweringProviderIdentity
+        	Messages:   	every SSE chunk must report the provider/model that actually answered
+    passthrough_flag_red_test.go:857: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:857
+        	Error:      	"data: {\"id\":\"chatcmpl-549412c01ccfd1db\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: [DONE]\n\n" should not contain "\"model\":\"helixagent-debate\""
+        	Test:       	TestPassthrough_StreamingModelReportsAnsweringProviderIdentity
+        	Messages:   	the stream must not echo the requested alias back
+--- FAIL: TestPassthrough_StreamingModelReportsAnsweringProviderIdentity (0.00s)
+=== RUN   TestPassthrough_StreamingWithToolsReportsAnsweringProviderIdentity
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, streaming verbatim from provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain Stream] tools present — routing through non-streaming path then SSE-wrapping" tool_count=1
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain Stream/Tools] provider succeeded" provider=helixllm
+    passthrough_flag_red_test.go:898: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:898
+        	Error:      	"data: {\"id\":\"chatcmpl-2869ccbd9e4c4083\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: {\"id\":\"chatcmpl-2869ccbd9e4c4083\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n" does not contain "\"model\":\"helixllm/helixllm-stub-v9\""
+        	Test:       	TestPassthrough_StreamingWithToolsReportsAnsweringProviderIdentity
+        	Messages:   	the tools/SSE path must report the provider/model that actually answered
+    passthrough_flag_red_test.go:900: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:900
+        	Error:      	"data: {\"id\":\"chatcmpl-2869ccbd9e4c4083\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"ZEBRA_42\"},\"finish_reason\":null}]}\n\ndata: {\"id\":\"chatcmpl-2869ccbd9e4c4083\",\"object\":\"chat.completion.chunk\",\"created\":1788936864,\"model\":\"helixagent-debate\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n" should not contain "\"model\":\"helixagent-debate\""
+        	Test:       	TestPassthrough_StreamingWithToolsReportsAnsweringProviderIdentity
+        	Messages:   	the tools/SSE path must not echo the requested alias back
+--- FAIL: TestPassthrough_StreamingWithToolsReportsAnsweringProviderIdentity (0.00s)
+=== RUN   TestPassthrough_ProviderWithoutModelIdentityIsHonest
+time="2026-09-09T08:54:24+02:00" level=info msg="Stored provider configurations for lazy loading"
+time="2026-09-09T08:54:24+02:00" level=info msg="[ENTRY] ChatCompletions handler called"
+time="2026-09-09T08:54:24+02:00" level=info msg="Model: helixagent-debate or default - routing to AI Debate ensemble"
+time="2026-09-09T08:54:24+02:00" level=info msg="Explicit passthrough requested - bypassing AI Debate, routing verbatim to provider chain (HXC-350)" model=helixagent-debate
+time="2026-09-09T08:54:24+02:00" level=info msg="[Provider Chain] force_provider succeeded" provider=hxc350-forced
+    passthrough_flag_red_test.go:935: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:935
+        	Error:      	Not equal: 
+        	            	expected: "hxc350-forced/<unreported>"
+        	            	actual  : "helixagent-debate"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-hxc350-forced/<unreported>
+        	            	+helixagent-debate
+        	Test:       	TestPassthrough_ProviderWithoutModelIdentityIsHonest
+        	Messages:   	a provider that reports no model id must still be named, with the unknown half marked explicitly
+    passthrough_flag_red_test.go:938: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:938
+        	Error:      	Should not be: "helixagent-debate"
+        	Test:       	TestPassthrough_ProviderWithoutModelIdentityIsHonest
+        	Messages:   	a silent fallback to the requested alias is the defect, not a graceful default
+    passthrough_flag_red_test.go:940: 
+        	Error Trace:	/home/milosvasic/Projects/helix_code/submodules/helix_agent/internal/handlers/passthrough_flag_red_test.go:940
+        	Error:      	"helixagent-debate" does not contain "hxc350-forced"
+        	Test:       	TestPassthrough_ProviderWithoutModelIdentityIsHonest
+        	Messages:   	the half that IS known — which provider answered — must survive
+--- FAIL: TestPassthrough_ProviderWithoutModelIdentityIsHonest (0.00s)
+FAIL
+FAIL	dev.helix.agent/internal/handlers	0.370s
+FAIL

@@ -1,0 +1,35 @@
+[1m== SELF-TEST 1/8: gate PASSES on the real tree (golden-good) ==[0m
+[32mPASS[0m — gate reports clean on the working tree.
+
+[1m== SELF-TEST 2/8: gate FAILS on a planted literal (golden-bad) ==[0m
+[32mPASS[0m — gate flagged the planted literal:
+      [1mplanted-compose.yml:4[0m  credential key assigned a LITERAL value
+
+[1m== SELF-TEST 3/8: gate FAILS on a planted inline-URL password ==[0m
+[32mPASS[0m — gate flagged the planted inline-URL credential:
+      [1mplanted-url.yml:4[0m  connection URL embeds a LITERAL password
+
+[1m== SELF-TEST 4/8: CHECK 1 FAILS on a tracked planted literal ==[0m
+[32mPASS[0m — CHECK 1 flagged the tracked config and correctly ignored prose:
+    compose.yml:1:POSTGRES_PASSWORD: <REDACTED-L1>
+
+[1m== SELF-TEST 5/8: CHECK 1 catches the SECOND (remediation-pass-1) literal ==[0m
+[32mPASS[0m — CHECK 1 flagged the second literal too:
+    compose.yml:1:POSTGRES_PASSWORD: <REDACTED-L2>
+
+[1m== SELF-TEST 6/8: .env.full-test is scanned like any other tracked file ==[0m
+[32mPASS[0m — no path is exempt: both .env.full-test and other/config.yml flagged:
+    helix_code/.env.full-test:1:HELIX_DATABASE_PASSWORD=<REDACTED-L2>
+    other/config.yml:1:HELIX_DATABASE_PASSWORD=<REDACTED-L2>
+
+[1m== SELF-TEST 7/8: CHECK 1 tells a config handover from incident prose ==[0m
+[32mPASS[0m — handover flagged (.md and .html), incident prose exempt:
+    HANDOVER.html:1
+    HANDOVER.md:3
+
+[1m== SELF-TEST 8/8: CHECK 3 flags a wildcard publish, not a loopback one ==[0m
+[32mPASS[0m — wildcard flagged, loopback accepted:
+      [1m/tmp/tmp.nuWVTuLN7O/wildcard.yml[0m  publishes 5433:5432 on the WILDCARD address (LAN-reachable)
+
+[1m== SELF-TEST RESULT ==[0m
+[32mPASS[0m — gate proven in BOTH directions (clean tree: PASS, planted literals: FAIL).

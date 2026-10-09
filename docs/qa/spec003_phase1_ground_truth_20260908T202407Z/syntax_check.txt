@@ -1,0 +1,4 @@
+### §11.4.67 target-shell parseability of authored scripts
+bash -n census_query.sh rc=0
+bash -n test_census_query.sh rc=0
+bash -n test_mechanical_tools_acceptance.sh rc=0

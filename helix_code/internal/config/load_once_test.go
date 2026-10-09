@@ -80,16 +80,24 @@ func itoa(n int) string {
 	return string(b)
 }
 
-// silenceTestStdout redirects stdout to /dev/null for the duration of a test —
-// Load() prints an "using config file" notice via fmt.Println.
-func silenceTestStdout(t *testing.T) {
+// silenceTestOutput redirects BOTH stdout and stderr to /dev/null for the
+// duration of a test. Load() emits its "using config file" / "no config file"
+// notices on STDERR (they were moved off stdout because stdout is a machine
+// protocol for the subagent-helper JSON and the ACP JSON-RPC transport — see
+// Load() in config.go). stdout is still redirected so that a regression that
+// puts a notice back on stdout does not spam the test log; the falsifiable
+// assertion that stdout stays byte-empty lives in
+// TestLoad_EmitsNoBytesOnStdout (stdout_protocol_guard_test.go).
+func silenceTestOutput(t *testing.T) {
 	t.Helper()
-	orig := os.Stdout
+	origOut, origErr := os.Stdout, os.Stderr
 	devnull, err := os.OpenFile(os.DevNull, os.O_WRONLY, 0)
 	require.NoError(t, err)
 	os.Stdout = devnull
+	os.Stderr = devnull
 	t.Cleanup(func() {
-		os.Stdout = orig
+		os.Stdout = origOut
+		os.Stderr = origErr
 		_ = devnull.Close()
 	})
 }
@@ -97,13 +105,22 @@ func silenceTestStdout(t *testing.T) {
 // TestGet_ReadsConfigFileExactlyOnce proves the load-once invariant: calling
 // Get() N times reads the config file off disk exactly once.
 func TestGet_ReadsConfigFileExactlyOnce(t *testing.T) {
-	silenceTestStdout(t)
+	silenceTestOutput(t)
 	path := writeTestConfig(t, 8080)
 	t.Setenv("HELIX_CONFIG", path)
 	t.Setenv("HELIX_AUTH_JWT_SECRET", "")
 
 	// Clean slate — discard any memoised config from earlier tests.
 	resetForTest()
+	// DETERMINISM (§11.4.50): also reset on the way OUT. resetForTest() at
+	// entry gives THIS test a clean slate, but without a matching cleanup the
+	// package-level loadOnce/cachedCfg singleton is left populated with this
+	// test's t.TempDir()-backed config — a directory the framework then
+	// deletes. Any sibling that calls Get() without resetting first would
+	// inherit that stale, dangling cache, and whether it did so would depend
+	// on test ORDER. Leaving the singleton empty makes the package
+	// order-independent.
+	t.Cleanup(resetForTest)
 	before := readInConfigCalls()
 
 	const n = 50
@@ -128,7 +145,7 @@ func TestGet_ReadsConfigFileExactlyOnce(t *testing.T) {
 // TestLoad_PrecedenceUnchanged proves defaults < file < env precedence is
 // preserved by the local-viper-instance migration (no-regression proof).
 func TestLoad_PrecedenceUnchanged(t *testing.T) {
-	silenceTestStdout(t)
+	silenceTestOutput(t)
 
 	t.Run("defaults_fill_unset_fields", func(t *testing.T) {
 		// A minimal config file that supplies ONLY the validation-required
@@ -199,7 +216,7 @@ llm:
 // viper.SetDefault — concurrent construction panicked "concurrent map writes".
 // Run: go test -race -run TestLoad_ConcurrentIsRaceFree ./internal/config/
 func TestLoad_ConcurrentIsRaceFree(t *testing.T) {
-	silenceTestStdout(t)
+	silenceTestOutput(t)
 	path := writeTestConfig(t, 8080)
 	t.Setenv("HELIX_CONFIG", path)
 	t.Setenv("HELIX_AUTH_JWT_SECRET", "")
@@ -226,11 +243,20 @@ func TestLoad_ConcurrentIsRaceFree(t *testing.T) {
 // TestGet_ConcurrentIsRaceFree proves concurrent Get() calls share the single
 // sync.Once-guarded load without data race and all observe the same struct.
 func TestGet_ConcurrentIsRaceFree(t *testing.T) {
-	silenceTestStdout(t)
+	silenceTestOutput(t)
 	path := writeTestConfig(t, 8080)
 	t.Setenv("HELIX_CONFIG", path)
 	t.Setenv("HELIX_AUTH_JWT_SECRET", "")
 	resetForTest()
+	// DETERMINISM (§11.4.50): also reset on the way OUT. resetForTest() at
+	// entry gives THIS test a clean slate, but without a matching cleanup the
+	// package-level loadOnce/cachedCfg singleton is left populated with this
+	// test's t.TempDir()-backed config — a directory the framework then
+	// deletes. Any sibling that calls Get() without resetting first would
+	// inherit that stale, dangling cache, and whether it did so would depend
+	// on test ORDER. Leaving the singleton empty makes the package
+	// order-independent.
+	t.Cleanup(resetForTest)
 
 	const goroutines = 64
 	var wg sync.WaitGroup
@@ -288,10 +314,11 @@ logging:
 	b.Setenv("HELIX_CONFIG", path)
 	b.Setenv("HELIX_AUTH_JWT_SECRET", "")
 
-	orig := os.Stdout
+	origOut, origErr := os.Stdout, os.Stderr
 	devnull, _ := os.OpenFile(os.DevNull, os.O_WRONLY, 0)
 	os.Stdout = devnull
-	defer func() { os.Stdout = orig; _ = devnull.Close() }()
+	os.Stderr = devnull
+	defer func() { os.Stdout = origOut; os.Stderr = origErr; _ = devnull.Close() }()
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -339,11 +366,21 @@ logging:
 	b.Setenv("HELIX_CONFIG", path)
 	b.Setenv("HELIX_AUTH_JWT_SECRET", "")
 	resetForTest()
+	// DETERMINISM (§11.4.50): also reset on the way OUT. resetForTest() at
+	// entry gives THIS benchmark a clean slate, but without a matching cleanup the
+	// package-level loadOnce/cachedCfg singleton is left populated with this
+	// test's t.TempDir()-backed config — a directory the framework then
+	// deletes. Any sibling that calls Get() without resetting first would
+	// inherit that stale, dangling cache, and whether it did so would depend
+	// on test ORDER. Leaving the singleton empty makes the package
+	// order-independent.
+	b.Cleanup(resetForTest)
 
-	orig := os.Stdout
+	origOut, origErr := os.Stdout, os.Stderr
 	devnull, _ := os.OpenFile(os.DevNull, os.O_WRONLY, 0)
 	os.Stdout = devnull
-	defer func() { os.Stdout = orig; _ = devnull.Close() }()
+	os.Stderr = devnull
+	defer func() { os.Stdout = origOut; os.Stderr = origErr; _ = devnull.Close() }()
 
 	b.ReportAllocs()
 	b.ResetTimer()

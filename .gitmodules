@@ -518,3 +518,9 @@
 	path = submodules/claude-toolkit
 	url = git@github.com:vasic-digital/claude-toolkit.git
 	branch = main
+[submodule "submodules/superspec"]
+	path = submodules/superspec
+	url = git@github.com:WangX0111/superspec.git
+[submodule "dependencies/colibri"]
+	path = dependencies/colibri
+	url = git@github.com:JustVugg/colibri.git

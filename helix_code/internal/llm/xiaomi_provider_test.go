@@ -6,6 +6,13 @@ import (
 )
 
 func TestNewXiaomiProvider_WithKey(t *testing.T) {
+	// Xiaomi is a hosted cloud provider now subject to the W2c-1 cloud gate
+	// (NewXiaomiProvider delegates to NewOpenAICompatibleProvider, whose
+	// endpoint-locality check rejects hosted construction when the gate is
+	// closed). This test opens the gate because it exercises Xiaomi provider
+	// construction/behavior, not gate policy — see openCloudGateForTest in
+	// provider_factory_test.go.
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -28,6 +35,7 @@ func TestNewXiaomiProvider_WithKey(t *testing.T) {
 }
 
 func TestNewXiaomiProvider_DefaultBaseURL(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -43,6 +51,7 @@ func TestNewXiaomiProvider_DefaultBaseURL(t *testing.T) {
 }
 
 func TestXiaomiProvider_Models(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -75,6 +84,7 @@ func TestXiaomiProvider_Models(t *testing.T) {
 }
 
 func TestXiaomiProvider_Capabilities(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -101,6 +111,7 @@ func TestXiaomiProvider_Capabilities(t *testing.T) {
 }
 
 func TestXiaomiProvider_ContextWindow(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -117,6 +128,7 @@ func TestXiaomiProvider_ContextWindow(t *testing.T) {
 }
 
 func TestXiaomiProvider_ASRMethodExists(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",
@@ -134,6 +146,7 @@ func TestXiaomiProvider_ASRMethodExists(t *testing.T) {
 }
 
 func TestXiaomiProvider_TTSMethodExists(t *testing.T) {
+	openCloudGateForTest(t)
 	config := ProviderConfigEntry{
 		Type:    ProviderTypeXiaomi,
 		APIKey:  "sk-test123",

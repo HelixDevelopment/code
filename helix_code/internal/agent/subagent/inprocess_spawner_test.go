@@ -31,6 +31,87 @@ func drainOne(t *testing.T, ch <-chan SubagentResult, timeout time.Duration) Sub
 	return SubagentResult{}
 }
 
+// gateBudget bounds how long a test waits for the other side of a
+// gateProvider barrier. It is NOT a pass/fail threshold: the correct-behaviour
+// path crosses each barrier in microseconds, and the budget exists only so a
+// genuinely stuck subagent reports a cause instead of hanging the suite. Its
+// expiry is always a loud, explanatory FAIL.
+const gateBudget = 30 * time.Second
+
+// gateProvider is a TEST-ONLY llm.Provider whose Generate PARKS until the test
+// releases it or the call context ends. It is the deterministic replacement
+// for FakeLLMProvider.WithDelay in tests whose subject is cancellation or
+// timeout rather than latency (§11.4.50).
+//
+// Why a barrier beats a delay: "block for 2s so the result cannot have
+// arrived yet" is only true if the host schedules the test goroutine within
+// those 2s. Parking until an explicit release makes the same precondition a
+// structural fact — while a subagent sits inside Generate it provably has not
+// produced a result, at any host load. And because the park can ONLY end via
+// ctx, a timeout/cancellation state in the result is positive evidence that
+// the ctx path fired, rather than an inference from elapsed time.
+type gateProvider struct {
+	entered   chan struct{} // closed on first Generate entry
+	release   chan struct{} // closed by Release
+	enterOnce sync.Once
+	relOnce   sync.Once
+}
+
+func newGateProvider() *gateProvider {
+	return &gateProvider{entered: make(chan struct{}), release: make(chan struct{})}
+}
+
+// AwaitEntered blocks until Generate has been entered — i.e. the subagent is
+// provably in flight and cannot yet have published a result.
+func (p *gateProvider) AwaitEntered(t *testing.T) {
+	t.Helper()
+	select {
+	case <-p.entered:
+	case <-time.After(gateBudget):
+		t.Fatalf("gateProvider: Generate was never entered within %s — the subagent never reached the provider (barrier budget expired; this is not a latency assertion)", gateBudget)
+	}
+}
+
+// Release unparks Generate. Idempotent, so it is safe both as a t.Cleanup and
+// as an explicit in-test call.
+func (p *gateProvider) Release() { p.relOnce.Do(func() { close(p.release) }) }
+
+func (p *gateProvider) GetType() llm.ProviderType              { return llm.ProviderType("test-gate-only") }
+func (p *gateProvider) GetName() string                        { return "Gate Test Provider" }
+func (p *gateProvider) GetModels() []llm.ModelInfo             { return nil }
+func (p *gateProvider) GetCapabilities() []llm.ModelCapability { return nil }
+func (p *gateProvider) Generate(ctx context.Context, req *llm.LLMRequest) (*llm.LLMResponse, error) {
+	p.enterOnce.Do(func() { close(p.entered) })
+	select {
+	case <-p.release:
+		return &llm.LLMResponse{Content: "GATE-PROVIDER-RELEASED"}, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+}
+func (p *gateProvider) GenerateStream(ctx context.Context, req *llm.LLMRequest, ch chan<- llm.LLMResponse) error {
+	resp, err := p.Generate(ctx, req)
+	if ch != nil {
+		defer close(ch)
+	}
+	if err != nil {
+		return err
+	}
+	if ch != nil {
+		select {
+		case ch <- *resp:
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+	return nil
+}
+func (p *gateProvider) IsAvailable(ctx context.Context) bool                       { return true }
+func (p *gateProvider) GetHealth(ctx context.Context) (*llm.ProviderHealth, error) { return nil, nil }
+func (p *gateProvider) Close() error                                               { return nil }
+func (p *gateProvider) GetContextWindow() int                                      { return 1024 }
+func (p *gateProvider) CountTokens(text string) (int, error)                       { return len(text) / 4, nil }
+
 // errProvider is a TEST-ONLY llm.Provider that returns a fixed error from
 // Generate. It is a hexagonal seam for the spawner test, NOT a production
 // stub.
@@ -38,9 +119,9 @@ type errProvider struct {
 	err error
 }
 
-func (p *errProvider) GetType() llm.ProviderType            { return llm.ProviderType("test-err-only") }
-func (p *errProvider) GetName() string                      { return "Err Test Provider" }
-func (p *errProvider) GetModels() []llm.ModelInfo           { return nil }
+func (p *errProvider) GetType() llm.ProviderType              { return llm.ProviderType("test-err-only") }
+func (p *errProvider) GetName() string                        { return "Err Test Provider" }
+func (p *errProvider) GetModels() []llm.ModelInfo             { return nil }
 func (p *errProvider) GetCapabilities() []llm.ModelCapability { return nil }
 func (p *errProvider) Generate(ctx context.Context, req *llm.LLMRequest) (*llm.LLMResponse, error) {
 	return nil, p.err
@@ -48,18 +129,18 @@ func (p *errProvider) Generate(ctx context.Context, req *llm.LLMRequest) (*llm.L
 func (p *errProvider) GenerateStream(ctx context.Context, req *llm.LLMRequest, ch chan<- llm.LLMResponse) error {
 	return p.err
 }
-func (p *errProvider) IsAvailable(ctx context.Context) bool                  { return true }
+func (p *errProvider) IsAvailable(ctx context.Context) bool                       { return true }
 func (p *errProvider) GetHealth(ctx context.Context) (*llm.ProviderHealth, error) { return nil, nil }
-func (p *errProvider) Close() error                                          { return nil }
-func (p *errProvider) GetContextWindow() int                                 { return 1024 }
-func (p *errProvider) CountTokens(text string) (int, error)                  { return len(text) / 4, nil }
+func (p *errProvider) Close() error                                               { return nil }
+func (p *errProvider) GetContextWindow() int                                      { return 1024 }
+func (p *errProvider) CountTokens(text string) (int, error)                       { return len(text) / 4, nil }
 
 // panicProvider is a TEST-ONLY llm.Provider that panics from Generate.
 type panicProvider struct{}
 
-func (p *panicProvider) GetType() llm.ProviderType            { return llm.ProviderType("test-panic-only") }
-func (p *panicProvider) GetName() string                      { return "Panic Test Provider" }
-func (p *panicProvider) GetModels() []llm.ModelInfo           { return nil }
+func (p *panicProvider) GetType() llm.ProviderType              { return llm.ProviderType("test-panic-only") }
+func (p *panicProvider) GetName() string                        { return "Panic Test Provider" }
+func (p *panicProvider) GetModels() []llm.ModelInfo             { return nil }
 func (p *panicProvider) GetCapabilities() []llm.ModelCapability { return nil }
 func (p *panicProvider) Generate(ctx context.Context, req *llm.LLMRequest) (*llm.LLMResponse, error) {
 	panic("intentional test panic from panicProvider")
@@ -67,11 +148,11 @@ func (p *panicProvider) Generate(ctx context.Context, req *llm.LLMRequest) (*llm
 func (p *panicProvider) GenerateStream(ctx context.Context, req *llm.LLMRequest, ch chan<- llm.LLMResponse) error {
 	return nil
 }
-func (p *panicProvider) IsAvailable(ctx context.Context) bool                  { return true }
+func (p *panicProvider) IsAvailable(ctx context.Context) bool                       { return true }
 func (p *panicProvider) GetHealth(ctx context.Context) (*llm.ProviderHealth, error) { return nil, nil }
-func (p *panicProvider) Close() error                                          { return nil }
-func (p *panicProvider) GetContextWindow() int                                 { return 1024 }
-func (p *panicProvider) CountTokens(text string) (int, error)                  { return len(text) / 4, nil }
+func (p *panicProvider) Close() error                                               { return nil }
+func (p *panicProvider) GetContextWindow() int                                      { return 1024 }
+func (p *panicProvider) CountTokens(text string) (int, error)                       { return len(text) / 4, nil }
 
 func TestInProcessSpawner_Kind(t *testing.T) {
 	s := NewInProcessSpawner()
@@ -151,9 +232,21 @@ func TestInProcessSpawner_FallbackEchoCapturesPrompt(t *testing.T) {
 	}
 }
 
+// TestInProcessSpawner_TimeoutEnforced proves the per-task timeout is
+// enforced and is what ended the call.
+//
+// DETERMINISM (§11.4.50): the gate is never released, so Generate can ONLY
+// return through its context. A StateTimedOut result naming DeadlineExceeded
+// is therefore positive evidence that the per-task deadline fired — if the
+// timeout were not enforced the provider would still be parked and drainOne's
+// budget would expire with an explicit failure, rather than the test silently
+// passing on a lucky elapsed time. This replaces a `res.Duration > 800ms`
+// bound, which sampled host scheduling: measured on this host at load 223/16
+// CPUs the 50ms timeout produced Durations of 50.2ms–56.7ms, i.e. the bound's
+// entire 750ms of slack existed only to absorb scheduling noise.
 func TestInProcessSpawner_TimeoutEnforced(t *testing.T) {
-	provider := NewFakeLLMProvider(nil)
-	provider.WithDelay(1 * time.Second)
+	provider := newGateProvider()
+	t.Cleanup(provider.Release)
 
 	s := NewInProcessSpawner()
 	ch, err := s.Spawn(context.Background(), SubagentTask{
@@ -165,7 +258,9 @@ func TestInProcessSpawner_TimeoutEnforced(t *testing.T) {
 		t.Fatalf("Spawn returned error: %v", err)
 	}
 
-	res := drainOne(t, ch, 2*time.Second)
+	provider.AwaitEntered(t) // the call is provably in flight and parked
+
+	res := drainOne(t, ch, gateBudget)
 
 	if res.State != StateTimedOut {
 		t.Fatalf("expected StateTimedOut, got %q (err=%q)", res.State, res.Error)
@@ -173,14 +268,16 @@ func TestInProcessSpawner_TimeoutEnforced(t *testing.T) {
 	if res.Duration <= 0 {
 		t.Fatalf("expected positive Duration, got %v", res.Duration)
 	}
-	if res.Duration > 800*time.Millisecond {
-		t.Fatalf("timeout was not enforced; Duration=%v exceeds reasonable bound", res.Duration)
+	// The REASON the parked call ended: the per-task deadline, not a parent
+	// cancellation and not a provider error.
+	if !strings.Contains(res.Error, context.DeadlineExceeded.Error()) {
+		t.Fatalf("res.Error = %q, want it to name %q — the abort was not attributed to the per-task deadline", res.Error, context.DeadlineExceeded)
 	}
 }
 
 func TestInProcessSpawner_CtxCancelPropagates(t *testing.T) {
-	provider := NewFakeLLMProvider(nil)
-	provider.WithDelay(1 * time.Second)
+	provider := newGateProvider()
+	t.Cleanup(provider.Release)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	s := NewInProcessSpawner()
@@ -192,14 +289,20 @@ func TestInProcessSpawner_CtxCancelPropagates(t *testing.T) {
 		t.Fatalf("Spawn returned error: %v", err)
 	}
 
-	// Give the goroutine time to start, then cancel.
-	time.Sleep(20 * time.Millisecond)
+	// Barrier, not a sleep: waiting for Generate to be entered makes "the call
+	// is in flight when we cancel" a structural fact rather than a 20ms bet on
+	// the host scheduler (§11.4.50). No task Timeout is set, so the parked
+	// call can only end via this cancellation.
+	provider.AwaitEntered(t)
 	cancel()
 
-	res := drainOne(t, ch, 2*time.Second)
+	res := drainOne(t, ch, gateBudget)
 
-	if res.State != StateCanceled && res.State != StateTimedOut {
-		t.Fatalf("expected StateCanceled or StateTimedOut, got %q (err=%q)", res.State, res.Error)
+	if res.State != StateCanceled {
+		t.Fatalf("expected StateCanceled, got %q (err=%q)", res.State, res.Error)
+	}
+	if !strings.Contains(res.Error, context.Canceled.Error()) {
+		t.Fatalf("res.Error = %q, want it to name %q — the abort was not attributed to the parent cancellation", res.Error, context.Canceled)
 	}
 }
 

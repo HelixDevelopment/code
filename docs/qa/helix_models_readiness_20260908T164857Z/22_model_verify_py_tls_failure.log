@@ -1,0 +1,44 @@
+=== model_verify.py vs TLS self-signed endpoint (CMA_PROVIDER_CA_CERT IS set) ===
+CMA_PROVIDER_CA_CERT=/home/milosvasic/Projects/helix_code/submodules/helix_llm/certs/cert.pem
+Verifying 1 models for helix-llm...
+  ✗ helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190: score=0 (Connection failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1081)>)
+{
+  "provider_id": "helix-llm",
+  "endpoint": "https://127.0.0.1:8443/v1/chat/completions",
+  "verified_count": 0,
+  "failed_count": 1,
+  "total_tested": 1,
+  "free_only": false,
+  "skipped_count": 0,
+  "skipped_models": [],
+  "tested_at": "2026-09-08T16:59:59.776975+00:00",
+  "models": [
+    {
+      "model_id": "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190",
+      "provider_id": "helix-llm",
+      "score": 5,
+      "capabilities": {
+        "chat": false,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 35,
+      "verified": false,
+      "failure_reason": "Connection failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1081)>",
+      "tested_at": "2026-09-08T16:59:59.740487+00:00",
+
+=== CONTROL NEEDLE: same script vs a PLAINTEXT http endpoint must NOT show a TLS error ===
+Verifying 1 models for ctl...
+  ✗ x: score=0 (Connection failed: <urlopen error [Errno 111] Connection refused>)
+{
+  "provider_id": "ctl",
+  "endpoint": "http://127.0.0.1:9/v1/chat/completions",
+  "verified_count": 0,
+  "failed_count": 1,
+  "total_tested": 1,
+  "free_only": false,
+  "skipped_count": 0,

@@ -20,6 +20,7 @@ package clientcore
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"strings"
@@ -106,6 +107,7 @@ func RegisterEnvProviders(manager *llm.ModelManager, cfg *config.Config) int {
 	ensembleMembers := make([]llm.Provider, 0, len(envProviderCandidates))
 
 	registered := 0
+	cloudGateRefused := 0
 	for _, cand := range envProviderCandidates {
 		if !llm.IsProviderKeyPresent(cand.providerType) {
 			continue
@@ -116,6 +118,14 @@ func RegisterEnvProviders(manager *llm.ModelManager, cfg *config.Config) int {
 			Enabled: true,
 		})
 		if err != nil {
+			if errors.Is(err, llm.ErrCloudDisabled) {
+				// Deliberate operator policy (llm.cloud.enabled=false, the
+				// default) — not a construction defect. Tally it for the
+				// single summary line emitted after the loop instead of the
+				// scary per-key "construction failed" warning below.
+				cloudGateRefused++
+				continue
+			}
 			log.Printf("⚠️  clientcore: skipping provider %s (construction failed: %v)", cand.providerType, err)
 			continue
 		}
@@ -127,6 +137,10 @@ func RegisterEnvProviders(manager *llm.ModelManager, cfg *config.Config) int {
 
 		ensembleMembers = append(ensembleMembers, provider)
 		registered++
+	}
+
+	if cloudGateRefused > 0 {
+		log.Printf("ℹ️  clientcore: %d hosted provider(s) with credentials present were NOT registered because llm.cloud.enabled is false (the default). Set llm.cloud.enabled: true to permit hosted providers — local routes (helixllm coder, llama.cpp, Ollama) are unaffected.", cloudGateRefused)
 	}
 
 	// PRIMARY PATH (CONST-036 / CONST-046): source the OpenAI-compatible

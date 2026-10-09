@@ -8,10 +8,23 @@
 
 | Field         | Value                                              |
 |---------------|----------------------------------------------------|
-| Revision      | 2                                                  |
+| Revision      | 3                                                  |
 | Created       | 2025-10-31                                         |
-| Last modified | 2026-06-24                                         |
-| Status        | Current — synced to release `helixcode-v1.1.0`     |
+| Last modified | 2026-09-03                                         |
+| Status        | Current — release `helixcode-v1.1.0`; feature 002 in flight |
+
+> **Where to start, and what is in flight.** This README is the entry point for
+> all project documentation (CONST §11.4.212). Two documents carry the live
+> state and are more current than any narrative below:
+>
+> | Document | What it holds |
+> |---|---|
+> | [`RESUME.md`](RESUME.md) | Session-resumption record (CONST §11.4.131). §2b is the **verified** way to run the system; §2c is the current full-suite retest with its failure analysis. |
+> | [`specs/002-adaptive-local-model-serving/`](specs/002-adaptive-local-model-serving/) | The in-flight feature — host-capability-driven local model serving. `progress.yml` is its findings ledger. |
+> | [`docs/operator_decisions_20260903.md`](docs/operator_decisions_20260903.md) | Twelve operator decisions taken 2026-09-03, each with the options it **rejected** — read before re-opening any of them. Also records what was deliberately NOT decided. |
+>
+> The Phase 1-5 feature list below describes the shipped v1.1.0 platform and is
+> not a claim about feature 002, which is mid-execution.
 
 HelixCode is an enterprise-grade distributed AI development platform that enables intelligent task division, work preservation, and cross-platform development workflows. Built with Go and designed for scalability, HelixCode provides a robust foundation for distributed computing with automatic checkpointing, rollback functionality, and real-time monitoring.
 
@@ -33,12 +46,6 @@ HelixCode is an enterprise-grade distributed AI development platform that enable
 - **MCP Protocol**: Model Context Protocol implementation
 - **Advanced Reasoning**: Chain-of-thought and tree-of-thoughts reasoning
 - **Multi-Channel Notifications**: Slack, Discord, Email, Telegram integration
-
-### ✅ **Phase 4: LLM Integration** (Completed)
-- **Hardware Detection**: Comprehensive CPU/GPU/memory analysis
-- **Model Management**: Intelligent model selection based on capabilities
-- **Provider Architecture**: Unified interface for all LLM providers
-- **CLI Interface**: Command-line interface with interactive mode
 
 ### ✅ **Phase 3: Workflows** (Completed)
 - **✅ Project Management**: Full project lifecycle with database persistence
@@ -164,21 +171,50 @@ helix_code/
    comment for full usage, and `tests/install_helix_path/test_install_helix_path.sh`
    for its black-box test suite.
 
-4. **Setup database**:
+4. **Configure the required secrets** — the server REFUSES to start without
+   them, naming the missing variable rather than falling back to a literal:
+
    ```bash
-   createdb helixcode
-   createuser helixcode
+   cp .env.example .env && chmod 600 .env
+   # then set these three to real values (.env is gitignored):
+   #   HELIX_DATABASE_PASSWORD
+   #   HELIX_REDIS_PASSWORD
+   #   HELIX_AUTH_JWT_SECRET
+   # e.g. for a local run:  openssl rand -hex 32
    ```
 
-5. **Configure environment**:
+5. **Run the server**:
    ```bash
-   export HELIX_DATABASE_PASSWORD=your_password
-   export HELIX_AUTH_JWT_SECRET=your_jwt_secret
+   cd helix_code
+   set -a; . ../.env; set +a
+   HELIX_REDIS_HOST=localhost ./bin/helixcode
    ```
 
-6. **Run the server**:
+   **You do NOT need to create a database.** On startup the server boots its
+   own PostgreSQL and Redis containers on demand (per the Containers submodule,
+   CONST §11.4.76) and repoints its own config at them, so a fresh run works
+   with no `createdb`, no compose file and no manual container commands:
+
+   ```
+   ✅ Infra auto-boot: podman booted postgres:<port> redis:<port>
+   ✅ Database connection established successfully
+   🚀 Starting HelixCode server on 0.0.0.0:8080
+   ```
+
+   Two containers appear (`helixcode-autoboot-postgres`,
+   `helixcode-autoboot-redis`). Set `HELIX_AUTOBOOT_INFRA=false` to use
+   externally-provisioned infrastructure instead.
+
+   > **Container runtime.** This project mandates **rootless podman**
+   > (CONST §11.4.161); `docker` is not required and is not used. The `./helix`
+   > facade resolves podman first and falls back to docker only if podman is
+   > absent.
+
+6. **Verify it is serving**:
    ```bash
-   ./bin/helixcode
+   curl -s http://localhost:8080/health
+   # {"status":"healthy","version":"1.0.0"}
+   curl -s http://localhost:8080/api/v1/llm/providers
    ```
 
 ### CLI Usage
@@ -319,9 +355,39 @@ repository's actual state on **2026-05-29**:
   rows (Revision/Created/Last modified/Status) are now present. `Created` (2025-10-31) is sourced
   from the README's first commit (`git log --reverse -- README.md`), not guessed.
 
+- **Quick Start corrected against a real run (2026-09-03)** — the previous steps were verified
+  by actually executing them, and three were wrong:
+  - *"Setup database: `createdb helixcode` / `createuser helixcode`"* was **removed**. It is not
+    merely unnecessary, it describes the wrong architecture: on startup the server calls
+    `infraboot.EnsureInfra` and boots its OWN PostgreSQL + Redis containers, then repoints its
+    config at them (`cmd/server/main.go`, per CONST §11.4.76 on-demand-infra). Observed:
+    `✅ Infra auto-boot: podman booted postgres:55432 redis:56379`, followed by a successful
+    connection and schema creation, with `helixcode-autoboot-{postgres,redis}` both healthy.
+    `HELIX_AUTOBOOT_INFRA=false` opts out.
+  - *"Run the server: `./bin/helixcode`"* omitted the environment. The server REFUSES to start
+    without the secrets, by design, naming the variable:
+    `auth.jwt_secret is still the unexpanded placeholder for ${HELIX_AUTH_JWT_SECRET}`.
+    The three required variables and the `.env` route are now stated.
+  - The **container runtime** is now stated explicitly. This host has podman and no docker at
+    all, which is what CONST §11.4.161 requires; the `./helix` facade was podman-blind until
+    `d5158bd3` and exited 1 on every command with *"Docker is not installed or not in PATH"*.
+  - A **verification step** was added (`/health`, `/api/v1/llm/providers`), both confirmed 200.
+- **Duplicate section removed (2026-09-03)** — the "Phase 4: LLM Integration" block appeared
+  TWICE in Key Features (once before Phase 3 and once after), leaving the phase list ordered
+  1, 2, 4, 3, 4, 5. The first copy was removed; the order is now 1-5.
+- **Live-state pointers added (2026-09-03)** — per §11.4.212 (README is the canonical entry
+  point) the header now routes readers to `RESUME.md` and the in-flight feature 002 directory,
+  and states plainly that the Phase 1-5 list describes shipped v1.1.0 rather than feature 002.
+
 Re-verify before the next release boundary or if any tool above ships a breaking change
 (§11.4.99(C) — instructions older than 6 months are stale).
 
 Sources verified 2026-06-24: https://go.dev/doc/devel/release ; repo cross-reference
 (`helix_code/go.mod`, `go.mod`, on-disk paths, `git remote`, `CLAUDE.md` §3.1, `git tag -l`,
 `git log -- README.md`).
+
+Sources verified 2026-09-03: verified by EXECUTION rather than by reading — the server was
+built and run, its auto-boot and refusal paths observed in its own log, the endpoints probed,
+and the podman-only runtime confirmed on the host (`command -v docker` absent,
+`command -v podman` present). Repo cross-reference: `helix_code/cmd/server/main.go`
+(`infraboot.EnsureInfra`), `docker-compose.helix.yml`, `helix`, `RESUME.md` §2b/§2c.

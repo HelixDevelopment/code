@@ -148,7 +148,7 @@ Add Xiaomi to `submodules/helix_agent/internal/services/provider_discovery.go`:
 
 From `~/api_keys.sh` (already configured):
 ```bash
-export ApiKey_Xiaomi_MiMo=sk-ssj17adx0op2a61gfychds44ymmxf1tziobtr0t6nggenp9e
+export ApiKey_Xiaomi_MiMo=<REDACTED-XIAOMI-MIMO-KEY-CONST-042-ROTATION-PENDING>
 export XIAOMI_MIMO_API_KEY=$ApiKey_Xiaomi_MiMo
 ```
 

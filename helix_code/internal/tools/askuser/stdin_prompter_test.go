@@ -97,13 +97,30 @@ type slowReader struct {
 	data  []byte
 	done  chan struct{}
 	once  sync.Once
+
+	// started is closed the first time Read is entered, so a test can
+	// synchronise on "the blocking read has actually begun" instead of
+	// sleeping and hoping. Correct at any speed.
+	started     chan struct{}
+	startedOnce sync.Once
 }
 
 func newSlowReader(delay time.Duration, data string) *slowReader {
-	return &slowReader{delay: delay, data: []byte(data), done: make(chan struct{})}
+	return &slowReader{
+		delay:   delay,
+		data:    []byte(data),
+		done:    make(chan struct{}),
+		started: make(chan struct{}),
+	}
 }
 
+// Started returns a channel that is closed once Read has been entered.
+// Callers use it to order an action strictly after the blocking read has
+// begun, with no sleep and no timing assumption.
+func (s *slowReader) Started() <-chan struct{} { return s.started }
+
 func (s *slowReader) Read(p []byte) (int, error) {
+	s.startedOnce.Do(func() { close(s.started) })
 	select {
 	case <-time.After(s.delay):
 	case <-s.done:
@@ -392,8 +409,12 @@ func TestStdinPrompter_TTY_CtxCancelReturnsCtxErr(t *testing.T) {
 		t.Fatalf("NewStdinPrompter: %v", err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
+	// Cancel only after Prompt's blocking read has provably begun. The
+	// happens-before comes from the channel, not from a sleep, so this is
+	// correct on an instant machine and on a 100x-slow one alike — and it
+	// never waits longer than the read takes to start.
 	go func() {
-		time.Sleep(50 * time.Millisecond)
+		<-sr.Started()
 		cancel()
 	}()
 	_, err = p.Prompt(ctx, validQuestion())

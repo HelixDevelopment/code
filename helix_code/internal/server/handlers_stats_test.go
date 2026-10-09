@@ -22,7 +22,7 @@ func TestServer_UptimeTracking(t *testing.T) {
 	// Record start time
 	startTime := time.Now()
 
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Server startTime should be set
 	assert.NotNil(t, server.startTime)
@@ -44,7 +44,7 @@ func TestServer_UptimeTracking(t *testing.T) {
 // TestGetSystemStats_WithoutManagers tests getSystemStats endpoint with nil managers
 func TestGetSystemStats_WithoutManagers(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Create test router and register the handler
 	router := gin.New()
@@ -100,7 +100,7 @@ func TestGetSystemStats_WithoutManagers(t *testing.T) {
 // TestGetSystemStats_UptimeFormat tests that uptime is formatted correctly
 func TestGetSystemStats_UptimeFormat(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Wait a known amount of time
 	time.Sleep(150 * time.Millisecond)
@@ -130,7 +130,7 @@ func TestGetSystemStats_UptimeFormat(t *testing.T) {
 // TestGetSystemStats_ResponseStructure tests the complete response structure
 func TestGetSystemStats_ResponseStructure(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	router := gin.New()
 	router.GET("/api/v1/system/stats", server.getSystemStats)
@@ -194,14 +194,14 @@ func TestGetSystemStatus_UptimeInStats(t *testing.T) {
 	rds := &redis.Client{}
 
 	// Create server
-	server1 := New(cfg, db, rds)
+	server1 := newTestServer(t, cfg, db, rds)
 	time1 := server1.startTime
 
 	// Wait
 	time.Sleep(100 * time.Millisecond)
 
 	// Create another server
-	server2 := New(cfg, db, rds)
+	server2 := newTestServer(t, cfg, db, rds)
 	time2 := server2.startTime
 
 	// Time2 should be after time1
@@ -245,7 +245,7 @@ func TestNewServer_ManagerInitialization(t *testing.T) {
 
 			rds := &redis.Client{}
 
-			server := New(cfg, tt.db, rds)
+			server := newTestServer(t, cfg, tt.db, rds)
 
 			if tt.expectTaskManager {
 				assert.NotNil(t, server.taskManager, "task manager should be initialized")
@@ -265,7 +265,7 @@ func TestNewServer_ManagerInitialization(t *testing.T) {
 // TestGetSystemStats_ManagerNilSafety tests nil safety for managers
 func TestGetSystemStats_ManagerNilSafety(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Ensure managers are nil
 	server.taskManager = nil
@@ -293,7 +293,7 @@ func TestGetSystemStats_ManagerNilSafety(t *testing.T) {
 // TestGetSystemStats_MultipleRequests tests that stats are consistent across requests
 func TestGetSystemStats_MultipleRequests(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	router := gin.New()
 	router.GET("/api/v1/system/stats", server.getSystemStats)
@@ -334,7 +334,7 @@ func TestGetSystemStats_MultipleRequests(t *testing.T) {
 // TestServer_StartTimeImmutable tests that start time doesn't change
 func TestServer_StartTimeImmutable(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	// Record initial start time
 	initialStartTime := server.startTime
@@ -370,7 +370,7 @@ func BenchmarkGetSystemStats(b *testing.B) {
 	db := (*database.Database)(nil)
 	rds := &redis.Client{}
 
-	server := New(cfg, db, rds)
+	server := newTestServer(b, cfg, db, rds)
 
 	router := gin.New()
 	router.GET("/api/v1/system/stats", server.getSystemStats)
@@ -387,7 +387,7 @@ func BenchmarkGetSystemStats(b *testing.B) {
 // TestGetSystemStats_ContentType tests response content type
 func TestGetSystemStats_ContentType(t *testing.T) {
 	cfg, db, rds := createMockDependencies(t)
-	server := New(cfg, db, rds)
+	server := newTestServer(t, cfg, db, rds)
 
 	router := gin.New()
 	router.GET("/api/v1/system/stats", server.getSystemStats)

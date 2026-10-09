@@ -1,0 +1,8 @@
+test_anchor_census.sh            rc=0     32 passed    0 failed
+test_await_condition.sh          rc=0     26 passed    0 failed
+test_mech_common.sh              rc=0     17 passed    0 failed
+test_mutation_harness.sh         rc=0     40 passed    0 failed
+test_residue_scan.sh             rc=0     39 passed    0 failed
+test_suite_fanout.sh             rc=0     27 passed    0 failed
+
+ALL SUITES: 181 passed, 0 failed

@@ -1,0 +1,463 @@
+{
+  "generated": "2026-09-07T12:15:53+0200",
+  "self_validation_passed": true,
+  "repeats": 3,
+  "thresholds": {
+    "truncation_ratio": 2.0,
+    "degraded_ratio": 4.0,
+    "nominal_input_ratio": 8.0
+  },
+  "discovery": [
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "models": [
+        "helixagent-debate",
+        "helixagent-llm",
+        "helixagent-ensemble",
+        "helix-debate",
+        "helix-llm"
+      ],
+      "error": null,
+      "authenticated": true
+    },
+    {
+      "endpoint": "helixllm-gateway",
+      "base_url": "https://127.0.0.1:8443/v1",
+      "models": [],
+      "error": "GET /v1/models -> status=401 err=HTTP 401: b'{\"error\":{\"message\":\"invalid credentials\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":null}}'",
+      "authenticated": true
+    },
+    {
+      "endpoint": "coder",
+      "base_url": "http://127.0.0.1:18434/v1",
+      "models": [
+        "qwen2.5-coder-3b-instruct-q4_k_m"
+      ],
+      "error": null,
+      "authenticated": false
+    }
+  ],
+  "results": [
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "model": "helixagent-debate",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "PASS",
+          "detail": "advertised and HTTP 200",
+          "measurements": {
+            "status": 200,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "FAIL",
+          "detail": "prompt_tokens=0 (expected >0); completion_tokens=0 (expected >0) -- all-zero usage beside HTTP 200 means no LLM ran",
+          "measurements": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "content_len": 376,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "NON-DETERMINISTIC",
+          "detail": "verdict varied across 3 repeats: ['ERROR', 'PASS']",
+          "measurements": {
+            "repeats": 3,
+            "verdicts": [
+              "PASS",
+              "ERROR",
+              "ERROR"
+            ],
+            "details": [
+              "distinct replies to distinct prompts",
+              "HTTP None / None",
+              "HTTP None / None"
+            ]
+          }
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "ERROR",
+          "detail": "HTTP None / None",
+          "measurements": {
+            "repeats": 3
+          }
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "ERROR",
+          "detail": "HTTP None at depth 0.25",
+          "measurements": {
+            "repeats": 3
+          }
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "SKIPPED",
+          "detail": "not run: `claude-providers sync` mutates shared provider config; enable with --with-sync when you own it",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "model": "helixagent-llm",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "UNTESTED",
+          "detail": "endpoint not reachable (URLError: <urlopen error [Errno 111] Connection refused>) -- service appears down; no claim can be made about this model",
+          "measurements": {
+            "status": null,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "model": "helixagent-ensemble",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "UNTESTED",
+          "detail": "endpoint not reachable (URLError: <urlopen error [Errno 111] Connection refused>) -- service appears down; no claim can be made about this model",
+          "measurements": {
+            "status": null,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "model": "helix-debate",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "UNTESTED",
+          "detail": "endpoint not reachable (URLError: <urlopen error [Errno 111] Connection refused>) -- service appears down; no claim can be made about this model",
+          "measurements": {
+            "status": null,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "helixagent",
+      "base_url": "http://127.0.0.1:7061/v1",
+      "model": "helix-llm",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "UNTESTED",
+          "detail": "endpoint not reachable (URLError: <urlopen error [Errno 111] Connection refused>) -- service appears down; no claim can be made about this model",
+          "measurements": {
+            "status": null,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint unreachable",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "helixllm-gateway",
+      "base_url": "https://127.0.0.1:8443/v1",
+      "model": "<endpoint discovery failed>",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "FAIL",
+          "detail": "endpoint refused model discovery: GET /v1/models -> status=401 err=HTTP 401: b'{\"error\":{\"message\":\"invalid credentials\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":null}}' -- every model behind this endpoint is unusable through its alias",
+          "measurements": {
+            "authenticated": true
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint discovery failed",
+          "measurements": {}
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint discovery failed",
+          "measurements": {}
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint discovery failed",
+          "measurements": {}
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint discovery failed",
+          "measurements": {}
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "UNTESTED",
+          "detail": "not evaluated: endpoint discovery failed",
+          "measurements": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "coder",
+      "base_url": "http://127.0.0.1:18434/v1",
+      "model": "qwen2.5-coder-3b-instruct-q4_k_m",
+      "checks": [
+        {
+          "check": "A",
+          "name": "reachability",
+          "verdict": "PASS",
+          "detail": "advertised and HTTP 200",
+          "measurements": {
+            "status": 200,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "B",
+          "name": "real-generation",
+          "verdict": "PASS",
+          "detail": "content 5 chars, prompt_tokens=43 completion_tokens=2",
+          "measurements": {
+            "prompt_tokens": 43,
+            "completion_tokens": 2,
+            "content_len": 5,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "C",
+          "name": "prompt-dependence",
+          "verdict": "PASS",
+          "detail": "distinct replies to distinct prompts",
+          "measurements": {
+            "reply_a_len": 5,
+            "reply_b_len": 216,
+            "reply_a": "Paris",
+            "reply_b": "Certainly! Below is a Python function that reverses a string:\n\n```python\ndef reverse_string(s):\n    return s[::-1]\n\n# Example usage:\noriginal_string = \"Hello, W",
+            "repeats": 3
+          }
+        },
+        {
+          "check": "D",
+          "name": "context-fidelity",
+          "verdict": "PASS",
+          "detail": "prompt_tokens scaled 7.68x for a 8.0x input increase (786->6036)",
+          "measurements": {
+            "words_small": 500,
+            "words_large": 4000,
+            "nominal_input_ratio": 8.0,
+            "prompt_tokens_small": 786,
+            "prompt_tokens_large": 6036,
+            "measured_token_ratio": 7.679,
+            "repeats": 3
+          }
+        },
+        {
+          "check": "E",
+          "name": "needle-in-haystack",
+          "verdict": "PASS",
+          "detail": "buried token retrieved at all depths (25%, 50%, 75%)",
+          "measurements": {
+            "depth_25": {
+              "prompt_tokens": 6079,
+              "found": true,
+              "reply": "MIDKEY-QW3RM8-D25"
+            },
+            "depth_50": {
+              "prompt_tokens": 6079,
+              "found": true,
+              "reply": "MIDKEY-QW3RM8-D50"
+            },
+            "depth_75": {
+              "prompt_tokens": 6079,
+              "found": true,
+              "reply": "MIDKEY-QW3RM8-D75"
+            },
+            "repeats": 3
+          }
+        },
+        {
+          "check": "F",
+          "name": "alias-durability",
+          "verdict": "SKIPPED",
+          "detail": "not run: `claude-providers sync` mutates shared provider config; enable with --with-sync when you own it",
+          "measurements": {}
+        }
+      ]
+    }
+  ]
+}

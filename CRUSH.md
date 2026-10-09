@@ -1703,3 +1703,92 @@ match on, and the canonical text remains the sole authority (CONST-059 / §11.4.
 **§11.4.238 — Automated QA must be the DISCOVERER: manual QA finds nothing new, and anything it finds is a coverage escape (User mandate, 2026-08-08).** Verbatim operator mandate: *"Helix QA full websites testing MUST find all such issues, not us! Once we do manual QA we shall not be able to find anything! THIS IS MANDATORY RULE / CONSTRAIN / GOAL to achieve with this and any other project and MUST BE part of the root constitution!"* Forensic case study (FACT, 2026-08-08): in one cycle five real defects were found — a health endpoint returning `{"status":"healthy","components":[]}` that was structurally incapable of ever reporting unhealthy; a gateway routing every completion at a port nothing served (HTTP 500 on the product's primary capability); two submodule pins on `main` that upstream answers with `not our ref`, so no fresh clone could check them out; and two hardware-profiler defects reading a key from a file where it does not exist. **Every one was found by an agent reading source or probing by hand; not one by the automated QA system**, which reported green throughout. The mandate (ALL hold): **(A) the automated QA system is the DISCOVERER, not the confirmer** — discovery by a human, an operator's manual pass, an agent reading code, or an end-user report is a FAILURE of the QA system; the finding is still fixed, but the QA gap it exposes is a defect of equal standing and closing only the reported defect is the violation. **(B) manual QA must find NOTHING NEW** — by the time manual QA runs (§11.4.185) the automated regime must already have surfaced everything, so manual QA is a CONFIRMATION and sufficiency gate, never the discovery mechanism; the target is explicit and measurable — a manual pass discovering zero previously-unknown defects. **(C) every escape triggers the §11.4.138 loop, widened** to EVERY out-of-band channel: systematic-debug the defect (§11.4.102), produce a **coverage-escape audit** naming WHY the regime missed it cited to the specific missing check / unexercised path / absent assertion (never "we didn't think of it"), register a new or strengthened automated check that WOULD have caught it into the standing regime (§11.4.135) with a §11.4.115 RED capturing the escaped defect, and commit the audit as captured evidence. **(D) coverage is measured by what the regime can CATCH, not what it runs** — every surface falsifiable per §1.1 (a check whose paired mutation does not make it fail is decoration), exercising real user-reachable paths end-to-end (§11.4.98 / §11.4.143 / §11.4.136 / §11.4.158 / §11.4.159 / §11.4.160). **(E) directional and measured** — track the discovery-channel split (automated vs out-of-band) and drive out-of-band toward zero; honest boundary (§11.4.6): this does NOT claim a regime can be provably complete (§11.4.118) and does NOT license closing an escape by narrowing the definition of "defect". Composes §11.4.27 / §11.4.138 (trigger set widened) / §11.4.185 (manual QA becomes confirmation, never discovery) / §11.4.118 / §11.4.135 / §11.4.115 / §11.4.98 / §11.4.136 / §11.4.143 / §11.4.158 / §11.4.159 / §11.4.160 / §11.4.102 / §11.4.6 / §1.1. Classification: universal (§11.4.17) — the consuming project supplies its QA system, surface inventory, and discovery-channel ledger per §11.4.35. Propagation gate `CM-COVENANT-114-238-PROPAGATION` (literal `11.4.238`) + recommended gates `CM-QA-IS-THE-DISCOVERER` / `CM-MANUAL-QA-FINDS-NOTHING-NEW` + paired §1.1 mutation (gate-code = separate work item, NOT claimed shipped §11.4.6/§11.4.227).
 
 **Canonical authority:** constitution submodule [`Constitution.md`](constitution/Constitution.md) §11.4.238. Non-compliance is a release blocker. No escape hatch — no `--manual-qa-may-discover`, `--skip-coverage-escape-audit`, `--found-by-human-is-fine`, `--close-escape-without-new-check`, `--qa-green-is-enough`, `--discovery-channel-not-tracked` flag.
+
+---
+
+## CONST-051(A) — Project instantiation: the concrete equal-codebase roster (§11.4.35)
+
+> **Operator mandate (2026-09-02):** *"Make sure that all of our systems, sub-systems,
+> submodules and everything we control in our organizations repos is treated equally as
+> part of the project — work done on them all equally as on main repo module itself!
+> Especially Helix Agent, LLM, Translate, QA, etc. Make sure that this fact is part of
+> the local project's constitution so it is absolutely clear."*
+
+The universal rule already exists: **CONST-051(A) / §11.4.28(A) equal-codebase**. This
+section is its **§11.4.35 project instantiation** — the concrete roster the universal
+rule requires the consuming project to supply, so "every owned submodule" is never an
+abstraction anyone has to guess at.
+
+### The rule, stated without hedging
+
+Every repository listed below is **an equal part of HelixCode's codebase — not a
+dependency, not a vendored blob, not somebody else's problem.** Work performed on any
+of them carries **exactly** the same obligations as work on the main module:
+
+- the same anti-bluff posture — every PASS carries captured runtime evidence (§11.4, §11.4.5, §11.4.123)
+- the same test-type floor (§11.4.169) and four-layer coverage (§11.4.4(b))
+- the same TDD discipline and coverage floor (§11.4.224)
+- the same independent code review, iterated to a zero-finding GO (§11.4.125 / §11.4.134 / §11.4.142)
+- the same documentation, user manuals and guides, kept in sync (§11.4.12 / §11.4.65)
+- the same Challenges + HelixQA coverage (CONST-050(B))
+- the same gates and paired §1.1 mutations
+- the same release discipline — prefixed tags (§11.4.151), ff-only pushes, never force (§11.4.113)
+
+**A round of work that improves the main module while leaving an owned submodule's
+equivalent deficiency unaddressed is a CONST-051(A) violation**, regardless of how good
+the main-module work was. Coverage ledgers (§11.4.48) list every repository below as
+in-scope.
+
+### The roster — 118 owned repositories of 131 total (measured 2026-09-02)
+
+**HelixDevelopment (13)** — the Helix family the operator named explicitly:
+
+| Path | Repository |
+|---|---|
+| `submodules/helix_agent` | `HelixDevelopment/HelixAgent` |
+| `submodules/helix_llm` | `HelixDevelopment/HelixLLM` |
+| `submodules/helix_qa` | `HelixDevelopment/HelixQA` |
+| `submodules/helix_memory` | `HelixDevelopment/HelixMemory` |
+| `submodules/helix_specifier` | `HelixDevelopment/HelixSpecifier` |
+| `submodules/doc_processor` | `HelixDevelopment/DocProcessor` |
+| `submodules/llm_orchestrator` | `HelixDevelopment/LLMOrchestrator` |
+| `submodules/llm_provider` | `HelixDevelopment/LLMProvider` |
+| `submodules/vision_engine` | `HelixDevelopment/VisionEngine` |
+| `submodules/debate_orchestrator` | `HelixDevelopment/DebateOrchestrator` |
+| `submodules/dag_orchestrator` | `HelixDevelopment/DagOrchestrator` |
+| `submodules/pipeline_runtime` | `HelixDevelopment/PipelineRuntime` |
+| `constitution` | `HelixDevelopment/constitution` |
+
+**HelixDevelopment-Code (1):** `github_pages_website` → `HelixDevelopment-Code/Welcome`
+
+**vasic-digital (104):** every submodule whose URL is `git@github.com:vasic-digital/*`
+— the `submodules/*` capability modules (containers, security, challenges, llms_verifier,
+storage, auth, database, cache, rag, memory, agentic, …) and the `cli_agents/caf-*`
+fork family. Enumerate the live list with:
+
+```bash
+grep -E '^\s*(path|url)' .gitmodules | paste - - | grep -E 'vasic-digital|HelixDevelopment'
+```
+
+**Not on the roster — 13 third-party submodules are READ-ONLY.** Any repository whose
+URL owner is neither `vasic-digital` nor `HelixDevelopment*` (llama.cpp, ollama,
+huggingface_hub, docling, skyvern, mcp servers, the `cli_agents_resources/*` reference
+corpora, …) is vendored: we consume it, we do not modify it, and it is pinned at an
+upstream revision. Local modifications to these are drift to be reverted, never work to
+be committed.
+
+### Honest boundary (§11.4.6)
+
+The operator's mandate named **"Helix Agent, LLM, Translate, QA"**. Agent, LLM and QA
+are on the roster above and verified present. **There is no `helix_translate` submodule
+in this project** — `grep helix_translate .gitmodules` returns 0 matches, and the only
+occurrence of that name anywhere in the governance corpus is as an illustrative example
+string inside the §11.4.151 release-prefix rule (`helix_translate-1.0.0-dev-0.0.1`).
+It is recorded here as **NOT INCORPORATED** rather than silently listed as though it
+existed. If Helix Translate is a real repository that belongs in this project, adding it
+is a §11.4.74 catalogue-check + submodule-incorporation task, and this roster must be
+updated in the same commit.
+
+**Roster maintenance:** this list is data, and it drifts. Any commit that adds or removes
+an owned submodule MUST update this section in the same commit — a stale roster
+under-states the equal-codebase surface and is itself a CONST-051(A) defect.

@@ -1,0 +1,116 @@
+[Unit]
+Description=HelixLLM coder (native llama.cpp, Qwen2.5-Coder-3B Q4_K_M) on :18434
+Documentation=file://@HELIX_ROOT@/submodules/helix_llm/docs/OPERATOR_GUIDE.md
+After=network-online.target
+Wants=network-online.target
+# The podman/CDI coder unit serves the SAME port with a 30B model that does not
+# fit this host. Exactly one of the two may hold :18434, so they conflict.
+Conflicts=helixllm-coder.service
+PartOf=helix.target
+StartLimitBurst=5
+StartLimitIntervalSec=600
+
+[Service]
+Type=exec
+# @LLAMA_SERVER_BIN@ / @LLAMA_NGL@ are resolved by
+# scripts/install_systemd_units.sh, which PROBES each candidate binary with
+# `llama-server --list-devices` and picks the first that actually enumerates a
+# GPU (§11.4.201: assert the real condition, not the proxy "a path exists").
+#
+# WHY A NON-DISTRO BINARY IS PREFERRED HERE, measured 2026-09-03:
+# /usr/bin/llama-server (8681-Debian) is a CPU-ONLY build. It ships only
+# libggml-cpu-*.so under /usr/lib/x86_64-linux-gnu/ggml/backends0 — there is no
+# CUDA or Vulkan backend in the archive at all (`apt-cache search ggml` offers
+# blas/hip/vulkan but NO cuda backend package) — so `--list-devices` prints an
+# empty device list and the host's RTX 3060 is unreachable. Upstream ggml-org
+# publishes NO Linux CUDA prebuilt either (CUDA assets are win-* only), so the
+# GPU-capable binary installed at ~/opt/llamacpp_gpu/current is the upstream
+# ubuntu-vulkan-x64 build, which reaches the 3060 through the NVIDIA Vulkan ICD
+# and its NV_coopmat2 cooperative-matrix (tensor-core) path.
+#
+# The Debian package is deliberately left INSTALLED and UNTOUCHED as the
+# fallback candidate (§11.4.122: no capability removed) — if the GPU build ever
+# goes missing the installer resolves back to /usr/bin/llama-server with
+# @LLAMA_NGL@=0 rather than installing a unit that claims an offload it cannot
+# perform.
+#
+# The upstream tarball is self-contained: its libllama/libggml* resolve via
+# rpath from the binary's own directory, verified from an unrelated cwd with no
+# LD_LIBRARY_PATH set. No library env var is therefore needed here, and NOT
+# setting one is what keeps the two installs from cross-loading each other's
+# ABI-incompatible backends.
+#
+# Measured on this host, same model, same binary, only -ngl varying:
+#   -ngl 0  (CPU) : pp128  200.73 t/s | tg32   0.74 t/s   (at load average 83)
+#   -ngl 99 (GPU) : pp512 3728.42 t/s | tg64 108.75 t/s
+# Generation is ~147x faster than the contended CPU path, and ~11-54x faster
+# than the 2-10 t/s the CPU path delivered at lower load. The GPU path is also
+# largely immune to the CPU contention that makes the CPU figure so variable.
+#
+# Threads stay at 8 of 16 deliberately: this is a shared host. With all layers
+# offloaded the CPU does little more than sampling and detokenisation, so 8 is
+# generous headroom rather than a throughput limit.
+#
+# --ctx-size is 32768 (raised from 4096 by operator decision 2026-09-05),
+# matching this model's full n_ctx_train.
+#
+# 4096 was not merely conservative -- it made the endpoint UNUSABLE for CLI
+# agents. Every mainstream agent (opencode, pi, crush, claude) sends a system
+# prompt of tool definitions and instructions far larger than 4096 tokens, so
+# provider registration would SUCCEED while every real request failed at the
+# first turn. Measured 2026-09-05, a real `pi` request was rejected by this
+# server with:
+#   request (141440 tokens) exceeds the available context size (4096 tokens)
+# Only a deliberately minimal prompt (`crush run -q`) fit, which is exactly why
+# a smoke test could pass against an endpoint that was in practice unusable --
+# registration proves plumbing, not usability (§11.4).
+#
+# WHAT 32768 DOES AND DOES NOT BUY -- measured 2026-09-07, no longer UNCONFIRMED.
+# 32768 is this model's n_ctx_train, i.e. the MAXIMUM this server can offer, not
+# a value chosen because it was measured sufficient. It was then measured, by
+# capturing what each agent really sends and replaying it against THIS server so
+# the token count comes from llama.cpp itself:
+#
+#   pi       (default, 950 skills inlined)   86,411 tokens  -> REJECTED
+#   pi       --no-skills                      1,480 tokens  -> ACCEPTED, answers correctly
+#   crush    (default, 949 skills inlined)   96,564 tokens  -> REJECTED
+#   crush    with host skills removed        11,342 tokens  -> ACCEPTED
+#   opencode (default, 979 skills + 120 tools) 134,043 tokens -> REJECTED
+#
+# So raising 4096 -> 32768 made the endpoint usable for a TRIMMED agent prompt
+# and for nothing else. The weight is not the agents: it is the ~950 skills
+# installed under ~/.claude/skills, ~/.config/crush/skills and ~/.pi/agent/skills,
+# which every one of these agents inlines into its system prompt. Raising this
+# further is genuinely not available -- 32768 IS the ceiling for this model.
+#
+# A longer-context surface DOES exist on this host, which the previous revision
+# of this comment did not know: HelixAgent on :7061 accepted a request whose
+# usage.prompt_tokens was 200,046 and correctly recalled a marker planted at the
+# very FRONT of it (so it neither refused nor silently truncated). `crush` runs
+# against it end to end at the full skill load, with real tool use. See
+# docs/guides/cli_agent_integration/README.md §3 for the full agent x surface
+# matrix and for the two defects that keep `pi` and `opencode` off that surface.
+#
+# Evidence: docs/qa/cli_agent_model_usability_20260907T113000Z/.
+#
+# VRAM cost, measured rather than assumed (§11.4.133 target-hardware safety):
+# the 3B Q4_K_M weights occupy ~2 GB of the RTX 3060's 12288 MiB (9634 MiB free
+# when this change was made). The f16 KV cache for this architecture costs
+# ~36 KB/token (36 layers x 2 KV heads x 128 head_dim x 2 tensors x 2 bytes),
+# so 32768 tokens adds ~1.2 GB -- several GB of headroom remain. Raising this
+# further, or moving to a larger model, must re-do that arithmetic against the
+# free VRAM at the time.
+ExecStart=@LLAMA_SERVER_BIN@ \
+  --model %h/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf \
+  --alias qwen2.5-coder-3b-instruct-q4_k_m \
+  --host 127.0.0.1 --port 18434 \
+  --ctx-size 32768 --n-gpu-layers @LLAMA_NGL@ \
+  --threads 8 --threads-batch 8 --batch-size 256 \
+  --jinja --metrics
+Restart=on-failure
+RestartSec=10
+# Model load from cold page cache is slow on a loaded host.
+TimeoutStartSec=300
+
+[Install]
+WantedBy=helix.target

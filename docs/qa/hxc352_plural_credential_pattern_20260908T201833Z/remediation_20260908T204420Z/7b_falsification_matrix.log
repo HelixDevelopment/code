@@ -1,0 +1,42 @@
+
+M1_BLANKET_revert
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-3) plural keyword + COLON = a collection declaration, not a secret
+
+M2_TIGHTEN_no_padding
+    == RESULT: 71 passed, 2 failed ==
+    FAILED CASES: (26-h) plural PASSWORDS with spaces around =, (26-i) plural passwords = "<secret>" quoted literal
+
+M3_ELVIS_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-j) plural keyword with an elvis fallback secret
+
+M4_PLACEHOLDER_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-2) plural keyword with placeholder value still hits the #8a strip
+
+M5_ENVLOOKUP_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-4) plural keyword whose value is an env lookup (#20 strip)
+
+M6_ACCESSOR_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-5) plural keyword whose value is an accessor call (#25 strip)
+
+M7_IDENTREF_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-6) plural value-equals-key is a variable reference (#18 strip)
+
+M8_SYMBOLREF_plural_unwiden
+    == RESULT: 71 passed, 2 failed ==
+    FAILED CASES: (26-neg-7) plural keyword whose value is a TYPE name (#21 strip), (26-neg-8) plural keyword whose value is a Go composite literal (#21 strip)
+
+M9_SYMBOLREF_composite_unwiden
+    == RESULT: 72 passed, 1 failed ==
+    FAILED CASES: (26-neg-8) plural keyword whose value is a Go composite literal (#21 strip)
+
+M10_PLURAL_ALTERNATIVE_removed
+    == RESULT: 64 passed, 9 failed ==
+    FAILED CASES: (26-a) plural API_KEYS= assignment (the exact shape that escaped), (26-b) plural PASSWORDS= assignment, (26-c) plural SECRETS= assignment, (26-d) plural ACCESS_TOKENS= assignment, (26-e) plural CLIENT_SECRETS= assignment, (26-f) plural AUTH_TOKENS= assignment, (26-g) plural PASSWDS= assignment, (26-h) plural PASSWORDS with spaces around =, (26-i) plural passwords = "<secret>" quoted literal
+
+matrix_exit=0

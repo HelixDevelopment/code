@@ -1,0 +1,23 @@
+=== TLS cert info for helixllm gateway :8443 (read-only openssl probe) ===
+subject=CN=helixllm
+issuer=CN=helixllm
+notBefore=Apr 12 12:34:52 2026 GMT
+notAfter=Apr  9 12:34:52 2036 GMT
+SHA1 Fingerprint=FD:B4:8D:5B:2B:80:16:FA:82:42:E6:21:10:FE:84:FB:2A:57:01:32
+
+=== curl -k (insecure, scoped to this one probe only) GET https://localhost:8443/v1/models ===
+{"object":"list","data":[{"id":"helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190","object":"model","created":1700000000,"owned_by":"llamacpp","model_identity":"helixllm/anton/qwen2.5-coder-3b-instruct-q4_k_m","host":"anton","availability":"serving"}]}
+[HTTP_STATUS:200]
+
+=== curl (no -k, default trust store) GET https://localhost:8443/v1/models — expected to fail on self-signed cert ===
+curl: (60) SSL certificate OpenSSL verify result: self-signed certificate (18)
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the webpage mentioned above.
+
+[HTTP_STATUS:000]
+
+=== looking for TLS cert/key config hints in unit file or .env ===
+134:ExecStartPost=/home/milosvasic/Projects/helix_code/scripts/systemd/wait-http-ready.sh https://localhost:8443/v1/models 1100 5

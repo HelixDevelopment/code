@@ -1,0 +1,7 @@
+### GRADED PROMPT-SIZE SWEEP through gateway :8443 -> anton  (2026-09-07T09:47:49Z)
+words -> gateway usage.prompt_tokens / http
+  words=200  bytes=1447  prompt_tokens=369 | 'HELIX-OK-7'  HTTP=200
+  words=2000  bytes=12787  prompt_tokens=1016 | 'HELIX-OK-7'  HTTP=200
+  words=8000  bytes=50587  prompt_tokens=1016 | 'HELIX-OK-7'  HTTP=200
+  words=20000  bytes=126187  prompt_tokens=1016 | 'HELIX-OK-7'  HTTP=200
+  words=40000  bytes=252187  prompt_tokens=1016 | 'HELIX-OK-7'  HTTP=200

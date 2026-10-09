@@ -1,0 +1,28 @@
+=== 02b: keys-file SHAPE (no value is printed; §11.4.10) ===
+--- line count / non-comment line count ---
+23
+--- lines that SOURCE another file (the indirection) ---
+13:. "/home/milosvasic/Projects/helix_code/scripts/export_gateway_keys.sh"
+grep_rc=0
+--- every line with all = -values redacted ---
+# NEUTRALISED 2026-09-07. This was a LITERAL copy of the gateway key, and the
+# gateway had no matching HELIX_AUTH_API_KEYS at all -- so this value
+# authenticated nothing and every request 401'd. It is commented out rather
+# than deleted so the old value stays recoverable. The live value now comes
+# from helix_code/.env via the source line at the end of this file; do not
+# re-add a literal here, or the two will drift apart silently.
+# export HELIXLLM_GATEWAY_KEY=<REDACTED>
+export HELIXAGENT_GATEWAY_KEY=<REDACTED>
+# HelixCode gateways: derive inbound keys from the SAME .env the
+# systemd units read. Do NOT replace this with a literal key — a copy
+# goes stale the moment the key is rotated and every request 401s.
+. "/home/milosvasic/Projects/helix_code/scripts/export_gateway_keys.sh"
+# HelixLLM gateway serves TLS with a SELF-SIGNED certificate (CN=<REDACTED>
+# the verification probe must be told which CA to trust or every probe returns
+# HTTP 000 — indistinguishable from "nothing is listening" (providers-verify.sh
+# documents exactly this). There is deliberately no default: a certificate path
+# is a property of THIS host, not of the toolkit (CONST-045).
+# Verified 2026-09-08: this file's SHA-256 fingerprint is identical to the cert
+# the live endpoint presents, and curl reaches it with --cacert and no -k.
+# Not a secret — a path. Remove this line to revert.
+export CMA_PROVIDER_CA_CERT=<REDACTED>

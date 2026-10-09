@@ -1,0 +1,91 @@
+-- ephemeral server healthy on 127.0.0.1:51821 (pid 1045442), facade key configured
+
+### T1  POST /v1/messages  model=claude-sonnet-4-20250514  (what Claude Code would send)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 502 Bad Gateway
+Content-Type: application/json; charset=utf-8
+Content-Length: 120
+
+{"error":{"message":"generation failed: API request failed: API returned status 404","type":"api_error"},"type":"error"}
+
+
+### T2  POST /v1/messages  model=totally-made-up-model-xyz  (arbitrary id)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 502 Bad Gateway
+Content-Type: application/json; charset=utf-8
+Content-Length: 120
+
+{"error":{"message":"generation failed: API request failed: API returned status 404","type":"api_error"},"type":"error"}
+
+
+### T3  POST /v1/messages  Authorization: Bearer form (ANTHROPIC_AUTH_TOKEN mapping)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 502 Bad Gateway
+Content-Type: application/json; charset=utf-8
+Content-Length: 120
+
+{"error":{"message":"generation failed: API request failed: API returned status 404","type":"api_error"},"type":"error"}
+
+
+### T4  POST /v1/messages/count_tokens  (Claude Code may call this)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages/count_tokens  [args elided; key via $EPH_KEY]
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+Content-Length: 18
+
+404 page not found
+
+
+### T5  GET /v1/models?limit=1000  (gateway model discovery)
+$ curl -sS -i -X GET http://127.0.0.1:PORT/v1/models?limit=1000  [args elided; key via $EPH_KEY]
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+Content-Length: 18
+
+404 page not found
+
+
+### T6  POST /v1/messages  stream:true  (Claude Code always streams)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 200 OK
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: text/event-stream
+Transfer-Encoding: chunked
+
+event: message_start
+data: {"message":{"content":[],"id":"msg_2d87edde-5c8a-4994-a651-8555f27fbb17","model":"claude-sonnet-4-20250514","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+
+
+### T7  POST /v1/messages  wrong key on a key-configured instance (negative control)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Content-Length: 69
+
+{"error":{"message":"invalid API key","type":"authentication_error"}}
+
+
+### T8  POST /v1/messages  tools[] present (Claude Code sends its tool schemas)
+$ curl -sS -i -X POST http://127.0.0.1:PORT/v1/messages  [args elided; key via $EPH_KEY]
+HTTP/1.1 502 Bad Gateway
+Content-Type: application/json; charset=utf-8
+Content-Length: 120
+
+{"error":{"message":"generation failed: API request failed: API returned status 404","type":"api_error"},"type":"error"}
+
+
+-- probes complete; stopping ephemeral pid 1045442

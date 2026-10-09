@@ -1,0 +1,300 @@
+### The sentinel change only — diff of the two files this task modified
+### (router.go and chain.go also carry the pre-existing HXC-348 fix)
+
+diff --git a/internal/brain/router.go b/internal/brain/router.go
+index 93949cc..9875063 100644
+--- a/internal/brain/router.go
++++ b/internal/brain/router.go
+@@ -19,9 +19,15 @@ type RoutingRule struct {
+ //  1. req.Provider explicit override (if that provider is registered and available)
+ //  2. Exact model match against registered providers' model lists (if available)
+ //  3. Prefix-match rules built dynamically from provider models (if available)
+-//  4. Fallback provider (if available)
+-//  5. Any available provider
+-//  6. Error
++//  4. Refuse a NAMED model no registered provider claims (ErrModelNotFound)
++//  5. Fallback provider (if available)
++//  6. Any available provider
++//  7. Error
++//
++// Steps 5 and 6 are the substitution the router exists to provide, and step 4
++// is the boundary that keeps them honest: they answer a caller who named NO
++// model, never one who named a model this deployment has never heard of. See
++// Route for why that distinction is the whole point.
+ type Router struct {
+ 	providers map[string]Provider
+ 	rules     []RoutingRule
+@@ -87,32 +93,75 @@ func (r *Router) Route(req *types.InternalChatRequest) (Provider, error) {
+ 		}
+ 	}
+ 
++	// claimed records that SOME registered provider offers this name, even if
++	// the provider that offers it turned out to be down. It is what separates
++	// the two reasons steps 2 and 3 can fail — see step 4.
++	claimed := false
++
+ 	// 2. Exact model match — check every provider's model list.
+ 	for _, p := range r.providers {
+ 		for _, m := range p.Models() {
+-			if m == req.Model && p.Available() {
++			if m != req.Model {
++				continue
++			}
++			if p.Available() {
+ 				return p, nil
+ 			}
++			claimed = true
+ 		}
+ 	}
+ 
+ 	// 3. Prefix-match rules (built dynamically from provider models).
+ 	for _, rule := range r.rules {
+-		if strings.HasPrefix(req.Model, rule.Prefix) {
+-			if p, ok := r.providers[rule.Provider]; ok && p.Available() {
++		if !strings.HasPrefix(req.Model, rule.Prefix) {
++			continue
++		}
++		if p, ok := r.providers[rule.Provider]; ok {
++			if p.Available() {
+ 				return p, nil
+ 			}
++			claimed = true
+ 		}
+ 	}
+ 
+-	// 4. Fallback provider.
++	// 4. A model this deployment does not serve is REFUSED, not substituted.
++	//
++	// Steps 5 and 6 below hand back a provider chosen without reference to
++	// req.Model. For a request that named no model that is the intended
++	// behaviour — the caller expressed no preference and any available
++	// backend answers it. For a request that named one, it is a silent
++	// misroute: the caller gets a confident completion from a model it never
++	// asked for, with a 200 and no way to detect the substitution. Measured
++	// on the shipped gateway, `definitely-not-a-real-model-zzz`, `gpt-4o` and
++	// `claude-opus-4` were all answered by the one local model, and the
++	// naming layer's own comment (see ResolveModelName) already called this
++	// out as "a silent misroute" without guarding it here.
++	//
++	// The condition is narrow on purpose. `claimed` is set when some provider
++	// LISTS the name and was skipped only for being unavailable, which is an
++	// availability condition the deployment reports elsewhere as retryable —
++	// refusing it here would change an unrelated answer under cover of this
++	// fix, and TestRouter_FallbackWhenPreferredUnavailable pins that
++	// behaviour. Availability is therefore never consulted to decide
++	// not-found; only the model lists are.
++	// A DELEGATION SENTINEL is exempt for the same reason the empty model is:
++	// it names no model to be missing. `auto` is the documented "you choose"
++	// value, so a registry miss on it carries no information and refusing it
++	// would 404 the project's own canonical first API call. The predicate is
++	// shared with fallback.Chain.refuseUnknownModel — see delegation_sentinel.go
++	// for why one definition rather than two.
++	if !IsDelegationSentinel(req.Model) && !claimed {
++		return nil, NewModelNotFound(req.Model)
++	}
++
++	// 5. Fallback provider.
+ 	if r.fallback != "" {
+ 		if p, ok := r.providers[r.fallback]; ok && p.Available() {
+ 			return p, nil
+ 		}
+ 	}
+ 
+-	// 5. Any available provider.
++	// 6. Any available provider.
+ 	for _, p := range r.providers {
+ 		if p.Available() {
+ 			return p, nil
+diff --git a/internal/fallback/chain.go b/internal/fallback/chain.go
+index 52b149d..4e6f294 100644
+--- a/internal/fallback/chain.go
++++ b/internal/fallback/chain.go
+@@ -174,6 +174,54 @@ func (c *Chain) pin(requested string) (provider, model string, ok bool) {
+ 	return p.PinModel(requested)
+ }
+ 
++// refuseUnknownModel reports the error owed to a request whose model name the
++// pin could not resolve, or nil when the score-ordered chain may answer it.
++//
++// # What the pin's miss means
++//
++// Brain.PinModel documents three outcomes, and ok=false is "nothing
++// registered serves this name". Two very different requests arrive there: one
++// that named NO model, and one that named a model this deployment does not
++// serve. The chain used to treat both as "the caller named nothing" and hand
++// them to its own top-ranked entry — which for the first is the feature, and
++// for the second is a silent misroute. Measured on the shipped gateway,
++// `definitely-not-a-real-model-zzz`, `gpt-4o` and `claude-opus-4` each
++// returned HTTP 200 answered by the single local model, with nothing in the
++// response a client could use to detect the substitution.
++//
++// This is the same trade pinnedProvider already makes one branch away, and
++// for the same stated reason: "a caller who names one and cannot have it is
++// better served by an error it can see."
++//
++// # Why a missing pinner is not a refusal
++//
++// Without a pinner the chain has no registry and therefore no basis to call a
++// name unknown — exactly the reasoning [Chain.retired] already applies. A
++// Chain wired without one keeps its pre-existing score-ordered behaviour,
++// which is what every caller that has no naming registry (most tests, and any
++// embedder using the Chain standalone) depends on.
++// # Why a delegation sentinel is not a refusal
++//
++// The empty string was originally the only exemption here, on the grounds
++// that it means "the caller named nothing". `auto` means exactly that too —
++// it is the project's documented "you choose" value and the one its own
++// canonical first API call sends — so refusing it broke a documented client
++// flow while fixing an undocumented one. brain.IsDelegationSentinel is the
++// single definition of that set, shared with Router.Route so the two refusal
++// sites cannot drift into disagreeing about which requests name a model.
++func (c *Chain) refuseUnknownModel(requested string) error {
++	if brain.IsDelegationSentinel(requested) {
++		return nil
++	}
++	c.mu.RLock()
++	p := c.pinner
++	c.mu.RUnlock()
++	if p == nil {
++		return nil
++	}
++	return brain.NewModelNotFound(requested)
++}
++
+ // retired asks the installed pinner whether a requested name is one this
+ // deployment has permanently stopped publishing.
+ //
+@@ -273,6 +321,14 @@ func (c *Chain) Complete(ctx context.Context, req *types.InternalChatRequest) (*
+ 		return provider.Complete(ctx, &reqCopy)
+ 	}
+ 
++	// The pin missed. A caller that named a model this deployment does not
++	// serve is refused here, before the entry list below overrides req.Model
++	// with its own default and answers from a model the caller never asked
++	// for. See refuseUnknownModel.
++	if err := c.refuseUnknownModel(req.Model); err != nil {
++		return nil, err
++	}
++
+ 	c.mu.RLock()
+ 	numEntries := len(c.entries)
+ 	c.mu.RUnlock()
+@@ -362,6 +418,13 @@ func (c *Chain) CompleteStream(ctx context.Context, req *types.InternalChatReque
+ 		return provider.CompleteStream(ctx, &reqCopy)
+ 	}
+ 
++	// Same refusal as Complete, on its own call site: streaming is how a chat
++	// client actually talks, so a guard that covered only the buffered path
++	// would leave the misroute live for the common case.
++	if err := c.refuseUnknownModel(req.Model); err != nil {
++		return nil, err
++	}
++
+ 	c.mu.RLock()
+ 	numEntries := len(c.entries)
+ 	c.mu.RUnlock()
+
+### NEW file: internal/brain/delegation_sentinel.go
+package brain
+
+import "strings"
+
+// A DELEGATION SENTINEL is a reserved model value meaning "you choose" — the
+// caller has expressed no preference and is asking the deployment to pick.
+//
+// # Why this exists
+//
+// [ErrModelNotFound] and the refusals that raise it (fallback.Chain's pin
+// miss, and Router.Route step 4) derive "this deployment does not serve that"
+// from a naming-registry miss. That inference is correct for a model NAME and
+// wrong for a KEYWORD: `auto` was never meant to resolve to anything, so a
+// registry miss on it carries no information at all. Refusing it turns the
+// project's own canonical first API call into a 404:
+//
+//	website/content/_index.md:29                     {"model":"auto", ...}
+//	docs/courses/01-getting-started/lesson-01-introduction.md:131
+//	docs/courses/01-getting-started/lesson-03-first-api-call.md:202
+//	challenges/banks/performance/nonblocking.yaml:34,65
+//	tests/e2e/e2e_test.go:60, tests/e2e/multi_provider_e2e_test.go:24
+//	tests/stress/stress_test.go:34, tests/integration/auth_test.go:51
+//
+// That regression is exactly what [IsDelegationSentinel] prevents, and it is
+// the reason the empty string was already exempted one branch away: an empty
+// model and `auto` are the SAME request wearing two spellings, and the code
+// only ever recognised one of them.
+//
+// # Why this does not weaken the refusal
+//
+// HXC-348 exists to stop a caller who names a SPECIFIC model being answered
+// by a different one behind a 200. A sentinel makes no such claim — it
+// delegates the choice — so answering it from the score-ordered chain is
+// obedience, not substitution. `gpt-4o`, `claude-opus-4` and
+// `definitely-not-a-real-model-zzz` are unaffected and still refused.
+//
+// # Why the match is exact, not a prefix
+//
+// A prefix or substring match would let `auto-gpt`, `automatic` and
+// `default-model` through and silently re-open HXC-348 for every id with a
+// sentinel-shaped prefix. Those are model NAMES that merely contain a
+// keyword, and they are refused like any other unserved name. The gateway
+// tests pin them as the negative control.
+//
+// # Why a registered model of the same name still wins
+//
+// Both call sites consult this ONLY after the pin has already missed, so a
+// deployment that genuinely registers a model called `auto` resolves it
+// normally and never reaches here. The sentinel is a fallback reading of the
+// value, never an override of a real one.
+//
+// # Why one definition, shared
+//
+// fallback.Chain and Router.Route are two independent refusal sites for one
+// condition. model_not_found.go records why the ERROR is a single exported
+// sentinel rather than two message strings — "two independently-worded copies
+// of one condition is exactly how the sentinel would stop meaning one thing" —
+// and the exemption is the same argument in the same shape: two copies of the
+// keyword list would drift, and the drift would be invisible until one path
+// 404'd a request the other answered.
+var delegationSentinels = map[string]struct{}{
+	// `auto` is the project's documented "let the gateway pick" value, and is
+	// the same convention the deployment already uses for every other
+	// choose-for-me setting (HELIX_CONTAINER_RUNTIME, HELIX_SCHEDULE_STRATEGY,
+	// HELIX_LLM_DEFAULT_PROVIDER all take `auto`). Evidence: 15 occurrences
+	// across the website, both getting-started lessons, a challenge bank and
+	// four test files.
+	"auto": {},
+
+	// `default` is a SHIPPED, RELEASE-NOTED alias, not an inference. The
+	// consuming repository's CHANGELOG.md documents it by name under Fixed —
+	// "A client requesting an alias (e.g. \"model\":\"default\") now gets back
+	// the model that actually served the request, on both the OpenAI- and
+	// Anthropic-compatible wires, streaming and non-streaming — not the alias
+	// echoed back." That sentence is this exemption's contract: `default` must
+	// reach the chain, and the response must name the model that answered.
+	// Three QA capture scripts post it against a live gateway
+	// (scripts/qa/capture_feat_{helixllm_a21ad7ca,azureguard_eb233785,
+	// wirefacade_51c058b1}.sh), and docs/OPERATOR_GUIDE.md:419 uses it too.
+	"default": {},
+}
+
+// IsDelegationSentinel reports whether a requested model value is a reserved
+// "you choose" keyword rather than a claim on a specific model.
+//
+// The empty string is a sentinel by the same logic — it is the original
+// spelling of "no preference" — so callers may use this as the single
+// no-preference predicate instead of testing emptiness separately.
+//
+// Matching is case-folded and space-trimmed because a sentinel is a keyword,
+// not an identifier: `Auto` and `auto` express the same delegation, and
+// honouring one while refusing the other would be a distinction with nothing
+// behind it. Trimming is defence in depth at this layer — the gateway's
+// model-name charset validation already refuses a space-padded value with 400
+// before either refusal site is reached.
+func IsDelegationSentinel(model string) bool {
+	trimmed := strings.TrimSpace(model)
+	if trimmed == "" {
+		return true
+	}
+	_, ok := delegationSentinels[strings.ToLower(trimmed)]
+	return ok
+}

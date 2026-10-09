@@ -43,7 +43,7 @@ func newNilRedisServer(t *testing.T) *Server {
 	}
 	db := (*database.Database)(nil)
 	// The reproduced defect: a NIL *redis.Client argument.
-	server := New(cfg, db, nil)
+	server := newTestServer(t, cfg, db, nil)
 	require.NotNil(t, server)
 	return server
 }

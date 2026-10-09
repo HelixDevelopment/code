@@ -1,0 +1,1 @@
+{"object":"list","data":[{"id":"helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190","object":"model","created":1700000000,"owned_by":"llamacpp","model_identity":"helixllm/anton/qwen2.5-coder-3b-instruct-q4_k_m","host":"anton","availability":"serving"}]}

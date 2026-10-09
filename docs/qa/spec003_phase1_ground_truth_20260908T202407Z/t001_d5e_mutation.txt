@@ -1,0 +1,7 @@
+### D5e — swap ALIAS/PROVIDER in kimi-providers.sh positional parse; suite MUST fail
+[INFO] mutation 'D5e' applied to scripts/kimi-providers.sh (1 replacement(s))
+MUTATION D5e: EXPECTED-FAIL got 23 failed / 35 passed [OK]
+  suite=scripts/tests/test_kimi_wire_and_status_freshness.sh mode=scratch-copy replacements=1 suite_rc=1
+  parsed_line=✗ 23 failed, 35 passed
+  tree_fingerprint_unchanged=a3618d114d51a2b0962f6dc3f853b847
+D5E_EXIT=0

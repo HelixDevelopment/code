@@ -277,6 +277,22 @@ ALTER TABLE notifications
     DROP COLUMN IF EXISTS channel,
     ADD COLUMN IF NOT EXISTS channels TEXT[] DEFAULT '{}';
 
--- Grant permissions to the configured user
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO helixcode;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO helixcode;
+-- Grant permissions to the configured user.
+--
+-- This file is mounted into /docker-entrypoint-initdb.d by TWO compose files
+-- that create DIFFERENT roles: docker-compose.test.yml uses POSTGRES_USER
+-- helixcode, docker-compose.helix.yml uses helix. A hardcoded grantee is
+-- therefore wrong in one of them -- naming helixcode literally made the
+-- deployment stack abort startup with
+--   ERROR: role "helixcode" does not exist
+-- and postgres exited 3 before ever accepting a connection.
+--
+-- Resolve the grantee instead of naming it: init scripts run as POSTGRES_USER,
+-- so current_user IS the configured role in either environment. %I quotes the
+-- identifier, so a role name needing quoting cannot break the statement.
+DO $grant_to_configured_user$
+BEGIN
+    EXECUTE format('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO %I', current_user);
+    EXECUTE format('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO %I', current_user);
+END
+$grant_to_configured_user$;

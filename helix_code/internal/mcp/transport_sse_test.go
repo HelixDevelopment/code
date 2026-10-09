@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -15,9 +16,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runSSEServer returns (postURL, sseURL, controlCloseStream, cleanup).
+// runSSEServer returns (postURL, sseURL, controlCloseStream, waitStream, cleanup).
 // controlCloseStream() closes the active SSE stream so the client must reconnect.
-func runSSEServer(t *testing.T) (string, string, func(), func()) {
+// waitStream(n, ceiling) blocks until the server has accepted at least n SSE
+// streams, waking on the accept itself rather than on a timer. It reports
+// whether the predicate held; callers assert that bool, never elapsed time.
+func runSSEServer(t *testing.T) (string, string, func(), func(int64, time.Duration) bool, func()) {
 	t.Helper()
 	mux := http.NewServeMux()
 	var sessionID atomic.Int64
@@ -27,6 +31,36 @@ func runSSEServer(t *testing.T) (string, string, func(), func()) {
 		done    chan struct{}
 	}
 	var current atomic.Pointer[session]
+
+	// Generation broadcast so tests can wait for the Nth stream to be
+	// established instead of sleeping a guessed interval.
+	var genMu sync.Mutex
+	genCh := make(chan struct{})
+	bumpGen := func() {
+		genMu.Lock()
+		close(genCh)
+		genCh = make(chan struct{})
+		genMu.Unlock()
+	}
+	waitStream := func(min int64, ceiling time.Duration) bool {
+		timer := time.NewTimer(ceiling)
+		defer timer.Stop()
+		for {
+			// Capture the generation BEFORE reading the count, so a bump that
+			// lands in between wakes us instead of being missed.
+			genMu.Lock()
+			g := genCh
+			genMu.Unlock()
+			if sessionID.Load() >= min {
+				return true
+			}
+			select {
+			case <-g:
+			case <-timer.C:
+				return sessionID.Load() >= min
+			}
+		}
+	}
 
 	mux.HandleFunc("/sse", func(w http.ResponseWriter, r *http.Request) {
 		flusher, ok := w.(http.Flusher)
@@ -40,6 +74,7 @@ func runSSEServer(t *testing.T) (string, string, func(), func()) {
 		s := &session{flusher: flusher, w: w, done: make(chan struct{})}
 		current.Store(s)
 		sessionID.Add(1)
+		bumpGen()
 		<-s.done
 	})
 	mux.HandleFunc("/post", func(w http.ResponseWriter, r *http.Request) {
@@ -69,18 +104,20 @@ func runSSEServer(t *testing.T) (string, string, func(), func()) {
 		closeStream()
 		srv.Close()
 	}
-	return srv.URL + "/post", srv.URL + "/sse", closeStream, cleanup
+	return srv.URL + "/post", srv.URL + "/sse", closeStream, waitStream, cleanup
 }
 
 func TestSSETransport_RoundTrip(t *testing.T) {
-	postURL, sseURL, _, cleanup := runSSEServer(t)
+	postURL, sseURL, _, waitStream, cleanup := runSSEServer(t)
 	defer cleanup()
 	tr := NewSSETransport(SSEConfig{PostURL: postURL, SSEURL: sseURL, BackoffOverride: 50 * time.Millisecond})
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	require.NoError(t, tr.Open(ctx))
 	defer tr.Close()
-	time.Sleep(100 * time.Millisecond)
+	// /post 503s when no SSE stream is attached, so wait for the stream to
+	// actually exist rather than sleeping 100ms and hoping.
+	require.True(t, waitStream(1, 20*time.Second), "initial SSE stream never established")
 	require.NoError(t, tr.Send(ctx, &MCPMessage{JSONRPC: "2.0", ID: "1", Method: "ping"}))
 	resp, err := tr.Recv(ctx)
 	require.NoError(t, err)
@@ -89,24 +126,20 @@ func TestSSETransport_RoundTrip(t *testing.T) {
 }
 
 func TestSSETransport_ReconnectAfterStreamClose(t *testing.T) {
-	postURL, sseURL, closeStream, cleanup := runSSEServer(t)
+	postURL, sseURL, closeStream, waitStream, cleanup := runSSEServer(t)
 	defer cleanup()
 	tr := NewSSETransport(SSEConfig{PostURL: postURL, SSEURL: sseURL, BackoffOverride: 50 * time.Millisecond})
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	require.NoError(t, tr.Open(ctx))
 	defer tr.Close()
-	time.Sleep(100 * time.Millisecond)
+	require.True(t, waitStream(1, 20*time.Second), "initial SSE stream never established")
 	closeStream()
-	deadline := time.Now().Add(3 * time.Second)
-	for time.Now().Before(deadline) {
-		if tr.Reconnects() >= 1 {
-			break
-		}
-		time.Sleep(50 * time.Millisecond)
-	}
+	// The reconnect IS the behaviour under test. Wait for the server to accept
+	// the SECOND stream — the observable proof the transport re-dialled — then
+	// assert the counter. Both are predicates; neither is a timer.
+	require.True(t, waitStream(2, 30*time.Second), "transport never re-established the SSE stream")
 	assert.GreaterOrEqual(t, tr.Reconnects(), int64(1))
-	time.Sleep(200 * time.Millisecond)
 	require.NoError(t, tr.Send(ctx, &MCPMessage{JSONRPC: "2.0", ID: "2", Method: "ping"}))
 	resp, err := tr.Recv(ctx)
 	require.NoError(t, err)
@@ -115,7 +148,7 @@ func TestSSETransport_ReconnectAfterStreamClose(t *testing.T) {
 
 // REQUIRED regression test (added based on T03/T04 lesson)
 func TestSSETransport_CloseUnblocksRecv(t *testing.T) {
-	postURL, sseURL, _, cleanup := runSSEServer(t)
+	postURL, sseURL, _, _, cleanup := runSSEServer(t)
 	defer cleanup()
 	tr := NewSSETransport(SSEConfig{PostURL: postURL, SSEURL: sseURL, BackoffOverride: 50 * time.Millisecond})
 	require.NoError(t, tr.Open(context.Background()))

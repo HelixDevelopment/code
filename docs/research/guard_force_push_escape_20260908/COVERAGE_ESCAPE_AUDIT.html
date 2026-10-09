@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>COVERAGE_ESCAPE_AUDIT</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">COVERAGE_ESCAPE_AUDIT</h1>
+</header>
+<h1 id="coverage-escape-audit-force-push-guard-substitution-word-boundary-class">Coverage-escape
+audit — force-push guard, substitution + word-boundary class</h1>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Revision</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>2026-09-08</td>
+</tr>
+<tr>
+<td>Last modified</td>
+<td>2026-09-08</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>active</td>
+</tr>
+</tbody>
+</table>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#what-escaped">What escaped</a></li>
+<li><a href="#how-it-was-found">How it was found</a></li>
+<li><a href="#why-the-standing-suite-missed-it">Why the standing suite
+missed it</a></li>
+<li><a href="#root-causes">Root causes</a></li>
+<li><a href="#what-was-registered">What was registered</a></li>
+<li><a href="#honest-gaps">Honest gaps</a></li>
+</ul>
+<h2 id="what-escaped">What escaped</h2>
+<p>Six defects in
+<code>constitution/scripts/hooks/guard-forbidden-commands.sh</code>, the
+PreToolUse hook that mechanically enforces §11.4.113 (absolute
+no-force-push, a rule that by its own text has <strong>no</strong>
+escape hatch).</p>
+<p>Five were <strong>false negatives</strong> — a genuine force-push the
+guard ALLOWED (exit 0). Measured before the fix:</p>
+<table>
+<thead>
+<tr>
+<th>Spelling</th>
+<th>Pre-fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>echo $(git push --force origin main)</code></td>
+<td>ALLOWED</td>
+</tr>
+<tr>
+<td><code>echo `git push --force origin main`</code></td>
+<td>ALLOWED</td>
+</tr>
+<tr>
+<td><code>(git push --force origin main)</code></td>
+<td>ALLOWED</td>
+</tr>
+<tr>
+<td><code>/usr/bin/git push --force origin main</code></td>
+<td>ALLOWED</td>
+</tr>
+<tr>
+<td><code>x $(y $(git push --force z) w)</code></td>
+<td>ALLOWED</td>
+</tr>
+</tbody>
+</table>
+<p>One was a <strong>false positive</strong> — an ordinary fast-forward
+push REFUSED (exit 2), which §11.4.201 classes as a FAIL-bluff of equal
+standing:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Spelling</th>
+<th>Pre-fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git push gitlab main &gt; &quot;log_$(date -u +%Y%m%dT%H%M%SZ).log&quot;</code></td>
+<td>REFUSED</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-was-found">How it was found</h2>
+<p>Not by automation. The false positive blocked a real detached GitLab
+push during ordinary work; investigating that one refusal (§11.4.102)
+surfaced the five false negatives. Per §11.4.238 this is a
+<strong>coverage escape</strong>: discovery by live use rather than by
+the standing regime is itself a defect of equal standing to the bug, and
+closing only the bug would leave the real hole open.</p>
+<h2 id="why-the-standing-suite-missed-it">Why the standing suite missed
+it</h2>
+<p><code>test_guard_forbidden_commands.sh</code> held 32 cases and
+passed 32/32 against the defective guard. Two structural blind spots,
+both invisible from inside the suite’s own fixture style:</p>
+<ol type="1">
+<li><strong>Every</strong> force-push fixture spelled the invocation
+with <code>git</code> at start-of-string or immediately after a space —
+the exact two positions the old anchor <code>(^|[[:space:]])git</code>
+recognises. No fixture ever placed a LIVE <code>git push</code> behind a
+non-space boundary, so the anchor’s narrowness could not be
+observed.</li>
+<li>Every “should not block” fixture put its trigger token in an
+<strong>inert</strong> region (a quoted string or a <code>#</code>
+comment), which the scrubber blanks. No fixture put a
+<code>+</code>-leading token belonging to an <strong>unrelated live
+command</strong> in the same clause as a real push, so the
+<code>+&lt;refspec&gt;</code> heuristic’s over-match could not be
+observed either.</li>
+</ol>
+<p>The suite was internally consistent and genuinely falsifiable — it
+simply tested the shapes its author had in mind. That is the ordinary
+way coverage escapes happen, and why §11.4.238 requires naming the
+missing check rather than recording “we didn’t think of it”.</p>
+<h2 id="root-causes">Root causes</h2>
+<p>Two, both about command substitution, and independently
+sufficient:</p>
+<ol type="1">
+<li><p><strong>Boundary anchor too narrow.</strong>
+<code>(^|[[:space:]])git</code> requires whitespace before
+<code>git</code>. In <code>$(git …)</code> the preceding char is
+<code>(</code>; in <code>`git …`</code> it is a backtick; in
+<code>/usr/bin/git</code> it is <code>/</code>. All are genuine word
+boundaries; none is whitespace. Fixed by anchoring on
+<code>(^|[^[:alnum:]_-])git</code>, which excludes only the characters
+that would make <code>git</code> a substring of a longer identifier — so
+<code>legit push</code> / <code>mygit push</code> still correctly do not
+match.</p></li>
+<li><p><strong>Substitution bodies scanned as outer-command
+arguments.</strong> A substitution is a <em>different</em> command. Its
+tokens were pooled into the outer clause, so <code>date</code>’s
+<code>+%Y…</code> satisfied the <code>+&lt;refspec&gt;</code> test while
+the outer <code>git push</code> satisfied the push test, and the AND
+fired.</p>
+<p>Fixed by <strong>extraction, not splitting</strong>. Splitting the
+string at <code>$(</code>/<code>)</code> would have broken the clause
+splitter’s load-bearing invariant — <em>malformed input can only MERGE
+clauses, never SPLIT a real force-push apart</em> — and would have torn
+<code>git push $(get_remote) --force</code> into pieces, MISSING a real
+force-push. Instead each body is emitted as its own command while the
+outer keeps an inert <code>@@SUB@@</code> placeholder, so
+<code>git push</code> and <code>--force</code> stay in the same outer
+clause.</p></li>
+</ol>
+<p>Note the fixes <strong>overlap</strong>: reverting (1) alone still
+leaves 2 of the 5 escapes closed, because (2) hands a substitution body
+to the scanner as a standalone command where <code>git</code> sits at
+start-of-string. Defense in depth, not redundancy.</p>
+<h2 id="what-was-registered">What was registered</h2>
+<p>Ten cases added to the standing suite (32 → 42), covering all five
+escape routes, the load-bearing “force flag after a substitution
+argument” case, the false positive, and a negative control proving
+<code>legit</code> is still not <code>git</code>.</p>
+<p>Falsifiability proven by paired §1.1 mutation against the
+<strong>standing</strong> suite, not a scratch harness:</p>
+<ul>
+<li>revert the boundary widening → <code>PASS=40 FAIL=2</code></li>
+<li>neuter the substitution expander → <code>PASS=41 FAIL=1</code></li>
+<li>restored → <code>PASS=42 FAIL=0</code>, mutation-residue scan clean
+(§11.4.84)</li>
+</ul>
+<h2 id="honest-gaps">Honest gaps</h2>
+<ul>
+<li>The fix is proven at the <strong>hook</strong> layer by driving the
+hook directly. It is additionally confirmed at the live layer for
+exactly one command — the real push that was wrongly refused now passes.
+Other spellings are covered by fixtures, not by live invocation.</li>
+<li>The escape-route list is the set found by one adversarial pass.
+§11.4.118 applies: this reduces the unknown-unknown surface, it does not
+prove the guard now has zero remaining escapes. An independent
+adversarial review was dispatched specifically to hunt for spellings
+this pass did not imagine.</li>
+<li>Whether the five escapes were ever actually <em>used</em> to land a
+force-push is NOT established here. <code>git reflog</code>/upstream
+history were not audited for evidence of a past force-push through these
+routes. UNKNOWN, not “no”.</li>
+</ul>
+</body>
+</html>

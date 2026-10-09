@@ -10,6 +10,71 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// testSafeBasePort returns a base port for `count` consecutive test
+// allocations that is guaranteed to sit OUTSIDE both (a) the kernel ephemeral
+// range and (b) this allocator's own fallback block.
+//
+// WHY THIS EXISTS (measured, §11.4.50): these tests previously hardcoded
+// preferred ports 50000-50049 and 55555, which are INSIDE the Linux default
+// ephemeral range 32768-60999. isPortAvailableUnsafe probes each preferred port
+// with a real bind, so once the host had accumulated TIME-WAIT pressure in that
+// range (a full-suite run was measured driving it to 100% occupancy) those
+// probes failed, every goroutine fell through to the 19-port `api` fallback
+// 8081-8099, and the tests failed with "no ports available in configured
+// range". They passed on an idle host and failed under back-to-back runs — i.e.
+// they were asserting on host state, not on the allocator.
+//
+// The base is DERIVED at runtime rather than hardcoded (§11.4.111): hardcoding
+// another literal would just relocate the same brittleness to whatever this
+// host's range happens to be today. If no window is available the test SKIPs
+// honestly rather than silently reusing a colliding range (§11.4.3).
+// safeTestPort returns a port that is outside BOTH the kernel ephemeral range
+// and this allocator's fallback block, at a fixed offset from a base computed
+// once per test binary.
+//
+// The hardcoded safeTestPort(0) / safeTestPort(1) these replaced sat inside the Linux default
+// ephemeral range 32768-60999. isPortAvailableUnsafe probes a preferred port
+// with a real bind, so under accumulated TIME-WAIT pressure those probes failed
+// and the tests asserted on host state rather than on allocator behaviour
+// (§11.4.50). Derived, not hardcoded, per §11.4.111 — a fresh literal would
+// only relocate the same brittleness.
+var safeTestPortBase = func() int {
+	_, ephHigh := ephemeralPortRange()
+	base := ephHigh + 1
+	if fb, err := fallbackPortRange(); err == nil && fb.End+1 > base {
+		base = fb.End + 1
+	}
+	// Leave headroom for the largest offset any caller uses.
+	if base+128 > maxPort {
+		return 0 // signals "no safe window"; callers skip
+	}
+	return base
+}()
+
+func safeTestPort(offset int) int { return safeTestPortBase + offset }
+
+func testSafeBasePort(t *testing.T, count int) int {
+	t.Helper()
+
+	_, ephHigh := ephemeralPortRange()
+	fb, err := fallbackPortRange()
+	if err != nil {
+		t.Skipf("SKIP-OK: no fallback block fits outside the ephemeral range on this host: %v", err)
+	}
+
+	// Start above BOTH the ephemeral range and the allocator's fallback block,
+	// so a test allocation can collide with neither.
+	base := fb.End + 1
+	if base <= ephHigh {
+		base = ephHigh + 1
+	}
+	if base+count > maxPort {
+		t.Skipf("SKIP-OK: no room for %d test ports above ephemeral high %d and fallback block %d-%d",
+			count, ephHigh, fb.Start, fb.End)
+	}
+	return base
+}
+
 func TestNewPortAllocator(t *testing.T) {
 	config := DefaultPortAllocatorConfig()
 	pa := NewPortAllocator(config)
@@ -34,8 +99,8 @@ func TestAllocatePort_PreferredAvailable(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// Try to allocate with preferred port
-	// If 55555 isn't available, it will fall back to api range (8081-8099)
-	preferredPort := 55555
+	// If safeTestPort(0) isn't available, it will fall back to api range (8081-8099)
+	preferredPort := testSafeBasePort(t, 1)
 	port, err := pa.AllocatePort("test-service", preferredPort)
 
 	require.NoError(t, err)
@@ -79,12 +144,12 @@ func TestAllocatePort_ServiceAlreadyHasPort(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// Allocate port (may get preferred or fallback)
-	port1, err := pa.AllocatePort("test-service", 55555)
+	port1, err := pa.AllocatePort("test-service", safeTestPort(0))
 	require.NoError(t, err)
 	assert.NotEqual(t, 0, port1, "Should allocate a valid port")
 
 	// Try to allocate again for same service with different preferred port
-	port2, err := pa.AllocatePort("test-service", 55556)
+	port2, err := pa.AllocatePort("test-service", safeTestPort(1))
 	require.NoError(t, err)
 	assert.Equal(t, port1, port2, "Should return existing port for same service")
 }
@@ -177,7 +242,7 @@ func TestReleasePort(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// Allocate port
-	port, err := pa.AllocatePort("test-service", 55555)
+	port, err := pa.AllocatePort("test-service", safeTestPort(0))
 	require.NoError(t, err)
 
 	// Release it
@@ -195,7 +260,7 @@ func TestReleasePort(t *testing.T) {
 func TestReleasePort_NotAllocated(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
-	err := pa.ReleasePort(55555)
+	err := pa.ReleasePort(safeTestPort(0))
 	assert.ErrorIs(t, err, ErrPortNotAllocated)
 }
 
@@ -203,7 +268,7 @@ func TestReleaseServicePort(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// Allocate port
-	port, err := pa.AllocatePort("test-service", 55555)
+	port, err := pa.AllocatePort("test-service", safeTestPort(0))
 	require.NoError(t, err)
 
 	// Release by service name
@@ -225,8 +290,8 @@ func TestReleaseServicePort_NotAllocated(t *testing.T) {
 func TestIsPortAvailable(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
-	// Allocate a port (may be 55555 or fallback to api range)
-	port, err := pa.AllocatePort("test", 55555)
+	// Allocate a port (may be safeTestPort(0) or fallback to api range)
+	port, err := pa.AllocatePort("test", safeTestPort(0))
 	require.NoError(t, err)
 	assert.NotEqual(t, 0, port, "Should allocate a valid port")
 
@@ -251,7 +316,7 @@ func TestGetPortForService(t *testing.T) {
 	assert.False(t, exists)
 
 	// Allocate port
-	expectedPort, err := pa.AllocatePort("test-service", 55555)
+	expectedPort, err := pa.AllocatePort("test-service", safeTestPort(0))
 	require.NoError(t, err)
 
 	// Get port
@@ -264,11 +329,11 @@ func TestGetAllocation(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// No allocation
-	_, exists := pa.GetAllocation(55555)
+	_, exists := pa.GetAllocation(safeTestPort(0))
 	assert.False(t, exists)
 
 	// Allocate port
-	port, err := pa.AllocatePort("test-service", 55555)
+	port, err := pa.AllocatePort("test-service", safeTestPort(0))
 	require.NoError(t, err)
 
 	// Get allocation
@@ -289,7 +354,7 @@ func TestListAllocations(t *testing.T) {
 	// Allocate some ports
 	services := []string{"service-1", "service-2", "service-3"}
 	for _, svc := range services {
-		_, err := pa.AllocatePort(svc, 55555+len(allocations))
+		_, err := pa.AllocatePort(svc, safeTestPort(0)+len(allocations))
 		require.NoError(t, err)
 		allocations = pa.ListAllocations()
 	}
@@ -342,7 +407,7 @@ func TestConcurrentAllocations(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	const numGoroutines = 50
-	const basePort = 50000
+	basePort := testSafeBasePort(t, numGoroutines)
 
 	var wg sync.WaitGroup
 	wg.Add(numGoroutines)
@@ -390,12 +455,13 @@ func TestConcurrentReleases(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	const numServices = 20
+	releaseBase := testSafeBasePort(t, numServices)
 
 	// Allocate ports first
 	servicePorts := make(map[string]int)
 	for i := 0; i < numServices; i++ {
 		serviceName := fmt.Sprintf("service-%d", i)
-		port, err := pa.AllocatePort(serviceName, 50000+i)
+		port, err := pa.AllocatePort(serviceName, releaseBase+i)
 		require.NoError(t, err)
 		servicePorts[serviceName] = port
 	}
@@ -423,7 +489,7 @@ func TestPortReallocation(t *testing.T) {
 	pa := NewDefaultPortAllocator()
 
 	// Allocate port (may be preferred or fallback)
-	preferredPort := 55555
+	preferredPort := testSafeBasePort(t, 1)
 	port1, err := pa.AllocatePort("service-1", preferredPort)
 	require.NoError(t, err)
 	assert.NotEqual(t, 0, port1, "Should allocate a valid port")

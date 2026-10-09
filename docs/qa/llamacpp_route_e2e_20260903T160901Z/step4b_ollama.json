@@ -1,0 +1,1 @@
+{"error":"generation failed: API request failed: API request failed: Post \"http://localhost:11434/api/chat\": dial tcp 127.0.0.1:11434: connect: connection refused","provider":"ollama","status":"error"}

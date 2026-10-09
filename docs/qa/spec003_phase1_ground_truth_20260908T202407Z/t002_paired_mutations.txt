@@ -1,0 +1,16 @@
+### PAIRED §1.1 MUTATION for the NEW census gate
+### disable the positive-control refusal; test_census_query.sh MUST go red
+[INFO] mutation 'CENSUS-POSCTRL-DISABLED' applied to census_query.sh (1 replacement(s))
+MUTATION CENSUS-POSCTRL-DISABLED: EXPECTED-FAIL got 8 failed / 23 passed [OK]
+  suite=tests/test_census_query.sh mode=scratch-copy replacements=1 suite_rc=1
+  parsed_line=8 failed, 23 passed
+  tree_fingerprint_unchanged=722f73b653614ca78a3c24504add6ee1
+MUT1_EXIT=0
+
+### paired mutation 2: disable the NEGATIVE-control refusal
+[INFO] mutation 'CENSUS-NEGCTRL-DISABLED' applied to census_query.sh (1 replacement(s))
+MUTATION CENSUS-NEGCTRL-DISABLED: EXPECTED-FAIL got 3 failed / 28 passed [OK]
+  suite=tests/test_census_query.sh mode=scratch-copy replacements=1 suite_rc=1
+  parsed_line=3 failed, 28 passed
+  tree_fingerprint_unchanged=722f73b653614ca78a3c24504add6ee1
+MUT2_EXIT=0

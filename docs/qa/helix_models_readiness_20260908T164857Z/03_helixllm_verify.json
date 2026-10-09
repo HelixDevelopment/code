@@ -1,0 +1,32 @@
+{
+  "provider_id": "helixllm-gateway",
+  "endpoint": "https://127.0.0.1:8443/v1",
+  "verified_count": 0,
+  "failed_count": 1,
+  "total_tested": 1,
+  "free_only": false,
+  "skipped_count": 0,
+  "skipped_models": [],
+  "tested_at": "2026-09-08T16:51:25.307874+00:00",
+  "models": [
+    {
+      "model_id": "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190",
+      "provider_id": "helixllm-gateway",
+      "score": 5,
+      "capabilities": {
+        "chat": false,
+        "tool_call": false,
+        "reasoning": false,
+        "streaming": false,
+        "context_window": 0,
+        "output_tokens": 0,
+        "is_free": true
+      },
+      "latency_ms": 23,
+      "verified": false,
+      "failure_reason": "Connection failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1081)>",
+      "tested_at": "2026-09-08T16:51:25.283618+00:00",
+      "credit_tier": "free"
+    }
+  ]
+}

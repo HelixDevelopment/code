@@ -1,0 +1,21 @@
+=== NEG NEEDLE A: bad bearer token (endpoint MUST reject) ===
+HTTP=401
+{"error":{"message":"invalid credentials","type":"invalid_request_error","param":null,"code":null}}
+
+=== NEG NEEDLE B: malformed body (endpoint MUST reject) ===
+HTTP=400
+{"error":{"message":"invalid request body: malformed JSON","type":"invalid_request_error","param":null,"code":null}}
+
+=== NEG NEEDLE C: no messages array ===
+HTTP=400
+{"error":{"message":"messages must contain at least one message","type":"invalid_request_error","param":"messages","code":"empty_array"}}
+
+=== EXTRA: foreign vendor model ids ===
+requested=gpt-4o -> HTTP=200 served=qwen2.5-coder-3b-instruct-q4_k_m
+requested=claude-opus-4 -> HTTP=200 served=qwen2.5-coder-3b-instruct-q4_k_m
+requested=llama3.3:70b -> HTTP=200 served=qwen2.5-coder-3b-instruct-q4_k_m
+requested=../../etc/passwd -> HTTP=400 served=
+
+=== /v1/models advertised list ===
+HTTP=200
+{"object":"list","data":[{"id":"helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190","object":"model","created":1700000000,"owned_by":"llamacpp","model_identity":"helixllm/anton/qwen2.5-coder-3b-instruct-q4_k_m","host":"anton","availability":"serving"}]}

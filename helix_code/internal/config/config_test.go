@@ -319,27 +319,27 @@ func TestCreateDefaultConfigFunction(t *testing.T) {
 }
 
 func TestConfigUtilityFunctions(t *testing.T) {
-	// Test GetEnvOrDefault
-	oldVal := os.Getenv("TEST_VAR")
-	defer func() {
-		if oldVal != "" {
-			os.Setenv("TEST_VAR", oldVal)
-		} else {
-			os.Unsetenv("TEST_VAR")
-		}
-	}()
+	// DETERMINISM (§11.4.50): all three variables are set with t.Setenv, which
+	// the framework restores when the test ends. TEST_VAR previously used a
+	// hand-rolled save/defer while TEST_INT_VAR and TEST_INVALID_INT were set
+	// with raw os.Setenv and never restored at all — they leaked into the
+	// process environment for the remainder of the test binary, so any later
+	// test in this package that read them saw values whose presence depended
+	// on whether this test had already run. t.Setenv also fails the test if it
+	// is ever combined with t.Parallel(), which is the correct guard here.
 
-	os.Setenv("TEST_VAR", "test_value")
+	// Test GetEnvOrDefault
+	t.Setenv("TEST_VAR", "test_value")
 	assert.Equal(t, "test_value", GetEnvOrDefault("TEST_VAR", "default"))
 	assert.Equal(t, "default", GetEnvOrDefault("NONEXISTENT_VAR", "default"))
 
 	// Test GetEnvIntOrDefault
-	os.Setenv("TEST_INT_VAR", "123")
+	t.Setenv("TEST_INT_VAR", "123")
 	assert.Equal(t, 123, GetEnvIntOrDefault("TEST_INT_VAR", 0))
 	assert.Equal(t, 456, GetEnvIntOrDefault("NONEXISTENT_INT_VAR", 456))
 
 	// Test invalid int value
-	os.Setenv("TEST_INVALID_INT", "not_a_number")
+	t.Setenv("TEST_INVALID_INT", "not_a_number")
 	assert.Equal(t, 789, GetEnvIntOrDefault("TEST_INVALID_INT", 789))
 }
 

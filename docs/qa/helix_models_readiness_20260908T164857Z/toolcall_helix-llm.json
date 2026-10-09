@@ -1,0 +1,2 @@
+{"id":"","object":"chat.completion","created":1788886593,"model":"helix-llm","choices":[{"index":0,"message":{"role":"assistant","content":"The weather in Belgrade is sunny with a high temperature of 25°C."},"finish_reason":""}],"usage":{"prompt_tokens":43,"completion_tokens":18,"total_tokens":61},"system_fingerprint":"fp_helixllm_v1"}
+[HTTP:200 TIME:0.957331]

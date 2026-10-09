@@ -36,9 +36,8 @@ func TestBroadcastService_StartStop(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, bs.IsRunning())
 
-	// Wait a moment for goroutines to start
-	time.Sleep(100 * time.Millisecond)
-
+	// No sleep needed: Start() does bs.wg.Add(1) synchronously before
+	// `go bs.listen()`, and Stop() ends in bs.wg.Wait().
 	// Stop service
 	err = bs.Stop()
 	require.NoError(t, err)
@@ -108,9 +107,11 @@ func TestBroadcastService_SetLocalServiceWhileRunning(t *testing.T) {
 	err = bs.SetLocalService(info)
 	require.NoError(t, err)
 
-	// Wait for announcement to be sent
-	time.Sleep(200 * time.Millisecond)
-
+	// The only assertion here is on state SetLocalService sets synchronously,
+	// so there is nothing to wait for. (Genuinely asserting that an
+	// announcement was SENT is not possible today: BroadcastService exposes no
+	// send counter — that would need a production observable, so it is
+	// recorded as a gap rather than faked with a sleep.)
 	assert.NotNil(t, bs.localService)
 }
 
@@ -142,7 +143,7 @@ func TestBroadcastService_DiscoverTimeout(t *testing.T) {
 }
 
 func TestBroadcastService_AnnounceAndDiscover(t *testing.T) {
-	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment")  // SKIP-OK: #requires-network
+	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment") // SKIP-OK: #requires-network
 	// Create two broadcast services
 	config1 := DefaultBroadcastConfig()
 	config1.AnnouncementInterval = 100 * time.Millisecond
@@ -174,10 +175,8 @@ func TestBroadcastService_AnnounceAndDiscover(t *testing.T) {
 	require.NoError(t, err)
 	defer bs2.Stop()
 
-	// Wait for announcements to propagate
-	time.Sleep(300 * time.Millisecond)
-
-	// bs2 should discover service-1
+	// No sleep needed: Discover() already polls on its own ticker until
+	// DiscoveryTimeout — it IS the bounded predicate wait.
 	discovered, err := bs2.Discover("service-1")
 	require.NoError(t, err)
 	assert.NotNil(t, discovered)
@@ -252,7 +251,7 @@ func TestBroadcastService_CleanExpired(t *testing.T) {
 }
 
 func TestBroadcastService_QueryResponse(t *testing.T) {
-	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment")  // SKIP-OK: #requires-network
+	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment") // SKIP-OK: #requires-network
 	// Create two services
 	config1 := DefaultBroadcastConfig()
 	config1.AnnouncementInterval = 1 * time.Second // Don't auto-announce
@@ -284,10 +283,7 @@ func TestBroadcastService_QueryResponse(t *testing.T) {
 	require.NoError(t, err)
 	defer bs2.Stop()
 
-	// Wait for services to be ready
-	time.Sleep(100 * time.Millisecond)
-
-	// bs1 queries for service-2
+	// No sleep needed: Discover() already polls until DiscoveryTimeout.
 	discovered, err := bs1.Discover("service-2")
 	require.NoError(t, err)
 	assert.NotNil(t, discovered)
@@ -296,7 +292,7 @@ func TestBroadcastService_QueryResponse(t *testing.T) {
 }
 
 func TestBroadcastService_MultipleServices(t *testing.T) {
-	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment")  // SKIP-OK: #requires-network
+	t.Skip("Skipping flaky network test - UDP multicast unreliable in test environment") // SKIP-OK: #requires-network
 	// Create three broadcast services
 	config1 := DefaultBroadcastConfig()
 	config1.AnnouncementInterval = 100 * time.Millisecond
@@ -343,10 +339,12 @@ func TestBroadcastService_MultipleServices(t *testing.T) {
 	require.NoError(t, err)
 	defer bs3.Stop()
 
-	// Wait for announcements to propagate
-	time.Sleep(500 * time.Millisecond)
+	// List() is a SNAPSHOT (unlike Discover it does not poll), so wait for the
+	// predicate instead of sleeping a guessed 500ms.
+	require.Eventually(t, func() bool {
+		return len(bs3.List()) >= 2
+	}, 30*time.Second, 10*time.Millisecond, "Should discover at least 2 services")
 
-	// bs3 should see both services
 	list := bs3.List()
 	assert.GreaterOrEqual(t, len(list), 2, "Should discover at least 2 services")
 

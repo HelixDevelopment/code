@@ -1,0 +1,2 @@
+{"type":"error","error":{"type":"invalid_request_error","message":"Anthropic tools are not yet supported by HelixAgent's /v1/messages translator (Finding #20). Use /v1/chat/completions with OpenAI tool format, or contact maintainers if you need this."}}
+[HTTP:400]

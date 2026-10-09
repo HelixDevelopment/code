@@ -1,0 +1,64 @@
+### §1.1 PAIRED MUTATION — sentinel pass-through removed on scratch copy
+### Mutation: IsDelegationSentinel reduced to the pre-fix empty-only check
+
+=== A) RED_MODE=0 (standing GREEN guard) against MUTATED tree — MUST FAIL ===
+--- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto (0.00s)
+        hxc348_delegation_sentinel_test.go:141: POST /v1/chat/completions model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO (0.00s)
+        hxc348_delegation_sentinel_test.go:141: POST /v1/chat/completions model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto (0.00s)
+        hxc348_delegation_sentinel_test.go:141: POST /v1/chat/completions model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default (0.00s)
+        hxc348_delegation_sentinel_test.go:141: POST /v1/chat/completions model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT (0.00s)
+        hxc348_delegation_sentinel_test.go:141: POST /v1/chat/completions model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto (0.00s)
+        hxc348_delegation_sentinel_test.go:161: POST /v1/chat/completions (stream) model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO (0.00s)
+        hxc348_delegation_sentinel_test.go:161: POST /v1/chat/completions (stream) model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto (0.00s)
+        hxc348_delegation_sentinel_test.go:161: POST /v1/chat/completions (stream) model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default (0.00s)
+        hxc348_delegation_sentinel_test.go:161: POST /v1/chat/completions (stream) model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT (0.00s)
+        hxc348_delegation_sentinel_test.go:161: POST /v1/chat/completions (stream) model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/auto (0.00s)
+        hxc348_delegation_sentinel_test.go:180: POST /v1/completions model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO (0.00s)
+        hxc348_delegation_sentinel_test.go:180: POST /v1/completions model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto (0.00s)
+        hxc348_delegation_sentinel_test.go:180: POST /v1/completions model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/default (0.00s)
+        hxc348_delegation_sentinel_test.go:180: POST /v1/completions model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT (0.00s)
+        hxc348_delegation_sentinel_test.go:180: POST /v1/completions model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks (0.00s)
+    hxc348_delegation_sentinel_test.go:205: sentinel (stream): status = 404, want 200; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel (0.00s)
+    hxc348_delegation_sentinel_test.go:229: sentinel: status = 404, want 200; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/gateway	0.024s
+--- FAIL: TestHXC348Sentinel_IsDelegationSentinel (0.00s)
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("auto") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("AUTO") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("Auto") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("default") = false, want true — this value delegates the choice and names no model to be missing
+    hxc348_delegation_sentinel_test.go:52: IsDelegationSentinel("DEFAULT") = false, want true — this value delegates the choice and names no model to be missing
+--- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack (0.00s)
+    --- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=auto (0.00s)
+        hxc348_delegation_sentinel_test.go:93: Route("auto") returned error no provider serves the requested model: "auto"; a delegation sentinel names no model, so it must be routed exactly as an empty model is
+    --- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=AUTO (0.00s)
+        hxc348_delegation_sentinel_test.go:93: Route("AUTO") returned error no provider serves the requested model: "AUTO"; a delegation sentinel names no model, so it must be routed exactly as an empty model is
+    --- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=Auto (0.00s)
+        hxc348_delegation_sentinel_test.go:93: Route("Auto") returned error no provider serves the requested model: "Auto"; a delegation sentinel names no model, so it must be routed exactly as an empty model is
+    --- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=default (0.00s)
+        hxc348_delegation_sentinel_test.go:93: Route("default") returned error no provider serves the requested model: "default"; a delegation sentinel names no model, so it must be routed exactly as an empty model is
+    --- FAIL: TestHXC348Sentinel_Route_SentinelStillFallsBack/model=DEFAULT (0.00s)
+        hxc348_delegation_sentinel_test.go:93: Route("DEFAULT") returned error no provider serves the requested model: "DEFAULT"; a delegation sentinel names no model, so it must be routed exactly as an empty model is
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/brain	0.014s
+FAIL
+go test exit=1

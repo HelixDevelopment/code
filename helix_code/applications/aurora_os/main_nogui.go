@@ -301,6 +301,13 @@ func (cliApp *CLIApp) Initialize() error {
 
 	cliApp.projectManager = project.NewManager()
 	cliApp.sessionManager = session.NewManager()
+
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only adaptive
+	// serving): wire the hosted-provider gate from configuration BEFORE any
+	// handler can construct a provider. Mirrors internal/server/server.go.
+	// Default false -- llm.cloud.enabled must be explicitly set true to
+	// permit cloud construction.
+	llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)
 	cliApp.llmManager = llm.NewModelManager()
 
 	// Log initialization

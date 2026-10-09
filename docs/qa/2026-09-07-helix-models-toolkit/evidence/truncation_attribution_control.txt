@@ -1,0 +1,4 @@
+### ATTRIBUTION CONTROL: same 2000-word prompt, DIRECT to llama.cpp :18434 (2026-09-07T09:48:07Z)
+bytes=12759
+DIRECT usage: {'completion_tokens': 7, 'prompt_tokens': 3040, 'total_tokens': 3047, 'prompt_tokens_details': {'cached_tokens': 24}}
+(gateway reported prompt_tokens=1016 for the equivalent 2000-word prompt — see graded_prompt_size_sweep.txt)

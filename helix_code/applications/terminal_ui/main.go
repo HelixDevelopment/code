@@ -279,6 +279,13 @@ func (tui *TerminalUI) Initialize() error {
 		tui.qaEngine = qaEngine
 	}
 
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only adaptive
+	// serving): wire the hosted-provider gate from configuration BEFORE any
+	// handler can construct a provider. Mirrors internal/server/server.go.
+	// Default false -- llm.cloud.enabled must be explicitly set true to
+	// permit cloud construction.
+	llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)
+
 	// Initialize LLM manager and register cloud providers discovered from
 	// environment API keys (CONST-036 / BLUFF-002). Without this, the chat
 	// showed "Available Models Total: 0" because no provider was ever

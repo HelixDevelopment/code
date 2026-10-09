@@ -1,0 +1,59 @@
+### Claude Code, --output-format json (structured result)
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+{"duration_api_ms":1383,"stop_reason":"end_turn","session_id":"e31b5101-8b21-4621-aced-52b83ebbba97","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"output_tokens_details":{"thinking_tokens":0},"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{"helix-local":{"inputTokens":0,"outputTokens":0,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0,"contextWindow":200000,"maxOutputTokens":32000,"thinkingTokens":0,"canonicalModel":"helix-local","provider":"firstParty","costBasis":"unknown"}},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","fast_mode_disabled_reason":"sdk_opt_in_required","subagent_stats":{"spawned":0,"requested":{"background":0,"foreground":0,"unset":0},"started_in_background":0,"max_depth":0,"spawned_by_subagents":0,"completed":0,"failed":0,"killed":{"parent":0,"user":0,"system":0},"refused":{"depth_limit":0,"concurrency_limit":0,"budget":0},"by_type":{}},"is_error":false,"num_turns":2,"subtype":"success","api_error_status":null,"result":"","ttft_ms":3058,"type":"result","duration_ms":3817,"uuid":"bb200644-f76f-4db9-8eb2-934de72d26aa","ttft_stream_ms":2478,"time_to_request_ms":2419,"first_content_frame_ms":2478,"queued_turn_count":0}
+
+
+### The exact response the facade returned to Claude Code (replayed with the SAME body Claude Code sent)
+{"id":"msg_ce4b40a5-be38-4b80-8e69-d4d5c2315124","type":"message","role":"assistant","model":"qwen2.5-coder-3b-instruct-q4_k_m","content":[{"type":"text","text":"FACADE_OK"}],"stop_reason":"end_turn","stop_sequence":null,"usage":{"input_tokens":164,"output_tokens":5}}
+
+### shim log
+  [shim] HEAD /api/hello -> 404
+  [shim] error body: 
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+  [shim] flattened system: 2 block(s) -> 9036 chars
+  [shim] POST /v1/messages?beta=true -> 200
+
+### facade access log
+[GIN] 2026/09/05 - 23:12:42 | 200 | 109.22µs |       127.0.0.1 | GET      "/health"
+[GIN] 2026/09/05 - 23:12:44 | 404 |   4.76µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:12:52 | 200 | 606.01ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:12:53 | 200 | 618.78ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:12:54 | 200 | 288.96ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+
+### SSE the facade actually streamed to Claude Code
+
+===== SSE RESPONSE (603 bytes) =====
+event: message_start
+data: {"message":{"content":[],"id":"msg_8f3e6f56-6e87-4958-a8db-ac7ea1f0bcb7","model":"helix-local","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+
+===== SSE RESPONSE (603 bytes) =====
+event: message_start
+data: {"message":{"content":[],"id":"msg_e5433760-1ff0-48df-8aa7-3d578a9326b9","model":"helix-local","role":"assistant","type":"message","usage":{"input_tokens":0,"output_tokens":0}},"type":"message_start"}
+
+event: content_block_start
+data: {"content_block":{"text":"","type":"text"},"index":0,"type":"content_block_start"}
+
+event: content_block_stop
+data: {"index":0,"type":"content_block_stop"}
+
+event: message_delta
+data: {"delta":{"stop_reason":"end_turn"},"type":"message_delta","usage":{"input_tokens":0,"output_tokens":0}}
+
+event: message_stop
+data: {"type":"message_stop"}
+

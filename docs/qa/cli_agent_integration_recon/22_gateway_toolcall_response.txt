@@ -1,0 +1,3 @@
+=== POST https://localhost:8443/v1/chat/completions (gateway, tool-calling probe, -k scoped to this self-signed dev cert) ===
+{"id":"chatcmpl-erBRBo7WcMRuyEyloEvroo0BHt9mltlO","object":"chat.completion","created":1788638380,"model":"qwen2.5-coder-3b-instruct-q4_k_m","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_get_weather","type":"function","function":{"name":"get_weather","arguments":"{\"location\":\"Paris\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":371,"completion_tokens":200,"total_tokens":571}}
+[HTTP_STATUS:200]

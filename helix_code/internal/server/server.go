@@ -55,6 +55,12 @@ type Server struct {
 
 // New creates a new HTTP server
 func New(cfg *config.Config, db *database.Database, rds *redis.Client) *Server {
+	// W2c-1 cloud gate (operator mandate 2026-09-05, local-only adaptive
+	// serving): wire the hosted-provider gate from configuration BEFORE any
+	// handler can construct a provider. Default false — llm.cloud.enabled
+	// must be explicitly set true to permit cloud construction.
+	llm.SetCloudEnabled(cfg.LLM.Cloud.Enabled)
+
 	// Set Gin mode
 	if cfg.Logging.Level == "debug" {
 		gin.SetMode(gin.DebugMode)
@@ -629,7 +635,20 @@ func (s *Server) wireFacadeAuthMiddleware() gin.HandlerFunc {
 		}
 
 		for _, configured := range strings.Split(configuredKeys, ",") {
-			if strings.TrimSpace(configured) == token {
+			configured = strings.TrimSpace(configured)
+			// CONST-042 defence in depth: never let a shipped placeholder
+			// authenticate. .env.example ships this key EMPTY and setup.sh
+			// generates a unique per-install secret, but a hand-assembled .env
+			// (or one copied from an older example that carried
+			// CHANGE_ME_wire_facade_key) would otherwise arm a PUBLISHED
+			// credential on routes that drive real LLM calls — and
+			// server.address ships as 0.0.0.0. Refusing the placeholder here
+			// keeps the documented fail-closed posture true on every path into
+			// config, not just the setup.sh one.
+			if configured == "" || strings.HasPrefix(configured, "CHANGE_ME") {
+				continue
+			}
+			if configured == token {
 				c.Set("wire_facade_api_key", token)
 				c.Next()
 				return

@@ -1,0 +1,16 @@
+### T004 DISCOVERY — run-all.sh's own find expression must list the new file
+### POSITIVE CONTROL: an existing suite (test_providers.sh) must be listed
+### NEGATIVE CONTROL: a fabricated name must NOT be listed
+mechanical_acceptance_listed=1
+POSITIVE_control_listed=1
+NEGATIVE_control_listed=0
+total_discovered=72
+
+### HONEST DEGRADATION — unreachable corpus must SKIP, never silently pass
+SKIP: the §11.4.274 mechanical tools are not reachable from this checkout.
+  UNAVAILABLE : constitution/scripts/mechanical (mutation_harness.sh, census_query.sh, await_condition.sh)
+  STILL WORKS : every other suite in this directory — these tools are used BY tests, not by the toolkit at runtime.
+  TO SUPPLY   : set CMA_CONSTITUTION_DIR=/path/to/constitution, or place a constitution checkout beside this repo.
+
+0 passed, 0 failed
+degraded_exit=0

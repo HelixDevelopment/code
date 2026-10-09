@@ -1,0 +1,17 @@
+{
+  "providers": {
+    "helixllm": {
+      "baseUrl": "http://localhost:18434/v1",
+      "api": "openai-completions",
+      "apiKey": "local",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        { "id": "qwen2.5-coder-3b-instruct-q4_k_m", "name": "HelixLLM Local Coder", "contextWindow": 32768, "maxTokens": 4096 }
+      ]
+    }
+  }
+}

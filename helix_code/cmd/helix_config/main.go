@@ -18,6 +18,8 @@ import (
 
 	"dev.helix.code/cmd/helix_config/i18n"
 	"dev.helix.code/internal/config"
+	"dev.helix.code/internal/llm"
+	"dev.helix.code/internal/provider"
 )
 
 // translator resolves CONST-046 message IDs for every user-facing
@@ -161,6 +163,7 @@ func createRootCommand() *cobra.Command {
 	rootCmd.AddCommand(createMergeCommand())
 	rootCmd.AddCommand(createSearchCommand())
 	rootCmd.AddCommand(createBenchmarkCommand())
+	rootCmd.AddCommand(createRegenerateAliasesCommand())
 
 	return rootCmd
 }
@@ -483,6 +486,23 @@ func createBenchmarkCommand() *cobra.Command {
 	cmd.Flags().String("output", "", tr(ctx, "helix_config_flag_output_benchmark", nil))
 	cmd.Flags().Bool("compare", false, tr(ctx, "helix_config_flag_compare_benchmark", nil))
 	cmd.Flags().Bool("warmup", true, tr(ctx, "helix_config_flag_warmup_benchmark", nil))
+
+	return cmd
+}
+
+func createRegenerateAliasesCommand() *cobra.Command {
+	ctx := context.Background()
+	cmd := &cobra.Command{
+		Use:   "regenerate-aliases",
+		Short: tr(ctx, "helix_config_cmd_regenerate_aliases_short", nil),
+		Long:  tr(ctx, "helix_config_cmd_regenerate_aliases_long", nil),
+		Args:  cobra.NoArgs,
+		RunE:  runRegenerateAliasesCommand,
+	}
+
+	cmd.Flags().StringP("output", "o", ".helix/model-aliases.yaml", tr(ctx, "helix_config_flag_output_aliases", nil))
+	cmd.Flags().Bool("include-disabled", false, tr(ctx, "helix_config_flag_include_disabled", nil))
+	cmd.Flags().Bool("dry-run", false, tr(ctx, "helix_config_flag_dry_run", nil))
 
 	return cmd
 }
@@ -1882,4 +1902,191 @@ func createSchemaImportCommand() *cobra.Command {
 			fmt.Println(tr(ctx, "helix_config_schema_import_action", map[string]any{"File": args[0]}))
 		},
 	}
+}
+
+// Regenerate aliases command implementation
+
+func runRegenerateAliasesCommand(cmd *cobra.Command, args []string) error {
+	outputPath, _ := cmd.Flags().GetString("output")
+	includeDisabled, _ := cmd.Flags().GetBool("include-disabled")
+	dryRun, _ := cmd.Flags().GetBool("dry-run")
+
+	ctx := cmd.Context()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	fmt.Println(tr(ctx, "helix_config_regenerate_aliases_start", map[string]any{"Output": outputPath}))
+
+	// Load config to get LLM settings
+	if _, err := config.LoadHelixConfig(); err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+
+	// Load providers from viper (config.yaml providers section)
+	var providerConfigs []llm.ProviderConfigEntry
+	if err := viper.UnmarshalKey("llm.providers", &providerConfigs); err != nil {
+		fmt.Println(tr(ctx, "helix_config_regenerate_aliases_warn_providers", map[string]any{"Error": err.Error()}))
+		providerConfigs = []llm.ProviderConfigEntry{}
+	}
+
+	// Create ModelManager and register providers
+	modelManager := llm.NewModelManager()
+
+	// Enable cloud gate for local development (allow cloud providers)
+	llm.SetCloudEnabled(true)
+
+	for _, pc := range providerConfigs {
+		if !includeDisabled && !pc.Enabled {
+			continue
+		}
+
+		provider, err := llm.NewProvider(pc)
+		if err != nil {
+			fmt.Println(tr(ctx, "helix_config_regenerate_aliases_warn_provider", map[string]any{
+				"Type":  pc.Type,
+				"Error": err.Error(),
+			}))
+			continue
+		}
+
+		if err := modelManager.RegisterProvider(provider); err != nil {
+			fmt.Println(tr(ctx, "helix_config_regenerate_aliases_warn_register", map[string]any{
+				"Type":  pc.Type,
+				"Error": err.Error(),
+			}))
+			continue
+		}
+	}
+
+	// Create ProviderBridge to access live registry
+	bridge := provider.NewProviderBridge(modelManager)
+
+	// Get providers from live registry
+	providers, err := bridge.ListProvidersDirect(ctx)
+	if err != nil {
+		fmt.Println(tr(ctx, "helix_config_regenerate_aliases_warn_list", map[string]any{"Error": err.Error()}))
+		providers = []provider.ProviderEntry{}
+	}
+
+	// Generate aliases from live providers
+	aliases := generateAliasesFromProviders(providers, includeDisabled)
+
+	// Add static aliases from example config
+	staticAliases := loadStaticAliases()
+	aliases = mergeAliases(staticAliases, aliases)
+
+	// Create alias config
+	aliasConfig := &llm.AliasConfig{
+		Version:        "1.0",
+		FuzzyThreshold: 0.7,
+		Aliases:        aliases,
+	}
+
+	if dryRun {
+		fmt.Println(tr(ctx, "helix_config_regenerate_aliases_dry_run", nil))
+		data, _ := yaml.Marshal(aliasConfig)
+		fmt.Println(string(data))
+		return nil
+	}
+
+	// Ensure output directory exists
+	dir := filepath.Dir(outputPath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	// Save alias config
+	if err := llm.SaveAliasConfig(aliasConfig, outputPath); err != nil {
+		return fmt.Errorf("failed to save aliases: %w", err)
+	}
+
+	fmt.Println(tr(ctx, "helix_config_regenerate_aliases_done", map[string]any{"Count": len(aliases), "Path": outputPath}))
+	return nil
+}
+
+func generateAliasesFromProviders(providers []provider.ProviderEntry, includeDisabled bool) []*llm.ModelAlias {
+	var aliases []*llm.ModelAlias
+
+	for _, p := range providers {
+		if !includeDisabled && !p.Enabled {
+			continue
+		}
+
+		for _, model := range p.Models {
+			// Create alias from model name
+			aliasName := strings.ToLower(strings.ReplaceAll(model.Name, " ", "-"))
+			aliasName = strings.ReplaceAll(aliasName, ".", "-")
+			aliasName = strings.ReplaceAll(aliasName, "_", "-")
+
+			// Skip if alias already exists (prefer first provider)
+			exists := false
+			for _, a := range aliases {
+				if a.Alias == aliasName {
+					exists = true
+					break
+				}
+			}
+			if exists {
+				continue
+			}
+
+			aliases = append(aliases, &llm.ModelAlias{
+				Alias:       aliasName,
+				TargetModel: model.ID,
+				Provider:    string(p.Type),
+				Description: fmt.Sprintf("%s (%s)", model.Name, p.Name),
+				Tags:        []string{string(p.Type), strings.ToLower(model.Name)},
+			})
+		}
+	}
+
+	return aliases
+}
+
+func loadStaticAliases() []*llm.ModelAlias {
+	// Load from example config as fallback
+	configPaths := llm.GetConfigPaths()
+	var allAliases []*llm.ModelAlias
+
+	for _, path := range configPaths {
+		if _, err := os.Stat(path); err == nil {
+			config, err := llm.LoadAliasConfig(path)
+			if err == nil && config != nil {
+				allAliases = append(allAliases, config.Aliases...)
+			}
+		}
+	}
+
+	// If no configs found, use defaults
+	if len(allAliases) == 0 {
+		defaultConfig := llm.DefaultAliasConfig()
+		allAliases = defaultConfig.Aliases
+	}
+
+	return allAliases
+}
+
+func mergeAliases(static, live []*llm.ModelAlias) []*llm.ModelAlias {
+	aliasMap := make(map[string]*llm.ModelAlias)
+
+	// Add static aliases first (lower priority)
+	for _, a := range static {
+		key := strings.ToLower(strings.TrimSpace(a.Alias))
+		aliasMap[key] = a
+	}
+
+	// Add live aliases (higher priority - they override)
+	for _, a := range live {
+		key := strings.ToLower(strings.TrimSpace(a.Alias))
+		aliasMap[key] = a
+	}
+
+	// Convert back to slice
+	var merged []*llm.ModelAlias
+	for _, a := range aliasMap {
+		merged = append(merged, a)
+	}
+
+	return merged
 }

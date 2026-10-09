@@ -1131,7 +1131,42 @@ for f in "${staged[@]}"; do
   # SIGPIPE-safe: see pipe_grep's header. Using the raw pipeline here made
   # this sweep silently blind to every marker in a blob over ~12 KiB (the
   # HXC-309 boundary), i.e. it failed open in exactly the case it exists for.
-  pipe_grep "$blob" -qE -- 'MUTATED for paired|// always pass|# always pass|MUTATION-RESIDUE|_mutated_'
+  # §11.4.201 (assert the REAL condition) — a marker QUOTED inside markdown
+  # inline-code is a CITATION, not residue. The governance carriers document
+  # the marker vocabulary BY DESIGN: §11.4.84's own rule text in CLAUDE.md /
+  # AGENTS.md / QWEN.md / GEMINI.md / CRUSH.md / CONSTITUTION.md literally
+  # contains `MUTATED for paired` and `// always pass` as examples of what to
+  # look for, and §11.4.147 quotes `// always pass` again. Without this strip
+  # the sweep can NEVER allow a governance-doc commit: it conflates "this file
+  # DOCUMENTS a marker" with "this file CARRIES residue" and blocks every
+  # amendment to the very rules it enforces. Measured 2026-09-02: a six-carrier
+  # governance commit whose own diff contained ZERO marker literals was blocked
+  # on pre-existing quoted text at CLAUDE.md:1115/1117/1705.
+  #
+  # This is the same prose-vs-code confusion already recorded as finding F10
+  # above (a comment MENTIONING `trap ... EXIT` selected as the real trap).
+  #
+  # SCOPED TO .md ONLY, deliberately: in a shell script backticks are command
+  # substitution, so stripping them there could hide genuine residue. A marker
+  # sitting OUTSIDE backticks in a .md is still caught — proven by the paired
+  # mutation in scripts/tests/pre_commit_md_citation_meta_test.sh.
+  scan_blob="$blob"
+  case "$f" in
+    *.md) scan_blob=$(printf '%s' "$blob" | sed 's/`[^`]*`//g') ;;
+    # HTML EXPORTS OF THE SAME PROSE (2026-09-08, §11.4.201 carrier-vs-thing).
+    # The .md branch above strips backtick spans because an inline-code span is
+    # a QUOTE of the marker, not the marker. Rendering that same .md to .html
+    # turns every backtick span into <code>…</code>, which was NOT stripped —
+    # so §11.4.84's OWN documentation, which necessarily lists the marker
+    # literals it detects, blocked its own governance commit in five carrier
+    # exports while the identical .md text passed. Measured: CLAUDE.md 2 hits
+    # (allowed) vs CLAUDE.html 2 hits (BLOCKED), same sentence.
+    #
+    # The same guarantee the .md branch gives is preserved exactly: a marker
+    # sitting OUTSIDE a <code> span in an .html is still caught.
+    *.html) scan_blob=$(printf '%s' "$blob" | sed 's|<code>[^<]*</code>||g') ;;
+  esac
+  pipe_grep "$scan_blob" -qE -- 'MUTATED for paired|// always pass|# always pass|MUTATION-RESIDUE|_mutated_'
   marker_rc=$?
   if [ "$marker_rc" -gt 1 ]; then
     # grep could not answer (rc >= 2). Never let "the instrument failed" read

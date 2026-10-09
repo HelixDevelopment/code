@@ -1,0 +1,10 @@
+=== REQUEST ===
+POST http://127.0.0.1:42053/v1/chat/completions
+Content-Type: application/json
+Authorization: Bearer test-only-fullhttp-e2e-wire-facade-key-not-a-real-secret
+
+{"messages":[{"role":"user","content":"What is the weather in the city named exactly \"HELIXCODE-FULLHTTP-E2E-aba5098278a2\"? You MUST call the get_weather tool with that exact city string."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}}],"max_tokens":64,"temperature":0}
+
+=== RESPONSE ===
+HTTP 502
+{"error":{"message":"generation failed: API request failed: API request failed: Post \"http://localhost:18434/v1/chat/completions\": context deadline exceeded","type":"server_error"}}

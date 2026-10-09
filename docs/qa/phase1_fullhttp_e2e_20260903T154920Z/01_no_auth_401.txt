@@ -1,0 +1,9 @@
+=== REQUEST ===
+POST http://127.0.0.1:36327/v1/chat/completions
+Content-Type: application/json
+
+{"messages":[{"role":"user","content":"hi"}]}
+
+=== RESPONSE ===
+HTTP 401
+{"error":{"message":"missing or invalid API key: provide 'Authorization: Bearer \u003ckey\u003e' or 'x-api-key: \u003ckey\u003e'","type":"authentication_error"}}

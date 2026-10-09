@@ -1,0 +1,15 @@
+=== GET /v1/providers/openai/health ===
+{"error":"provider not found"}
+[HTTP_STATUS:404]
+
+=== GET /v1/providers/anthropic/health ===
+{"error":"provider not found"}
+[HTTP_STATUS:404]
+
+=== GET /v1/providers/groq/health (one of the 27 listed) ===
+{"circuit_breaker":{"failure_count":0,"last_failure":"2026-09-05T21:56:36.077938919+02:00","state":"closed"},"healthy":true,"provider":"groq"}
+[HTTP_STATUS:200]
+
+=== GET /v1/providers/groq (detail) ===
+{"id":"groq","limits":{"max_tokens":131072,"max_input_length":131072,"max_output_length":32768,"max_concurrent_requests":100},"metadata":{"fast_inference":"true","provider":"groq"},"name":"groq","supported_features":["chat","streaming","tools","vision","json_mode","audio_transcription","code_completion","fast_inference"],"supported_models":["meta-llama/llama-prompt-guard-2-86m","qwen/qwen3.6-27b","allam-2-7b","groq/compound-mini","qwen/qwen3.8-27b","openai/gpt-oss-safeguard-20b","openai/gpt-oss-120b","groq/compound","canopylabs/orpheus-arabic-saudi","canopylabs/orpheus-v1-english","openai/gpt-oss-20b","meta-llama/llama-prompt-guard-2-22m"],"supports_function_calling":true,"supports_streaming":true,"supports_vision":true}
+[HTTP_STATUS:200]

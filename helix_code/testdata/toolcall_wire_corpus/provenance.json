@@ -1,0 +1,175 @@
+{
+  "captured_at_utc": "2026-09-07T06:40:09Z",
+  "coder_endpoint": "http://localhost:18434",
+  "coder_model": "qwen2.5-coder-3b-instruct-q4_k_m",
+  "coder_weather_request": {
+    "max_tokens": 64,
+    "messages": [
+      {
+        "content": "What is the weather in the city named exactly \"HELIXCODE-TOOLCALL-CORPUS-6d1717a51948\"? You MUST call the get_weather tool with that exact city string.",
+        "role": "user"
+      }
+    ],
+    "model": "qwen2.5-coder-3b-instruct-q4_k_m",
+    "temperature": 0,
+    "tool_choice": "auto",
+    "tools": [
+      {
+        "function": {
+          "description": "Get the current weather for a city",
+          "name": "get_weather",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "concurrency": 16,
+  "files": {
+    "coder_models.json": {
+      "bytes": 686,
+      "sha256": "48fbc33142ea73aca18e564625005b6fc56dfeacca929a2d2967bd631d988f97"
+    },
+    "coder_weather_fenced_stop.json": {
+      "bytes": 781,
+      "sha256": "3ae82b493edbca0865d4ee37c18d6ef758816f5c74f5af33eed42deff163d45a"
+    },
+    "gateway_add_00.json": {
+      "bytes": 426,
+      "sha256": "23c3c55c8eedc94a8c4d482544f21379f5feb4cb3ee69378966cbbf34d54a20f"
+    },
+    "gateway_add_01.json": {
+      "bytes": 426,
+      "sha256": "41fe9f20a45c846ddbb0f7dfbf47a3edee8fecca1cb73c02c7354178751d0c9c"
+    },
+    "gateway_add_02.json": {
+      "bytes": 426,
+      "sha256": "0e975d3de9a7d8270bb485fea3281fefa67de06108a555c61b0f69331e5dcfa7"
+    },
+    "gateway_add_03.json": {
+      "bytes": 426,
+      "sha256": "9fd058e6f787c0a9320b98f67cb8220cfa6eda34557b7a069128d4dc5b454b41"
+    },
+    "gateway_add_04.json": {
+      "bytes": 426,
+      "sha256": "e641f35dedddb4efff746dccd52525fef6856fdde14c491a7db52bcf6402b203"
+    },
+    "gateway_add_05.json": {
+      "bytes": 426,
+      "sha256": "09f39df46bb9b2757dd3e60f508efc94ca2a5cec1d814066f303ffba043ee065"
+    },
+    "gateway_add_06.json": {
+      "bytes": 426,
+      "sha256": "2a91c7a24c3fac126f4ff089ba22a4dbe0a4de09fbbf7a6ec9ba423ceadfe965"
+    },
+    "gateway_add_07.json": {
+      "bytes": 426,
+      "sha256": "c7a3aa61fe888825a8718488e5e48978f51b76ec1395d097df86bf7b14c4a247"
+    },
+    "gateway_add_08.json": {
+      "bytes": 426,
+      "sha256": "8d263490f1d1b1e431c5b43986f9053ccc8bdf3a6d03cc0e989d0c9ae739efc0"
+    },
+    "gateway_add_09.json": {
+      "bytes": 426,
+      "sha256": "1fcc7cfcc6b172c743157c2be154c7d3094e2f7f9596db4176df17a016644caa"
+    },
+    "gateway_add_10.json": {
+      "bytes": 426,
+      "sha256": "0a0791235178ed73647bfedd3a8d0802c27601123161dbb5a892dd3d4664ab90"
+    },
+    "gateway_add_11.json": {
+      "bytes": 426,
+      "sha256": "d8525ce3c4abb7f85f051dcd1a42c554700bc04851ab69a29b976bd7f475a1e8"
+    },
+    "gateway_add_12.json": {
+      "bytes": 426,
+      "sha256": "366b025e92ae9ba94f872aa0cf89616e9b43121ffd1b8001b63549e48592be14"
+    },
+    "gateway_add_13.json": {
+      "bytes": 426,
+      "sha256": "182dff98c257bc8efee10373541d0f3fa07f7439fbcd2b75abf74c998bfa953d"
+    },
+    "gateway_add_14.json": {
+      "bytes": 426,
+      "sha256": "1d07a24b03ae11cbefc8e0be6d81bc47e6dfac400bc6ecbd4890d847a74e9cc0"
+    },
+    "gateway_add_15.json": {
+      "bytes": 426,
+      "sha256": "07cf5db0ec1f1241c6d04738ba688a7e14e0343737f27c7d9606ab3028ebca6a"
+    },
+    "gateway_models.json": {
+      "bytes": 263,
+      "sha256": "d568131906165f41c61408988fd93c48e8291ada14277415ea566b42c5e57236"
+    },
+    "gateway_weather_no_tool_calls.json": {
+      "bytes": 594,
+      "sha256": "a991203833936ab84bdd205b7c1f1261a675c2f9710dec3a960d6715c5b27ee6"
+    },
+    "gateway_weather_tool_calls.json": {
+      "bytes": 471,
+      "sha256": "13ac18c0eede97b4a5bfae27f4aa568f75e34322fe9ba3791db089f06fe27098"
+    }
+  },
+  "frozen_nonce": "HELIXCODE-TOOLCALL-CORPUS-6d1717a51948",
+  "gateway_endpoint": "https://127.0.0.1:8443/v1",
+  "gateway_model": "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190",
+  "gateway_weather_request": {
+    "max_tokens": 64,
+    "messages": [
+      {
+        "content": "What is the weather in the city named exactly \"HELIXCODE-TOOLCALL-CORPUS-6d1717a51948\"? You MUST call the get_weather tool with that exact city string.",
+        "role": "user"
+      }
+    ],
+    "model": "helixllm-anton-qwen2-5-coder-3b-instruct-q4_k_m-f6771589d190",
+    "temperature": 0,
+    "tool_choice": "auto",
+    "tools": [
+      {
+        "function": {
+          "description": "Get the current weather for a city",
+          "name": "get_weather",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "nondeterminism_measurement": {
+    "finish_reason_length_tool_calls_absent": 4,
+    "identical": true,
+    "max_tokens": 64,
+    "requests": 12,
+    "temperature": 0,
+    "tool_calls_present": 8,
+    "verdict": "NON-DETERMINISTIC (2 distinct outcomes, identical request)"
+  },
+  "purpose": "Real captured OpenAI-compatible wire responses used by the DETERMINISTIC tool-calling replay guards. Recorded live; never hand-authored. Regenerate with helix_code/testdata/toolcall_wire_corpus/capture.py.",
+  "retries": {
+    "gateway_add_attempts_total": 23,
+    "gateway_add_requests_wanted": 16,
+    "gateway_weather_attempts": 4
+  },
+  "schema": 1
+}

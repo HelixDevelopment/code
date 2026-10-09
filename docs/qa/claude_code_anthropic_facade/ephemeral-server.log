@@ -1,0 +1,53 @@
+🚀 Starting HelixCode Server v3.0.0
+📅 Build: 2026-09-04_11:45:00
+🔧 Commit: 317492e0
+
+INFO: Using config file: /home/milosvasic/Projects/helix_code/docs/qa/claude_code_anthropic_facade/ephemeral-config.yaml
+WARN: config key llm.max_retries has no effect in this build — declared on LLMConfig but no caller reads it yet; LLM retry behaviour is not governed by this value. Setting it changes nothing.
+WARN: config key llm.providers has no effect in this build — no field on LLMConfig; the whole provider block (endpoints, enabled flags, api keys, parameters) is discarded. Providers are configured elsewhere. Setting it changes nothing.
+WARN: config key llm.selection has no effect in this build — no field on LLMConfig; provider selection strategy, fallback and health-check interval are discarded. Setting it changes nothing.
+WARN: config key llm.timeout has no effect in this build — declared on LLMConfig but no caller reads it yet; per-request LLM timeouts are not governed by this value. Setting it changes nothing.
+WARN: config key notifications.channels.discord.timeout has no effect in this build — declared on DiscordNotificationConfig but NewDiscordChannel takes no timeout; the value parses and is then ignored. Setting it changes nothing.
+WARN: config key notifications.channels.email.recipients has no effect in this build — declared on EmailNotificationConfig but NewEmailChannel takes no recipient list — mail is addressed from the SMTP account — so the whole recipients subtree parses and is then ignored. Setting it changes nothing.
+WARN: config key notifications.channels.email.smtp.tls has no effect in this build — declared on EmailSMTPNotificationConfig but EmailChannel negotiates its own transport security and reads no flag; the value changes nothing. Setting it changes nothing.
+WARN: config key notifications.channels.email.timeout has no effect in this build — declared on EmailNotificationConfig but NewEmailChannel takes no timeout; the value parses and is then ignored. Setting it changes nothing.
+WARN: config key notifications.channels.slack.timeout has no effect in this build — declared on SlackNotificationConfig but NewSlackChannel takes no timeout; the value parses and is then ignored. Setting it changes nothing.
+WARN: config key notifications.channels.telegram.timeout has no effect in this build — declared on TelegramNotificationConfig but NewTelegramChannel takes no timeout; the value parses and is then ignored. Setting it changes nothing.
+2026/09/05 23:13:47 ℹ️  Infra auto-boot disabled — using configured infrastructure
+2026/09/05 23:13:47 ⚠️  Failed to initialize database (continuing without): failed to ping database: failed to connect to `user=helix database=helixcode_prod`: 127.0.0.1:5432 (localhost): server error: FATAL: role "helix" does not exist (SQLSTATE 28000)
+2026/09/05 23:13:47 ✅ Loaded 1 plugin(s) into the server plugin registry
+2026/09/05 23:13:47 🌐 Starting HTTP server on 127.0.0.1
+2026/09/05 23:13:47 🚀 Starting HelixCode server on 127.0.0.1:40181
+[GIN] 2026/09/05 - 23:13:48 | 200 |   46.1µs |       127.0.0.1 | GET      "/health"
+2026/09/05 23:13:48 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:48 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:48 | 200 |  90.09ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:48 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:48 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:48 | 200 |  57.69ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:48 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:48 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:48 | 200 | 130.66ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:48 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:48 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:48 | 200 |  57.22ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:48 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 | 586.54ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 |  67.08ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 | 144.98ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 | 158.42ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 |   61.9ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 ✅ helixllm provider initialized with 1 models
+2026/09/05 23:13:49 ✅ helixllm provider closed
+[GIN] 2026/09/05 - 23:13:49 | 200 |  65.81ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+2026/09/05 23:13:49 🛑 Shutting down server...
+2026/09/05 23:13:49 ✅ Server exited properly

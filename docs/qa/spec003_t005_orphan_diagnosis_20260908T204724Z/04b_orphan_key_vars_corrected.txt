@@ -1,0 +1,58 @@
+=== 04b: orphan key-var NAMES, corrected instrument — UTC 2026-09-08T20:53:01Z ===
+INSTRUMENT ERROR RECORDED (§11.4.273): 04a searched CMA_PROVIDER_KEY_VAR.
+The real field is CMA_PROVIDER_KEYVAR (no underscore). 04a returned <none> for
+all 20 — a confident, plausible, WRONG zero. Controls below prove this one sees.
+
+--- POSITIVE CONTROL: a field known present in deepseek.env ---
+1
+positive_control_rc=0
+--- NEGATIVE CONTROL: a fabricated field that must NOT be found ---
+0
+negative_control_rc=1 (1 = correctly absent)
+
+--- per-orphan key-var NAME (the .env stores a NAME here, never a secret; see file header) ---
+chutes               ENV=no  KEYVAR=<status-only, no env file>
+deepseek             ENV=yes KEYVAR='DEEPSEEK_API_KEY'
+fireworks-ai         ENV=no  KEYVAR=<status-only, no env file>
+huggingface          ENV=yes KEYVAR='HUGGINGFACE_API_KEY'
+hyper                ENV=yes KEYVAR='HYPER_API_KEY'
+inference            ENV=no  KEYVAR=<status-only, no env file>
+kc-for-coding        ENV=yes KEYVAR='ApiKey_Kimi'
+kc-for-coding2       ENV=yes KEYVAR='ApiKey_Kimi'
+kilo                 ENV=yes KEYVAR='KILO_API_KEY'
+novita-ai            ENV=no  KEYVAR=<status-only, no env file>
+nvidia               ENV=yes KEYVAR='NVIDIA_API_KEY'
+nvidia2              ENV=yes KEYVAR='NVIDIA_API_KEY'
+nvidia3              ENV=yes KEYVAR='NVIDIA_API_KEY'
+nvidia4              ENV=yes KEYVAR='NVIDIA_API_KEY'
+opencode             ENV=yes KEYVAR='ApiKey_Opencode_Zen'
+openrouter           ENV=yes KEYVAR='OPENROUTER_API_KEY'
+openrouter2          ENV=yes KEYVAR='OPENROUTER_API_KEY'
+openrouter3          ENV=yes KEYVAR='OPENROUTER_API_KEY'
+openrouter4          ENV=yes KEYVAR='OPENROUTER_API_KEY'
+openrouter5          ENV=yes KEYVAR='OPENROUTER_API_KEY'
+poe                  ENV=yes KEYVAR='ApiKey_Poe'
+sarvam               ENV=yes KEYVAR='SARVAM_API_KEY'
+siliconflow          ENV=no  KEYVAR=<status-only, no env file>
+tencent-tokenhub     ENV=no  KEYVAR=<status-only, no env file>
+upstage              ENV=no  KEYVAR=<status-only, no env file>
+xiaomi               ENV=no  KEYVAR=<status-only, no env file>
+zai                  ENV=yes KEYVAR='ZHIPU_API_KEY'
+zai-coding-plan      ENV=yes KEYVAR='ZAI_API_KEY'
+--- distinct key-var names across the .env-carrying orphans ---
+'ApiKey_Kimi'
+'ApiKey_Opencode_Zen'
+'ApiKey_Poe'
+'DEEPSEEK_API_KEY'
+'HUGGINGFACE_API_KEY'
+'HYPER_API_KEY'
+'KILO_API_KEY'
+'NVIDIA_API_KEY'
+'OPENROUTER_API_KEY'
+'SARVAM_API_KEY'
+'ZAI_API_KEY'
+'ZHIPU_API_KEY'
+distinct_key_var_count=12
+
+--- CROSS-CHECK: which of those names does present_key_vars currently return? ---
+overlap_count=0

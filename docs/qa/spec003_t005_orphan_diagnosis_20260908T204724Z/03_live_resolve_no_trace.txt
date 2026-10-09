@@ -1,0 +1,42 @@
+=== 03: LIVE resolve, trace UNSET (uninstrumented behaviour) — UTC 2026-09-08T20:52:01Z ===
+--- host at run time ---
+ 22:52:01 up 3 days,  9:01,  3 users,  load average: 11.25, 17.33, 23.39
+
+driver_rc=0
+--- stderr ---
+[33m[cma warn][0m offline: using cached catalog (/home/milosvasic/.local/share/claude-multi-account/providers/models.dev.cache.json)
+[33m[cma warn][0m helixcoder: 'helixcoder' has an endpoint but no nameable model — http://127.0.0.1:18434/v1 named no model and none is pinned, so there is nothing to point an alias at
+--- stdout ---
+RECORDS_TOTAL=25
+RECORDS_RESOLVED=23
+RESOLVED_IDS=[chutes1 chutes2 chutes3 chutes4 chutes5 helixagent helixagent-native helixllm-gateway hyper1 hyper2 hyper3 hyper4 hyper5 opencode-go1 opencode-go2 opencode-go3 opencode-go4 opencode-go5 opencode-zen1 opencode-zen2 opencode-zen3 opencode-zen4 opencode-zen5]
+=== cma_find_orphans output ===
+chutes
+deepseek
+fireworks-ai
+helixcoder
+huggingface
+hyper
+inference
+kc-for-coding
+kc-for-coding2
+kilo
+novita-ai
+nvidia
+nvidia2
+nvidia3
+nvidia4
+opencode
+openrouter
+openrouter2
+openrouter3
+openrouter4
+openrouter5
+poe
+sarvam
+siliconflow
+tencent-tokenhub
+upstage
+xiaomi
+zai
+zai-coding-plan

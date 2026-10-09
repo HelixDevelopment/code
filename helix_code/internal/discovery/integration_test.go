@@ -1,6 +1,7 @@
 package discovery
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -153,16 +154,17 @@ func TestServiceExpirationFlow(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "expiring-service", result.ServiceInfo.Name)
 
-	// Wait for service to expire
-	time.Sleep(200 * time.Millisecond)
+	// Expiry is completed by the background cleanupLoop. Wait for that OUTCOME
+	// rather than sleeping a guessed 200ms and hoping the loop was scheduled.
+	require.Eventually(t, func() bool {
+		_, gErr := registry.Get("expiring-service")
+		return errors.Is(gErr, ErrServiceNotFound)
+	}, 30*time.Second, 5*time.Millisecond,
+		"expiring-service was never removed by cleanupLoop")
 
 	// Service should no longer be discoverable
 	_, err = client.Discover("expiring-service")
 	assert.Error(t, err)
-
-	// Verify service was cleaned up from registry
-	_, err = registry.Get("expiring-service")
-	assert.ErrorIs(t, err, ErrServiceNotFound)
 }
 
 // TestHeartbeatKeepsServiceAlive tests that heartbeats prevent expiration
@@ -187,9 +189,12 @@ func TestHeartbeatKeepsServiceAlive(t *testing.T) {
 	err := client.Register(info)
 	require.NoError(t, err)
 
-	// Send heartbeats periodically to keep service alive
+	// Send heartbeats periodically to keep service alive.
 	done := make(chan bool)
+	var beatWG sync.WaitGroup
+	beatWG.Add(1)
 	go func() {
+		defer beatWG.Done()
 		ticker := time.NewTicker(100 * time.Millisecond)
 		defer ticker.Stop()
 
@@ -203,7 +208,15 @@ func TestHeartbeatKeepsServiceAlive(t *testing.T) {
 		}
 	}()
 
-	// Wait for multiple cleanup cycles
+	// NEEDS-REDESIGN (deliberately still a sleep): this asserts a REAL-TIME
+	// DEADLINE property — "a service heartbeaten every 100ms never exceeds its
+	// 200ms TTL". Polling cannot rescue it: under CPU load THIS TEST'S OWN
+	// heartbeat goroutine can be starved past the TTL, so the service really
+	// does expire and the failure is genuine-but-irrelevant. Making it
+	// deterministic needs an injectable clock on ServiceRegistry
+	// (ServiceInfo.IsExpired hardcodes time.Since), which is a PRODUCTION
+	// design change, not a test fix — so it is surfaced here, not smuggled in.
+	// This is the site that failed the loaded pre-fix baseline at line ~211.
 	time.Sleep(300 * time.Millisecond)
 
 	// Service should still be alive due to heartbeats
@@ -211,15 +224,19 @@ func TestHeartbeatKeepsServiceAlive(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "heartbeat-service", result.ServiceInfo.Name)
 
-	// Stop heartbeats
+	// Stop heartbeats and WAIT for the goroutine to actually exit. Without the
+	// join, `close(done)` races the ticker branch: one more Heartbeat can land
+	// after we think beating stopped, refreshing the TTL under the assertion.
 	close(done)
+	beatWG.Wait()
 
-	// Wait for service to expire
-	time.Sleep(250 * time.Millisecond)
-
-	// Service should now be gone
-	_, err = client.Discover("heartbeat-service")
-	assert.Error(t, err)
+	// Now that no further heartbeat can arrive, expiry is monotone — wait for
+	// the outcome instead of sleeping a guessed 250ms.
+	require.Eventually(t, func() bool {
+		_, dErr := client.Discover("heartbeat-service")
+		return dErr != nil
+	}, 30*time.Second, 5*time.Millisecond,
+		"heartbeat-service never expired after heartbeats stopped")
 }
 
 // TestConcurrentServiceOperations tests thread-safe concurrent operations

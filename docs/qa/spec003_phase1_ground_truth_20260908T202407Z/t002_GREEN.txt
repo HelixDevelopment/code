@@ -1,0 +1,56 @@
+== census_query.sh (§11.4.273 control-needled census) ==
+
+  • the tool exists and is executable
+    [PASS] census_query.sh present and executable
+
+  • a query with both controls satisfied emits its result and exits 0
+    [PASS] exit 0: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] verdict line is emitted: 'CENSUS happy:'
+    [PASS] counts all three planted matches: 'matches=3'
+
+  • an ABSENT positive needle REFUSES the result and exits CANNOT_RUN (2)
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] result is REFUSED, not merely annotated: 'matches=' absent
+    [PASS] names which control failed: 'POSITIVE CONTROL'
+
+  • a FOUND negative needle REFUSES the result and exits CANNOT_RUN (2)
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] result is REFUSED: 'matches=' absent
+    [PASS] names which control failed: 'NEGATIVE CONTROL'
+
+  • a genuine zero is REPORTABLE — 'found nothing' is not 'could not look'
+    [PASS] exit 0: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] an honest zero is emitted, not refused: 'matches=0'
+
+  • BOTH controls are mandatory — omitting either is CANNOT_RUN (2)
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] refusal names the missing flag: '--negative'
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] refusal names the missing flag: '--positive'
+
+  • controls are REPEATABLE and ALL must hold (§11.4.273(f))
+    [PASS] exit 0: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] all-members-present case still reports: 'matches=3'
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] one absent member REFUSES the whole result: 'matches=' absent
+    [PASS] names the member that failed: 'needle_that_is_not_there'
+
+  • an OUT-OF-SCOPE positive control is distinguished from a blind instrument
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] distinguishes out-of-scope from unseeable: 'OUT OF SCOPE'
+
+  • --expect-count mismatch is a FINDING (1), not a pass and not an error
+    [PASS] exit 1: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] the measured count is still reported: 'matches=3'
+    [PASS] exit 0: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+
+  • a missing tree is CANNOT_RUN (2), never an empty result
+    [PASS] exit 2: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] no count from a tree that is not there: 'matches=' absent
+
+  • the verdict line records that BOTH controls were actually checked
+    [PASS] exit 0: /home/milosvasic/Projects/helix_code/constitution/scripts/mechanical/tests/../census_query.sh
+    [PASS] positive control count is published: 'positive=1/1'
+    [PASS] negative control count is published: 'negative=0/1'
+
+31 passed, 0 failed

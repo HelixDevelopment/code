@@ -62,7 +62,10 @@ func realDBConfigFromEnv() (database.Config, bool) {
 		Host:     host,
 		Port:     port,
 		User:     firstNonEmpty(os.Getenv("DB_USER"), os.Getenv("HELIX_DATABASE_USER"), "helixcode"),
-		Password: firstNonEmpty(os.Getenv("DB_PASSWORD"), os.Getenv("HELIX_DATABASE_PASSWORD"), "helixcode_test_password"),
+		// HXC-168: no literal default — an unset/wrong password surfaces as a
+		// ping/connect failure below, which SKIPs honestly (§11.4.3) rather
+		// than silently authenticating with a (previously leaked) value.
+		Password: firstNonEmpty(os.Getenv("DB_PASSWORD"), os.Getenv("HELIX_DATABASE_PASSWORD")),
 		DBName:   firstNonEmpty(os.Getenv("DB_NAME"), os.Getenv("HELIX_DATABASE_NAME"), "helixcode_test"),
 		SSLMode:  firstNonEmpty(os.Getenv("DB_SSLMODE"), os.Getenv("HELIX_DATABASE_SSL_MODE"), "disable"),
 	}, true

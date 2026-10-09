@@ -6530,7 +6530,7 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: helix
-      POSTGRES_PASSWORD: helixpass
+      POSTGRES_PASSWORD: ${HELIX_DATABASE_PASSWORD:?set HELIX_DATABASE_PASSWORD in .env (run ./setup.sh, or cp .env.example .env)}
       POSTGRES_DB: helixcode_test
     ports:
       - "5433:5432"

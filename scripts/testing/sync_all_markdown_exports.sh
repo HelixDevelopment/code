@@ -85,10 +85,50 @@ command -v weasyprint >/dev/null 2>&1 || HAVE_WEASY=0
 HAVE_MMDC=1
 command -v mmdc >/dev/null 2>&1 || HAVE_MMDC=0
 
+# Browser resolution for mmdc (§11.4.6: probe, never assume).
+#
+# mmdc drives headless Chromium via puppeteer. Two things routinely break that
+# on a hardened host, and both were observed here:
+#
+#   1. puppeteer's bundled browser is often absent, because npm refuses to run
+#      its postinstall script without an explicit --allow-scripts.
+#   2. Even with a browser present, Chromium REFUSES TO START on distros that
+#      disable unprivileged user namespaces via AppArmor (Ubuntu 23.10+):
+#        FATAL zygote_host_impl_linux.cc: No usable sandbox!
+#
+# Either one makes every Mermaid block fall back to RAW SOURCE in the shipped
+# HTML/PDF -- the exact §11.4.168 defect this pipeline exists to prevent
+# (measured: 19 lines of readable `graph LR` source and 0 embedded images in a
+# generated PDF).
+#
+# We therefore (a) reuse an already-installed Chromium when puppeteer has none,
+# preferring an operator override, and (b) pass --no-sandbox.
+#
+# On --no-sandbox: this Chromium renders ONLY Mermaid source already committed
+# to this repository's own Markdown. It opens no remote URL and consumes no
+# untrusted input, so the sandbox is not standing between anything here. That is
+# what makes the flag acceptable in THIS pipeline and not a general default.
+MERMAID_PUPPETEER_CFG=""
+if [ "$HAVE_MMDC" -eq 1 ] && [ -z "${PUPPETEER_EXECUTABLE_PATH:-}" ]; then
+  for _cand in \
+    "$HOME"/.cache/puppeteer/chrome/*/chrome-linux64/chrome \
+    "$HOME"/.cache/ms-playwright/chromium-*/chrome-linux64/chrome \
+    "$HOME"/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \
+    /usr/bin/chromium /usr/bin/chromium-browser /usr/bin/google-chrome; do
+    if [ -x "$_cand" ]; then
+      export PUPPETEER_EXECUTABLE_PATH="$_cand"
+      break
+    fi
+  done
+  unset _cand
+fi
+
 MERMAID_TMPROOT=""
 if [ "$HAVE_MMDC" -eq 1 ]; then
   MERMAID_TMPROOT="$(mktemp -d "${TMPDIR:-/tmp}/sync_md_mermaid.XXXXXX")"
   trap 'rm -rf "$MERMAID_TMPROOT"' EXIT
+  MERMAID_PUPPETEER_CFG="$MERMAID_TMPROOT/puppeteer.json"
+  printf '{"args":["--no-sandbox","--disable-dev-shm-usage"]}\n' > "$MERMAID_PUPPETEER_CFG"
 fi
 
 # A doc "has Mermaid" if it contains a ```mermaid (or :::mermaid) fence.
@@ -124,7 +164,7 @@ preprocess_mermaid() {
       in_block=0
       local png="$workdir/block_${idx}.png"
       local mlog="$workdir/block_${idx}.mmdc.log"
-      if mmdc -i "$block_file" -o "$png" -b white >"$mlog" 2>&1 && [ -f "$png" ]; then
+      if mmdc -i "$block_file" -o "$png" -b white -p "$MERMAID_PUPPETEER_CFG" >"$mlog" 2>&1 && [ -f "$png" ]; then
         printf '\n![Mermaid diagram %d](%s)\n\n' "$idx" "$png" >> "$out"
       else
         echo "WARN §11.4.6/§11.4.168: mmdc failed to render Mermaid block #$idx in $src" \
@@ -265,9 +305,28 @@ for src in "${SOURCES[@]}"; do
     if timeout "$TIMEOUT_SECS" weasyprint "$html" "$pdf" >/dev/null 2>&1; then
       rendered=$((rendered+1))
     else
-      # weasyprint emits benign warnings on stderr but may still exit 0;
-      # a real failure (timeout / no output) is caught here.
-      if [ -f "$pdf" ]; then rendered=$((rendered+1)); else
+      _wp_rc=$?
+      # FALSE-SUCCESS FIX (2026-09-08, §11.4.201).
+      #
+      # This fallback used to ask `[ -f "$pdf" ]`. Existence is NOT freshness:
+      # when weasyprint TIMED OUT, the STALE pdf from a previous run was still
+      # on disk, so the run counted it as `rendered`. Measured: a batch of 8
+      # documents reported `rendered=16 failed=0` while 2 pdfs were never
+      # written and kept an eight-day-old mtime — and because those two were
+      # regenerations of a CREDENTIAL SCRUB, the stale copies went on handing
+      # the credential over under a green summary line. Absence of a fresh
+      # render was indistinguishable from success.
+      #
+      # A timeout is now ALWAYS a failure (124 is timeout(1)'s own code), and
+      # the fallback requires the pdf to be NEWER than the html it renders,
+      # never merely present.
+      if [ "$_wp_rc" -eq 124 ]; then
+        echo "FAIL pdf (timeout after ${TIMEOUT_SECS}s): $src" >&2; failed=$((failed+1))
+      elif [ -f "$pdf" ] && [ ! "$pdf" -ot "$html" ]; then
+        # weasyprint emits benign warnings and can exit non-zero while still
+        # having written a CURRENT pdf; that case is a genuine pass.
+        rendered=$((rendered+1))
+      else
         echo "FAIL pdf: $src" >&2; failed=$((failed+1))
       fi
     fi

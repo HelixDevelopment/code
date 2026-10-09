@@ -1,0 +1,8 @@
+=== GET http://127.0.0.1:11434/api/tags (Ollama) ===
+{"models":[{"name":"nomic-embed-text:latest","model":"nomic-embed-text:latest","modified_at":"2026-09-05T17:31:13.167393414+02:00","size":274302450,"digest":"0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f","details":{"parent_model":"","format":"gguf","family":"nomic-bert","families":["nomic-bert"],"parameter_size":"137M","quantization_level":"F16","context_length":2048,"embedding_length":768},"capabilities":["embedding"]},{"name":"qwen2.5:3b-instruct-q4_K_M","model":"qwen2.5:3b-instruct-q4_K_M","modified_at":"2026-09-05T14:59:01.492456262+02:00","size":1929912432,"digest":"357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b","details":{"parent_model":"","format":"gguf","family":"qwen2","families":["qwen2"],"parameter_size":"3.1B","quantization_level":"Q4_K_M","context_length":32768,"embedding_length":2048},"capabilities":["completion","tools"]}]}
+[HTTP_STATUS:200]
+
+=== GET http://127.0.0.1:11434/v1/models (OpenAI-compat check) ===
+{"object":"list","data":[{"id":"nomic-embed-text:latest","object":"model","created":1788622273,"owned_by":"library"},{"id":"qwen2.5:3b-instruct-q4_K_M","object":"model","created":1788613141,"owned_by":"library"}]}
+
+[HTTP_STATUS:200]

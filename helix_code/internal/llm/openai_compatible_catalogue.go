@@ -301,7 +301,14 @@ func NewHostedOpenAICompatibleProvider(h HostedOpenAICompatible) (Provider, erro
 		return nil, fmt.Errorf("hosted provider %q: no present non-placeholder key in env aliases %v",
 			h.Name, h.KeyEnvAliases)
 	}
-	return NewOpenAICompatibleProvider(h.Name, OpenAICompatibleConfig{
+	// Assign, check, and return an EXPLICIT nil on the error path. Do NOT
+	// forward this call directly: NewOpenAICompatibleProvider returns the
+	// CONCRETE *OpenAICompatibleProvider while this function returns the
+	// Provider INTERFACE, so a direct `return NewOpenAICompatibleProvider(...)`
+	// boxes a nil POINTER into a non-nil INTERFACE on failure. Callers guarding
+	// with `if p != nil` would then hold a Provider whose underlying pointer is
+	// nil and panic on the first method call.
+	p, err := NewOpenAICompatibleProvider(h.Name, OpenAICompatibleConfig{
 		BaseURL:          h.BaseURL,
 		APIKey:           apiKey,
 		Timeout:          120 * time.Second,
@@ -309,4 +316,8 @@ func NewHostedOpenAICompatibleProvider(h HostedOpenAICompatible) (Provider, erro
 		ModelEndpoint:    h.ModelEndpoint,
 		ChatEndpoint:     h.ChatEndpoint,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
 }

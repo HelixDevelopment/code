@@ -2,180 +2,53 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc 3.10" />
+  <meta name="generator" content="pandoc 3.11" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Issues_Summary</title>
   <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">Issues_Summary</h1>
+</header>
 <h1 id="issues_summary">Issues_Summary</h1>
 <p>Open workable items (current_location = Issues), regenerated from the
 SQLite single-source-of-truth (§11.4.12).</p>
@@ -191,33 +64,38 @@ SQLite single-source-of-truth (§11.4.12).</p>
 <tbody>
 <tr>
 <td>Bug</td>
+<td>In progress</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Bug</td>
 <td>Operator-blocked</td>
 <td>1</td>
 </tr>
 <tr>
 <td>Bug</td>
 <td>Queued</td>
-<td>50</td>
+<td>108</td>
 </tr>
 <tr>
 <td>Bug</td>
 <td>Ready for testing</td>
-<td>1</td>
+<td>4</td>
 </tr>
 <tr>
-<td>Task</td>
-<td>Operator-blocked</td>
+<td>Bug</td>
+<td>Reopened</td>
 <td>1</td>
 </tr>
 <tr>
 <td>Task</td>
 <td>Queued</td>
-<td>14</td>
+<td>20</td>
 </tr>
 <tr>
 <td><strong>TOTAL</strong></td>
 <td></td>
-<td><strong>67</strong></td>
+<td><strong>136</strong></td>
 </tr>
 </tbody>
 </table>
@@ -549,32 +427,17 @@ in writing: either keep the copy and properly maintain and build it, or
 remove it and its broken startup entry, or replace it with a reference
 to the upstream hosted service. Because deleting shipped components
 requires approval, the decision must be put to the operator rather than
-taken unilaterally.</td>
-</tr>
-<tr>
-<td>HXC-172</td>
-<td>Task</td>
-<td>Operator-blocked</td>
-<td>High</td>
-<td>A small companion service we wrote ourselves is packaged into a
-container and started as part of the standard deployment, and it carries
-three known security warnings in its supporting packages, two of them
-rated high. Unlike the great bulk of the reported warnings, these have
-no mitigating evidence in either direction: we cannot say the code is
-unshipped, because it demonstrably ships, and no analysis has been run
-to establish whether the affected functionality is ever exercised. This
-matters because it is the one place in the whole review where something
-we genuinely run carries unassessed risk, which makes it far more
-deserving of attention than its small count suggests. One of the three
-is not really an upgrade problem at all: it concerns a protective
-setting that is switched off unless explicitly enabled, so updating the
-package without also turning the protection on would leave the exposure
-in place while appearing to resolve it. Users of any deployment running
-this service benefit. The expected outcome is a reachability assessment
-of the three warnings, the two straightforward package updates applied,
-the protective setting explicitly verified as enabled in our
-configuration rather than assumed, and the service rebuilt and confirmed
-working.</td>
+taken unilaterally. HXC-225 tracked this identical component
+(submodules/helix_agent/mcp-servers/GitMCP) under a separately-minted
+ticket id with no Duplicate-of link back to this one — a §11.4.214
+recurrence-links-not-mints violation. HXC-225 has been consolidated into
+this ticket: it is closed Obsolete (reason duplicate-of, superseding
+item HXC-171) per §11.4.90, citing the investigation evidence at
+docs/qa/hxc225_gitmcp_investigation_20260807T151320Z/ANALYSIS.md, which
+identifies both tickets as tracking the same vendored copy of
+idosal/git-mcp. The operator has approved removal of this vendored copy
+per §11.4.122 (approval granted 2026-09-02); this item is no longer
+awaiting an operator decision.</td>
 </tr>
 <tr>
 <td>HXC-175</td>
@@ -993,28 +856,6 @@ true, because a claim of proof that cannot be produced on demand is
 worse than no claim at all.</td>
 </tr>
 <tr>
-<td>HXC-225</td>
-<td>Task</td>
-<td>Queued</td>
-<td>Medium</td>
-<td>A single bundled helper component inside the agent project is
-responsible for 140 of the roughly 208 security advisories reported
-against the whole project — about two thirds of the total — and it
-entered the codebase without ever being discussed. Nobody has
-established what it does, whether we wrote it or copied it in, whether
-anything we ship actually uses it, or whether removing it would cost us
-anything. Until those questions are answered the headline advisory count
-is misleading: it reads as though the agent project carries enormous
-risk, when in reality the great bulk of it sits in one component that
-may not even be part of what we deliver. The work is to determine the
-component’s origin and purpose, whether it is reachable from anything we
-build or run, and then to make a decision about it — keep and maintain,
-upgrade its dependencies, or remove it — and record which was chosen and
-why. The decision matters more than the individual advisories, because
-upgrading dependencies inside a component we do not need would be effort
-spent on nothing.</td>
-</tr>
-<tr>
 <td>HXC-226</td>
 <td>Bug</td>
 <td>Queued</td>
@@ -1040,8 +881,8 @@ name which mirror it came from.</td>
 <tr>
 <td>HXC-227</td>
 <td>Bug</td>
-<td>Queued</td>
-<td>—</td>
+<td>Reopened</td>
+<td>Critical</td>
 <td>A design document committed forty-eight days ago contains, in its
 API-keys section, what appears to be a genuine access key for an
 external model provider rather than a placeholder. The section is headed
@@ -1068,7 +909,7 @@ commit introducing a value of this shape.</td>
 <td>HXC-231</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>High</td>
 <td>The HelixLLM gateway downloads large AI model files from an external
 website before it starts accepting network connections. During that
 download the operating system reports the service as running and
@@ -1089,7 +930,7 @@ state while the downloads are still in progress.</td>
 <td>HXC-232</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Medium</td>
 <td>HelixAgent expects two tables to exist in its database, named
 distributed_locks and agent_instances, but neither of them has ever been
 created. There is no setup script anywhere in the project that creates
@@ -1110,7 +951,7 @@ be guessed.</td>
 <td>HXC-234</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Medium</td>
 <td>On startup HelixAgent tries to build and launch a set of optional
 plug-in tool servers, known as MCP servers, using the container engine.
 The build fails: two of the packages inside the container fail during
@@ -1130,7 +971,7 @@ installation inside those container build files.</td>
 <td>HXC-235</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>High</td>
 <td>The HelixLLM gateway provides a feature that finds documents by
 meaning rather than by exact wording. On startup it reports that no real
 language model is configured for this purpose, so it has fallen back to
@@ -1150,7 +991,7 @@ or whether the feature should refuse to answer instead.</td>
 <td>HXC-236</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Medium</td>
 <td>The standard library routine that splits a web address into a host
 and a port behaves differently in two parts of this codebase, using the
 same compiler and the same input. In the main application it rejects an
@@ -1196,7 +1037,7 @@ to cover.</td>
 <td>HXC-239</td>
 <td>Bug</td>
 <td>Ready for testing</td>
-<td>—</td>
+<td>High</td>
 <td>When HelixQA runs a test bank that needs to sign in, it cannot find
 the access pass in the sign-in reply, so every test in that bank that
 needs to be signed in fails. CORRECTED MECHANISM (the original wording
@@ -1243,7 +1084,7 @@ behaviour, shown real by a paired mutation that makes it fail.</td>
 <td>HXC-240</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Low</td>
 <td>One of the HelixCode test banks signs up a new account as part of
 its checks, but it always uses the very same account name,
 ‘hxc_gen_e2e’. The first time the bank is run the sign-up succeeds and
@@ -1265,7 +1106,7 @@ finishes.</td>
 <td>HXC-241</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Low</td>
 <td>The checks that confirm HelixCode can generate AI text look for an
 exact run of characters inside the server’s reply, and that comparison
 treats capital and small letters as different. Two checks in the
@@ -1288,7 +1129,7 @@ problems and waste investigation time.</td>
 <td>HXC-242</td>
 <td>Bug</td>
 <td>Queued</td>
-<td>—</td>
+<td>Medium</td>
 <td>Five checks covering the built-in screenshot and quality-assurance
 session features fail against the running HelixCode server, and every
 one of them fails for the same reason: the server answers ‘QA engine is
@@ -1309,8 +1150,8 @@ should say so rather than reporting failures.</td>
 <tr>
 <td>HXC-243</td>
 <td>Bug</td>
-<td>Queued</td>
-<td>—</td>
+<td>Ready for testing</td>
+<td>Critical</td>
 <td>Several of the automated test collections that check our services
 declare no expectation about what a correct answer looks like. They send
 a request, receive whatever comes back, and record a pass regardless of
@@ -1465,35 +1306,6 @@ normal case here. The expected outcome is a check that confirms the
 identity of what is answering - not merely that the port is occupied -
 so the cleanup makes its decision on the real condition rather than a
 coincidence, and so the message it logs is true.</td>
-</tr>
-<tr>
-<td>HXC-250</td>
-<td>Bug</td>
-<td>Queued</td>
-<td>High</td>
-<td>When a user asks the system to write out a ready-made configuration
-file for their command-line coding assistant, the file it produces
-points that assistant at the wrong service. The generator fills in a
-network address that belongs to the model verifier rather than to the
-agent runtime the assistant is supposed to talk to, so the assistant
-sends its requests to a component that does not understand them and
-receives a flat “not found” in reply. From the user’s point of view the
-assistant simply does not work, with nothing in the error explaining
-that the address in their brand-new config was wrong from the moment it
-was written. Of the forty-eight assistants the project documents support
-for, forty-six are affected; a fix landed earlier covers only two of
-them, so the shared generator that serves all the rest still writes the
-wrong address today. This is the most directly user-facing defect in the
-current set, because it is not an internal test that misleads a
-developer - it is a file handed to a user with an instruction to use it.
-The people harmed are exactly the newcomers the feature exists to help:
-someone setting up their assistant for the first time, following the
-documented path, and getting a broken result they have no way to
-diagnose. The expected outcome is that every generated configuration
-names the address the agent runtime genuinely serves, that all
-forty-eight documented assistants are covered rather than two, and that
-a generated config works when the user follows the documented setup
-without editing anything by hand.</td>
 </tr>
 <tr>
 <td>HXC-251</td>
@@ -1753,52 +1565,6 @@ variable outside a comment) and fails on the pre-fix tree, citing
 deployment.yaml line 32.</td>
 </tr>
 <tr>
-<td>HXC-261</td>
-<td>Bug</td>
-<td>Queued</td>
-<td>Critical</td>
-<td>The challenge script that is supposed to prove HelixAgent’s gRPC
-protocol works was structurally incapable of failing, and it has been
-reporting green for the entire time it has existed. Two independent
-faults compounded. First, it resolved its port from an environment
-variable named HELIXAGENT_GRPC_PORT defaulting to 7062 — a third
-spelling that no Go source reads (the server honours
-HELIXAGENT_PORT_GRPC) and a number belonging to no service in the
-project: not the old hardcoded 50051, not the registry’s 8112, not the
-HTTP port 7061. Second, and far worse, every one of its four probes
-recorded a successful assertion whether the port answered or not: the
-port-availability check recorded true when the port was listening AND
-recorded true, labelled ‘optional’, when it was not; the unary-call,
-streaming-call and error-handling checks did the same. The two faults
-together mean the challenge dialled an address no HelixAgent process has
-ever bound, found nothing there, and then certified the gRPC protocol
-healthy. This is the most damaging class of defect in the codebase
-because it is not merely an untested feature — it is an automated test
-actively producing false-green results, which is exactly what the
-anti-bluff covenant exists to prevent, and it masks any real gRPC
-breakage from everyone reading the suite. It also violated the challenge
-framework’s own documented contract: the framework already ships a
-record_skip helper whose docstring says never to use record_assertion
-with status true to mask a missing feature, and the primitive was simply
-not used. This item covers resolving the port through the registry’s own
-variable name and default, consolidating the four duplicated probe sites
-into one helper so absence is interpreted in exactly one place, making
-absence report as an honest SKIP carrying a SKIP-OK ticket rather than
-success, making a real failed call report as FAILED, and replacing the
-two-state final verdict (which reported PASSED whenever nothing had
-failed, including when nothing had been verified) with a three-state
-verdict that reports SKIPPED when no assertion could be verified.
-Reproduce with the guard at
-challenges/scripts/tests/protocol_grpc_fail_open_guard.sh run with
-RED_MODE=1 against the pre-fix script: it binds and releases a port to
-prove it is free, drives the challenge’s own probe functions against it,
-and confirms assertions are recorded PASSED anyway. Acceptance criteria:
-that same guard with RED_MODE=0 reports zero PASSED assertions against a
-proven-free port with every probe SKIPPED and SKIP-OK tagged, and the
-challenge still records a genuine PASSED assertion when a real gRPC
-server is listening on the registry port.</td>
-</tr>
-<tr>
 <td>HXC-262</td>
 <td>Bug</td>
 <td>Queued</td>
@@ -1899,9 +1665,9 @@ readers who copy a documentation example expecting it to compile. THE
 COUNTS, each verifiable by one command (the quotes are load-bearing —
 unquoted, the shell expands the pattern before git sees it and reports 2
 instead of 36): inside submodules/helix_agent,
-<code>git ls-files '*/go.mod' \| wc -l</code> reports 36 nested modules,
+<code>git ls-files &#39;*/go.mod&#39; \| wc -l</code> reports 36 nested modules,
 and
-<code>git ls-files 'challenges/codebase/go_files/*/go.mod' \| wc -l</code>
+<code>git ls-files &#39;challenges/codebase/go_files/*/go.mod&#39; \| wc -l</code>
 reports the 6 that the Makefile build-challenge-modules recipe walks. By
 directory the 36 are 23 under docs/, 6 under challenges/, 2 under
 plugins/, 2 under docker/, and one each under Toolkit/, pkg/, and
@@ -2017,7 +1783,7 @@ correctly.</td>
 <tr>
 <td>HXC-268</td>
 <td>Bug</td>
-<td>Queued</td>
+<td>Ready for testing</td>
 <td>Medium</td>
 <td>The model verifier builds web addresses by pasting a host and a port
 together with a colon, without the square brackets that IPv6 addresses
@@ -2067,119 +1833,6 @@ the IPv6 literal, already-bracketed, IPv4 and hostname cases and is
 proven real by a paired mutation that removes the bracketing and makes
 the test fail; and the count of remaining unbracketed sites in that file
 is zero, verified by the same command that produced the fifteen.</td>
-</tr>
-<tr>
-<td>HXC-269</td>
-<td>Bug</td>
-<td>Queued</td>
-<td>Medium</td>
-<td>When the model verifier builds a web address from a host and a port,
-and the host value contains a question mark, a hash, or a slash, the
-port is silently swallowed and the address ends up pointing at the
-default port instead of the one configured. WHY IT HAPPENS: the address
-builder appends the port after whatever it was given, so a host carrying
-a query string produces something like a normal address with the port
-glued onto the end of the query rather than onto the host; every
-standard address parser then reads the host correctly, reads NO port at
-all, and treats the port digits as part of the query text. HOW IT
-MANIFESTS: the client connects to the wrong place with no error and no
-warning anywhere, which is the same silent-misdirection this component
-was just remediated to eliminate. WHY IT IS REACHABLE RATHER THAN
-THEORETICAL: the host-normalising step accepts these shapes without
-complaint, so the value flows end to end from the operator-facing host
-setting into generated configuration with nothing reporting a problem.
-THREE SHAPES CONFIRMED BY MEASUREMENT: a host with a query string loses
-its port into the query; a host with a fragment loses it into the
-fragment; a host with a path loses it into the path. WHO IS AFFECTED:
-any operator who pastes a full address into the host setting instead of
-the dedicated full-address setting, which the component’s own guidance
-anticipates as a likely mistake. HOW TO REPRODUCE: build an address from
-a host containing a question mark and any port, then parse the result
-and observe the port is empty while the query carries the digits.
-ACCEPTANCE CRITERIA: a host containing a query, fragment, or path either
-is rejected with a clear message naming the setting and the expected
-shape, or is handled so the port survives; whichever is chosen, the
-operator is told rather than left with a silently wrong address; and a
-standing test covers all three shapes plus the ordinary host and address
-cases, proven real by a paired mutation that removes the handling and
-makes the test fail.</td>
-</tr>
-<tr>
-<td>HXC-270</td>
-<td>Bug</td>
-<td>Queued</td>
-<td>Medium</td>
-<td>HelixQA copies failed reply bodies straight into reports and error
-messages in several places, and one of those places is a sign-in reply,
-which is exactly where a credential is most likely to be. WHAT HAPPENS:
-when a request returns an unsuccessful status, the code records the
-entire reply body as the description of a reported finding. This occurs
-at THREE sites in the same validation routine — the sign-in path, the
-entity-statistics path, and the media-search path. A fourth and fifth
-exposure sit in the shared HTTP helper: an error message carrying a
-slice of the body, and a wrapper around the underlying decoding
-complaint, which on the current toolchain quotes a character taken from
-the body. WHY THIS MATTERS: these reports and errors are written to
-shared logs and captured by automation, so anything the server put in
-that body travels outward with them. The sign-in site is the highest
-risk by a wide margin — a sign-in endpoint that echoes a submitted
-token, returns a cookie in the body, or includes an authorization header
-in its diagnostic output would have that value copied verbatim into a
-durable record. The other two sites echo the tested service’s own error
-bodies, which is a lower but identical mechanical risk. RELATIONSHIP TO
-OTHER WORK: a sibling item hardened the SUCCESSFUL sign-in path so it
-reports only a shape label, a byte count and a decode position, never a
-body byte; a separate component now redacts values that look like they
-carry credentials. These sites predate that work and were deliberately
-left untouched while it was under review, so the discipline is now
-inconsistent inside a single function: the success path is careful and
-the failure path fifteen lines below it is not. HOW TO REPRODUCE: point
-the pipeline at a test server whose sign-in route returns an
-unsuccessful status with a body containing a recognisable marker, run
-the validation step, and observe the marker appears in the recorded
-finding and in the returned error text. ACCEPTANCE CRITERIA: none of the
-five sites emits raw body bytes; all report the same class of bounded,
-non-echoing detail the success path already uses; the decode-complaint
-wrapping is replaced with a position and a shape rather than a quoted
-character; and a standing test asserts a marker placed in a failure body
-never appears in any finding or error at any of the five sites, proven
-real by a paired mutation that restores the echo and makes the test
-fail.</td>
-</tr>
-<tr>
-<td>HXC-271</td>
-<td>Bug</td>
-<td>Queued</td>
-<td>Critical</td>
-<td>One of the two families of remote calls the agent publishes cannot
-ever succeed, on any machine, however well configured. WHAT IS BROKEN:
-the facade family of calls — the ones for completing text, streaming a
-completion, and chatting — reaches an internal routine that is always
-handed an EMPTY list of providers, and that routine refuses immediately
-when the list is empty. So every call in this family returns the same
-failure regardless of how many providers are actually configured and
-discovered. WHY IT IS NOT A CONFIGURATION PROBLEM: the object serving
-this family was never given a reference to the registry that holds the
-discovered providers; it has no such field at all. Start-up wires the
-registry into the OTHER family only, and that other family’s completion
-call does consult it, which is why the two families behave differently
-despite looking equivalent from outside. HOW IT WAS CONFIRMED: captured
-at runtime on a machine where fifty-plus real models had genuinely been
-discovered from live provider APIs, so this is not a case of an
-unprovisioned host — the providers existed and the call still failed
-with a message saying no providers were configured. WHO IS AFFECTED: any
-client using the facade family, which is the family the published
-interface presents first and the one an integrator would naturally reach
-for. HOW IT MANIFESTS: a caller gets an error advising them to use the
-provider registry for credential injection, which reads as a
-configuration mistake on their side and sends them to check credentials
-that are already correct. ACCEPTANCE CRITERIA: the facade family either
-receives the registry and succeeds against configured providers, or is
-explicitly withdrawn from the published interface with a clear error
-naming its replacement; a test drives each of the three calls end to end
-against a real configured provider and asserts a genuine response rather
-than an absence of error; and a paired mutation that removes the
-registry wiring makes that test fail.</td>
 </tr>
 <tr>
 <td>HXC-272</td>
@@ -2294,6 +1947,2699 @@ environment, and the server begins serving promptly after it begins
 accepting; a test starts the server with credentials present and asserts
 no outbound calls occur, proven real by a paired mutation that restores
 eager discovery and makes the test fail.</td>
+</tr>
+<tr>
+<td>HXC-275</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The automated check that confirms our own remote-call service is
+genuinely the one answering has two decision branches that no test ever
+reaches, so an edit that weakened either one would not be noticed. WHAT
+IS NOT COVERED: first, the check’s most important test asks the service
+a deliberately invalid question and demands BOTH the expected refusal
+code AND the service’s own wording of the complaint — demanding both is
+what proves the real service answered rather than any program that
+returns an error. A static guard now pins that the two demands stay
+joined, but nothing exercises the branch at runtime, because doing so
+needs a stand-in service that reproduces our validation wording, plus a
+second path for hosts that have the query tool installed. Second, there
+is a deliberately cautious fallback branch for a peer that speaks the
+right protocol but answers in wording we do not recognise; peers built
+on other language runtimes phrase refusals differently and land exactly
+there, yet no test ever drives it. WHY IT MATTERS: these are the two
+branches that decide whether a half-broken or entirely foreign service
+is accepted as ours, which is the failure this whole check exists to
+prevent. WHO IS AFFECTED: anyone relying on the automated gate to notice
+a wrong or partially-started service before manual testing begins.
+CORRECTION TO AN EARLIER RECORD: a related concern was previously logged
+as unguarded — that the two failure messages could be swapped without
+detection. Measurement shows a full swap IS caught, because one arm
+asserts its message text; only a change to the not-speaking-the-protocol
+message alone goes unnoticed, which a single added assertion would
+close. HOW TO REPRODUCE: change the invalid-question branch so it
+accepts either demand instead of both, and observe every runtime test
+still passes; separately, point the check at a peer that speaks the
+protocol but returns unfamiliar refusal wording and observe no test
+exercises that path. ACCEPTANCE CRITERIA: a runtime test drives the
+invalid-question branch against a stand-in service that performs the
+same validation as the real one, with an honest skip and stated reason
+on hosts lacking the query tool rather than a silent pass; a second test
+drives the unrecognised-wording fallback using a peer that answers every
+request as unknown; the not-speaking-the-protocol message gains its own
+assertion; and each new test is proven real by a paired mutation that
+weakens the branch it covers and makes that test fail.</td>
+</tr>
+<tr>
+<td>HXC-276</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The test-bank machinery copies an excerpt of a service’s reply into
+its assertion diagnostics, and unlike the sibling defect just fixed,
+this one is DELIBERATE — when a bank author writes an expectation about
+reply content and it does not match, showing part of the reply is
+precisely how the author sees why. WHAT IS AT ISSUE: the excerpt is
+bounded only by a fixed character count, with no attention to what those
+characters might be, so a bank pointed at a sign-in route or any route
+whose reply carries a token will copy that value into a durable report
+exactly as the recently-fixed sites did. WHY IT IS NOT SIMPLY THE SAME
+FIX: stripping the excerpt would silently break the workflow it exists
+for, turning a useful failure message into an unusable one, so the
+remedy here is different in kind — the excerpt should stay, but be
+filtered so that anything resembling a credential is masked while
+ordinary content survives intact. WHERE: five places — three in the bank
+request executor and one in its structured-assertion counterpart, plus a
+shared path-check helper that folds a decoder’s own complaint into a
+message, and a decoder complaint quotes the input that upset it. WHO IS
+AFFECTED: anyone reading an archived bank report, since these reports
+are kept and shared, and anyone writing banks against an authenticated
+service. RELATIONSHIP TO OTHER WORK: the sibling item fixed the same
+mechanical leak in the pipeline’s own validation paths, where no excerpt
+was ever wanted; the fixer measured these five, judged them a different
+design intent, and left them deliberately rather than silently — this
+item records that decision and the work it defers. HOW TO REPRODUCE:
+write a bank whose expectation about reply content fails against a route
+returning a recognisable marker in its body, run it, and observe the
+marker copied into the recorded result message. ACCEPTANCE CRITERIA: the
+excerpt survives for ordinary content so the diagnostic stays useful;
+values resembling credentials are masked before the excerpt is recorded;
+the decoder-complaint path reports a position and a shape rather than
+quoting input; and a standing test proves both directions at every site
+— a credential-shaped marker never appears, while an ordinary marker
+still does — each proven real by a paired mutation that restores the raw
+copy and makes the first assertion fail, and one that strips the excerpt
+entirely and makes the second fail.</td>
+</tr>
+<tr>
+<td>HXC-277</td>
+<td>Task</td>
+<td>Queued</td>
+<td>High</td>
+<td>The document that tells a newly-started session where the project
+actually stands has not been updated since the twenty-eighth of July,
+while about two hundred and thirty-six commits have changed the very
+state it describes. WHY THIS MATTERS: this record is the agreed
+authority on what is finished, what is in progress, and what is blocked,
+and our own governing rules class an out-of-date copy as a defect of the
+same seriousness as a test that reports success for something broken —
+because both hand a reader a confident answer that is wrong. WHAT GOES
+WRONG IN PRACTICE: anyone or anything resuming work from it plans
+against a fortnight-old picture, redoes work already finished, reports
+completion for items that moved on, or misses a blocker that has since
+appeared. HOW IT DRIFTED: the rule requires the record to advance in the
+same commit as any change that moves the project’s state, but the
+burn-down has been running through submodule work whose commits land in
+other repositories, so the habit of updating it in step was quietly
+lost. WHO IS AFFECTED: every future session, and any team member relying
+on it rather than reading the commit history themselves. RELATIONSHIP TO
+OTHER WORK: a companion handoff document at the repository root WAS
+refreshed and now carries the current picture, so the immediate risk of
+a lost session is covered; this item is about restoring the longer-lived
+record and, more importantly, the discipline that keeps it current. HOW
+TO REPRODUCE: compare the date of the newest change to the record
+against the dates of the commits made since, and observe the gap.
+ACCEPTANCE CRITERIA: the record is brought level with the current state,
+including everything closed, filed, and left in progress across the gap;
+the discipline is made mechanical rather than remembered, so that a
+state-advancing commit which leaves the record untouched is caught
+automatically rather than noticed weeks later; and the catch is proven
+real by deliberately making such a commit and confirming it is
+refused.</td>
+</tr>
+<tr>
+<td>HXC-279</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The check that confirms our remote-call service is genuinely the one
+answering now has a solid guard over HOW its decisive test is composed —
+it demands two separate probes both hold — but nothing guards what
+happens AFTER that composition is evaluated. Two distinct promises are
+unprotected. THE FIRST IS POLARITY: two small edits, each leaving the
+composition exactly as the guard requires, invert the meaning of the
+test. One negates the whole condition, so a pass is recorded precisely
+when both probes failed. The other leaves the condition untouched and
+simply exchanges the two recording statements beneath it, with the same
+inverting effect. THE SECOND IS REACHABILITY, found later and widening
+this item’s scope: an edit can make the whole statement dead, so no
+verdict is recorded at all — the condition remains a clean conjunction
+of both probes, satisfying the composition guard perfectly, while the
+check silently stops deciding anything. WHY THE EXISTING GUARD CANNOT
+COVER EITHER: these are different kinds of promise. One is about how the
+question is asked; these two are about whether the answer is reached and
+whether it is written down the right way round. Stretching the
+composition guard to cover them would blur what any of them certifies,
+and repeatedly widening that guard is exactly what produced four rounds
+of chasing its edges. WHY NO TEST CATCHES THEM TODAY: the four
+live-execution arms all reach their verdict before this comparison is
+exercised, and the one that would reach it deliberately removes the
+query tool from its environment, so none of them ever observes the
+recorded result. WHO IS AFFECTED: anyone relying on the automated gate
+to notice a wrong, foreign or half-started service before manual testing
+begins — an inverted check reports every healthy service as broken and,
+far worse, every broken one as healthy, while a dead check reports
+nothing at all yet still shows green. HOW THESE WERE FOUND: while
+verifying unrelated widenings, by asking whether any single edit could
+still defeat the test; the answer for composition was no, with an
+argument rather than a failed search, but asking the question one layer
+out surfaced polarity, and asking again surfaced reachability. All three
+edits were confirmed against the whole package with the query tool
+present, and nothing caught any of them. HOW TO REPRODUCE: negate the
+decisive condition as a whole, or exchange the two recording statements
+beneath it, or make the statement unreachable, then run the package and
+observe every check still passing. ACCEPTANCE CRITERIA: a guard asserts
+that the verdict statement is genuinely REACHED and that the passing
+verdict is recorded on the branch taken when the condition holds, with
+the failing verdict on the other, so that negating the condition,
+exchanging the branches, or killing reachability are each caught; it is
+proven real by paired mutations performing each of those three edits and
+confirming each makes the guard fail; and the existing composition guard
+keeps its own narrow scope rather than absorbing this one.</td>
+</tr>
+<tr>
+<td>HXC-280</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Seven places where we build a network address for a service that is
+NOT ours carry a defect a sibling item has just repaired everywhere
+else, and they were left alone because the repair would make them worse
+rather than better. THE SHARED DEFECT: an address for a modern-style
+numeric host must wrap that host in square brackets before a port is
+appended, or every reader sees a different host and no port at all. THE
+REPAIR THAT DOES NOT FIT: the shared builder brackets correctly, but
+when the host it is given is unusable it substitutes a default host of
+our own while KEEPING the port the caller asked for. That is right for
+the many places addressing our own agent, and wrong for these seven,
+which address a search database, a log-analysis service, a stream
+processor, two database systems and a message broker: a misconfigured
+outside address would quietly become the wrong machine on the right port
+— a connection that may well succeed against something else, which is
+worse than one that fails. THE SEVENTH SITE, AND WHY IT HID: six were
+found by searching for one way of writing an address; the seventh builds
+its address by repeated appending with a small local number-to-text
+helper, so no search shaped by the other six could see it. CORRECTION TO
+AN EARLIER VERSION OF THIS ENTRY: it stated that the seventh site sits
+in a part of the codebase that cannot use the shared helper at all, and
+therefore must call the underlying routine directly. That was measured
+FALSE — the two parts of the codebase are already wired together and
+three files across that boundary import each other today, and a compile
+check confirms the helper is reachable. The real reason the shared
+builder does not fit is the one that always applied: this address
+carries a user name, a password and a trailing path segment, a shape
+neither existing builder composes. Whoever takes this item should
+therefore weigh reusing and extending the shared helper on the real
+facts rather than inheriting a constraint that does not exist. THE MORE
+SERIOUS SECOND FACT about that site: it also places a password into the
+address without escaping it, so any password containing a character with
+meaning in an address will either corrupt the address or place secret
+material where addresses are logged and displayed. That is a
+credential-handling concern in its own right and must be fixed in the
+same pass. WHO IS AFFECTED: any deployment configuring these outside
+services with a modern-style numeric address, or with a password
+containing a reserved character. ACCEPTANCE CRITERIA: a defaults-free
+way of building these addresses exists — whether by extending the shared
+helper or otherwise, decided on measured facts — with the difference
+from the substituting builder stated where a reader will see it;
+credentials placed in an address are escaped; each of the seven is
+routed to whichever path is correct, justified per site; an unusable
+host produces an explicit refusal rather than a silent substitution; and
+a standing test proves every direction at every site, each proven real
+by a paired mutation restoring the old concatenation, one swapping in
+the substituting builder, and one removing the escaping.</td>
+</tr>
+<tr>
+<td>HXC-281</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>One of our streaming tests examines the pieces of a streamed reply
+and confirms none of them carries a fabricated confidence figure — but
+that list of pieces has always been empty, so the check has never
+actually examined anything. WHY IT WAS ALWAYS EMPTY: the server it
+exercises could not reach any provider at all, so it failed before
+producing a single piece; the test therefore looped over nothing and
+passed, every time, for a reason unrelated to what it claims to verify.
+WHY THIS IS WORTH FIXING NOW RATHER THAN LATER: a sibling item has just
+repaired that server, so the same test can finally be given real pieces
+to examine, and the check it was written to perform can be performed for
+the first time. WHAT IT WAS MEANT TO CATCH: a streamed reply that
+invents a confidence number the underlying provider never supplied — a
+fabrication the reader would have no way to distinguish from a genuine
+measurement. WHO IS AFFECTED: anyone trusting the streamed replies, and
+anyone reading this test as evidence that fabrication cannot occur,
+since it currently provides no such evidence. RELATIONSHIP TO OTHER
+WORK: found while repairing the server, and deliberately left alone at
+that time because widening an unrelated test inside a critical fix would
+have obscured what that fix changed. HOW TO REPRODUCE: examine the list
+the test iterates over and confirm it is empty in every run;
+alternatively, break the property the test claims to protect and observe
+the test still passes. ACCEPTANCE CRITERIA: the test drives the repaired
+server with a provider that genuinely streams more than one piece, so
+the list it examines is non-empty; the check runs against real pieces;
+and it is proven real by a paired mutation that makes a piece carry a
+fabricated confidence figure and confirms the test then fails.</td>
+</tr>
+<tr>
+<td>HXC-282</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Before every commit we sweep the working files for leftovers from
+deliberate break-it-and-see experiments, and that sweep searches for a
+handful of tell-tale phrases the experiments are supposed to leave
+behind. It therefore cannot see an experiment whose whole method was to
+DELETE something, because a deletion leaves no phrase to find. WHAT
+ACTUALLY HAPPENED: an experiment that removed a protective rule from a
+live source file was left un-restored on disk. The sweep reported clean,
+every other check reported clean, and the damage was one staging command
+away from being committed and published. It was caught only because an
+independent reviewer compared the file against a preserved copy rather
+than searching it for phrases. WHY THAT MATTERS SO MUCH HERE: the rule
+that had been deleted was the one preventing a particular kind of secret
+from being written verbatim into records we keep and share, so the
+leftover damage was not a harmless experiment residue — it was the
+reinstatement of exactly the leak that file had just been repaired to
+prevent, sitting silently in a working tree that every check called
+clean. WHY IT ESCAPED EVERYTHING ELSE: the tests that would have caught
+it were reported as passing because the passing report predated the
+damage; a summary of what changed shows the file as modified but says
+nothing about whether the modification is wanted; and the phrase-search
+sweep is the only check whose specific job is spotting experiment
+leftovers. WHO IS AFFECTED: every commit of every file that an
+experiment has ever been run against, which in practice is every file we
+have been most careful about — the ones with the most guards get the
+most experiments run on them. WHAT IS NEEDED: the leftover check must
+compare the file against a recorded known-good version rather than
+searching it for phrases, so that any difference the author did not
+intend is surfaced whatever its shape — added, changed or removed.
+Experiments must record that known-good version before they begin and
+confirm the restoration afterwards, and the confirmation must be a
+comparison, not an assertion. HOW TO REPRODUCE: run any experiment that
+deletes a protective rule, do not restore it, run the leftover sweep,
+and observe it report clean. ACCEPTANCE CRITERIA: the pre-commit
+leftover check detects an un-restored deletion as reliably as it detects
+an un-restored insertion; every experiment records a known-good
+reference before it starts; restoration is verified by comparison
+against that reference and the verification is captured; and the whole
+mechanism is proven by a paired test that deletes a protective rule,
+leaves it un-restored, and confirms the check refuses the commit.</td>
+</tr>
+<tr>
+<td>HXC-283</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>Where we take an incoming caller’s address apart to decide who is
+making a request, we split it at the LAST colon rather than using the
+standard routine for the job. WHY THAT BREAKS: a modern-style numeric
+address is full of colons and is written wrapped in square brackets, so
+splitting at the last colon leaves the bracket punctuation attached to
+the caller’s identity for some requests and not others. The consequence
+is that the same caller can be counted as several different callers, or
+several different callers counted as one, which is precisely what a
+request limiter must never do — it either lets an abusive caller through
+by splitting their requests across identities, or throttles unrelated
+callers by merging them. WHERE: the request-limiting middleware, at the
+point it derives a caller key from the remote address. RELATIONSHIP TO
+OTHER WORK: this is the same family as a sibling item that has just
+repaired thirty-one places where we BUILD such an address, but it is the
+opposite direction — this one takes an address APART. That is why no
+part of the sibling work touched it and why searches shaped by the
+building sites could not surface it; it was found by a reviewer sweeping
+from the consuming side rather than the producing side. WHO IS AFFECTED:
+any caller reaching us over a modern-style numeric address, and anyone
+relying on request limits to hold. HOW TO REPRODUCE: send requests from
+a modern-style numeric address and observe the derived caller identity
+retains bracket punctuation inconsistently across requests. ACCEPTANCE
+CRITERIA: the caller address is taken apart with the standard routine
+that understands bracketed numeric addresses; one caller yields exactly
+one identity across every request shape; and a standing test proves it
+for old-style, modern-style, bracketed, zone-carrying and hostname
+callers, proven real by a paired mutation restoring the
+split-at-last-colon and confirming the test fails.</td>
+</tr>
+<tr>
+<td>HXC-284</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The guard that decides whether a host is a usable shape for building
+a network address is protected by a test suite that does not actually
+pin three of its rules: each of the three can be altered and every test
+still passes. WHY THIS MATTERS: a rule no test pins is a rule a future
+edit can silently remove, and one of the three is load-bearing for
+correctness rather than merely for tidiness — altering it makes the
+guard ACCEPT a malformed address it currently rejects, producing a
+nonsense destination that looks well-formed. HOW IT WAS FOUND: a review
+deliberately broke each rule in turn and watched which breakages the
+suite caught; five alterations survived, of which two were then PROVEN
+harmless (they cannot change behaviour for any possible input,
+demonstrated by exhausting the entire single-character input space) and
+three were shown to change real behaviour, each with a specific input
+that demonstrates the difference. THE THREE DEMONSTRATED CASES: an
+address whose zone marker appears twice, which the working guard accepts
+and the altered one rejects; an address mixing a plain numeric host with
+a zone marker, which the working guard rejects and the altered one
+wrongly accepts; and a host ending in a bare zone marker, which the
+working guard cleans and the altered one passes through untouched. A
+RELATED OBSERVATION FROM THE SAME REVIEW: the guard silently strips a
+trailing zone marker rather than rejecting it, which sits oddly beside
+the reject-do-not-repair philosophy the rest of the file follows, and
+deserves a deliberate decision either way. WHO IS AFFECTED: every place
+that composes an address through this guard, which after the sibling
+repair is all fifteen capability sites plus the shared helper. THESE ARE
+PRE-EXISTING PROPERTIES OF THE SUITE, not defects introduced by the
+repair that surfaced them. ACCEPTANCE CRITERIA: each of the three rules
+is pinned by a test using the demonstrated input, so that altering that
+rule makes a test fail; the trailing-zone-marker behaviour is either
+justified in place or changed to match the surrounding philosophy; and
+each new pin is proven real by restoring the alteration and confirming
+the test fails.</td>
+</tr>
+<tr>
+<td>HXC-285</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>Three separate translation-helper files each carry the same comment
+asserting that a shared translation package lives in a different module
+and therefore cannot be imported without adding a module dependency.
+THAT ASSERTION IS FALSE TODAY: the module dependency is already
+declared, the shared package exists at the stated location, and other
+files in the same module import across that boundary routinely — one of
+them is a live entry point that builds and runs. WHY A WRONG COMMENT IS
+WORTH FILING: this comment does not merely describe, it JUSTIFIES — it
+is the stated reason each of the three files defines its own local
+translation helper instead of using the shared one. So the false claim
+is actively holding three duplicate implementations in place, and any
+future reader deciding whether to consolidate them will read the
+comment, believe the constraint is real, and leave the duplication
+alone. HOW IT WAS FOUND: a review checking an unrelated comment for
+accuracy traced the module wiring to confirm the boundary really was
+crossable, and found these three making the opposite claim; the same
+confusion had already misled one earlier briefing about which files
+import what. WHO IS AFFECTED: anyone reading these three files to decide
+whether the duplication is necessary. ACCEPTANCE CRITERIA: the comment
+in each of the three files states what is actually true of the module
+wiring; if the duplication is still wanted for a different and genuine
+reason, that reason replaces the false one rather than the comment
+simply being deleted; and whether to consolidate onto the shared package
+is decided deliberately rather than by inheriting a constraint that does
+not exist.</td>
+</tr>
+<tr>
+<td>HXC-286</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>A family of four tracked items covers a defect where a network
+address is built by gluing a host and a port together, which breaks for
+the modern numeric address form. All four were scoped to one component,
+and its published count of affected places explicitly says it covers
+that component only. A survey of the neighbouring component — the one
+that CONSUMES the repaired addresses — found roughly thirty more places
+with the identical defect that no item covers. WHY THIS IS THE STRONGEST
+SIGNAL YET: several of them are the very service kinds one of the four
+items names in its own description as examples of what it covers — a
+search database, a stream processor, a message broker — so the family
+reads as complete while its own named examples sit unfixed one directory
+over. One of them is a second, independent copy of a defect already
+tracked once, in a component nobody thought to look at. Another
+twenty-one are duplicated copies of generator logic that was already
+repaired in the first component, so the repair simply never reached its
+clones. WHO IS AFFECTED: anyone configuring any of those services with a
+modern-form address, which reaches them as a different address entirely,
+with the port dropped. ACCEPTANCE CRITERIA: the true scope of the defect
+class is established by a survey that names the components searched
+rather than assuming one; every site found is either repaired,
+deliberately deferred with a written reason, or shown not to be
+affected; and the published count states which components it covers so a
+future reader cannot mistake a partial census for a complete one.</td>
+</tr>
+<tr>
+<td>HXC-287</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>A test file whose name declares it checks for rate-limit bypasses
+never loads the real rate-limiting code at all. Instead it constructs
+its own small imitation of a rate limiter and tests that, so it reports
+on a thing that does not ship. WHY THAT IS SERIOUS RATHER THAN MERELY
+WASTEFUL: a genuine bypass was found in the real rate limiter this file
+is named for, and this file passed throughout — it could not have
+detected it, because it was never looking at it. A SECOND, INDEPENDENT
+WAY IT CANNOT FAIL: most of its individual checks respond to an
+unexpected outcome by printing a warning rather than recording a
+failure, so even against the right code they would report success
+regardless of what happened. A THIRD: the whole file sits behind a build
+switch, so it does not run in ordinary test runs. Any one of the three
+would be enough to make it incapable of catching what it is named for;
+it has all three. WHO IS AFFECTED: anyone reading the test inventory and
+concluding that rate-limit bypasses are covered. ACCEPTANCE CRITERIA:
+the file exercises the real shipping rate limiter rather than an
+imitation; every check records a failure rather than a warning when the
+outcome is wrong; the file runs where it will actually be seen; and the
+whole is proven by reintroducing the real bypass and confirming this
+file turns red.</td>
+</tr>
+<tr>
+<td>HXC-288</td>
+<td>Task</td>
+<td>Queued</td>
+<td>High</td>
+<td>A recently landed repair states in its own ticket that it covered
+fifteen places. The documentation written alongside it in the same
+change says the total is thirty-one, split as twenty-four repaired plus
+seven deferred. A direct count of the repaired call sites today returns
+thirty. WHY THE NUMBERS CANNOT SIMPLY BE AVERAGED: the change also
+touched files its own ticket had explicitly declared out of scope, and a
+further group of sites inherited the repair for free from an earlier
+piece of work without being touched at all, so each of the four numbers
+is measuring a slightly different thing and none of them says which. THE
+ITEM CANNOT CLOSE UNTIL THIS RESOLVES: its own acceptance criteria
+require the counting command to be re-run and reconciled, and it
+currently cannot be, because there is no agreed definition of what is
+being counted. THIS IS THE SECOND TIME: the same ticket already
+documents one earlier instance of its own count moving, which makes a
+repeat worth treating as a process signal rather than a slip. ACCEPTANCE
+CRITERIA: one published number, stated together with exactly what it
+counts and which components it covers; every other published count
+updated or removed; and the counting command recorded so any reader can
+reproduce the number rather than trust it.</td>
+</tr>
+<tr>
+<td>HXC-289</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A shared library used by every automated check in one component had
+a defect where the pointer meant to name the most recent run never moved
+after the first run of the day. That has been repaired in the library.
+Three individual check scripts, however, do not use the library for this
+and each maintain their own copy of the same pointer with the same
+defect. WHY THEY WERE LEFT: the repair was deliberately scoped to the
+shared library, and these three sit outside it, so extending the change
+to them would have widened a reviewed piece of work after review. WHAT
+THE CONSEQUENCE IS: for these three specifically, the most-recent-run
+pointer continues to name the first run rather than the latest, and
+anyone reading their results by following that pointer reads a stale run
+— which has already misled two readers when the shared library had the
+same defect. WHO IS AFFECTED: anyone investigating the results of these
+three checks, which are the sustained-load, concurrent-load and
+rate-limit stress checks. ACCEPTANCE CRITERIA: each of the three either
+uses the repaired shared library or applies the same correction locally;
+the pointer names the genuinely most recent run in all three; and a
+check proves it by running each twice and confirming the pointer
+moved.</td>
+</tr>
+<tr>
+<td>HXC-290</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>When work was published to the hosting service, it reported that the
+agent component default branch carries two hundred twenty-nine known
+security vulnerabilities in its dependencies: five critical, one hundred
+one high, one hundred four moderate and nineteen low. These are
+published advisories against libraries the component depends on, not
+defects in code written here. WHY THIS MATTERS FOR THE RELEASE
+SPECIFICALLY: a component being prepared for release with five critical
+and one hundred one high dependency advisories is carrying known,
+publicly documented, externally exploitable risk into that release, and
+the count is high enough that it cannot be assumed someone has already
+reviewed it. WHAT IS NOT YET KNOWN: how many of the advisories are
+reachable from the paths the product actually uses, which is the
+difference between a genuine exposure and an inherited advisory on an
+unused code path — that assessment has not been done and must not be
+assumed either way. WHO IS AFFECTED: every deployment of the agent
+component. ACCEPTANCE CRITERIA: each critical and high advisory is
+assessed for whether the vulnerable path is reachable in our usage;
+those that are reachable are resolved by upgrading or by a documented
+mitigation; those that are not are recorded as such with the reasoning;
+and the resulting position is stated in the release record rather than
+left to a dashboard nobody reads. DETERMINATION (2026-08-13, govulncheck
+v1.6.0, database last modified 2026-08-11, symbol/source mode, positive
+control passed before any negative was trusted): NOT release-blocking,
+and the headline figure measures a different object than its framing
+implies. The figure has no captured tool output anywhere in the
+repository. Its whole committed footprint is prose — this row and one
+commit body — with no command, no query date, no repository named and no
+scan artifact. Its measured ancestor counted the entire GitHub
+repository across all ecosystems, where the split is npm one hundred
+eighty-three, pip seventeen, Go ten, and where all five criticals are
+npm with three of them inside a vendored copy. Zero criticals are Go.
+That ancestor also documented that per-manifest counting inflates by
+about a quarter; two hundred ten alerts are one hundred sixty-nine
+distinct advisories. Measured directly by scope: the agent component
+this row names is CLEAN across all eight shipped binaries — zero
+reachable. The inner application has exactly one reachable finding. The
+meta root resolves to itself plus the standard library. Three hundred
+six advisory records load against module paths in the build graph; six
+apply to the pinned versions; one is reachable. Counting loaded records
+reports hundreds, version-filtering reports six, adding reachability
+reports one. THE ONE REACHABLE FINDING is a metric-exporter
+memory-exhaustion advisory in the inner application, gated off by
+default — the configuration resolver falls back to a no-op exporter
+rather than guessing, so the vulnerable path is constructed only when an
+operator explicitly selects it. Exploitation requires controlling the
+collector the application exports to. Fixed by a single minor bump whose
+sibling exporter is already pinned at exactly the target version in the
+same manifest: a partial-upgrade gap where the trace exporter was
+advanced and the metric exporter was left behind. The five
+container-runtime advisories are daemon-side; this project imports the
+client. Their reachable markings are a tool artifact — those advisory
+records carry no symbol scoping at all, so every reachable symbol in
+every imported package is conservatively marked, and the printed traces
+are package initializers. The entire surface is one file with ZERO
+importers, verified two independent ways each with its own positive
+control. Their fixes exist only under a renamed module path, so no
+version of the current path resolves them. COVERAGE GAPS, stated rather
+than implied clean: the desktop and mobile application tree was not
+scanned because its build needs system headers absent from this host;
+thirty-six nested Go manifests inside the agent were not measured; and
+no package manager was run, so all non-Go figures are manifest counts
+rather than resolved trees. RECOMMENDED FOLLOW-UP is not an upgrade. It
+is replacing this inherited number with a committed measurement — a
+fresh capture, deduplicated by advisory id and split by ecosystem — so
+the tracker stops carrying a figure no artifact backs.</td>
+</tr>
+<tr>
+<td>HXC-291</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>A guard exists to prove that a particular protocol check cannot
+report success when it should report failure. It works by taking the
+check apart, keeping some of it and discarding the rest, then running
+the remainder twice — once expecting success and once expecting failure.
+The part it discards was recently rewritten, and the rewrite moved a
+value the kept part still depends on into the discarded part. THE
+RESULT: the kept part now stops immediately on a missing value, under a
+setting that makes any missing value fatal, and it does so SILENTLY
+because the surrounding loop discards error output. Both of its two runs
+therefore end in failure, which means it reports the same answer whether
+the thing it guards is healthy or broken. A guard that gives the same
+answer in both directions certifies nothing at all, and it currently
+looks like an ordinary failing check rather than a broken instrument.
+WHY IT WENT UNNOTICED: its failure is indistinguishable from the failure
+it is designed to detect, so a reader seeing it fail would reasonably
+conclude the subject is broken rather than the guard. HOW IT WAS FOUND:
+an unrelated review ran it against two different versions of a shared
+library, saw identical output both times, and re-ran it with error
+output restored to find the real cause. ACCEPTANCE CRITERIA: the guard
+supplies whatever the kept part needs rather than depending on the
+discarded part; it demonstrably reports success in one direction and
+failure in the other; its error output is no longer discarded, so a
+broken instrument can never again be mistaken for a broken subject.</td>
+</tr>
+<tr>
+<td>HXC-292</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>One component decides who a request came from by cutting the caller
+address at its last colon. For the modern numeric address form the
+surrounding punctuation stays attached to the result, so the same caller
+is recorded under two different identities depending on which path the
+request arrived by. A SECOND AND MORE SERIOUS PROBLEM IN THE SAME PLACE:
+when the request carries a header claiming a different origin address,
+that claim is believed exactly as written, with no list of which
+intermediaries are permitted to make such a claim. Anyone able to send a
+request can therefore state any origin they like and mint themselves an
+unlimited number of identities. WHY BOTH MATTER TOGETHER: identity here
+is what everything downstream counts against, so an identity that varies
+by request shape or that a caller can choose freely makes any per-caller
+limit advisory rather than real. THIS IS A SEPARATE DEFECT FROM THE
+SIBLING ONE ALREADY FIXED: a sibling item repaired the same class of
+problem in a different component, and its written description actually
+describes THIS site rather than the one it repaired — both are real,
+they are in different components, and only one has been fixed. EXTERNAL
+PRECEDENT: a published 2026 advisory records the identical
+punctuation-mismatch shape being used to defeat an access check in
+another product. ACCEPTANCE CRITERIA: the caller address is taken apart
+by the standard routine rather than by cutting at a colon; the same
+caller yields one identity regardless of the path the request took; a
+claimed-origin header is honoured only from intermediaries on an
+explicit permitted list and ignored otherwise; and each is proven by a
+test that fails if the old behaviour returns.</td>
+</tr>
+<tr>
+<td>HXC-293</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The web framework this project uses has a setting that declares
+which intermediary servers are allowed to state, on a callers behalf,
+where a request really came from. That setting is never configured
+anywhere in this codebase. Its unconfigured default is to trust every
+intermediary and to believe any such claim. WHY THIS IS FILED SEPARATELY
+FROM THE COMPONENT THAT HAS THE PROBLEM TODAY: the setting is global to
+the framework, so the permissive default is inherited by every present
+and future request-handling path rather than by one component, and the
+next person to add a path that keys on caller origin will inherit it
+silently without any indication that a decision was made. WHAT LIMITS
+THE IMPACT RIGHT NOW: the one component that would be most affected is
+not currently connected to the live request path, so this is not a live
+exposure today; it is a trap laid for whoever connects it. THAT IS
+PRECISELY WHY IT IS WORTH FIXING WHILE IT IS CHEAP — an inherited
+permissive default costs nothing to correct now and is very hard to
+notice later. ACCEPTANCE CRITERIA: the permitted-intermediary setting is
+configured explicitly, with the chosen value written down together with
+the reasoning; a test proves a claim from a non-permitted intermediary
+is ignored; and the reasoning is recorded where someone adding a new
+request path will encounter it.</td>
+</tr>
+<tr>
+<td>HXC-294</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>When an automated check finishes, it seals its results and writes a
+final verdict. A separate cleanup step that runs afterwards then deletes
+a small housekeeping file from inside that same folder, which updates
+the folders last-changed time to a moment after the run was sealed. WHY
+THAT MATTERS AT ALL: one way of finding the most recent run is to sort
+folders by last-changed time, and a folder touched after sealing sorts
+later than it should. WHEN IT CAN ACTUALLY BITE: only where two runs
+overlap and the earlier one performs this cleanup after the later one
+has already sealed, which can place the earlier run first. It cannot
+happen for runs that do not overlap, and it only affects checks that
+start their own helper process. THIS IS PRE-EXISTING AND WAS NOT
+INTRODUCED BY THE RECENT REPAIR to the same area — that repair fixed the
+cross-run version of this problem, and this is the remaining same-run
+version, which is much narrower. ACCEPTANCE CRITERIA: either the
+housekeeping file lives outside the sealed folder so cleanup cannot
+disturb it, or the sealing step happens after cleanup rather than
+before; and ordering by time is shown to be correct for two deliberately
+overlapping runs.</td>
+</tr>
+<tr>
+<td>HXC-295</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>A code comment explains, in the present tense, that a shared results
+library has a defect where the pointer to the most recent run never
+advances. That defect has since been repaired. The comment now states as
+current fact something that is no longer true. WHY IT IS NOT SIMPLY
+DELETED: the advice the comment gives — resolve a run folder from the
+announcement in the log rather than by following the pointer or sorting
+by time — remains correct, but for a different reason than the one
+written down. Concurrent runs are still safest resolved from their own
+announcement, so the conclusion survives while its justification does
+not. THAT COMBINATION IS THE HAZARD: a reader who checks the stated
+reason and finds it no longer applies may reasonably discard the
+still-correct advice along with the stale explanation. WHO IS AFFECTED:
+anyone maintaining the automated checks who reads this comment to decide
+how to locate a run folder. ACCEPTANCE CRITERIA: the comment describes
+the repaired state rather than the old one; the advice it gives is kept,
+restated against the reason that still holds; and it names the repair so
+a reader can confirm the history rather than having to rediscover
+it.</td>
+</tr>
+<tr>
+<td>HXC-296</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>The project handbook lists the web framework version this codebase
+depends on. The version recorded there is older than the version
+actually declared in the dependency file and actually compiled into the
+product. WHY A VERSION FIGURE IN A HANDBOOK IS WORTH CORRECTING:
+contributors consult it when deciding whether a framework feature or
+behaviour is available to them, and behaviour genuinely differs between
+the two versions in areas this project touches, including how a callers
+origin address is resolved. A contributor reasoning from the stated
+version can therefore reach a conclusion that is correct for that
+version and wrong for the one that ships. HOW IT WAS FOUND: a review
+needed the exact behaviour of a framework function, checked the version
+rather than assuming, and found the handbook disagreed with the
+dependency file. ACCEPTANCE CRITERIA: the handbook states the version
+actually in use; the dependency file remains the single place the
+version is decided; and any other place that repeats a version figure is
+either corrected or changed to point at the dependency file instead of
+repeating it.</td>
+</tr>
+<tr>
+<td>HXC-297</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>The checks that run before each commit build their list of files to
+inspect from the version-control tool using its default settings. Under
+those defaults, any filename containing characters outside the plain
+English range comes back wrapped in quotes with those characters
+escaped, rather than as the name itself. Each of the four checks then
+looks for a file under that quoted-and-escaped name, does not find one,
+and moves on without inspecting it. THE EFFECT IS ALWAYS THE SAME
+DIRECTION: such a file is silently skipped, never wrongly rejected, so
+nobody is ever blocked and nobody ever notices. That is precisely why it
+has survived — it produces no symptom until the day a file that needed
+checking was one of the ones skipped. WHO IS AFFECTED: any contributor
+whose filenames include accented letters, non-Latin scripts, or emoji,
+which is a normal thing in a project with contributors and documentation
+in more than one language. THIS IS PRE-EXISTING AND SHARED BY ALL FOUR
+CHECKS rather than belonging to any one of them, which is why it was
+deliberately not folded into the recent repair of one of those checks —
+fixing it properly means changing how the file list is built for all of
+them at once. THE FIX IS SMALL: ask the version-control tool not to
+escape the names. ACCEPTANCE CRITERIA: a file whose name contains
+non-English characters is inspected by every one of the four checks
+exactly as an English-named file would be; a test proves it by staging
+such a file with a problem the checks are meant to catch and confirming
+they catch it; and no check gains a new way to reject a file it should
+accept.</td>
+</tr>
+<tr>
+<td>HXC-298</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A second place in the same component works out who a request came
+from, and it does so by believing a header in which the caller states
+their own origin address, exactly as written, with no list of which
+intermediaries are permitted to make such a claim. It also falls back to
+the raw connection address including the port, so the same caller
+appears under a different identity on every connection. WHERE THAT
+IDENTITY GOES: into the access-control audit log, which is the record of
+who did what for permission decisions. So a caller can both choose the
+identity recorded against their actions and, by varying the port,
+fragment their own history into unrelated-looking entries. THIS IS A
+SIBLING OF AN ALREADY-REPAIRED DEFECT, NOT THE SAME ONE: a fix landing
+separately repairs the same class in a different function of the same
+component. That fix examined the two consumers of its own function and
+stopped there; nobody took a census of the defect class across the
+component, which is how this one and one other stayed live while their
+sibling was closed. WHO IS AFFECTED: anyone relying on the
+access-control audit trail to establish who performed an action.
+ACCEPTANCE CRITERIA: the caller origin is derived the same way as the
+repaired sibling, including honouring a claimed-origin header only from
+permitted intermediaries and choosing the entry a permitted intermediary
+cannot control; the connection port never forms part of an identity; and
+both are proven by tests that fail if the old behaviour returns.</td>
+</tr>
+<tr>
+<td>HXC-299</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A third place in the same component extracts a callers address by
+splitting the raw connection address at its FIRST colon and keeping what
+comes before it. For an old-style address that happens to work. For the
+modern numeric form, which is written wrapped in square brackets and is
+full of colons, it returns a fragment consisting of an opening bracket
+and the first group of digits — not an address at all, and one that is
+identical for enormous numbers of unrelated callers. THIS IS WORSE THAN
+THE DEFECT ITS SIBLING JUST REPAIRED: that one retained surrounding
+punctuation on an otherwise complete address, so the identity was at
+least unique per caller. This one truncates, so genuinely different
+callers collapse onto the same identity — and anything counting or
+recording per caller counts them as one. IT ALSO BELIEVES A
+CLAIMED-ORIGIN HEADER VERBATIM, with no list of permitted
+intermediaries, so a caller may state any origin they wish. HOW IT WAS
+FOUND: a review of the sibling repair took the component-wide census of
+the defect class that the repair itself had not, and found this and one
+other. WHO IS AFFECTED: every security decision or record keyed on this
+helpers output. ACCEPTANCE CRITERIA: the address is taken apart by the
+standard routine rather than by cutting at a colon, so the modern form
+survives intact; a claimed-origin header is honoured only from permitted
+intermediaries; and a test proves two genuinely different modern-form
+callers no longer collapse onto one identity.</td>
+</tr>
+<tr>
+<td>HXC-300</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The shared mechanism for looking up which models a provider offers
+has three stages, the second of which asks an outside third-party
+catalogue website. One particular provider does not use that shared
+mechanism at all: it carries its own independent copy of the same
+three-stage logic, with its own separate call to that same outside
+catalogue. WHY A PRIVATE COPY MATTERS MORE THAN THE DUPLICATION ITSELF:
+a repair to the shared mechanism does not reach it. A sibling repair has
+just removed unwanted outside calls from the shared path at start-up;
+this copy is untouched by that work and will keep making them wherever
+it is reached. WHEN IT IS REACHED: only through the explicit
+operator-triggered refresh, and only when a particular command-line tool
+happens to be installed on the machine — which it is on the current
+development machine, so this is reachable here today rather than
+hypothetical. WHO IS AFFECTED: anyone triggering a refresh on a machine
+with that tool present, whose request then reaches a third-party website
+that no part of our configuration names. HOW IT WAS FOUND: a repair to
+the shared path traced every call that reaches the outside and found
+this one does not go through the shared path at all. ACCEPTANCE
+CRITERIA: this provider either uses the shared mechanism or its private
+copy is brought under the same controls, so that a change to how we
+contact outside services reaches every path rather than most of them;
+and a test proves no path contacts the outside catalogue except where
+that is intended and configured.</td>
+</tr>
+<tr>
+<td>HXC-301</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A component is constructed with a true-or-false setting whose name
+states plainly that it controls whether providers are checked over the
+network at start-up. The value is stored and then never read, anywhere,
+by anything. It has been unread since the file first entered the project
+history. WHY AN UNREAD SETTING IS WORSE THAN NO SETTING: the one place
+that constructs this component passes the value meaning do-not-check, so
+anyone reading that line — including three separate reviewers of related
+work — reasonably concludes that start-up network checking is switched
+off. It is not, and was not; the checking happened regardless, on every
+start, using whatever credentials were present. The setting did not
+merely fail to help, it actively misdirected everyone who read it, and
+it is the reason the underlying problem was described incorrectly when
+first reported. THE UNDERLYING PROBLEM IS BEING FIXED SEPARATELY; this
+item is about the misleading control that hid it. WHAT MUST NOT HAPPEN:
+the setting should not simply be deleted without establishing what it
+was intended to do, per our rule on apparently-unused code — it may
+represent an intention that was never finished rather than one that was
+abandoned. ACCEPTANCE CRITERIA: the project history is examined to
+establish what the setting was meant to control; it is then either
+connected so that it genuinely does that, or removed in its own separate
+change with the evidence recorded; and no remaining setting anywhere in
+that constructor claims to control something it does not.</td>
+</tr>
+<tr>
+<td>HXC-302</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A repair stopped the server from making paid outside calls during
+start-up, and ships with a guard meant to catch anyone reintroducing
+them. The guard runs in a deliberately empty environment with no
+credentials present, which means the start-up scan finds no credentialed
+providers at all — so the four places that could reintroduce the calls,
+the guard only ever observes one of them. WHY THAT IS THE WRONG ONE: the
+unobserved three include the primary path, the loop that handles every
+provider reached by an environment credential, which is where the
+original defect lived and where a future edit is most likely to put it
+back. PROVEN, NOT SUSPECTED: a reviewer un-gated that one site and left
+the rest alone; the entire guard suite stayed green. Un-gating the
+observed site is correctly caught, which is what makes the gap easy to
+miss — the guard looks like it works. WHO IS AFFECTED: anyone who edits
+this area later and trusts a green guard. THE FIX IS KNOWN AND SMALL:
+the test can register a synthetic provider entry whose model-list
+address points at a local stand-in server with its environment variable
+set; the credentials-only path must then record zero arrivals at that
+server and the full path at least one. ACCEPTANCE CRITERIA: each of the
+four sites, un-gated alone, makes the guard fail; the primary path is
+exercised through a local stand-in rather than a real service; and no
+real outside call is made to prove any of it.</td>
+</tr>
+<tr>
+<td>HXC-303</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>Providers are ranked by a score out of ten, and up to one and a half
+points of that score comes from the capabilities a provider reports.
+Those capabilities used to be collected during start-up. A recent repair
+stopped that collection, for good reason — it was making paid calls to
+outside services on every start — but the scoring path was not updated
+to collect them itself. THE CONSEQUENCE: unless an operator happens to
+trigger a refresh first, that portion of every score is now zero, and
+the reported breakdown shows zero for it. WHAT IT IS NOT: this is not
+fabricated data. The score honestly reports the bonus actually applied,
+and every provider is affected equally, so the ranking is internally
+consistent and the base score dominates. WHAT IT IS: a silent change in
+behaviour that can shift the relative ordering of providers by up to one
+and a half points, which is enough to change which provider is chosen
+for a multi-provider deliberation. Nobody is told this happened. WHO IS
+AFFECTED: any automatic selection that ranks providers by score without
+a refresh first. ACCEPTANCE CRITERIA: either the scoring path populates
+capabilities from the provider it has just contacted anyway, or the
+dependency on a prior refresh is documented where a reader will meet it;
+and a test proves the score is the same whether or not a refresh
+preceded it, or proves the documented ordering requirement.</td>
+</tr>
+<tr>
+<td>HXC-304</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>A repair that stopped paid outside calls at start-up carries two
+written claims that overstate it. THE FIRST: the code says the start-up
+path now performs no outgoing network activity of any kind. It performs
+none to any outside service and none using any credential, which is the
+property that matters and the one the repair achieved — but one provider
+branch still makes a request to a service on the machine itself and
+still runs a local command, both of which pre-date the repair and are
+untouched by it. The precise statement is no third-party and no
+credentialed activity. THE SECOND: the accompanying description says
+roughly forty of forty-five provider kinds make the paid call. That
+number blends two different populations. Counted properly, thirty-two of
+the thirty-five kinds constructible from an environment credential make
+it, which is ninety-one percent; separately, forty of about fifty
+provider packages are wired to the shared lookup. WHY BOTH ARE WORTH
+CORRECTING RATHER THAN LETTING SLIDE: a reader who tests the first claim
+finds a local request and may conclude the repair failed, and a reader
+who recounts the second finds neither number. A claim that is
+directionally right and literally wrong teaches readers to distrust the
+precise ones. ACCEPTANCE CRITERIA: both statements say what the code
+does; the local-only side effects are named so a future reader is not
+surprised by them; and the counts state which population they
+count.</td>
+</tr>
+<tr>
+<td>HXC-305</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Test collections exist in two forms: an older prose form that is
+descriptive and cannot be run, and a newer structured form that actually
+executes requests. When the system loads a whole directory of
+collections, it silently discards the runnable form of any collection
+whose prose namesake is also present. No message is printed and no count
+is reported, so from the outside the directory appears fully loaded. WHY
+THIS IS THE ROOT CAUSE OF A LARGER PROBLEM: because those runnable
+collections never ran, nobody noticed that a hundred and twenty-five of
+their individual checks declared no expectation at all and would report
+success against any reply whatsoever — a defect tracked separately and
+now repaired. Nor did anyone notice that eight of them carried a value
+of the wrong type which makes the loader refuse the file outright. Both
+went undiscovered for the same reason: the files were never executed.
+THE REPAIR TO THOSE CHECKS DOES NOT HELP UNTIL THIS IS FIXED. Adding a
+proper expectation to a check that never runs changes nothing about what
+the system actually verifies, so this defect determines whether that
+repair delivers anything at all. There is one path that does reach them
+— naming a single file explicitly on the command line bypasses the
+directory scan — but the regular whole-directory run does not. WHO IS
+AFFECTED: anyone who runs the collections as a suite and believes the
+reported total reflects what was checked. ACCEPTANCE CRITERIA: a
+whole-directory run either loads the runnable form in preference to the
+prose form or reports plainly which files it declined and why; the count
+it reports matches what it actually attempted; and a test proves a
+collection with both forms present is genuinely executed rather than
+silently dropped. REVIEW SHARPENING (2026-08-12): an independent review
+established the precise state. As STRUCTURAL checks the affected
+collections now run on every ordinary test cycle — a companion repair
+drives every one of their checks through the real request-executor, so
+their content can no longer rot unnoticed. As LIVE testing against a
+running service they remain available only when someone names a file
+explicitly, and no committed pipeline does so: the release testing
+script selects a different naming prefix entirely. So the outstanding
+decision is narrower than first filed — either wire these collections
+into a pipeline that consumes their result, or record deliberately that
+they are framework fixtures rather than release gates.</td>
+</tr>
+<tr>
+<td>HXC-306</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A repair gave every previously-unasserted check an explicit
+expectation. For a hundred and nineteen of them that expectation was
+then proven to work in both directions — it fails when the answer is
+wrong and passes when the answer is right. For thirty-three it could not
+be proven, and the reason is a separate pre-existing limitation: their
+target address contains a placeholder standing in for an identifier that
+the system has no way to fill in, so the run reports them as skipped
+before the expectation is ever consulted. THIS IS HONEST RATHER THAN
+HIDDEN — the repair records them as their own category and does not
+claim they were verified — but it leaves roughly a quarter of the
+newly-added expectations in a state where nobody has ever seen them
+fail. AN EXPECTATION NOBODY HAS WATCHED FAIL IS NOT YET EVIDENCE, which
+is the whole principle the repair exists to serve, so this remainder
+deserves closing rather than accepting. WHAT WOULD CLOSE IT: the ability
+to capture an identifier from an earlier reply and substitute it into a
+later address, which is already tracked as a known limitation of the
+runner. Once that exists, these thirty-three begin being exercised with
+no further change to them. WHO IS AFFECTED: anyone reading the coverage
+figure and assuming every added expectation is live. ACCEPTANCE
+CRITERIA: the runner can carry a value from one step into a later step
+address; the thirty-three are then proven to fail against a deliberately
+wrong answer and pass against a right one, exactly as the other hundred
+and nineteen were; and the honest-category count returns to zero or is
+restated with whatever genuinely remains. REVIEW SHARPENING
+(2026-08-12): twenty-four of the twenty-nine expectations that were
+derived from convention rather than from a direct precedent — including
+all fifteen where the literal precedent disagreed and convention was
+correctly preferred — sit INSIDE this unexercised set. So the checks
+whose expected answer rests on the weakest evidence are exactly the ones
+nobody has yet watched fail. Nothing currently prevents the category
+growing either; asserting its size would stop it expanding
+unnoticed.</td>
+</tr>
+<tr>
+<td>HXC-307</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>A guard runs a fast text-based pre-check before its real runtime
+check. That pre-check refuses to proceed whenever the body it scans
+appears to contain a name followed by an equals sign, or one of a
+handful of other constructs. NINE ENTIRELY HARMLESS SHAPES TRIP IT: a
+message string that happens to contain such text, a web address with
+query parameters, a here-document body, a pattern in a branch statement,
+an embedded program written in another small language, a command
+prefixed with a temporary setting that creates nothing lasting, a
+comparison against a pattern, and the ordinary word for reading input
+appearing anywhere in any string. WHY IT IS ONLY LOW: it fails in the
+safe direction — a refusal, never a wrongly-cheerful pass — and the
+subject it actually guards today contains none of the nine, so the
+shipped configuration runs cleanly. It is a trap laid for whoever next
+edits that subject, not a live fault. WHAT CHANGED THE CALCULATION: the
+guard now has a runtime check that catches everything the text-based one
+was trying to catch, and catches it correctly, so the pre-check is no
+longer the defence — it is a cheap early warning whose cost is now the
+only thing it contributes on these nine shapes. THE RECOMMENDED SHAPE OF
+THE FIX, from the review: the half that checks whether the harness
+actually supplied each expected value is still worth keeping, because it
+catches the original problem before anything runs and names the missing
+value precisely. The half that refuses on unrecognised constructs
+carries the false-refusal cost with the least remaining benefit, and
+narrowing or removing it is the clean change. ACCEPTANCE CRITERIA: none
+of the nine harmless shapes causes a refusal; the supply check still
+names a genuinely missing value before the run; and a test proves both,
+including one shape that previously refused.</td>
+</tr>
+<tr>
+<td>HXC-308</td>
+<td>Task</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The rule that decides which address a request genuinely came from
+now exists twice in the same component: once on the path that is live
+today, and once on a path that is not yet connected. The second copy was
+made deliberately and the reasoning is written down — the first copy
+cannot be called from where the second lives without turning the
+components dependency direction upside down. WHAT IS MISSING IS NOT THE
+COPY BUT THE LINK BETWEEN THEM: no test loads both, no shared set of
+examples is checked against each, and nothing compares their answers. If
+someone repairs one and not the other, everything stays green. WHY THAT
+IS MORE THAN UNTIDINESS: both copies read the SAME setting to decide
+which intermediaries may speak for a caller. An operator sets that one
+setting and reasonably expects both paths to behave identically. The
+moment the second path is connected, any difference between the copies
+becomes a security inconsistency that the setting itself gives no hint
+of. THERE IS A BETTER END STATE THAN EITHER COPY: the shared rule can
+live in a lower-level place that both paths reach downward, which
+removes the duplication without inverting anything. That was not
+available when the second copy was made only because the first path was
+deliberately frozen at the time. ACCEPTANCE CRITERIA: either the rule
+lives in one place both paths use, or a test loads both copies and
+checks them against one shared set of examples so a difference cannot
+pass unnoticed; and the written reasoning is updated, since it currently
+presents the duplication as unavoidable when it was in fact bounded by
+the scope of one change.</td>
+</tr>
+<tr>
+<td>HXC-309</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Before every commit, a check searches staged file contents for
+tell-tale phrases left behind by deliberate break-it-and-see
+experiments. It does this by feeding the file content into a search
+command through a pipe. WHY IT SILENTLY STOPS WORKING ON LARGER FILES:
+the search command stops as soon as it finds a match, which closes the
+pipe; the command feeding it is then killed by that closure; and because
+the check treats the whole pipeline as one result, a killed feeder is
+reported as failure — which the check reads as NO MATCH FOUND. On small
+files the feeder finishes writing before the search can stop it, so the
+problem never appears. MEASURED: files of four and eight kilobytes are
+correctly blocked; files of sixteen, thirty-two and sixty-four kilobytes
+are silently allowed through. THE MOST POINTED EXAMPLE: the check’s own
+source file is forty-one kilobytes, so if it were ever staged with
+leftover damage in it, it would pass its own inspection. WHY THIS IS
+SERIOUS RATHER THAN THEORETICAL: this is the check whose entire job is
+catching leftover experiment damage before it reaches a commit, and the
+larger files it goes blind on are exactly the substantial source files
+most likely to have had experiments run against them. IT IS
+PRE-EXISTING, not introduced by any recent change, and the same shape
+affects two neighbouring checks — one in the direction of wrongly
+refusing rather than wrongly allowing. HOW IT WAS FOUND: a review of a
+related repair measured the threshold directly rather than reading the
+code. ACCEPTANCE CRITERIA: content of any size is inspected correctly; a
+test proves a file well above the threshold with damage in it is
+refused; and the neighbouring checks with the same shape are corrected
+or shown not to share it. CONTESTED — DO NOT ACT ON THIS ITEM UNTIL
+RESOLVED (recorded 2026-08-12). Two independent parties reproduced the
+blindness and measured the same threshold; a third could not reproduce
+it at all. The third ran the shape the check actually ships — feeding
+the content with an explicit format specifier — and got a correct match
+at every size from four kilobytes to one megabyte, eleven times out of
+eleven, with its instrument validated by correctly reporting no-match on
+content genuinely free of the phrases. The two that did reproduce it ran
+a standalone script. A LIKELY EXPLANATION, NOT YET CONFIRMED: the two
+shapes differ materially — feeding content WITHOUT a format specifier
+treats that content as a formatting instruction rather than as data,
+which is both a separate defect and changes the timing the whole finding
+rests on. If the reproductions used that second shape and the shipped
+check uses the first, then this item as filed describes a defect the
+shipped code does not have, and the real finding is the shape difference
+itself. RESOLUTION REQUIRED BEFORE ANY WORK: obtain the exact
+reproduction conditions — the precise invocation, the line number in the
+shipped file, and which of the two shapes each party used. Then either
+restate this item to describe what genuinely reproduces, or close it as
+not-a-defect with the measurements recorded. Filing it on two
+measurements was reasonable; leaving it unqualified once a third
+contradicts them would not be. CONTEST RESOLVED (2026-08-13) — BOTH
+MEASUREMENTS WERE CORRECT, AND THE ITEM STANDS WITH A RESTATED
+THRESHOLD. Two causes were isolated, each verified directly. FIRST: the
+failure belongs to the shell built-in form of the writing command, not
+the external program of the same name. An A-B test over an otherwise
+identical pipeline gave the killed-writer result every time with the
+built-in and a clean result every time with the external one. The check
+uses the built-in, so this sharpens the finding rather than retracting
+it. SECOND, and this is what reconciles the disagreement: the size at
+which it begins depends on how much a pipe on the host can hold before a
+writer blocks. This host holds eight kilobytes, queried directly rather
+than assumed, which is well below the sixty-four kilobytes many
+comparable hosts default to. The failure needs the writer to block on a
+full pipe while the reader has already found its match and exited, so on
+a host with a larger pipe it needs a correspondingly larger amount of
+content — plausibly more than the one megabyte the contradicting
+measurement reached, which explains a clean result there without either
+party being wrong. THE THRESHOLD IS NOW PINNED EXACTLY on this host and
+reproduced twice: twelve thousand two hundred and eighty-eight bytes
+always matches, twelve thousand four hundred and above never does.
+Deterministic, not intermittent. The instrument was validated as
+required — content genuinely free of the phrases correctly reports no
+match at every size from four kilobytes to one megabyte. THE ORIGINAL
+FILING SAID SIXTEEN KILOBYTES; that was directionally right and
+quantitatively wrong, and stated as a universal figure when it is
+host-dependent. RESTATED ACCEPTANCE CRITERIA: content of any size is
+inspected correctly regardless of how much the host pipe holds; the fix
+does not depend on the writer being either the built-in or the external
+form; a test proves a file above the threshold with a planted phrase is
+refused, and states the host pipe size it ran against; and the two
+neighbouring checks sharing this shape are corrected or shown not to
+share it. WORTH RECORDING FOR THE NEXT INVESTIGATION: the party who
+could not reproduce it initially also could not because an interactive
+shell function shadows the reader command, and that shadow does NOT
+propagate into a script run as a file — the same environment-mismatch
+class this check own comments already warn about, encountered twice in
+one night from opposite directions. ROOT-CAUSED AND FIXED, PENDING
+REVIEW (2026-08-13). A repair round working on the neighbouring item
+traced the mechanism precisely: the searching command stops at its first
+hit and closes the pipe; the feeding command is killed by that closure;
+and because the check treats the whole pipeline as one result, the
+killed feeder is read as NO MATCH. A guard was added that reads the
+SEARCHER own status rather than the pipeline status, plus a fail-safe so
+a search that CANNOT ANSWER now refuses the commit instead of reading
+clean. Proven end to end through a real commit: a thirty-kilobyte file
+containing a planted phrase was ALLOWED before the change and REFUSED
+after. THE PRODUCER-SPECIFICITY QUESTION IS NOT SETTLED — three
+measurements now disagree. The resolution above concluded the failure
+belongs to the shell built-in form of the writing command. The repair
+round states an external command reproduces it identically. A third
+party could not reproduce it AT ALL: four different writers, forty
+kilobytes, phrase at the front and at the back, every run reported a
+correct match. That third probe had a flawed status capture and may not
+have matched the shipped code path at all, so it does not overturn
+anything — but it does mean the cause attribution rests on measurements
+that have never been reconciled against the SHIPPED invocation. WHATEVER
+SETTLES THIS MUST DO SO AGAINST THE SHIPPED CHECK ITSELF, citing its
+line number, not against a hand-built pipeline. The end-to-end refusal
+evidence stands independently of which writer is implicated. SEPARATELY
+VERIFIED (2026-08-13): a scan of every commit across all four
+repositories since 2026-08-09 — ninety-five commits — found ZERO added
+lines carrying any experiment-residue phrase. So although this check was
+failing open for larger files, no residue is known to have reached a
+commit. That scan can only see residue that was ADDED; residue that
+works by DELETING code leaves no phrase to find, which is exactly the
+gap the neighbouring item exists to close. SETTLED (2026-08-13,
+independent review round 8) — AND TWO EARLIER CONCLUSIONS RECORDED HERE
+ARE NOW DISPROVED. Read this paragraph in preference to everything above
+it. IT IS A RACE, NOT A THRESHOLD. The earlier “pinned exactly” figures
+were an artefact of one fixture. Forty repetitions at each size: at
+twelve thousand nine hundred and seventy-eight bytes it behaves
+correctly every time; at twenty thousand and eighteen it fails open
+every time; and at sixteen thousand and eighteen it fails open SIXTEEN
+times out of forty — genuinely non-deterministic in a transition band.
+It also depends on WHERE the phrase sits, not how large the file is: in
+a fixed thirty-kilobyte file, a phrase early in the file fails open
+while the same phrase late in the file does not. The governing quantity
+is how much content remains AFTER the matching line compared with how
+much the pipe can hold. Any fixture therefore produces its own apparent
+threshold, which is why three parties measured three different ones. IT
+IS NOT SPECIFIC TO THE SHELL BUILT-IN WRITER. That conclusion, recorded
+above, is disproved: the same failure was reproduced with two external
+writers as well as the built-in, all showing the identical killed-writer
+signature. The A-B test that produced the earlier conclusion was
+measuring the race, not the writer. THE THIRD PARTY WHO COULD NOT
+REPRODUCE IT WAS WRONG, AND THE REASON IS INSTRUCTIVE. Their test
+content was a single enormous line with no line breaks. The searching
+command works line by line, so it cannot stop early on one unbroken line
+— it must read to the end, which is precisely the condition under which
+the fault cannot occur. Their probe was structurally incapable of
+detecting the thing it was testing for, and its clean result carried no
+information. Anyone re-testing this MUST use content containing line
+breaks, and MUST test several sizes and phrase positions, because a
+single lucky probe has now produced a false all-clear twice. WHAT
+REMAINS TRUE: the repair is correct and confirmed end to end through
+real commits, with a fresh repository for each version of the check — a
+thirty-kilobyte file carrying the phrase was allowed before and refused
+after, while clean, binary, malformed-encoding and very large
+single-line files continued to be allowed, so nothing is
+over-refused.</td>
+</tr>
+<tr>
+<td>HXC-310</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>A component exists whose job is to limit how often any one caller
+may make requests. It is complete, it is tested, and a genuine bypass in
+it was found and repaired. It is also not connected to the running
+service. THREE INDEPENDENT CHECKS ESTABLISHED THIS: the single place
+that assembles the live request path installs logging, recovery, feature
+handling, compression, a concurrency cap, a body-size cap, metrics and
+authentication — and not this. The second way the service can be started
+does not even load the package it lives in. No connection to it exists
+anywhere outside test code. WHAT THAT MEANS FOR THE REPAIR THAT WAS JUST
+MADE: the bypass was real and the repair is correct, but both concern a
+component no request currently passes through, so the repair protects
+nothing today and the original defect endangered nothing. That reframes
+how urgently either should be weighed. A SECOND LAYER MAKES IT WORSE IF
+IT IS EVER CONNECTED: the setting that decides which intermediaries may
+speak for a caller is never configured, so the framework default of
+believing everyone applies. Connected as-is, a caller could simply claim
+a different origin and evade the limit anyway — so connecting it without
+also configuring that setting would deliver a limit that does not limit.
+WHO IS AFFECTED: anyone assuming request-rate limiting is in force. It
+is not. ACCEPTANCE CRITERIA: the component is either connected to the
+live request path together with a configured intermediary setting, or it
+is recorded plainly and where readers will find it that request-rate
+limiting is deliberately not in force; and whichever is chosen, a test
+proves the actual state rather than the intended one.</td>
+</tr>
+<tr>
+<td>HXC-311</td>
+<td>Task</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A suite of adversarial tests exists which, until today, could not
+fail — it exercised an imitation of the real component rather than the
+component. That has been repaired and the suite is now genuinely capable
+of failing. WHAT HAS NOT CHANGED IS HOW IT IS INVOKED: the only thing
+requiring it to run before a release is a tick-box on a checklist
+document, which a person marks by hand. Nothing refuses to proceed if
+the suite was never run, and nothing refuses if it ran and failed. WHY
+THAT MATTERS MORE NOW THAN YESTERDAY: while the suite could not fail,
+its manual invocation cost nothing, because running it proved nothing
+either way. Now that it can fail, the gap between can-fail and must-run
+is the whole of its value — a capable check nobody is required to run
+protects exactly as little as one that cannot fail. OUR OWN STANDING
+RULE ON THIS asks for a check that BLOCKS a release rather than one that
+reminds someone. WHAT IS ALSO WORTH DECIDING: the same suite is
+deliberately separated from the ordinary fast test run because it is
+slower and drives real requests — that separation is sound and
+documented, so the fix is to require it at the release boundary, not to
+fold it into every run. WHO IS AFFECTED: anyone reading a completed
+checklist and concluding the adversarial suite passed. ACCEPTANCE
+CRITERIA: the release path refuses to proceed when this suite has not
+run or has failed; the tick-box either reflects that mechanical result
+or is removed so nobody is asked to vouch by hand for something now
+checkable; and a test proves the refusal by making the suite fail
+deliberately.</td>
+</tr>
+<tr>
+<td>HXC-312</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>The check that inspects every test collection now looks inside
+sub-folders as well as the top level. That is the correct behaviour and
+it was the point of a recent repair. It introduced one narrow weakness:
+if any file with a collection-like extension sitting anywhere beneath
+that folder cannot be read as a collection, the inspection stops at that
+file and reports only that one problem. The other roughly one hundred
+and ninety-seven files are never examined and nothing says so. WHY IT IS
+ONLY LOW: it fails loudly rather than quietly, so nobody is told
+everything is fine when it is not; and no such file exists today, since
+the only sub-folder the inspection currently reaches holds a single file
+of an unrelated type that is filtered out before reading. A file of the
+right extension but the wrong shape, however, is an ordinary thing for
+someone to drop into a folder like this. WHAT MAKES IT WORTH FIXING
+RATHER THAN ACCEPTING: the value of this inspection is that it covers
+everything, and a single unreadable stray silently reduces its coverage
+to whatever it happened to reach first while still appearing to have
+run. THE FIX IS SMALL: treat an unreadable file as one more problem to
+report and carry on, rather than as a reason to stop. ACCEPTANCE
+CRITERIA: an unreadable file is reported as its own problem and the
+inspection continues through every remaining file; the report names both
+the unreadable file and any other problems found; and a test proves it
+by placing a deliberately unreadable file alongside a genuine problem
+and confirming both are reported.</td>
+</tr>
+<tr>
+<td>HXC-313</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The rule that works out which address a request genuinely came from
+reads the claimed-origin header by asking for it once. The standard
+library method used returns only the FIRST line of that header when a
+caller sends it more than once. A caller can send the header twice:
+their own forged value first, and the genuine chain second. The reader
+takes the first and never sees the second. MEASURED: two header lines
+with a forged address first resolved to the forged address. WHY IT
+DEFEATS THE PROTECTION JUST BUILT: a careful right-to-left walk over the
+chain, skipping intermediaries we trust, is exactly right — and it is
+applied to the wrong line. All the care goes into choosing correctly
+within a chain the attacker got to choose. THE CORRECT HANDLING is to
+collect every line of that header and join them, which is what the
+standard prescribes, since a repeated header is defined to mean the same
+thing as one header with the values joined by commas. WHERE IT APPLIES:
+this shape was identical in all three places that derived caller
+identity. Those three have just been consolidated into a single shared
+rule, so this is now one fix rather than three — which is the clearest
+argument yet that consolidating them was right. WHO IS AFFECTED:
+anything keying on caller identity, including request-rate accounting
+and the security audit record, wherever the shared rule is reached from
+a live path. ACCEPTANCE CRITERIA: every line of the header is
+considered, joined as the standard prescribes; a test sends the header
+twice with a forged value first and proves the genuine origin still
+wins; and the same test proves a single-line header is unaffected.</td>
+</tr>
+<tr>
+<td>HXC-314</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>The enterprise service defines a handler whose name says it limits
+how often a caller may make requests. Its body discards the caller
+identity it computes and passes every request through untouched, with
+comments saying a real implementation would go here and that it passes
+through for demonstration purposes. It is also never attached to any
+route: three handler names are registered and a fourth is consulted for
+a different purpose, but this one is written into the registry and never
+read again. So it is inert twice over — it would do nothing if reached,
+and it is not reached. WHY IT IS FILED RATHER THAN IGNORED: placeholder
+text of this kind in code that is not a test is forbidden outright by
+our own rules, and a handler named for a protection that provides none
+is precisely the shape that leads a reader to believe a protection
+exists. The enterprise service as a whole is currently unreachable from
+any shipped program, which is why this is Low rather than higher — but
+if that service is ever connected, this handler joins it looking like a
+safeguard. WHO IS AFFECTED: anyone auditing what protections the
+enterprise service applies. ACCEPTANCE CRITERIA: the handler either does
+what its name says and is attached where it belongs, or it is removed
+with the reasoning recorded per our rule on apparently-unused code; and
+no placeholder or demonstration text remains in code outside tests.</td>
+</tr>
+<tr>
+<td>HXC-315</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>When the runner loads cases from a folder, it walks the folder by
+hand and loads each file one at a time with no handling for the
+two-format twins that exist throughout the collection. Both forms of a
+twin therefore load, and each writes into the same lookup keyed by case
+identifier, so whichever loads last wins. The ordering the system uses
+puts the runnable form first and the descriptive form second, so the
+DESCRIPTIVE form always wins and the runnable one is discarded. WHY THAT
+IS MORE THAN UNTIDY: the loaded case decides two things. It decides
+which steps are executed as real commands. And it decides whether a case
+contains a step that makes an assertion but has not yet run — a
+condition that is supposed to PREVENT a result being automatically
+upgraded from skipped to passed. When the descriptive form wins, a case
+whose real step makes an assertion is seen as containing only prose, so
+nothing blocks the upgrade and a skipped result is promoted to a pass it
+never earned. THAT IS THE EXACT CLASS OF DEFECT THE PROJECT HAS SPENT
+THIS ENTIRE CYCLE CLOSING, arrived at from a different direction: not a
+check that cannot fail, but a check whose failure is silently upgraded
+away. A CONCRETE EXAMPLE WAS MEASURED: a specific administrative case
+whose runnable form carries a request step is loaded as description, and
+the promotion proceeds. THIS IS SEPARATE from the folder-loading defect
+being repaired elsewhere; this path never uses that loader at all, so
+repairing it does not help here. ACCEPTANCE CRITERIA: this path prefers
+the runnable form of a twin, or refuses to load both; a test proves a
+case with a real asserting step blocks the upgrade; and a test proves
+the ordering of files on disk cannot change which form wins.</td>
+</tr>
+<tr>
+<td>HXC-316</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The script that runs this product test collections selects them by
+matching a name prefix that ends in a hyphen. Two collections declare in
+their own contents that they belong to this product, but their filenames
+use an underscore instead of a hyphen at exactly that position, so the
+selection never matches them and they are never run. THE SELECTION
+ITSELF IS CORRECT AND DELIBERATE: it exists to exclude collections
+belonging to other consumers, which rely on their own services, and the
+script says so in its own comment. The defect is that two of OUR OWN
+collections are on the wrong side of it purely through a naming
+inconsistency nobody noticed. WHY IT MATTERS NOW RATHER THAN IN GENERAL:
+one of the two was among the collections repaired in the recent work to
+give every check a real expectation. That repair was made specifically
+so those checks could no longer pass regardless of the answer — and this
+collection still never runs, so the repair does not reach it. HOW IT WAS
+FOUND: a review checking whether a set of collections belonging to
+another product were correctly excluded confirmed that they were, and
+while confirming it noticed these two are incorrectly excluded in the
+same sweep. ACCEPTANCE CRITERIA: both collections are named consistently
+with the selection or the selection matches both spellings; a run proves
+both are now included; and a check prevents a future collection
+declaring this product from sitting outside the selection.</td>
+</tr>
+<tr>
+<td>HXC-317</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>The main run path does not use the folder loader that everything
+else uses. It reads collections through a loader belonging to a
+different shared component, which loads every file it finds and lets the
+last one written win, with no awareness that the collection folder
+contains pairs of files describing the same cases in two formats. THE
+CONSEQUENCE IS MILDER HERE than in the sibling defect, because the
+records this loader produces do not carry executable steps at all — so
+what is lost is descriptive accuracy rather than the ability to run
+something. WHY IT IS STILL WORTH RECORDING: it means a repair to the
+folder loader does not reach this path either, so anyone reasoning about
+which collections the main run actually sees will be wrong if they
+reason from that repair. Two separate loading paths with two different
+sets of blind spots, neither of which is the one being fixed, is a fact
+about this system that deserves to be written down rather than
+rediscovered. ACCEPTANCE CRITERIA: the main run path either shares the
+repaired loader or handles twin files with the same rule; the choice is
+recorded where a reader will meet it; and a test proves which form of a
+twin the main run actually loads.</td>
+</tr>
+<tr>
+<td>HXC-318</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The only web server the shipped program starts registers its
+handlers directly, wrapping them in nothing. The component that serves
+those requests DEFINES five separate protective handlers — one limiting
+how often a caller may make requests, one recording who did what, one
+setting protective response headers, one declaring a content policy, and
+one cleaning outgoing content. NONE of the five is applied. Three of
+them have no reference anywhere in the codebase at all, not even in a
+test. A sixth protective component in a neighbouring package has no
+caller whatsoever, including tests, so its own request limiter cannot be
+reached even in principle. WHY THIS IS ONE FINDING AND NOT SIX: the
+tests for these handlers construct each one directly and exercise it in
+isolation, so every one of them passes. A reader looking at the test
+results sees protections that work. A reader looking at the request path
+finds none of them present. The suite is not wrong about the mechanisms
+— it is silent about whether anything uses them, and nothing anywhere
+reports that gap. HOW THE PATTERN WAS FOUND: five separate defects filed
+during one cycle, each judged serious on its shape, turned out on
+inspection to live in code that never runs — an entire enterprise
+service with its own sign-in and permission system, a request limiter
+attached to no route, a record of who-did-what with no real storage
+behind it, a limiter that is a placeholder, and now this. Each was
+individually restated to a lower severity as the evidence arrived. The
+sixth instance made clear these are not filing errors but one
+architectural fact. WHY IT MATTERS MOST FOR A RELEASE: the accurate
+statement about this system is not that its vulnerabilities are fixed.
+It is that most of them were never reachable, AND that the protections a
+reader would reasonably assume are in force are not applied to any
+request. Both halves need to be true in the release record, because the
+second half is what an operator would be most surprised by. ACCEPTANCE
+CRITERIA: every defined protective handler is either applied to the
+request path or recorded plainly as deliberately not applied, with the
+reasoning where a reader will meet it; a test asserts which protections
+a real request actually passes through, so that defining one without
+applying it can no longer pass unnoticed; and the release record states
+the resulting position rather than leaving it to be inferred from tests
+that pass in isolation.</td>
+</tr>
+<tr>
+<td>HXC-319</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>One helper composes the address for every service the system
+connects to at start-up, and it does so by joining the host and the port
+with a colon. That is the same defect a family of items has been
+repairing elsewhere, but this instance is more consequential than any of
+the nine just fixed. WHY IT IS MORE CONSEQUENTIAL: this address is
+genuinely dialled — twice, by the service-discovery path and by the
+health-checking path — and it fans out across roughly eighteen
+configured services, each of which takes its host from a configuration
+file with an environment-variable override, so an operator can supply
+the modern numeric form at any of them. Several of those services are
+marked as required, with the documentation stating plainly that start-up
+fails if they are unavailable. So a single operator setting the modern
+form on a required service prevents the system from starting, with an
+error that points at the service rather than at the address that was
+built for it. AND THE HALVES OF ONE PATH NOW DISAGREE: the caching
+client, which reads its settings from this very configuration package,
+was repaired in the recent work. This helper, which serves the same
+package, was not. Two parts of one configuration path now compose
+addresses by different rules — which is exactly the divergence the
+recent work was trying to eliminate. HOW IT WAS FOUND: a review of that
+recent work took the census the work itself had not, and ranked this
+above every site the work touched. ACCEPTANCE CRITERIA: this helper
+composes addresses through the same shared builder the repaired sites
+use; a test proves a required service configured with the modern numeric
+form is reachable rather than fatal at start-up; and a check prevents
+one part of this configuration package composing addresses differently
+from another.</td>
+</tr>
+<tr>
+<td>HXC-320</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The set-up path for the message broker builds a connection address
+that contains the account name and password, and when that path fails it
+places that whole address into the error it returns. Any handler that
+records or forwards that error therefore records the password with it.
+THIS IS THE SAME CLASS AS THE PUBLISHED-CREDENTIAL PROBLEM ALREADY
+TRACKED as our most serious open item, arrived at from a different
+direction: not a secret committed into a file, but a secret written into
+a diagnostic at the moment something goes wrong — which is precisely
+when diagnostics are most likely to be captured, forwarded and kept.
+WHAT LIMITS IT TODAY: both branches of that path return before the
+address is used to connect, so it is not a live connection route; it is
+a leak route. That makes it lower urgency than a secret already
+published, and higher urgency than the address-composition defect it was
+found alongside, because the consequence is disclosure rather than a
+failure to connect. HOW IT WAS FOUND: a review surveying
+address-composition sites noticed this one carries a credential and
+flagged the class rather than treating it as one more instance of the
+address defect. WHO IS AFFECTED: anyone with access to logs or error
+reports from a failed broker set-up. ACCEPTANCE CRITERIA: no error, log
+line, or returned message contains the password, whether directly or
+embedded inside a larger address; a test proves a deliberately failing
+set-up produces a diagnostic containing neither the password nor
+anything from which it can be read; and the surrounding paths are
+checked for the same shape rather than only this one being
+corrected.</td>
+</tr>
+<tr>
+<td>HXC-321</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>WHAT THIS IS: when someone signs in to the main product, the system
+writes down which machine the sign-in came from and stores that
+alongside the session. It gets that address from the web framework it is
+built on. That framework has a setting controlling which intermediaries
+are allowed to tell it “this request really came from somewhere else” —
+and out of the box the framework trusts EVERY sender to make that claim.
+The main product never changes that setting, so the address it writes
+down is simply whatever the caller says it is. HOW IT MANIFESTS: a
+person signing in can attach a note to their sign-in request naming any
+origin address they like, and the system believes it. The stored session
+then shows that invented address rather than the real one. Because it is
+applied at sign-in, no account or permission is needed first — anyone
+who can reach the sign-in page can do it. The recorded value is checked
+for being a well-formed address, so this is not a case of arbitrary text
+getting stored; the danger is narrower and quieter: the stored address
+looks completely legitimate while being entirely chosen by the caller.
+WHY IT MATTERS: sign-in history is what anyone reviewing a security
+incident relies on to answer “where did this access come from”. If that
+record can be set by the person being investigated, it does not merely
+go missing — it actively misleads, and can be used to point suspicion at
+an innocent address. Any future feature that reasons about session
+origin (alerting on sign-ins from new locations, restricting access by
+region, throttling by origin) would inherit the same forged input. HOW
+TO REPRODUCE: start the shipped server, send a sign-in request carrying
+a header that states a different origin address, and read back the
+stored session record. The stored address matches the invented one
+instead of the real sender. WHO IS AFFECTED: anyone relying on sign-in
+records — operators reviewing an incident, and any future origin-based
+protection built on top of them. ACCEPTANCE CRITERIA: the framework is
+told explicitly which intermediaries may make origin claims (or told to
+trust none, using the real sender directly). A test proves that a
+sign-in carrying a forged origin claim from an untrusted sender records
+the REAL address, and that same test fails if the setting is removed
+again. RELATED BUT DISTINCT: this is the same defect class already fixed
+in a different component under HXC-292, and already written up for a
+third component in that component own security notes. Neither covers the
+main product sign-in path, which is why this is filed separately rather
+than reopening either. HXC-310 and HXC-318 concern protections not being
+connected at all; this one concerns a protection that IS connected but
+is fed an attacker-chosen value.</td>
+</tr>
+<tr>
+<td>HXC-322</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>WHAT THIS IS: a group of tests in the quality-assurance component
+deliberately contain no direct checks. Each carries a written note
+explaining why that is acceptable — and four of them give the same
+reason: that a special detector built into the language toolchain will
+catch the specific class of problem they exist to find. That reason is
+sound, but only when the detector is switched on. The command the
+project offers as its ordinary way to run tests does not switch it on.
+Switching it on lives in a second, separate command that has to be asked
+for by name. HOW IT MANIFESTS: run the ordinary command and those four
+tests finish in about eight thousandths of a second and report success
+without examining anything. Run the separate command and the same four
+take about a second each, because the detector really is working. Both
+report success today, since there is no fault present to find. The
+difference is invisible in the result and visible only in the timing.
+WHY IT MATTERS: these four tests exist specifically to catch a class of
+fault that appears when several things happen at once — the kind that
+surfaces rarely, under load, and is very hard to diagnose after the
+fact. Someone who introduces such a fault and runs the ordinary command
+will be told everything passes. The protection is real but switched off
+in the path people actually use, which is worse than having no
+protection, because the reassuring result is mistaken for coverage. A
+SECOND, RELATED OBSERVATION recorded here rather than filed separately:
+about twenty-three further tests in the same component carry notes
+justifying themselves on the grounds that the code merely “must not fail
+outright”. Our own standards say plainly that nothing failing is not
+evidence that something worked. Unlike the four above, these have no
+detector that could be switched on — there is nothing to enable. They
+may still have modest value as coarse checks, but they should not be
+counted as coverage, and whether they stay as they are is a judgement
+call rather than a defect to repair. FOR COMPARISON: the two sibling
+components both enable the detector in their ordinary test command. The
+quality-assurance component is the only one where it is optional, which
+is most likely an oversight rather than a decision. HOW TO REPRODUCE:
+run the ordinary test command against the affected packages and note the
+elapsed time; run the detector-enabled command and note it is roughly a
+hundred times longer. The written justification on each of the four
+tests names the detector explicitly. WHO IS AFFECTED: anyone relying on
+the ordinary test command as a safety net before sharing work, and
+anyone reading a passing result as evidence these four checks were
+performed. ACCEPTANCE CRITERIA: either the ordinary test command enables
+the detector for these packages, or the four tests state plainly that
+they are only meaningful under the separate command and something
+mechanically prevents them being counted as coverage otherwise. A check
+proves the four are actually exercised by whatever command the project
+treats as its standard, and that check fails if the detector is switched
+off again.</td>
+</tr>
+<tr>
+<td>HXC-323</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>WHAT THIS IS: an operator can list which upstream machines are
+allowed to say “this request really came from somewhere else”. If an
+entry in that list is written in a form the system cannot understand, it
+logs a warning so the operator knows the entry will never match. There
+is one address form — the kind used on a directly-attached local network
+link, which carries a trailing interface name — that the system cannot
+recognise at all. Such an entry is correctly ignored, which is the safe
+behaviour. But the check that would emit the warning sits AFTER an
+earlier check that has already given up on that same address form, so
+for this one case the warning never fires. WHY THIS PARTICULAR CASE IS
+THE WORST ONE TO BE SILENT ABOUT: a directly-attached local link is the
+ONLY situation in which an operator would write an entry of this kind.
+So the single form of entry that always fails is also the single form
+that produces no explanation. From the operator side, “the upstream
+machine I explicitly listed is being ignored” looks exactly like “I
+never configured anything” — which is precisely the confusion the
+warning exists to resolve. HOW IT MANIFESTS: configure an
+allowed-upstream entry using the local-link form, send a request from
+that machine carrying a claimed origin address, and observe that the
+claim is ignored (correct) and that no warning of any kind is written
+(the defect). WHY IT IS ONLY LOW SEVERITY: the behaviour is safe. It
+refuses to trust rather than wrongly trusting, so nothing is exposed.
+What is lost is the diagnostic, not the protection. It was also
+established that this ordering is INHERITED — the code that existed
+before the recent consolidation had exactly the same sequence — so it is
+not something the consolidation introduced, and it was deliberately left
+out of that change rather than widening its scope. THE FIX IS SMALL: the
+warning depends only on the configured text, never on which machine is
+calling, so it can be emitted before the check that currently
+short-circuits it. The cost is one inexpensive read per decision, and
+the existing once-per-distinct-value suppression still prevents log
+spam. WHO IS AFFECTED: an operator deploying behind a directly-attached
+local-network proxy, who would otherwise spend time diagnosing a silent
+non-match. ACCEPTANCE CRITERIA: the warning is emitted for an unusable
+entry of this form, proven by a test that captures the log output; and a
+test proves the address is still refused trust, so improving the
+diagnostic has not loosened the protection.</td>
+</tr>
+<tr>
+<td>HXC-324</td>
+<td>Bug</td>
+<td>Ready for testing</td>
+<td>Medium</td>
+<td>WHAT THIS IS: before every commit, a check decides whether a staged
+file qualifies for an exemption reserved for captured-evidence files. To
+make that decision it asks the version-control system for the file
+record, then reads the FIRST line of the answer. The problem is that the
+question it asks is interpreted as a PATTERN, not as a literal name. If
+the filename contains characters that happen to be pattern syntax —
+question marks or square brackets — the question can match SEVERAL
+files, and the answer comes back sorted. Reading the first line then
+describes a DIFFERENT file than the one being examined. HOW IT WAS
+PROVEN: a file literally named with a question mark was staged as
+executable, alongside an unrelated decoy that sorts ahead of it. The
+check read the decoy line and reported the wrong permission for the file
+it was actually asked about. The over-matching itself was confirmed
+directly: one such query returned two records where one was expected.
+WHY IT MATTERS: this is one of the checks that stops leftover experiment
+damage reaching a commit. The exemption exists so genuinely captured
+evidence is not blocked. Because the decision can be made on a
+neighbouring file, a file that should NOT qualify could be waved through
+on the strength of a different file entirely — the check failing in the
+permissive direction, which is the worse of the two. REACHABILITY IS NOT
+ESTABLISHED AND SHOULD NOT BE ASSUMED: this needs a filename containing
+pattern characters in the evidence directory. Nothing in the project is
+known to create such names, and it may require deliberate action rather
+than arising by accident. The severity recorded here reflects that it is
+a permissive failure in a protective check, NOT a demonstration that it
+can be triggered in normal use. Several items this session were
+initially rated on the shape of a defect and later found to sit in paths
+that never run; this one is filed with that caution stated rather than
+discovered later. RELATED BUT DISTINCT: the neighbouring repair replaced
+a check that looked at the working copy instead of what was actually
+staged. This is a different mistake in the same file — asking a question
+whose answer can describe the wrong file — and it survived that repair.
+HOW TO REPRODUCE: stage a file whose name contains a question mark
+inside the evidence directory, alongside a similarly-named file that
+sorts before it, and observe that the permission reported for the first
+does not match its real permission. ACCEPTANCE CRITERIA: the lookup
+identifies the exact file by name rather than by pattern, so it can
+never describe a neighbour; a test stages a pattern-character filename
+beside a decoy and proves the correct record is read; and that test
+fails if the lookup reverts to the pattern form. CONFIRMED BY
+INDEPENDENT REVIEW (2026-08-13), AND IT IS WORSE THAN FILED IN THREE
+WAYS. FIRST — THIS IS NOT AN UNKNOWN HAZARD, IT IS A DOCUMENTED ONE
+APPLIED INCONSISTENTLY. Forty-six lines further down, the SAME FILE
+explains why a neighbouring check deliberately uses an exact-object
+lookup instead of the pattern form: because a name containing pattern
+characters could otherwise fail to match and re-open a permissive hole.
+The line reported here does precisely what that comment warns against.
+That moves this from a plausible edge case to a known hazard left
+unguarded in one place while being guarded in another. SECOND — THERE IS
+A SECOND SYMPTOM, IN THE OPPOSITE DIRECTION. The original report covered
+the permissive failure: a file that should not qualify being waved
+through on a neighbour record. The reverse also happens — a GENUINE
+evidence file, of the ordinary kind that should qualify, can be DENIED
+the exemption and wrongly refused, because the neighbour whose record is
+read is an executable one. Same root cause, opposite polarity: one lets
+the wrong thing through, the other blocks the right thing. The second is
+a usability failure on exactly the captured-evidence files our own
+standards require us to commit. THIRD — THE TRIGGER IS EASIER TO REACH
+THAN FIRST DESCRIBED. The neighbouring file does not need to be part of
+the same commit. It only needs to already exist in version control. An
+ordinary long-standing file plus one newly-added file with a pattern
+character in its name is sufficient. THE FIX IS ONE TOKEN, AND IT IS
+ALREADY PROVEN. Marking the lookup as a literal name rather than a
+pattern closes the permissive failure, and the legitimate exemption
+continues to work — verified, with the neighbouring test suite still
+fully passing. SIZING, MEASURED RATHER THAN ESTIMATED: there are
+currently ZERO tracked files anywhere in the repository whose names
+contain pattern characters, against roughly three thousand six hundred
+tracked evidence files. So this cannot be triggered today by anything
+already present. The reason it still matters is that the check fails in
+the permissive direction BY CONSTRUCTION the moment such a name appears,
+and the evidence directory is precisely where machine-generated names
+accumulate. Reachability today: low. Confidence in the defect: high.
+Filing it rather than fixing it inside an unrelated round was the right
+call.</td>
+</tr>
+<tr>
+<td>HXC-325</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>WHAT THIS IS: some test banks exist as two files describing the same
+tests — one in each of two formats. When both describe the same test,
+the system has to pick which version to keep. It picks by counting how
+many steps in each version look runnable. For one real test — a
+content-protection check — the two versions tie at one runnable step
+each, so the tie-break keeps the default version. The trouble is that
+the two steps are not equivalent: the version that was DISCARDED
+contained an actual command that runs on the device, while the version
+that was KEPT contains a step of a kind the runner does not execute at
+all, and which is reported as pending rather than run. THE RESULT: a
+content-protection test that used to genuinely exercise the device now
+runs nothing, and reports as pending. Nobody is told. The test still
+appears in the catalogue and still passes its own checks. WHY IT ESCAPES
+EVERY EXISTING SAFEGUARD: one safeguard checks that no kept version is
+worse than the one discarded — it compares the runnable-step counts,
+sees one against one, and is satisfied. Another safeguard checks that
+ties keep the default version — which is exactly what happened,
+correctly. Both are working as designed. The gap is that the counting
+treats a step the runner skips as if it were a step the runner executes,
+so two genuinely different things are counted as equal. HOW WIDESPREAD:
+of the two hundred and twelve cases decided this way, two hundred and
+eleven are harmless — in those the kept version is genuinely the better
+one and the discarded version was only descriptive text. This is the
+single case where the trade goes the wrong way. It was found by turning
+a vague note about the counting into a real assertion, which is why it
+surfaced now rather than at some later point. WHY THE FIX WAS
+DELIBERATELY NOT MADE IN THE SAME BATCH: the correct repair is to rank
+genuinely-runnable steps above pending ones instead of counting them
+together. That repair is right, but it changes which of the two files is
+treated as the default for the largest bank in the collection, which in
+turn changes that bank recorded name, version, and the order its cases
+appear in. That is a wide-reaching change and deserves its own review
+with a before-and-after comparison of the whole catalogue, rather than
+being appended to an unrelated batch. WHAT PROTECTS US MEANWHILE: this
+specific case is now pinned by name with its evidence, so any NEW case
+that falls into the same trap fails immediately and loudly. Removing
+that pin is the acceptance test for the repair — when the repair is
+correct, the pin becomes unnecessary and its removal must leave
+everything passing. WHO IS AFFECTED: anyone relying on the
+content-protection test as evidence that the feature works. It currently
+provides none. ACCEPTANCE CRITERIA: runnable steps outrank pending ones
+when choosing between two versions of the same test; the
+content-protection test loads the version carrying the real device
+command; a before-and-after comparison of the full catalogue shows no
+other case changed unintentionally; and the by-name pin is removed with
+everything still passing.</td>
+</tr>
+<tr>
+<td>HXC-326</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>WHAT THIS IS: one of the security-repair commands edits source files
+directly to fix problems it has found. Before doing so it announces that
+it has made a backup, naming the folder. That folder IS created — and
+nothing is ever put in it. It stays empty for the entire run. The tool
+then overwrites each affected source file in place. HOW IT WAS
+ESTABLISHED: the backup folder name is referenced exactly three times in
+the whole file — once where the name is composed, once where the empty
+folder is created, and once in the message announcing success. There is
+no fourth reference, so no file is ever copied into it. Meanwhile the
+repair step writes modified content straight over the original file.
+Both halves were read directly rather than inferred. WHY THIS MATTERS
+MORE THAN AN ORDINARY BUG: the danger is not that the backup is missing
+— it is that the operator is TOLD it exists. Someone running a repair
+tool on a codebase reasonably treats the announced backup as their way
+out if the repair goes wrong. There is no way out. If a repair is
+incorrect, or is applied to the wrong file, the original content is
+gone. Our own standards require a recoverable copy before any
+destructive operation, and this is exactly the shape that rule exists to
+prevent — with the added harm that the reassuring message actively
+discourages taking an independent copy first. A SECOND, SMALLER PROBLEM
+IN THE SAME PLACE: if creating that folder fails, the tool logs a
+warning and then carries on to modify files anyway. Nothing stops the
+destructive step when its supposed safeguard could not be set up. That
+is moot while the folder is empty regardless, but it must not be left in
+place once the backup is made real. A THIRD, RELATED ONE: the folder is
+named from the current time to the nearest second, so two runs within
+the same second would share it. That is a genuine flaw but the least of
+the three, and it only becomes relevant once the folder actually holds
+anything. REACHABILITY, STATED PRECISELY: this is a real, buildable
+command in the application tree and is one of the operator-facing
+security tools named in the project manual. It compiles cleanly. What
+has NOT been established is how often anyone runs it, or whether the
+repair step finds anything to fix on a healthy tree. The severity here
+reflects that the destructive path is real and its stated safeguard is
+absent — not a demonstration that it has already caused loss. HOW TO
+REPRODUCE: run the repair command against a tree containing at least one
+issue it recognises; observe the announced backup folder is created and
+remains empty, and that the affected source file is modified in place.
+ACCEPTANCE CRITERIA: every file the tool is about to modify is copied
+into the backup folder before it is touched; failure to create or
+populate that folder stops the run rather than warning and continuing;
+the folder name cannot collide between two runs; and a test proves that
+after a run the backup folder contains the original content of each
+modified file, failing if the copy step is removed.</td>
+</tr>
+<tr>
+<td>HXC-327</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>WHAT THIS IS: addresses for the newer numbering scheme can carry a
+trailing interface name, separated by a percent sign. Because the
+percent sign also begins an escape sequence in web addresses, it has to
+be escaped when the address is placed into one — and the escape for a
+percent sign itself begins with the digits two-five. That creates a
+genuine ambiguity: when the system sees an interface name that ALREADY
+begins with those two digits, it cannot tell whether the operator wrote
+a raw name starting with those digits, or an already-escaped percent
+sign followed by a shorter name. It currently assumes the latter, which
+silently rewrites the name — an interface named two-five-zero becomes
+zero, two-five-one becomes one, and so on. The address is then valid,
+dialable, and points at a DIFFERENT interface than the operator
+configured. WHY THIS IS NOT SIMPLY A BUG TO FIX: the ambiguity is
+inherent, not an oversight. Resolving it the other way — always treating
+those digits as part of the name — was measured and is worse: the result
+stops being stable when fed through the system twice, growing longer on
+each pass without limit. So there is no version of “escape it correctly”
+that resolves both readings. Only a change to what the function PROMISES
+about its input can settle it, which is a contract change rather than a
+repair. A THIRD OPTION EXISTS AND WAS CONSIDERED AND REJECTED: refuse
+such input outright, which is what this same component does for every
+other ambiguous or malformed host it is given. It was rejected because
+the refusal cannot be narrowed to the ambiguous case — it would also
+reject the ordinary, correct, already-escaped form that operators use
+routinely. Rejecting valid everyday input to catch a rare one is the
+wrong trade, but the reasoning should be recorded rather than left
+implicit. AN IMPORTANT CONSTRAINT ON ANY FIX: a sibling component builds
+the same addresses and currently produces byte-identical output for
+these inputs. Changing one without the other would leave two parts of
+the system quietly disagreeing about what the same configured address
+means — which is the exact class of defect this whole area of work
+exists to eliminate. Any repair must land in both at once. A test
+currently pins BOTH the rewriting behaviour AND the agreement between
+the two components, so an attempt to fix one alone fails loudly rather
+than silently diverging. REACHABILITY, STATED HONESTLY: this needs an
+interface name that literally begins with those two digits — either a
+numeric index of two hundred and fifty or above, or a named interface
+such as one describing a twenty-five-gigabit link. Neither is common,
+but neither is invented; high-speed network interfaces are named that
+way in practice. Low probability, not zero. WHY IT IS FILED SEPARATELY
+RATHER THAN FIXED IN PLACE: it was found during unrelated work, the
+correct repair spans two components, and leaving it as a paragraph of
+prose inside a six-hundred-line source comment meant it was discoverable
+only by reading that file. Our own standards treat work that stays
+un-wired in the backlog as a failure mode in itself, which is why it now
+carries an identifier. ACCEPTANCE CRITERIA: a decision is recorded on
+which reading the contract guarantees; both components implement that
+decision together; the test pinning current behaviour is updated in the
+same change; and a test proves the two components still agree byte for
+byte afterwards.</td>
+</tr>
+<tr>
+<td>HXC-328</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Low</td>
+<td>WHAT THIS IS: when two files describe the same set of tests, the
+system keeps one and sets the other aside, and reports which individual
+cases were left out. The report attaches that list of left-out cases to
+the file that was SET ASIDE — but the list was actually computed from
+the file that was KEPT. So the message names one file while describing
+the contents of the other. HOW IT WAS PROVEN: one particular case
+identifier exists in exactly three files, all of one format, and in no
+file of the other format — confirmed by searching the files directly.
+Yet the system reports that identifier as excluded from two files of the
+OTHER format, which do not contain it anywhere. WHY IT MATTERS: the
+whole purpose of naming individual cases in these messages is so that
+someone can go and look. The component own documentation states plainly
+that the message names exactly which cases were excluded FROM THAT FILE.
+Anyone following the message opens a file that does not contain the case
+they were sent to find, and has no way to tell whether the case is
+missing, misnamed, or the message is wrong. A diagnostic that points at
+the wrong place is worse than one that says nothing, because it costs
+the reader time before they discover it is misleading. WHAT IS NOT
+AFFECTED: the catalogue itself is correct. The safety check that
+verifies no case is lost combines the lists from every file before
+comparing, so the mis-attribution cancels out there and no case actually
+goes missing. This is a reporting fault, not a data-loss fault, which is
+why it is filed at low severity despite being live in the shipped
+behaviour. WHY NO TEST CAUGHT IT: the test covering this area searches
+ALL the set-aside entries for the identifier it expects, rather than
+checking the specific entry it should belong to. Under that check, an
+identifier attached to the wrong entry still counts as found. This is
+the same shape as several other findings in this area — a test that
+confirms something is present somewhere, when the thing that matters is
+WHERE. ACCEPTANCE CRITERIA: the list of excluded cases is attached to
+the file the cases were actually excluded from; a test asserts the
+identifier appears on the CORRECT entry and fails if it is moved to a
+sibling entry; and the existing test is tightened so that
+presence-anywhere no longer satisfies it.</td>
+</tr>
+<tr>
+<td>HXC-329</td>
+<td>Bug</td>
+<td>In progress</td>
+<td>High</td>
+<td>WHAT THIS IS: before every commit, a check reads the list of files
+about to be committed and inspects each one for tell-tale phrases left
+behind by deliberate break-it-and-see experiments. The command that
+produces that list has a long-standing behaviour: when a filename
+contains anything outside plain ASCII — an accent, a quotation mark, a
+backslash, a tab — it does not print the name as-is. It prints it
+wrapped in quotation marks with the unusual characters replaced by
+escape sequences. The check then hands that decorated string to the next
+command as though it were the real filename. No such file exists, that
+command fails, and the check treats the failure as “nothing to look at
+here” and moves on to the next file. The file is never inspected at all.
+PROVEN, NOT INFERRED: two files were prepared with byte-identical
+contents, both carrying a planted phrase, differing only in their names.
+The plain-ASCII one was correctly refused. The one with a single
+accented letter was ALLOWED, the check printed nothing whatsoever, and
+the planted phrase is present in the resulting commit. WHY THIS IS THE
+MOST SERIOUS OF ITS FAMILY: it fails in the PERMISSIVE direction — the
+damage actually ships. It needs no accomplice file, no unusual
+repository state, and no deliberate setup. One accented character in a
+filename is the entire requirement, and filenames with accents are
+completely ordinary. A closely related fault found earlier the same
+night needs a specially named neighbouring file to exist and currently
+cannot be triggered at all by anything in the repository; this one can
+be triggered by anyone who names a file naturally in their own language.
+IT ALSO CONTRADICTS A CLAIM THE SAME FILE MAKES ABOUT ITSELF: a comment
+written during an earlier repair explains that this very lookup was
+chosen precisely BECAUSE it reads the staged content directly and
+therefore “cannot silently fail to match and re-open a permissive hole”.
+That sentence has been cited twice in later work as the reasoning to
+follow. It is wrong: the lookup cannot be fooled by the working copy,
+but it is fooled by the decorated name, and the result is exactly the
+hole the sentence promises is impossible. THE REACH IS WIDER THAN THE
+ONE CHECK: the same decorated list is consumed by a second check that
+verifies experiment baselines are properly closed out, and by two
+earlier classification steps. All of them are keyed on the decorated
+name, so all of them silently mis-handle such files. That second check
+is the very protection this whole work item exists to build. HOW TO
+REPRODUCE: stage a file whose name contains an accented character and
+whose contents carry a planted phrase; observe the commit succeeds with
+no output from the check, and the phrase is in the committed content.
+Repeat with a plain-ASCII name and observe the commit is refused.
+ACCEPTANCE CRITERIA: the file list is read in a form that cannot
+decorate names — the machine-readable, separator-delimited form — at
+every place it is consumed, not only the first; a test stages an
+accented filename carrying a planted phrase and proves it is refused,
+with plain-ASCII controls proving nothing was over-tightened; the test
+fails if the decorated form returns; and the false comment is
+corrected.</td>
+</tr>
+<tr>
+<td>HXC-330</td>
+<td>Bug</td>
+<td>In progress</td>
+<td>High</td>
+<td>WHAT THIS IS: before every commit a separate scanner reads each file
+about to be committed and refuses the commit if it finds something
+resembling an access key or password. It builds its own list of those
+files using a command that decorates any name containing an accent, a
+quotation mark, a backslash or a tab — wrapping it in quotation marks
+and replacing the unusual characters with escape sequences. It then asks
+for the file by that decorated name. No such file exists, the request
+fails, and the scanner treats the failure as “skip this one” and moves
+on. The file is never examined. PROVEN, NOT INFERRED: two files were
+prepared with the same synthetic access key inside, differing only in
+their names. The plain-ASCII one was correctly refused with the scanner
+banner. The one with a single accented letter was ALLOWED, no banner was
+printed, and the key is present in the resulting commit. WHY THIS IS
+MORE SERIOUS THAN ITS SIBLING: an almost identical fault was found the
+same night in the check for leftover experiment damage, and repaired.
+This is the same mechanism in a different file, but the consequence is
+worse — a leaked credential is a release blocker requiring rotation and
+a written post-mortem under our own standards, whereas leftover
+experiment damage is a correctness problem. The repair of the sibling
+explicitly claimed to cover every consumer of that file list; this
+consumer was overlooked, and the claim named only four of the five
+places the list is used. WHY IT WAS NOT CAUGHT: the scanner has its own
+separate copy of the list-building logic rather than sharing the one
+that was repaired. The tests written for the accented-filename problem
+exercise the two checks that were fixed and never reach the scanner, so
+nothing failed when the scanner was left behind. A SECOND FAULT IN THE
+SAME PLACE: when the scanner cannot read a file it silently treats that
+as “nothing to report” and continues. A scanner that cannot read a file
+has not cleared it; it has failed to examine it, and those are different
+outcomes. That failure should stop the commit and say so. HOW TO
+REPRODUCE: place a synthetic access key in a file whose name contains an
+accented character, stage it, and commit. The commit succeeds and no
+scanner output appears. Repeat with a plain-ASCII name and the commit is
+refused. WHO IS AFFECTED: anyone who names a file naturally in a
+language using accents, which is entirely ordinary — no unusual setup or
+deliberate action is required. ACCEPTANCE CRITERIA: the scanner builds
+its file list in the machine-readable, separator-delimited form that
+cannot decorate names; an unreadable file blocks the commit with a clear
+message rather than passing silently; a test places a key in an
+accented-name file and proves the commit is refused, with a plain-ASCII
+control proving nothing was over-tightened; and the test fails if the
+decorated form returns.</td>
+</tr>
+<tr>
+<td>HXC-331</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>A full tracked-tree scan by the project’s own credential scanner
+exits 1 with seven findings, across four documentation HTML exports and
+one test script. The result is identical on the pre-fix scanner, so this
+is pre-existing and was not introduced by the HXC-282 remediation. It
+matters because docs/audit/bypass_events.md rows 1 and 2 both cite
+tree-mode exit 0 as their evidence that the tree is secret-clean; that
+citation is contradicted by the scan as it actually runs today. WHAT IT
+IS: either the tracked repository contains credential-shaped strings
+that were never triaged, or the scanner produces seven false positives
+its allowlist does not cover. Nobody has determined which, and that
+determination is the whole of this item. WHY IT MATTERS: if any finding
+is a real credential it is a CONST-042 secret-leak requiring operator
+rotation and a post-mortem before any release. If all seven are false
+positives, the bypass audit trail still rests on an exit code the
+scanner does not currently produce, so the audit evidence needs
+correcting either way. A scanner whose clean run is cited as proof, but
+which does not actually exit clean, is evidence of nothing. HOW TO
+TRIAGE: run the scanner in tree mode and list the flagged file plus
+pattern label per finding WITHOUT printing the matched value (CONST-042
+forbids reproducing a credential into a log or a ticket). Classify each
+as a real credential (rotate, operator-only), a documentation example or
+pattern definition (allowlist with the reason recorded), or a synthetic
+planted fixture (allowlist by path). All five files predate 2026-07-11.
+Budget ~45 minutes for the scan: tree mode spawns 16 grep subprocesses
+per file across 9308 files. WHO BENEFITS: the operator, who currently
+holds an audit trail asserting a clean tree that the tooling does not
+corroborate. EXPECTED OUTCOME: seven findings each classified; the
+allowlist extended with a recorded reason for every non-secret; any real
+credential routed to operator rotation; and the bypass_events.md
+citations corrected to reference a scan that genuinely exits as
+described. INSTRUMENT NOTE: a narrower three-pattern grep run separately
+matched only the scanner itself and a performance-test script, both of
+which contain the patterns as pattern definitions. That is consistent
+with the false-positive hypothesis but does not establish it, and is not
+comparable to the scanner run. CORRECTION (round 19, measured): the
+framing this item was filed with overstates the case in two ways, and
+both are now proven. (1) Only bypass_events row 2 makes a TREE-scope
+claim. Row 1 cites “both FILES verified secret-clean” — that is files
+mode on two named files, which passes raw argv and was never subject to
+the C-quoting fail-open at all. (2) The repo contains ZERO non-ASCII
+tracked paths, now and at the cited revision, so the tree-mode fail-open
+could not have manifested here. The contradiction between the audit
+trail and the scanner is caused entirely by the seven pre-existing
+findings, NOT by that defect. The item still stands: a full tracked-tree
+scan exits 1 with seven findings across five files (four documentation
+HTML exports plus scripts/test-verify-all-constitution-rules.sh), the
+pre-fix scanner produces an identical seven-finding set on those same
+files (measured directly, not inferred), and all five files predate
+2026-07-11 (four dated 2026-06-10, one 2026-05-16). So row 2 is
+contradicted by the scan as it actually runs. Cost correction: a full
+tree scan takes 645 seconds (10.75 minutes) on this host, not the ~45
+minutes first reported; PATTERNS holds 13 entries, not 16; tracked files
+number 9439, not 9308. DETERMINATION (2026-08-13, triage complete): ZERO
+real credentials. No rotation required. All seven findings resolved with
+affirmative evidence, none left UNKNOWN. Classification: two
+documentation examples (PEM BEGIN-headers quoted inside a prior
+secret-scan triage table, with zero base64 body lines anywhere in the
+file; and a YAML snippet carrying a header plus a literal ellipsis), and
+five synthetic fixtures (a block explicitly headed as a planted secret
+that must be detected, at 43 characters where the real vendor format is
+51; two rendered Go tests asserting a redaction filter fires, byte-class
+identical to fixtures the allowlist already documents as intentional
+fakes; and a paired-mutation meta-test whose planted key body is an
+English sentence describing the meta-test). Provenance: git log -G on
+the pattern shape, never on a value, shows each string entering in
+exactly one commit and never changed afterwards, so none was ever a
+working credential later redacted. ROOT CAUSE: the allowlist lists every
+markdown source but contains zero HTML globs, and no entry for the
+meta-test script. The documentation exports were committed 2026-06-10;
+the allowlist entries were authored 2026-07-11. The original triage
+enumerated sources and never extended the same decision to the generated
+twins that already existed. Note: the PDF twins are silent for a
+different reason entirely — they are binary-skipped, not allowlisted.
+They are not covered, merely unreadable. AUDIT TRAIL: the historical
+moment was reconstructed (scanner blob, allowlist blob and all five file
+blobs as of the cited push) and re-run: it exits 1, with a clean control
+returning 0. The tree-scope claim was already false when written. The
+safety half of that sentence — zero real secrets — is corroborated by
+this triage. Row 1 is NOT implicated: it cites files mode on two named
+paths, which returns 0 both today and at its own commit, for two
+independent reasons. REMAINING WORK: apply the validated allowlist
+proposal (five explicit entries, deliberately not a wildcard — a
+wildcard was measured to silently allowlist any future file in that
+directory, while the explicit form still returns 1 for a newly planted
+key), and correct the audit-trail sentence. Both are proposed and
+validated but NOT yet applied. REVIEW CORRECTION (2026-08-13,
+independent re-scan, 638 s, same seven findings by path and label): the
+determination of ZERO REAL CREDENTIALS is CONFIRMED and rests on
+composition and context, both re-verified independently. Three
+supporting statements recorded above are however wrong and are retracted
+here. (1) The provenance argument is FALSE and was never valid.
+Re-derived by the same method: the AWS-shaped string enters in eight
+commits, the PEM literal in six, the OpenAI-shaped string in five — not
+one apiece. One of the overlooked commits is titled “remove tracked test
+SSH keys; add ephemeral generation”, which is exactly the
+was-tracked-then-removed event the claim asserted had never happened.
+Independently of the count, the argument could never have established
+non-realness, because a genuine key committed once also shows one
+commit. (2) The evidence that a file contains zero long base64 runs came
+from an anchored line probe blind to material embedded inline in code
+markup. The valid unanchored probe finds 28 runs in that file. All 28
+are benign — twenty are 40-character git object ids, eight are file
+paths — and none sits near the flagged lines, so the conclusion holds
+while its stated evidence does not. (3) The PDF twins resurface five of
+the six strings, not all six: extraction mangles the dash runs in one
+document, so a dash-tolerant pattern is needed to recover its single
+match. SCOPE BOUNDARY: “zero real credentials” is a determination about
+THESE SEVEN FINDINGS, not about the whole tree. Gitlinks are never
+walked, roughly ninety allowlist entries suppress entire subtrees,
+binaries are skipped, and any line containing certain words is skipped
+by content. A clean scanner exit is not a clean-tree proof. BOTH
+PROPOSED CHANGES ARE BLOCKED pending correction: the audit-row
+restatement names a finding count that only today’s scanner produces,
+when the scanner at the cited revision had no path allowlist at all and
+would have exited with far more; and the allowlist proposal would
+permanently blind a live executable script when a line-level content
+marker achieves the same result with no blindness. The four
+documentation-export entries are sound and stand as proposed. COUNT
+CONFIRMED AND ITS DISCREPANCY EXPLAINED (independent re-derivation
+against committed bytes at the pre-fix commit, with the scanner verified
+byte-identical at that commit, at the fix commit and at head): the true
+number is SEVEN findings across FIVE files. The commit message is
+correct and needs no reconciliation. The recurring “six” was right about
+its own scope and wrong only as a whole-tree claim. Six findings sit in
+the four documentation exports, which were remediated by ALLOWLIST
+ENTRIES. The seventh sits in the meta-test script and was remediated by
+an IN-CONTENT MARKER on the line itself. Two different mechanisms — and
+the control used to verify the fix works by deleting the four allowlist
+entries and confirming the findings return, which is structurally blind
+to a finding that has no entry to delete. A second contributor stacks on
+top: tree mode reads working-tree bytes rather than the index, so a run
+made after the script fix was already applied on disk sees only six.
+CORRECTION TO A DETAIL OF THE COMMIT MESSAGE, recorded here because
+history must not be rewritten: the sub-classification given as two
+documentation examples and five synthetic fixtures does not map to the
+measured contexts, which read as THREE documentation-context findings
+(the prior triage table twice, and the configuration snippet whose body
+is an ellipsis) and FOUR synthetic fixtures (the scanner test plant, two
+redaction unit-test fixtures, and the gate meta-test plant). The total
+of seven is unaffected and remains correct. The stale note in the
+scanner asserting the seventh is unaccounted for is UNCOMMITTED
+working-tree text, and the answer was already committed in the same
+change: the audit document states six in the exports plus one more in
+the meta-test script for seven total, and names its line. Replacing that
+note with the six-plus-one decomposition is tracked with the scanner
+stream.</td>
+</tr>
+<tr>
+<td>HXC-332</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>When a documentation source is triaged and added to the scanner
+allowlist, the decision applies only to that one path. Every generated
+copy of it — the HTML export, and any future format — still carries the
+same strings and still fires, because the allowlist has no notion that
+one path is a rendering of another. WHAT IT IS: seven scanner findings
+were traced to exactly this. The allowlist lists every markdown source
+and contains zero HTML globs. The exports were committed 2026-06-10; the
+allowlist entries were written 2026-07-11 and covered only sources.
+Nobody made a wrong call — the decision simply had no way to travel to
+the twins. WHY IT MATTERS: the export pipeline regenerates these files,
+so the gap reopens every time documentation is rendered. Anyone adding a
+new triaged example to a document introduces a fresh finding in its
+export, and the natural fix — a directory wildcard — was measured to
+silently allowlist any future file in that directory, which is worse
+than the problem. HOW IT WORKS TODAY: the scanner reads a flat list of
+paths and globs. It has no relationship between a source and its
+renders, so the two are independent decisions that must be made twice
+and are only ever made once. WHO BENEFITS: whoever next triages a
+documentation finding, who currently has to know that the export exists
+and remember to list it separately. EXPECTED OUTCOME: the scanner
+derives twin coverage — a path allowlisted as a source extends to its
+known generated forms — so one triage decision covers the whole family,
+and a genuinely new file in the same directory still fires. This is a
+scanner change, not an allowlist edit, so it belongs with the scanner
+work rather than with the data. BOUNDARY: the PDF twins do not currently
+fire, but not because they are covered — they are binary-skipped and
+simply unreadable to the scanner. A future scanner that learns to read
+them would surface the whole set again, so binary-skip must not be
+mistaken for a decision.</td>
+</tr>
+<tr>
+<td>HXC-333</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Critical</td>
+<td>The kubernetes MCP container was built without its binary. Its
+start-up script scans a directory for something executable, finds
+nothing, prints an error and exits. The restart policy then starts it
+again, several times a second, indefinitely. WHAT IT IS: measured
+directly by running the image — the directory the entrypoint searches
+contains ZERO executables. Each attempt lives about 89 microseconds. The
+restart counter reached 291,505 and was climbing by roughly four per
+second when it was halted. WHY IT MATTERS: the service has never been
+available, so anything expecting it has been silently degraded since it
+was first deployed. Separately, the restart storm consumed CPU
+continuously on a shared host for as long as the container existed.
+Restarting it cannot help; only rebuilding the image with its program
+included can. WHO BENEFITS: anyone relying on that capability, who
+currently has no service and no error surfaced anywhere except a restart
+counter nobody reads. ACTION TAKEN: the container was stopped to end the
+CPU burn, after confirming it belongs to this project and that the image
+genuinely lacks its program. The counter froze and held across two
+checks. Stopping is reversible; the container was already incapable of
+serving, so nothing working was lost. EXPECTED OUTCOME: the image is
+rebuilt so it contains the program, the container starts and answers a
+real protocol request, and a check exists that would have caught an
+image built without its payload.</td>
+</tr>
+<tr>
+<td>HXC-334</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The health check used across the service fleet opens a TCP
+connection and reports success if the connection is accepted. It never
+sends a request and never reads a reply, so it cannot distinguish a
+working server from a process that merely holds a port open. WHAT IT IS:
+fifteen of twenty-nine services do not answer a protocol handshake. Two
+of them report HEALTHY while silent — verified with a positive control,
+where a working sibling answered correctly through the identical
+instrument in the same window. Neither of the two requires credentials,
+so credential-gating cannot explain their silence. WHY IT MATTERS: a
+green health check over a broken service is precisely the
+false-confidence failure this project treats as a critical defect class.
+Anyone reading the dashboard sees a healthy fleet. Separately,
+twenty-six of the forty-one running containers define no health check at
+all, so their silence carries no information whatsoever — it is neither
+good news nor bad. HOW IT SHOULD WORK: the check should perform a real
+handshake and require a well-formed reply, so that a process holding a
+port without serving is reported unhealthy. WHO BENEFITS: anyone who
+trusts the health display, which currently cannot fail for the most
+common way a service breaks. EXPECTED OUTCOME: health checks perform a
+genuine round-trip; the fifteen silent services are each triaged as
+credential-gated or broken; and the twenty-six without any check either
+gain one or are documented as deliberately unchecked.</td>
+</tr>
+<tr>
+<td>HXC-335</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The repository-root helper script is documented as the supported way
+to start, stop and inspect the platform. Run against a host with
+forty-one containers up, it reports that the platform is not created and
+advises starting it. WHAT IT IS: the script manages a different
+deployment described by a different compose file, whose services are not
+running. Its status check looks for a container by an exact name that
+does not exist here. One documented subcommand does not exist at all and
+returns an unknown-command error. Five subcommands exist but are
+undocumented, and three of those silently start the entire stack despite
+looking like read-only inspection commands. WHY IT MATTERS: the manual
+instructs an operator to use this script. Following it produces a false
+negative about a healthy system, and three of its commands have side
+effects nobody is warned about. The script also refers throughout to a
+container tool this project does not use, working only because a
+compatibility shim happens to exist — which contradicts the project rule
+requiring the sanctioned runtime. RELATED DOCUMENTATION DEFECT: the
+manual gives a smoke-test address whose port is wrong. The correct port
+serves this project; the documented one is held by a different user on
+this shared machine, so following the manual probes a foreign service
+and reports on something else entirely. WHO BENEFITS: any operator or
+agent following the documented procedure, who currently gets a confident
+wrong answer. EXPECTED OUTCOME: the script either targets the deployment
+that actually exists or is marked retired; the documentation matches the
+real command set including side effects; the smoke-test address is
+corrected; and the runtime references match the sanctioned tool.</td>
+</tr>
+<tr>
+<td>HXC-336</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Across the service fleet, eighteen entries read a port variable
+belonging to a different service. Two are outright swapped: one service
+reads the other one’s variable and vice versa. Another reads a variable
+named for an unrelated service entirely. WHY IT IS INVISIBLE TODAY: no
+configuration file exists, so every variable is unset and every service
+falls back to its own default. The mismatch has no effect and cannot be
+noticed. The moment anyone creates that file and sets one value, the
+service that moves is not the service they named. WHY IT CANNOT BE FIXED
+PIECEMEAL: at least one of the wrong readers has been noticed before and
+partially worked around — a second service already reads the variable
+belonging to the first, so renaming one in isolation creates a port
+collision between them. The set has to be corrected in one coherent
+pass, with the collisions resolved together. WHO BENEFITS: whoever first
+configures this deployment, who currently has no way to discover the
+mismatch except by changing a port and watching the wrong thing move.
+EXPECTED OUTCOME: every service reads the variable named after itself;
+no two services read the same one; and a check exists that fails when a
+service references a variable belonging to another.</td>
+</tr>
+<tr>
+<td>HXC-337</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Nine of twenty-seven services fail for reasons fixed at image-build
+time, not configuration. They cannot be repaired by editing settings;
+the images must be rebuilt. WHAT IS WRONG, BY GROUP: two install a
+dependency compiled for one system library flavour into an environment
+expecting another — the compiled file is present but can never be found,
+because the name the interpreter looks for and the name on disk differ
+by that flavour. Three have no build output at all: one directory is
+simply absent, and two ship uncompiled source that the runtime refuses
+to load, needing a build tool the image does not install. Two point
+their entry at a library file that only defines a start function and
+never calls it, while the real entry sits beside it unused. One ships a
+component designed to run inside a completely different execution
+environment and contains none of the protocol it is supposed to speak.
+One runs a command-line program with no arguments, so it prints its own
+help text and exits successfully. WHY IT WAS INVISIBLE: the build step
+ends with a pattern that tries one installer, falls back to another, and
+finally swallows any remaining failure so the build always reports
+success. A broken install and a good one produce the same green build.
+WHO BENEFITS: everyone relying on these capabilities, all of which have
+been unavailable since first deployment while reporting healthy.
+EXPECTED OUTCOME: each image is rebuilt so the program it exists to run
+actually starts and answers a real protocol request; and the build fails
+loudly when an install step fails, instead of discarding the error.</td>
+</tr>
+<tr>
+<td>HXC-338</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Across the tracked deployment there are two hundred seventy-nine
+container manifests referencing two hundred twenty-nine distinct images,
+and NOT ONE is pinned to a content digest. Sixty-six of them float on a
+moving latest tag, including the model runtime, three vector databases,
+the metrics stack and a headless browser. The remainder float on minor
+tags that also move. The package surface is the same shape. Of thirty
+tracked npm manifests only six have a lockfile beside them, so the
+dependency tree re-resolves at install time for the other twenty-four.
+Three images install with lockfile enforcement explicitly disabled, and
+two more install in a way that lets a failed install pass silently. Of
+one hundred twenty-two Python requirements, fifty-eight carry no version
+at all, and nine files are entirely unpinned. WHY IT MATTERS: this is
+where the real supply-chain exposure lives. A separate analysis
+established that the language-level scanner sees none of it, and that
+every one of the critical-severity advisories on this project sits in
+exactly this unmeasured surface rather than in the compiled code. A
+floating tag means the artifact that passed testing and the artifact
+that ships can differ with no change to any tracked file, and no record
+of what actually ran. HOW IT SHOULD WORK: every image reference resolves
+to a digest, so a rebuild produces the same bytes or fails loudly; every
+package manifest has a committed lockfile that installation enforces
+rather than regenerates; and an install failure fails the build instead
+of being swallowed. WHO BENEFITS: anyone who has to answer what was
+actually deployed, which today cannot be answered from the repository
+alone. EXPECTED OUTCOME: image references are digest-pinned with a
+documented update mechanism; lockfiles exist and are enforced;
+silent-failure install patterns are removed; and a check fails when a
+new floating reference or unlocked manifest is introduced.</td>
+</tr>
+<tr>
+<td>HXC-339</td>
+<td>Task</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>A single source file is the entire reason the project declares a
+direct dependency on a container-runtime client library. That file has
+ZERO importers — verified two independent ways, each with its own
+positive control, and confirmed absent from the dependency closure of
+every shipped binary while present in the closure of the full package
+set. There is no build tag, no feature flag and no configuration toggle:
+it compiles and is never used. WHY IT MATTERS TWICE OVER. First, it is
+the only thing keeping five unresolvable advisories in the dependency
+graph — unresolvable because their fixes exist solely under a renamed
+module path, so no version of the currently-required path clears them.
+Removing or rewiring the file drops all five. Second, the file itself
+contains a latent hazard: its execute path passes a caller-supplied
+command string directly into a shell invocation, and its file-transfer
+paths take unvalidated host locations together with a caller-chosen
+writable mount. None of that is reachable today, precisely because
+nothing imports it. WHAT MUST NOT HAPPEN: it must not simply be deleted
+because it has no importers. Zero importers is a lead, not a finding —
+the project rule here requires investigating through history where it
+was meant to be used and how it became unwired, and capturing that as
+evidence, before any removal. It may be unfinished wiring rather than
+dead code, and if it is intended to be wired then the shell-injection
+and path-validation issues must be fixed first, with tests. EXPECTED
+OUTCOME: a documented determination of where this was meant to connect
+and why it never did; then either a reviewed removal in its own commit
+citing that history, or the wiring completed with the injection and path
+hazards closed and covered by tests. Either way the dependency
+requirement is re-derived afterwards.</td>
+</tr>
+<tr>
+<td>HXC-340</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The agent service publishes three separate health addresses —
+/health, /readyz and /livez — but all three are wired to the exact same
+piece of code, so the system cannot distinguish ‘the process is alive’
+from ‘the process is ready to take work’. Those are different questions:
+a server can be running perfectly well and still be several minutes away
+from being able to answer a request. This matters because load balancers
+and container orchestrators decide where to send live user traffic based
+on the readiness answer, and they almost always read the HTTP status
+code rather than the message body. The code here always returns status
+200 (success) even while the body honestly says ‘starting’, and startup
+is documented as taking roughly seven minutes. For that whole window the
+orchestrator believes the server is ready and sends it real user
+requests, which fail. There is a second problem in the same place: once
+the server has reported itself ready one time, that answer is latched
+permanently and never revisited, so if a dependency dies later the
+server keeps advertising itself as ready forever. Who benefits from
+fixing it: every end user who would otherwise hit a failed request
+during a deployment or restart, and the operators who currently have no
+reliable signal for when a rollout is safe. Expected outcome: readiness
+returns a failure status code whenever the server genuinely cannot
+serve, liveness stays separate and always succeeds while the process is
+alive, and the ready state can go back to false when a dependency is
+lost.</td>
+</tr>
+<tr>
+<td>HXC-341</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The main server exposes a health endpoint that is supposed to tell
+operators whether the service and everything it depends on are working.
+It does perform genuine checks on the database and cache when those are
+configured, correctly reporting a failure when either is unreachable.
+However, when no database is wired up at all, the code takes a shortcut
+and skips the entire checking block, then reports success anyway. It
+also never checks the language-model providers, even though serving
+model requests is the product’s core purpose. The written documentation
+for this endpoint states that it checks all dependencies, which is not
+true in either respect. This is dangerous because the documentation is
+what an operator reasons from when deciding whether a green health
+signal means anything: a deployment missing its database entirely will
+report itself perfectly healthy, and so will one whose model providers
+are all unreachable. Who benefits: operators and on-call responders who
+need a health signal they can trust during an incident, and anyone
+automating deployment gates on that signal. Expected outcome: the
+endpoint reports an honest failure when a required dependency is absent
+or unreachable rather than treating absence as success, provider health
+is included in the verdict, and the documentation is corrected to
+describe exactly what is and is not covered.</td>
+</tr>
+<tr>
+<td>HXC-342</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The agent service exposes a health endpoint that always returns the
+same hardcoded success response. It performs no check whatsoever — it
+does not test any dependency, any provider, any connection, or any
+internal state, and there is no input or condition under which it could
+return anything other than success. It is published and documented as a
+health check, which means anyone reading the documentation or wiring up
+monitoring reasonably assumes a green result carries information. It
+does not. A completely broken agent returns exactly the same response as
+a perfectly working one. The practical effect is that any monitoring,
+alerting, or automated gate built on this endpoint is decorative: it
+will stay green through any outage. This is the least severe of the
+health-endpoint family because a companion endpoint on the same service
+now performs a real check, but it remains actively misleading while it
+is labelled a health check. Who benefits: operators building monitoring
+on this service, and any automated system that gates on the endpoint.
+Expected outcome: either the endpoint performs a genuine check and can
+report failure, or it is explicitly relabelled as a liveness-only signal
+in both the code and the published API documentation so that nobody
+mistakes it for a dependency check.</td>
+</tr>
+<tr>
+<td>HXC-343</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>The project keeps its list of work items in a database, and the
+human-readable tracker documents are generated from that database. For
+fifty-six of the items, a required link between the database record and
+the document layout is missing. The practical effect is severe and
+silent: if anyone regenerates the tracker documents from the database
+using the normal supported command, those fifty-six items simply vanish
+from the documents with no warning, no error, and no indication that
+anything was lost. The database would still hold them, but every
+human-readable view of the work would stop showing them, and anyone
+reading the trackers would reasonably conclude the work does not exist.
+This has not happened yet only because the regeneration has not been
+run; the built-in checker does detect and report the problem, which is
+how it was found. Who benefits from fixing it: everyone who reads the
+trackers to understand outstanding work, and anyone who needs to
+regenerate the documents without first proving it is safe to do so.
+Expected outcome: the missing links are restored for all fifty-six
+items, the checker reports no such gaps, and a regeneration can be run
+and verified to produce documents containing every item the database
+holds.</td>
+</tr>
+<tr>
+<td>HXC-344</td>
+<td>Task</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>During the security-hook work a file was produced that appears to be
+a frozen snapshot of an earlier, deliberately-broken version of a
+script, kept so a test can prove the current version detects the old
+fault. Two sibling files of exactly this kind exist and are correctly
+set up: each carries a header marking it as an intentional test
+artifact, and each is executed by a named test. This third file has
+neither. Nothing in the project refers to it, and it carries no such
+header, so the commit safety check correctly refuses to accept it: from
+the checker’s point of view it is indistinguishable from leftover damage
+accidentally left behind after an experiment. Two outcomes are possible
+and the difference matters. Either it is a genuine baseline whose wiring
+was never finished, in which case the fix is to connect it to a test and
+add the header its siblings have; or it is genuinely leftover, in which
+case it should be retired deliberately. Guessing either way is wrong:
+marking it as intentional to quiet the checker would make the checker
+agree with a claim nobody has verified, and deleting it without proof
+risks discarding real work. The file has been copied to a safe location
+outside the project and removed from the working area so the project is
+in a clean state while the question is settled. Who benefits: anyone
+relying on the commit safety check to mean what it says, and whoever
+next needs that baseline. Expected outcome: the file’s origin is traced
+through project history, a decision is recorded with the evidence behind
+it, and the file is either restored and properly wired in with a test
+that exercises it, or retired in its own clearly-labelled change.</td>
+</tr>
+<tr>
+<td>HXC-345</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Word documents are produced outside the export tool, so nothing
+checks that they still contain their pictures</td>
+</tr>
+<tr>
+<td>HXC-346</td>
+<td>Task</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>The password-in-documentation check can be fooled by common ways of
+writing the same thing</td>
+</tr>
+<tr>
+<td>HXC-347</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Medium</td>
+<td>One of our agent instruction manuals has fallen 36 rules behind the
+others</td>
+</tr>
+<tr>
+<td>HXC-348</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>Critical</td>
+<td>Our model gateway answers confidently for models it does not have,
+instead of saying it does not have them</td>
+</tr>
+<tr>
+<td>HXC-349</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Tool descriptions sent to HelixAgent are accepted and then silently
+discarded before the model sees them</td>
+</tr>
+<tr>
+<td>HXC-350</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Debate and ensemble routes rewrite the user’s message into a topic
+to write about, and report the wrong model</td>
+</tr>
+<tr>
+<td>HXC-351</td>
+<td>Bug</td>
+<td>Queued</td>
+<td>High</td>
+<td>Reported token usage on the debate routes is the same fixed number
+no matter how long the reply is</td>
 </tr>
 </tbody>
 </table>

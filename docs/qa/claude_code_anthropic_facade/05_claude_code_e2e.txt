@@ -1,0 +1,38 @@
+-- ephemeral HelixCode facade up at http://127.0.0.1:40881 (pid 1177406); HELIX_LLM_PROVIDER=local
+-- throwaway CLAUDE_CONFIG_DIR = /home/milosvasic/Projects/helix_code/docs/qa/claude_code_anthropic_facade/throwaway-claude-config  (operator's ~/.claude* untouched)
+
+==============================================================
+RUN: R1  default Claude Code -> facade
+==============================================================
+"helix-local" isn't described by this version's model catalog; update Claude Code, or map it with behavesAs on a modelPicker row (or modelOverrides, if it is a provider id of a model this version knows). Until then auto-compact keeps this session within 200k tokens (the context window it assumes); if the model accepts more, append [1m] to the model name for 1M, or set CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API behavior.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+API Error: 400 invalid request body: json: cannot unmarshal array into Go struct field anthropicMessagesRequest.system of type string
+[claude exit: 1]
+
+==============================================================
+RUN: R2  with CLAUDE_CODE_ATTRIBUTION_HEADER=0 (drops the attribution system block)
+==============================================================
+"helix-local" isn't described by this version's model catalog; update Claude Code, or map it with behavesAs on a modelPicker row (or modelOverrides, if it is a provider id of a model this version knows). Until then auto-compact keeps this session within 200k tokens (the context window it assumes); if the model accepts more, append [1m] to the model name for 1M, or set CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API behavior.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+API Error: 400 invalid request body: json: cannot unmarshal array into Go struct field anthropicMessagesRequest.system of type string
+[claude exit: 1]
+
+==============================================================
+RUN: R3  with CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1 as well
+==============================================================
+"helix-local" isn't described by this version's model catalog; update Claude Code, or map it with behavesAs on a modelPicker row (or modelOverrides, if it is a provider id of a model this version knows). Until then auto-compact keeps this session within 200k tokens (the context window it assumes); if the model accepts more, append [1m] to the model name for 1M, or set CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API behavior.
+[claude-code:unrecognized_model] {"model":"helix-local","query_source":"sdk"}
+API Error: 400 invalid request body: json: cannot unmarshal array into Go struct field anthropicMessagesRequest.system of type string
+[claude exit: 1]
+
+==============================================================
+SERVER-SIDE VIEW: what the facade logged / rejected
+==============================================================
+[GIN] 2026/09/05 - 23:09:46 | 404 |   4.88µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:09:51 | 400 |  14.33ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:09:52 | 404 |   5.14µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:09:57 | 400 |  18.66ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+[GIN] 2026/09/05 - 23:09:58 | 404 |    5.2µs |       127.0.0.1 | HEAD     "/api/hello"
+[GIN] 2026/09/05 - 23:10:03 | 400 |  20.01ms |       127.0.0.1 | POST     "/v1/messages?beta=true"
+
+-- claude-code e2e complete

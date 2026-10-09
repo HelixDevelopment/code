@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ARCHITECTURE</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+white-space: pre-wrap;
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ARCHITECTURE</h1>
+</header>
+<h1 id="architecture--cli-agents--helix-llm-surfaces">Architecture — CLI
+Agents ↔︎ Helix LLM Surfaces</h1>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Revision</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>Last modified</td>
+<td>2026-09-07</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>ACTIVE — arrows into HelixAgent were re-drawn on 2026-09-07 after
+end-to-end agent runs; revision 1 drew all three as &quot;not probed&quot;</td>
+</tr>
+<tr>
+<td>Status summary</td>
+<td>Shows which of the four CLI coding agents can reach which of the
+four Helix LLM surfaces, where auth/TLS boundaries sit, and where the
+tool-calling capability actually differs.</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Companion to <a href="README.md"><code>README.md</code></a> and <a href="FAQ.md"><code>FAQ.md</code></a> in this same directory</td>
+</tr>
+<tr>
+<td>Authority</td>
+<td>Every edge and label traces to a probe or cited vendor doc in
+<code>docs/research/cli_agent_config_schemas/EVIDENCE.md</code>, or to
+an end-to-end agent run in
+<code>docs/qa/cli_agent_model_usability_20260907T113000Z/</code>. This
+diagram makes no claim beyond what that evidence supports.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="table-of-contents">Table of contents</h2>
+<ol type="1">
+<li><a href="#1-how-to-read-this-diagram">How to read this
+diagram</a></li>
+<li><a href="#2-the-diagram">The diagram</a></li>
+<li><a href="#3-reading-the-boundaries">Reading the boundaries</a></li>
+<li><a href="#4-what-the-diagram-deliberately-leaves-out">What the
+diagram deliberately leaves out</a></li>
+</ol>
+<hr />
+<h2 id="1-how-to-read-this-diagram">1. How to read this diagram</h2>
+<p>The left column is the four CLI coding agents; the right column is
+the four Helix LLM surfaces. An edge means &quot;this agent can be configured
+to send requests to this surface&quot; — it does <strong>not</strong> mean an
+agent is currently configured that way on any given machine. Edge style
+and label carry the capability information:</p>
+<ul>
+<li><strong>Thick solid arrow (<code>==&gt;</code>)</strong> — a
+confirmed, live-probed capability. The label says exactly what was
+confirmed (tool-calling present or absent).</li>
+<li><strong>Dashed arrow (<code>-.-&gt;</code>)</strong> — the transport
+is reachable, but the combination does <strong>not</strong> work end to
+end: either it was refused (the label says so) or it was never driven to
+a verdict (the label says UNTESTED). Do not infer capability from the
+arrow alone; read the label.</li>
+<li><strong>Dashed cross-edge (<code>--x</code>)</strong> — no path
+exists at all. The target is a note, not a surface, explaining the
+vendor-side reason.</li>
+</ul>
+<p>Node fill color marks the surface&#39;s auth/TLS posture (see the legend
+inside the diagram and <a href="#3-reading-the-boundaries">§3</a>
+below).</p>
+<hr />
+<h2 id="2-the-diagram">2. The diagram</h2>
+<pre class="mermaid"><code>graph LR
+  subgraph AGENTS[&quot;CLI Coding Agents&quot;]
+    OC[&quot;opencode 1.18.29&quot;]
+    PI[&quot;pi 0.84.4&quot;]
+    CR[&quot;crush 0.91.2&quot;]
+    CC[&quot;Claude Code 2.1.261&quot;]
+  end
+
+  subgraph SURFACES[&quot;Helix LLM Surfaces&quot;]
+    CODER[&quot;Coder (llama.cpp)&lt;br/&gt;http://127.0.0.1:18434/v1&lt;br/&gt;auth: none&quot;]
+    GW[&quot;Gateway (HelixLLM)&lt;br/&gt;https://127.0.0.1:8443/v1&lt;br/&gt;auth: none · self-signed TLS&quot;]
+    HA[&quot;HelixAgent&lt;br/&gt;http://127.0.0.1:7061/v1&lt;br/&gt;auth: none&quot;]
+    HC[&quot;HelixCode&lt;br/&gt;http://127.0.0.1:8080&lt;br/&gt;auth: API key required&quot;]
+  end
+
+  OC ==&gt;|&quot;tool_calls: NO&lt;br/&gt;(fenced JSON in text)&quot;| CODER
+  PI ==&gt;|&quot;tool_calls: NO&lt;br/&gt;(fenced JSON in text)&quot;| CODER
+  CR ==&gt;|&quot;tool_calls: NO&lt;br/&gt;(fenced JSON in text)&quot;| CODER
+
+  OC ==&gt;|&quot;tool_calls: YES&lt;br/&gt;(gateway translates)&quot;| GW
+  PI ==&gt;|&quot;tool_calls: YES&lt;br/&gt;(gateway translates)&quot;| GW
+  CR ==&gt;|&quot;tool_calls: YES&lt;br/&gt;(gateway translates)&quot;| GW
+
+  OC -.-&gt;|&quot;array content rejected 400&lt;br/&gt;(--pure sends strings: UNTESTED)&quot;| HA
+  PI -.-&gt;|&quot;BLOCKED: array content rejected 400&quot;| HA
+  CR ==&gt;|&quot;WORKS end to end&lt;br/&gt;tool_calls: YES · ctx &gt;= 200,046&quot;| HA
+
+  CC -.-&gt;|&quot;UNDER VERIFICATION&lt;br/&gt;Anthropic /v1/messages + API key&quot;| HC
+
+  CC --x NOTE[&quot;No OpenAI-compatible provider&lt;br/&gt;mechanism exists in Claude Code&lt;br/&gt;(vendor constraint — see §3 below)&quot;]
+
+  classDef noauth fill:#e8f5e9,stroke:#2e7d32,color:#1b1b1b;
+  classDef tlsauth fill:#fff8e1,stroke:#f9a825,color:#1b1b1b;
+  classDef keyauth fill:#ffebee,stroke:#c62828,color:#1b1b1b;
+  classDef note fill:#eceff1,stroke:#607d8b,color:#1b1b1b,stroke-dasharray: 4 2;
+
+  class CODER,HA noauth;
+  class GW tlsauth;
+  class HC keyauth;
+  class NOTE note;</code></pre>
+<p><strong>Node color legend:</strong> green = no auth required; amber =
+no auth required but self-signed TLS must be trusted; red = API key
+required; grey/dashed = an explanatory note, not a live surface.</p>
+<hr />
+<h2 id="3-reading-the-boundaries">3. Reading the boundaries</h2>
+<ul>
+<li><strong><code>opencode</code>, <code>pi</code>, and
+<code>crush</code> all reach Coder, Gateway, and HelixAgent</strong>
+through the same mechanism — each agent&#39;s own custom &quot;OpenAI-compatible
+provider&quot; feature. This is the whole reason these three agents are
+grouped together in this guide: same mechanism, three different config
+file shapes (see <a href="README.md#4-per-agent-configuration"><code>README.md</code>
+§4</a>).</li>
+<li><strong>Coder vs. Gateway is the tool-calling boundary</strong>, not
+an auth or TLS boundary — both surfaces require no API key. The
+difference is purely in how each surface shapes its response: Coder
+returns tool-call intent as a fenced JSON blob inside the assistant&#39;s
+plain-text message (which no agent&#39;s tool-call parser recognizes), while
+Gateway translates the same underlying model&#39;s output into a real,
+structured <code>tool_calls</code> array with
+<code>finish_reason:&quot;tool_calls&quot;</code>. Same model, two different
+response shapes, because of what sits between the model and the client
+on each path.</li>
+<li><strong>Gateway is also the TLS boundary.</strong> It is the only
+one of the four surfaces served over HTTPS with a self-signed
+certificate — every agent reaching it needs that certificate trusted
+first (<code>SSL_CERT_FILE</code> for <code>crush</code>;
+<code>NODE_EXTRA_CA_CERTS</code> /
+<code>NODE_TLS_REJECT_UNAUTHORIZED</code> for Node/Bun-based agents in
+principle, though a full live proof for <code>opencode</code> and
+<code>pi</code> against the Gateway was inconclusive — see <a href="README.md#5-tls-for-the-self-signed-gateway"><code>README.md</code>
+§5</a>).</li>
+<li><strong>HelixCode is the auth boundary.</strong> It is the only
+surface of the four that rejects a request outright (HTTP 401) without
+an API key.</li>
+<li><strong>Claude Code sits entirely outside the
+OpenAI-compatible-provider mechanism.</strong> This is not a Helix
+limitation — it is a documented vendor constraint. Claude Code&#39;s own
+official documentation for the LLM Gateway Protocol (fetched 2026-09-05,
+<code>https://code.claude.com/docs/en/llm-gateway-protocol</code>) lists
+exactly three client-selectable API formats — Anthropic Messages, Amazon
+Bedrock InvokeModel, Google Agent Platform <code>rawPredict</code> —
+with no OpenAI Chat Completions option, and the companion LLM Gateway
+page states outright that Anthropic &quot;doesn&#39;t support routing Claude Code
+to non-Claude models through any gateway.&quot; Claude Code&#39;s optional
+model-discovery step additionally filters by name, keeping only ids
+containing <code>claude</code> or <code>anthropic</code>. The only
+candidate path into Helix from Claude Code is HelixCode&#39;s
+Anthropic-shaped <code>/v1/messages</code> endpoint on
+<code>:8080</code> — drawn here as <strong>under verification</strong>,
+because a separate work stream was still establishing whether it
+actually works at the time this diagram was produced.</li>
+</ul>
+<hr />
+<h2 id="4-what-the-diagram-deliberately-leaves-out">4. What the diagram
+deliberately leaves out</h2>
+<ul>
+<li><p><strong>HelixAgent is now measured, and it is the only surface
+with room for a real agent prompt</strong> (2026-09-07, superseding
+revision 1&#39;s &quot;reachable, not probed&quot;). It emits structured
+<code>tool_calls</code>, and it accepted a 200,046-token prompt while
+correctly recalling a marker planted at the very front of it — so it
+neither refused nor silently truncated. <code>crush</code> drives it end
+to end, including real tool use. <code>pi</code> and
+<code>opencode</code> cannot reach it: its OpenAI adapter returns HTTP
+400 on array-form <code>content</code>
+(<code>cannot unmarshal array into Go struct field OpenAIMessage.messages.content of type string</code>),
+which is the shape both send. See <a href="README.md#3-which-agent-x-surface-combinations-actually-work"><code>README.md</code>
+§3</a>.</p></li>
+<li><p><strong>The Coder/Gateway boundary is not the tool-calling win it
+looks like.</strong> The Gateway does translate tool calls — and it
+<em>also</em> silently discards array-form message content, returning
+<code>200 OK</code> with a fluent answer to a question the model never
+saw (measured: 903 prompt tokens, including the entire instruction,
+dropped). It is safe only for plain-string senders like
+<code>crush</code>. See the warning in <a href="README.md#2-the-four-helix-surfaces"><code>README.md</code>
+§2</a>.</p></li>
+<li><p><strong>Both llama.cpp surfaces are capped at 32,768
+tokens</strong>, which is the model&#39;s <code>n_ctx_train</code> and
+cannot be raised. Every agent&#39;s baseline system prompt on this host
+exceeds it (<code>pi</code> 86,411, <code>crush</code> 96,564,
+<code>opencode</code> 134,043) because ~950 installed skills are inlined
+into it. That, not the arrows, is what decides usability.</p></li>
+<li><p><strong>Whether an agent is currently configured this way on any
+particular machine.</strong> This diagram shows what is
+<em>possible</em> given each agent&#39;s own provider mechanism and each
+surface&#39;s own behavior — it is not a snapshot of any one operator&#39;s live
+config. Verify your own machine with the commands in <a href="README.md#6-verifying-each-agent-yourself"><code>README.md</code>
+§6</a>.</p></li>
+<li><p><strong>HelixCode&#39;s <code>/v1/chat/completions</code>
+shape</strong> is mentioned in <a href="README.md#2-the-four-helix-surfaces"><code>README.md</code> §2</a>
+but not drawn separately here, since no agent in this guide has a
+confirmed path to either of HelixCode&#39;s two endpoint shapes
+yet.</p></li>
+</ul>
+</body>
+</html>

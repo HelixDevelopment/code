@@ -1,0 +1,12 @@
+=== GET http://127.0.0.1:7061/v1/models (HelixAgent) ===
+{"object":"list","data":[{"id":"helixagent-debate","object":"model","created":1788638225,"owned_by":"helixagent","permission":[{"id":"helixagent-debate-permission","object":"model_permission","created":1788638225,"allow_create_engine":true,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":true,"allow_view":true,"allow_fine_tuning":false,"organization":"helixagent","group":null,"is_blocking":false}],"root":"helixagent-debate","parent":null},{"id":"helixagent-llm","object":"model","created":1788638225,"owned_by":"helixagent","permission":[{"id":"helixagent-llm-permission","object":"model_permission","created":1788638225,"allow_create_engine":true,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":true,"allow_view":true,"allow_fine_tuning":false,"organization":"helixagent","group":null,"is_blocking":false}],"root":"helixagent-llm","parent":null},{"id":"helixagent-ensemble","object":"model","created":1788638225,"owned_by":"helixagent","permission":[{"id":"helixagent-ensemble-permission","object":"model_permission","created":1788638225,"allow_create_engine":true,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":true,"allow_view":true,"allow_fine_tuning":false,"organization":"helixagent","group":null,"is_blocking":false}],"root":"helixagent-ensemble","parent":null},{"id":"helix-debate","object":"model","created":1788638225,"owned_by":"helixagent","permission":[{"id":"helix-debate-permission","object":"model_permission","created":1788638225,"allow_create_engine":true,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":true,"allow_view":true,"allow_fine_tuning":false,"organization":"helixagent","group":null,"is_blocking":false}],"root":"helix-debate","parent":null},{"id":"helix-llm","object":"model","created":1788638225,"owned_by":"helixagent","permission":[{"id":"helix-llm-permission","object":"model_permission","created":1788638225,"allow_create_engine":true,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":true,"allow_view":true,"allow_fine_tuning":false,"organization":"helixagent","group":null,"is_blocking":false}],"root":"helix-llm","parent":null}]}
+[HTTP_STATUS:200]
+
+=== GET http://127.0.0.1:8111/health (liveness, per unit-file note) ===
+{"status":"ready","started_at":"2026-09-05T11:50:47.266613624Z","elapsed_ms":29177932,"ready_at":"2026-09-05T11:51:32.28321616Z","ready_since_ms":29132916}
+
+[HTTP_STATUS:200]
+
+=== GET http://127.0.0.1:7061/ (root) ===
+404 page not found
+[HTTP_STATUS:404]

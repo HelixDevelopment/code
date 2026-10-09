@@ -64,6 +64,10 @@
 #   G30 §11.4.135 HXC-229 guard      — gateway serves in Gin RELEASE mode (live process)
 #   G31 §11.4.135 HXC-233 guard      — completion path returns a REAL generation (live e2e)
 #   G32 §11.4.135 HXC-244 guard      — health endpoint names the components it checked
+#   G34 §11.4.111 endpoint agreement — configured Helix endpoints agree across sources
+#                                      AND reach the service they name (live, 3-state)
+#   G35 CONST-042 HXC-168 guard     — no tracked file hands over a DB credential; DB ports bind loopback
+#   G36 HXC-168 regression guard  — the standing RED_MODE=0 polarity guard for the HXC-168 exposure class
 #
 # REGISTRATION DRIFT IS NOW SELF-REPORTING (review R4, 2026-08-10).
 # --explain lists the entries above; the sweep defines gates as `want_gate GN`
@@ -1275,6 +1279,181 @@ if want_gate G32; then
     else
         gate_fail G32 "/internal/health reports a verdict it never earned — the component list is empty or unnamed, so the endpoint answers 'healthy' no matter what is broken (see /tmp/g32-hxc244-health.out)" \
             "register the real dependency checks on the health.Checker in helix_llm cmd/helixllm/main.go (see commit 8260cf8), rebuild, and restart the gateway"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G33 — CONST-059 / §11.4.35 canonical-root inheritance clarity
+#       (CM-CANONICAL-ROOT-CLARITY) + the T-P1.06.4 `.specify/memory/` extension
+#
+# CONST-059 names this gate; until now NOTHING implemented it — the anchor was
+# restated across six governance carriers while the check itself did not exist
+# (§11.4.227: a named gate must be implemented or a registered deferral).
+#
+# Clause (d) is the reason it was finally built. `.specify/memory/constitution.md`
+# is a deliberate CONST-059 POINTER (task T-P1.06, done 2026-07-29) that SpecKit
+# reads at every /speckit-plan Constitution Check. Running /speckit-constitution
+# against it would overwrite the pointer with generated principles, creating a
+# THIRD constitution in this repository and re-opening risk R-23. Clause (d)
+# makes that mechanically detectable instead of relying on the file's own prose
+# asking future agents not to do it.
+#
+# Fenced code blocks are stripped before matching: constitution/CLAUDE.md:91 and
+# GEMINI.md:33 carry `## INHERITED FROM ...` inside ```markdown fences as
+# EXAMPLES for consumers, and refusing a correct tree is a FAIL-bluff (§11.4.201).
+# Paired mutation: scripts/tests/canonical_root_clarity_meta_test.sh (8 mutations,
+# incl. M6 which asserts the fenced example does NOT trip the gate).
+# ---------------------------------------------------------------------------
+if want_gate G33; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G33 — CONST-059 canonical-root inheritance clarity (CM-CANONICAL-ROOT-CLARITY)"
+    if bash "$ROOT/scripts/gates/canonical_root_clarity_gate.sh" >/tmp/g33-crc.out 2>&1; then
+        gate_pass G33 "$(grep -oE 'checked [0-9]+ item\(s\).*' /tmp/g33-crc.out | tail -1)"
+    else
+        gate_fail G33 "canonical-root inheritance clarity is broken — a consumer stopped inheriting, a canonical carrier started inheriting, or .specify/memory/constitution.md stopped being a pointer (see /tmp/g33-crc.out)" \
+            "$(tail -6 /tmp/g33-crc.out)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G34 — Helix service endpoint agreement + liveness (CM-HELIX-ENDPOINT-AGREEMENT)
+#
+# WHY THIS EXISTS
+# ---------------
+# Measured 2026-09-02: `claude-providers list` showed 21 verified providers and
+# NOT ONE HelixAgent or HelixLLM entry, because the Claude Toolkit's three Helix
+# provider rows named ports nothing served (:18434/:18435 — really the coder and
+# embeddings containers) while the services answered on :7061 and :8443. Nothing
+# failed loudly: that listing filters to verified-only, verification could not
+# connect, so no `*_verified.json` was written and the providers simply VANISHED.
+# A dead endpoint and a never-configured provider looked identical.
+#
+# It was DRIFT. The tracked tree already knew the right ports — the systemd
+# units declare them, the agentic challenge drives them — and only the toolkit's
+# copy was wrong. One fact recorded in several places with nothing holding the
+# copies equal is the gap this gate closes.
+#
+# TWO HALVES, DELIBERATELY INDEPENDENT
+#   (A) AGREEMENT — grouped by (service, ROLE), every record of one endpoint
+#       must name one port. Runs with every service DOWN, so it is enforceable
+#       on a laptop. Role-grouping is load-bearing: helixagent serves its API
+#       and its liveness probe on DIFFERENT ports by design, and comparing per
+#       service alone flagged that correct arrangement as drift.
+#   (B) LIVENESS — does the configured endpoint reach the service it names?
+#
+# THE THREE-STATE CONTRACT, AND WHY EXIT 2 IS A SKIP HERE
+#   0  GREEN — records agree and the endpoint reaches its service
+#   1  FAIL  — records contradict, or the endpoint misses a live service that
+#              answers on another port (the defect)
+#   2  SKIP  — nothing certifiable (no python3, no declarations)
+# Like G30-G32 this interrogates RUNNING SERVICES, which a developer host
+# legitimately does not run, so exit 2 records SKIP rather than a failure: a
+# gate that is red on every machine gets muted and takes the real signal with
+# it (§11.4.201 — a false refusal is as forbidden as a false pass). Absence is
+# keyed to PROVABLE absence — the service's owner, derived from its unit's
+# ExecStart rather than guessed, is not running.
+#
+# NO PORT IS PINNED TO A LITERAL, so deliberately moving a service cannot
+# false-FAIL this gate; hardcoding the answer would relocate the drift into the
+# guard. Ownership is verified from /proc (§11.4.174 — this is a shared host and
+# an open port is not proof of whose it is), and body SHAPE is asserted rather
+# than status code, because two ports here serve SPAs that answer 200 for any
+# path. A 503 carrying a well-formed health envelope PASSES: the wire landing on
+# the right service is the assertion, and service HEALTH is G30-G32's question.
+#
+# Polarity proof (§11.4.115): RED_MODE=1 synthesizes the pre-fix provider set on
+# COPIES and asserts this same checker FAILs on it, citing the drift.
+# ---------------------------------------------------------------------------
+if want_gate G34; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G34 — Helix endpoint agreement + liveness (CM-HELIX-ENDPOINT-AGREEMENT)"
+    RED_MODE=0 bash "$ROOT/scripts/gates/helix_endpoint_agreement_gate.sh" \
+        >/tmp/g34-endpoint-agreement.out 2>&1
+    g34_rc=$?
+    if [[ "$g34_rc" -eq 0 ]]; then
+        gate_pass G34 "$(grep -m1 -oE 'green=[0-9]+ skipped=[0-9]+ findings=[0-9]+ records=[0-9]+ services=[0-9]+' /tmp/g34-endpoint-agreement.out) — every recorded endpoint agrees across sources and reaches its service (ownership verified from /proc, body shape asserted)"
+    elif [[ "$g34_rc" -eq 2 ]]; then
+        # Carry the gate's OWN reason, never a canned sentence: a fixed string
+        # would assert world-state the gate never established.
+        GATE_RESULTS+=("G34|SKIP|$(grep -m1 'SKIP —' /tmp/g34-endpoint-agreement.out) — SKIP-OK: §11.4.3")
+        [[ "$QUIET" -eq 0 ]] && echo "  SKIP (G34): $(grep -m1 'SKIP —' /tmp/g34-endpoint-agreement.out) — certified nothing; this is NOT a detected regression. SKIP-OK: §11.4.3"
+    else
+        gate_fail G34 "a configured Helix endpoint has drifted — records contradict each other, or an endpoint does not reach the service it names while that service answers elsewhere (see /tmp/g34-endpoint-agreement.out)" \
+            "$(grep 'FAIL:' /tmp/g34-endpoint-agreement.out | head -4)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G35 — HXC-168 no hardcoded DB credential + loopback DB bind
+#       (CONST-042 / Article XII §12.1 / §11.4.135)
+#
+# WHY THIS EXISTS
+# ---------------
+# scripts/gates/no_hardcoded_db_credential_gate.sh has existed since 11861996 and
+# was invoked by NOTHING. Grepping the tree on 2026-09-08 found it referenced only
+# by its own source, an Issues entry describing it, and one Go test — no sweep, no
+# hook, no Makefile target. A guard nobody runs is a guard that cannot catch a
+# regression, which is the §11.4.226 result restated: it is the EVIDENCE CLASS at
+# the seam that predicts whether a fix holds, and an unwired gate produces none.
+#
+# The gate itself is falsifiable in both directions — `--self-test` runs eight
+# paired §1.1 mutations, including one that plants a copy-pasteable credential line
+# in a .md (must FAIL) alongside incident prose naming the same value (must PASS),
+# and one that plants a wildcard port publish (must FAIL) beside a loopback publish
+# (must PASS). Wiring it here is what makes that falsifiability load-bearing.
+#
+# HONEST BOUNDARY (§11.4.6): green here means no tracked file HANDS OVER a
+# historical credential in a copy-pasteable line and every scoped database port
+# binds loopback. It does NOT mean the credential is safe. The value is in git
+# history on four mirrors and REMAINS VALID until it is rotated at the database;
+# no gate can withdraw it.
+# ---------------------------------------------------------------------------
+if want_gate G35; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G35 — HXC-168 no hardcoded DB credential + loopback DB bind (CONST-042)"
+    if bash "$ROOT/scripts/gates/no_hardcoded_db_credential_gate.sh" >/tmp/g35-dbcred.out 2>&1; then
+        gate_pass G35 "no tracked file hands over a historical DB credential and every scoped DB port publish binds 127.0.0.1 — NOTE: this does not rotate the published value"
+    else
+        gate_fail G35 "a database credential literal is back in tracked config/source, or a database port is published on the wildcard address (see /tmp/g35-dbcred.out)" \
+            "$(grep -E '^(FAIL|  )' /tmp/g35-dbcred.out | head -6)"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# G36 — HXC-168 standing regression guard (§11.4.135 / §11.4.115)
+#
+# WHY THIS EXISTS
+# ---------------
+# scripts/tests/hxc168_db_exposure_red_test.sh was authored as the §11.4.115
+# polarity test for HXC-168 and, like the gate above before G35, was invoked by
+# NOTHING — a tree-wide grep on 2026-09-08 returned zero references outside its
+# own source. §11.4.135 requires a closed defect's guard to be REGISTERED in the
+# standing suite, not merely to exist; an unregistered guard cannot catch the
+# recurrence it was written for.
+#
+# It is NOT a duplicate of G35. G35 checks tracked SOURCE. This runs the same
+# class against the RUNNING artifact too (§11.4.108 layer 3), which is how the
+# two disagreed at review time: G35 was green while a wildcard listener was live.
+#
+# HONEST BOUNDARY (§11.4.6): the runtime leg distinguishes three states, not
+# two. A listener that is non-loopback while its SOURCE already binds 127.0.0.1
+# is reported OPERATOR-BLOCKED and does not fail the gate — the running
+# container predates the fix and podman cannot rebind a published port in place,
+# so it closes only on an operator-gated recreate. Calling that a regression
+# would be false (§11.4.6); passing it silently would be the false-null this
+# test exists to catch (§11.4.21). If the source does NOT declare loopback, it
+# is a finding and the gate FAILS — verified by a paired §1.1 mutation that
+# reverts the source publish to the wildcard and turns the report from
+# OPERATOR-BLOCKED into two findings.
+# ---------------------------------------------------------------------------
+if want_gate G36; then
+    GATES_RUN=$((GATES_RUN + 1))
+    gate_header "G36 — HXC-168 standing regression guard (RED_MODE=0)"
+    if RED_MODE=0 bash "$ROOT/scripts/tests/hxc168_db_exposure_red_test.sh" >/tmp/g36-hxc168.out 2>&1; then
+        gate_pass G36 "the HXC-168 exposure class has not regressed in source or at runtime — see /tmp/g36-hxc168.out for any OPERATOR-BLOCKED items, which are source-fixed but not yet live and are NOT certified closed"
+    else
+        gate_fail G36 "the HXC-168 exposure class has regressed (see /tmp/g36-hxc168.out)" \
+            "$(grep -E 'FOUND|GREEN FAIL' /tmp/g36-hxc168.out | head -6)"
     fi
 fi
 

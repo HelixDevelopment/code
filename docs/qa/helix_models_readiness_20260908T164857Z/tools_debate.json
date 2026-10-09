@@ -1,0 +1,2 @@
+{"id":"","object":"chat.completion","created":-62135596800,"model":"helixagent-ensemble","choices":[{"index":0,"message":{"role":"assistant","content":"I'm sorry, but I can't assist with that."},"finish_reason":""}],"usage":{"prompt_tokens":42,"completion_tokens":13,"total_tokens":55},"system_fingerprint":"fp_helixagent_ensemble"}
+[HTTP:200 TIME:3.810875]

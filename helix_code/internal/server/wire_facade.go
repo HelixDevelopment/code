@@ -66,9 +66,11 @@ import (
 //     wireFacadeAuthMiddleware's doc-comment in server.go for the fail-closed
 //     rationale and wire_facade_auth_test.go for the RED->GREEN regression
 //     guard.
-//   - Anthropic's `system` field is accepted as a plain string only (the
-//     dominant real-world shape); the array-of-blocks `system` form (used for
-//     cache_control annotations) is not translated.
+//   - Anthropic's `system` field is accepted in BOTH wire shapes: a plain
+//     string AND the array-of-blocks form (used for cache_control
+//     annotations) that real Claude Code clients always send. Text blocks
+//     are concatenated in order; non-text blocks are ignored, never
+//     rejected. See anthropicSystemPrompt.
 //   - Multi-modal content parts (image_url, image, audio) are not translated;
 //     only "text" parts are extracted from either wire's content-array shape.
 //   - tool_result content blocks are translated when their `content` is a
@@ -284,11 +286,84 @@ type anthropicToolWire struct {
 	InputSchema map[string]interface{} `json:"input_schema"`
 }
 
+// anthropicSystemPrompt accepts the two shapes the Anthropic Messages wire
+// format permits for the TOP-LEVEL `system` field: a plain string, or an array
+// of typed content blocks (`[{"type":"text","text":"..."}]`, typically carrying
+// `cache_control` annotations). It mirrors openAIMessageContent above — the
+// same string-or-array UnmarshalJSON pattern already used for message content.
+//
+// This is not a theoretical shape: real Claude Code clients ALWAYS send the
+// array form, so a `System string` field made every request from that client
+// fail at the door with `json: cannot unmarshal array into Go struct field
+// anthropicMessagesRequest.system of type string` (HTTP 400), while the plain
+// string form returned 200 — i.e. the facade was unusable by the one client
+// the Anthropic wire exists to serve.
+//
+// Translation rules:
+//   - Plain string: taken verbatim (existing behaviour preserved exactly).
+//   - Block array: the `text` of every text block is concatenated IN ORDER,
+//     separated by "\n" — the same separator openAIMessageContent uses for
+//     multi-part content, so both wires flatten multi-part text identically.
+//   - Non-text blocks are IGNORED, never an error. Anthropic adds block types
+//     over time, and rejecting an unknown block would resurrect exactly this
+//     class of total failure. A block with an empty/absent `type` is treated
+//     as text (some clients omit it on a lone text block).
+type anthropicSystemPrompt struct {
+	text string
+}
+
+func (s *anthropicSystemPrompt) UnmarshalJSON(data []byte) error {
+	trimmed := bytes.TrimSpace(data)
+	if len(trimmed) == 0 || string(trimmed) == "null" {
+		s.text = ""
+		return nil
+	}
+	if trimmed[0] == '"' {
+		var str string
+		if err := json.Unmarshal(data, &str); err != nil {
+			return fmt.Errorf("invalid system prompt string: %w", err)
+		}
+		s.text = str
+		return nil
+	}
+	// Decode into a MINIMAL {type,text} shape rather than the full
+	// anthropicContentBlock: an unknown future block whose extra fields happen
+	// to collide with a typed field (e.g. an `input` that is an array rather
+	// than an object) would otherwise fail the whole decode — the same
+	// total-failure mode this type exists to remove.
+	var blocks []struct {
+		Type string `json:"type"`
+		Text string `json:"text"`
+	}
+	if err := json.Unmarshal(data, &blocks); err != nil {
+		return fmt.Errorf("unsupported system prompt shape (must be a string or a content-block array): %w", err)
+	}
+	var sb strings.Builder
+	for _, b := range blocks {
+		if b.Type != "" && b.Type != "text" {
+			continue
+		}
+		if b.Text == "" {
+			continue
+		}
+		if sb.Len() > 0 {
+			sb.WriteString("\n")
+		}
+		sb.WriteString(b.Text)
+	}
+	s.text = sb.String()
+	return nil
+}
+
+// Text returns the flattened system-prompt text.
+func (s anthropicSystemPrompt) Text() string { return s.text }
+
 // anthropicMessagesRequest is the JSON body accepted by POST /v1/messages.
-// System is accepted as a plain string only — see file-level scope-limits.
+// System accepts BOTH the plain-string and the array-of-blocks wire shapes —
+// see anthropicSystemPrompt.
 type anthropicMessagesRequest struct {
 	Model       string                 `json:"model"`
-	System      string                 `json:"system,omitempty"`
+	System      anthropicSystemPrompt  `json:"system"`
 	Messages    []anthropicMessageWire `json:"messages"`
 	MaxTokens   int                    `json:"max_tokens"`
 	Temperature float64                `json:"temperature,omitempty"`
@@ -384,8 +459,8 @@ func anthropicRequestToLLMRequest(req anthropicMessagesRequest) (*llm.LLMRequest
 	// role:"system" message — promote it to a leading internal message so
 	// downstream provider routing sees it the same way regardless of which
 	// wire shape the caller used.
-	if strings.TrimSpace(req.System) != "" {
-		messages = append(messages, llm.Message{Role: "system", Content: req.System})
+	if sys := req.System.Text(); strings.TrimSpace(sys) != "" {
+		messages = append(messages, llm.Message{Role: "system", Content: sys})
 	}
 
 	for _, m := range req.Messages {
@@ -615,6 +690,56 @@ func llmResponseToAnthropic(resp *llm.LLMResponse, model string) anthropicMessag
 // chatCompletions handles POST /v1/chat/completions (OpenAI Chat Completions
 // wire shape). It reuses the EXISTING internal LLM routing — see file-level
 // doc-comment.
+// openAIErrorType and anthropicErrorType derive the wire `type` field from the
+// HTTP status actually being sent.
+//
+// Both facades used to emit ONE constant type for every provider-resolution
+// failure — "server_error" on the OpenAI shape, "api_error" on the Anthropic
+// shape — regardless of status. That was already inconsistent with the 400s the
+// same two handlers emit a few lines earlier ("invalid_request_error"), and it
+// became actively wrong once providerResolveStatus started returning 403: a
+// permission refusal arrived carrying a 5xx-flavoured type, so a client that
+// branches on `type` (both SDKs do) read a policy refusal as a server outage
+// and retried it.
+//
+// The two mappings differ ONLY in the 5xx name, because the two APIs genuinely
+// differ there: OpenAI names its server-side class "server_error" and Anthropic
+// names its "api_error". Preserving each keeps both facades faithful to the API
+// they imitate, and keeps the 5xx body byte-identical to what shipped before —
+// the only bodies this change alters are the 400 and the 403.
+func openAIErrorType(status int) string {
+	if status >= 500 {
+		return "server_error"
+	}
+	return sharedWireErrorType(status)
+}
+
+func anthropicErrorType(status int) string {
+	if status >= 500 {
+		return "api_error"
+	}
+	return sharedWireErrorType(status)
+}
+
+// sharedWireErrorType maps the sub-500 statuses, whose type names OpenAI and
+// Anthropic spell identically. Anything else 4xx falls back to
+// "invalid_request_error", which is what both APIs use as the generic
+// client-fault class.
+func sharedWireErrorType(status int) string {
+	switch status {
+	case http.StatusUnauthorized:
+		return "authentication_error"
+	case http.StatusForbidden:
+		return "permission_error"
+	case http.StatusNotFound:
+		return "not_found_error"
+	case http.StatusTooManyRequests:
+		return "rate_limit_error"
+	default:
+		return "invalid_request_error"
+	}
+}
+
 func (s *Server) chatCompletions(c *gin.Context) {
 	var req openAIChatCompletionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -637,7 +762,8 @@ func (s *Server) chatCompletions(c *gin.Context) {
 	// Anthropic API has one), so it is intentionally not threaded through.
 	provider, err := llmProviderResolver("", llmReq.Model)
 	if err != nil {
-		c.JSON(providerResolveStatus(err), gin.H{"error": gin.H{"message": err.Error(), "type": "server_error"}})
+		status := providerResolveStatus(err)
+		c.JSON(status, gin.H{"error": gin.H{"message": err.Error(), "type": openAIErrorType(status)}})
 		return
 	}
 	defer func() { _ = provider.Close() }()
@@ -690,9 +816,10 @@ func (s *Server) anthropicMessages(c *gin.Context) {
 
 	provider, err := llmProviderResolver("", llmReq.Model)
 	if err != nil {
-		c.JSON(providerResolveStatus(err), gin.H{
+		status := providerResolveStatus(err)
+		c.JSON(status, gin.H{
 			"type":  "error",
-			"error": gin.H{"type": "api_error", "message": err.Error()},
+			"error": gin.H{"type": anthropicErrorType(status), "message": err.Error()},
 		})
 		return
 	}
@@ -752,6 +879,12 @@ func (s *Server) streamOpenAIChatCompletion(c *gin.Context, provider llm.Provide
 	// as a chunk reports the concrete model.
 	servedModel := llmReq.Model
 
+	// wroteAny tracks whether ANY byte of the SSE body has been flushed. gin
+	// commits the HTTP status on the first Write, so once a frame is out a
+	// provider error can only be surfaced INSIDE the stream; before that, the
+	// genuine error status is still reachable.
+	wroteAny := false
+
 	writeChunk := func(delta openAIChatDelta, finishReason *string) {
 		frame := openAIChatCompletionChunk{
 			ID:      id,
@@ -765,6 +898,42 @@ func (s *Server) streamOpenAIChatCompletion(c *gin.Context, provider llm.Provide
 			return
 		}
 		fmt.Fprintf(c.Writer, "data: %s\n\n", b)
+		wroteAny = true
+		if flusher != nil {
+			flusher.Flush()
+		}
+	}
+
+	// failStream surfaces a REAL provider error. Previously the terminal error
+	// from GenerateStream was drained and DISCARDED, so a provider failure
+	// reached the client as a successful, empty turn — a CONST-035 / §11.4
+	// PASS-bluff at the wire layer (a failure rendered as success).
+	failStream := func(streamErr error) {
+		msg := fmt.Sprintf("generation failed: %v", streamErr)
+		if !wroteAny {
+			// Nothing flushed yet, so the SSE headers set above have NOT been
+			// committed and the genuine status is still available. Content-Type
+			// must be overwritten explicitly: gin's writeContentType only fills
+			// an EMPTY Content-Type, so c.JSON would otherwise keep
+			// text/event-stream. Same body shape the non-stream path returns.
+			c.Writer.Header().Del("Cache-Control")
+			c.Writer.Header().Del("Connection")
+			c.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+			c.JSON(http.StatusBadGateway, gin.H{
+				"error": gin.H{"message": msg, "type": "server_error"},
+			})
+			return
+		}
+		// The stream has already begun and the status is committed. The OpenAI
+		// SSE protocol carries a mid-stream failure as a `data:` frame whose
+		// payload is an `error` object — that is what lets a client tell a
+		// failure apart from a normal short turn.
+		if b, err := json.Marshal(gin.H{
+			"error": gin.H{"message": msg, "type": "server_error"},
+		}); err == nil {
+			fmt.Fprintf(c.Writer, "data: %s\n\n", b)
+		}
+		fmt.Fprint(c.Writer, "data: [DONE]\n\n")
 		if flusher != nil {
 			flusher.Flush()
 		}
@@ -776,15 +945,19 @@ func (s *Server) streamOpenAIChatCompletion(c *gin.Context, provider llm.Provide
 			return
 		case chunk, ok := <-chunkChan:
 			if !ok {
+				// Drain the sender's terminal error BEFORE emitting the terminal
+				// frames: a non-nil error here means the provider produced
+				// nothing usable and the turn FAILED.
+				if streamErr := <-errCh; streamErr != nil {
+					failStream(streamErr)
+					return
+				}
 				stop := "stop"
 				writeChunk(openAIChatDelta{}, &stop)
 				fmt.Fprint(c.Writer, "data: [DONE]\n\n")
 				if flusher != nil {
 					flusher.Flush()
 				}
-				<-errCh // drain the sender's terminal error (best-effort; the
-				// SSE stream has already been (partially) written so the
-				// status code cannot change at this point).
 				return
 			}
 			// Upgrade to the provider-reported model before emitting the frame,
@@ -796,6 +969,7 @@ func (s *Server) streamOpenAIChatCompletion(c *gin.Context, provider llm.Provide
 				writeChunk(openAIChatDelta{Content: chunk.Content}, nil)
 			}
 			if chunk.Err != nil {
+				failStream(chunk.Err)
 				return
 			}
 		}
@@ -833,36 +1007,86 @@ func (s *Server) streamAnthropicMessages(c *gin.Context, provider llm.Provider, 
 	flusher, _ := c.Writer.(interface{ Flush() })
 	msgID := "msg_" + uuid.New().String()
 
-	// HONEST BOUNDARY (§11.4.6) — model identity on the Anthropic stream.
-	// Everywhere else the facade now reports the model the provider ACTUALLY
-	// served (CONST-036 / CONST-037). Here it cannot: the Anthropic wire
-	// requires `message_start` to be the FIRST event, and nothing has been
-	// served yet — no chunk has arrived, so the concrete model is genuinely
-	// unknown at this point. Emitting the requested model is therefore the
-	// only non-fabricated value available.
+	// wroteAny tracks whether ANY byte of the SSE body has been flushed. It is
+	// the load-bearing discriminator for honest failure reporting: gin commits
+	// the HTTP status on the first Write, so once a frame is out a provider
+	// error can only be surfaced INSIDE the stream — before that, the genuine
+	// error status is still reachable.
+	wroteAny := false
+	emit := func(name string, payload interface{}) {
+		anthropicSSEEvent(c, flusher, name, payload)
+		wroteAny = true
+	}
+
+	// MODEL IDENTITY (CONST-036 / CONST-037) + honest-failure precondition.
+	// The Anthropic wire requires `message_start` to be the FIRST event, but at
+	// handler entry nothing has been served, so an EAGERLY emitted message_start
+	// could only carry the caller's REQUESTED alias. The preamble is therefore
+	// emitted LAZILY, at the first event that genuinely needs it: by then the
+	// first chunk (when there is one) has reported the concrete model, so the
+	// SERVED identity is available and reported.
 	//
-	// Deferring `message_start` until the first chunk WOULD yield the served
-	// identity, but it delays the event behind first-token latency and changes
-	// the timing contract Anthropic clients rely on — a behavioural change not
-	// worth making silently. Documented as a known limitation rather than
-	// hidden: an Anthropic-wire client that passed an alias sees that alias in
-	// `message_start`. The non-stream Anthropic path (llmResponseToAnthropic)
-	// and both OpenAI paths do report the served model.
-	anthropicSSEEvent(c, flusher, "message_start", gin.H{
-		"type": "message_start",
-		"message": gin.H{
-			"id":      msgID,
-			"type":    "message",
-			"role":    "assistant",
-			"model":   llmReq.Model,
-			"content": []anthropicContentBlockOut{},
-			"usage":   anthropicUsage{},
-		},
-	})
-	anthropicSSEEvent(c, flusher, "content_block_start", gin.H{
-		"type": "content_block_start", "index": 0,
-		"content_block": gin.H{"type": "text", "text": ""},
-	})
+	// The lazy preamble is ALSO what makes honest error reporting possible: a
+	// provider error arriving before any chunk now finds NOTHING written, so
+	// failStream can still answer with the real HTTP status instead of the
+	// former well-formed-but-EMPTY HTTP-200 event sequence (a CONST-035 / §11.4
+	// PASS-bluff at the wire layer — a failure rendered as a successful empty
+	// turn). The cost is that message_start is delayed behind first-token
+	// latency; that is a deliberate, documented trade (§11.4.6) — reporting a
+	// failure as success is strictly worse than a later first event.
+	servedModel := llmReq.Model
+	preambleSent := false
+	ensurePreamble := func() {
+		if preambleSent {
+			return
+		}
+		preambleSent = true
+		emit("message_start", gin.H{
+			"type": "message_start",
+			"message": gin.H{
+				"id":      msgID,
+				"type":    "message",
+				"role":    "assistant",
+				"model":   servedModel,
+				"content": []anthropicContentBlockOut{},
+				"usage":   anthropicUsage{},
+			},
+		})
+		emit("content_block_start", gin.H{
+			"type": "content_block_start", "index": 0,
+			"content_block": gin.H{"type": "text", "text": ""},
+		})
+	}
+
+	// failStream surfaces a REAL provider error. Previously the terminal error
+	// from GenerateStream was drained and DISCARDED, so a provider failure (e.g.
+	// the upstream answering 404) reached the client as a successful, empty
+	// turn — the silent-empty-200 defect this replaces.
+	failStream := func(streamErr error) {
+		msg := fmt.Sprintf("generation failed: %v", streamErr)
+		if !wroteAny {
+			// Nothing flushed yet, so the SSE headers set above have NOT been
+			// committed and the genuine status is still available. Content-Type
+			// must be overwritten explicitly: gin's writeContentType only fills
+			// an EMPTY Content-Type, so c.JSON would otherwise keep
+			// text/event-stream. Same body shape the non-stream path returns.
+			c.Writer.Header().Del("Cache-Control")
+			c.Writer.Header().Del("Connection")
+			c.Writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+			c.JSON(http.StatusBadGateway, gin.H{
+				"type":  "error",
+				"error": gin.H{"type": "api_error", "message": msg},
+			})
+			return
+		}
+		// The stream has already begun and the status is committed. Anthropic's
+		// streaming protocol defines an `error` event for exactly this case, so
+		// the client can tell a failure from a truncated-but-successful turn.
+		emit("error", gin.H{
+			"type":  "error",
+			"error": gin.H{"type": "api_error", "message": msg},
+		})
+	}
 
 	var lastFinish string
 	var lastUsage llm.Usage
@@ -872,20 +1096,33 @@ func (s *Server) streamAnthropicMessages(c *gin.Context, provider llm.Provider, 
 			return
 		case chunk, ok := <-chunkChan:
 			if !ok {
-				anthropicSSEEvent(c, flusher, "content_block_stop", gin.H{"type": "content_block_stop", "index": 0})
-				anthropicSSEEvent(c, flusher, "message_delta", gin.H{
+				// Drain the sender's terminal error BEFORE emitting terminal
+				// frames: a non-nil error here means the provider produced
+				// nothing usable and the turn FAILED.
+				if streamErr := <-errCh; streamErr != nil {
+					failStream(streamErr)
+					return
+				}
+				ensurePreamble()
+				emit("content_block_stop", gin.H{"type": "content_block_stop", "index": 0})
+				emit("message_delta", gin.H{
 					"type": "message_delta",
 					"delta": gin.H{
 						"stop_reason": normalizeFinishReasonAnthropic(lastFinish, false),
 					},
 					"usage": anthropicUsage{OutputTokens: lastUsage.CompletionTokens},
 				})
-				anthropicSSEEvent(c, flusher, "message_stop", gin.H{"type": "message_stop"})
-				<-errCh // drain the sender's terminal error (best-effort).
+				emit("message_stop", gin.H{"type": "message_stop"})
 				return
 			}
+			// Upgrade to the provider-reported model BEFORE the preamble is sent,
+			// so message_start already carries the real served identity.
+			if chunk.Model != "" {
+				servedModel = chunk.Model
+			}
 			if chunk.Content != "" {
-				anthropicSSEEvent(c, flusher, "content_block_delta", gin.H{
+				ensurePreamble()
+				emit("content_block_delta", gin.H{
 					"type": "content_block_delta", "index": 0,
 					"delta": gin.H{"type": "text_delta", "text": chunk.Content},
 				})
@@ -895,6 +1132,7 @@ func (s *Server) streamAnthropicMessages(c *gin.Context, provider llm.Provider, 
 			}
 			lastUsage = chunk.Usage
 			if chunk.Err != nil {
+				failStream(chunk.Err)
 				return
 			}
 		}

@@ -417,13 +417,13 @@ func (p *Provider) Generate(ctx context.Context, request *llm.LLMRequest) (*llm.
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.baseURL+endpoint, bytes.NewReader(body))
 	if err != nil {
-		return nil, fmt.Errorf("helixagent: build http request: %w", err)
+		return nil, fmt.Errorf("helixagent: build http request: %w", llm.RedactEndpointsInError(err))
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("helixagent: POST /v1/chat/completions: %w", err)
+		return nil, fmt.Errorf("helixagent: POST /v1/chat/completions: %w", llm.RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -547,14 +547,14 @@ func (p *Provider) GenerateStream(ctx context.Context, request *llm.LLMRequest, 
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.baseURL+"/v1/chat/completions", bytes.NewReader(body))
 	if err != nil {
-		return fmt.Errorf("helixagent: build http stream request: %w", err)
+		return fmt.Errorf("helixagent: build http stream request: %w", llm.RedactEndpointsInError(err))
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "text/event-stream")
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("helixagent: POST /v1/chat/completions (stream): %w", err)
+		return fmt.Errorf("helixagent: POST /v1/chat/completions (stream): %w", llm.RedactEndpointsInError(err))
 	}
 	defer resp.Body.Close()
 
@@ -662,11 +662,11 @@ func (p *Provider) GetModels() []llm.ModelInfo {
 func (p *Provider) fetchModels(ctx context.Context) ([]llm.ModelInfo, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.baseURL+"/v1/models", nil)
 	if err != nil {
-		return nil, err
+		return nil, llm.RedactEndpointsInError(err)
 	}
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, llm.RedactEndpointsInError(err)
 	}
 	defer resp.Body.Close()
 
@@ -720,18 +720,18 @@ func (p *Provider) GetHealth(ctx context.Context) (*llm.ProviderHealth, error) {
 	if err != nil {
 		health.Status = "unhealthy"
 		health.ErrorCount = 1
-		health.Message = fmt.Sprintf("HelixAgent unreachable at %s: %v", p.baseURL, err)
+		health.Message = fmt.Sprintf("HelixAgent unreachable at %s: %v", llm.RedactEndpointForMessage(p.baseURL), err)
 		return health, err
 	}
 	if n < 1 {
 		health.Status = "unhealthy"
 		health.ErrorCount = 1
-		health.Message = fmt.Sprintf("HelixAgent at %s reports zero providers", p.baseURL)
+		health.Message = fmt.Sprintf("HelixAgent at %s reports zero providers", llm.RedactEndpointForMessage(p.baseURL))
 		return health, fmt.Errorf("helixagent: zero providers in engine roster")
 	}
 
 	health.Status = "healthy"
-	health.Message = fmt.Sprintf("HelixAgent reachable at %s with %d providers", p.baseURL, n)
+	health.Message = fmt.Sprintf("HelixAgent reachable at %s with %d providers", llm.RedactEndpointForMessage(p.baseURL), n)
 	if models := p.GetModels(); models != nil {
 		health.ModelCount = len(models)
 	}
@@ -745,11 +745,11 @@ func (p *Provider) GetHealth(ctx context.Context) (*llm.ProviderHealth, error) {
 func (p *Provider) providerCount(ctx context.Context) (int, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.baseURL+"/v1/providers", nil)
 	if err != nil {
-		return 0, err
+		return 0, llm.RedactEndpointsInError(err)
 	}
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		return 0, err
+		return 0, llm.RedactEndpointsInError(err)
 	}
 	defer resp.Body.Close()
 

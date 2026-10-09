@@ -36,17 +36,27 @@ type ProviderType string
 
 // Provider type constants
 const (
-	ProviderTypeOpenAI      ProviderType = "openai"
-	ProviderTypeAnthropic   ProviderType = "anthropic"
-	ProviderTypeGemini      ProviderType = "gemini"
-	ProviderTypeVertexAI    ProviderType = "vertexai"
-	ProviderTypeAzure       ProviderType = "azure"
-	ProviderTypeBedrock     ProviderType = "bedrock"
-	ProviderTypeGroq        ProviderType = "groq"
-	ProviderTypeQwen        ProviderType = "qwen"
-	ProviderTypeCopilot     ProviderType = "copilot"
-	ProviderTypeOpenRouter  ProviderType = "openrouter"
-	ProviderTypeCerebras    ProviderType = "cerebras"
+	ProviderTypeOpenAI     ProviderType = "openai"
+	ProviderTypeAnthropic  ProviderType = "anthropic"
+	ProviderTypeGemini     ProviderType = "gemini"
+	ProviderTypeVertexAI   ProviderType = "vertexai"
+	ProviderTypeAzure      ProviderType = "azure"
+	ProviderTypeBedrock    ProviderType = "bedrock"
+	ProviderTypeGroq       ProviderType = "groq"
+	ProviderTypeQwen       ProviderType = "qwen"
+	ProviderTypeCopilot    ProviderType = "copilot"
+	ProviderTypeOpenRouter ProviderType = "openrouter"
+	ProviderTypeCerebras   ProviderType = "cerebras"
+	// ProviderTypeReplicate is the async-prediction-API hosted provider
+	// (https://replicate.com). Unlike ProviderTypeCerebras / HuggingFace /
+	// Together — all already served by the data-driven
+	// HostedOpenAICompatibleCatalogue() in openai_compatible_catalogue.go
+	// because Replicate's wire protocol is NOT the OpenAI chat-completions
+	// contract (it is a create-prediction-then-poll flow, see
+	// internal/llm/replicate_provider.go), Replicate genuinely has no
+	// catalogue substitute and is wired through its own constructor
+	// (NewReplicateProvider) instead. §11.4.124 investigation, resolved.
+	ProviderTypeReplicate   ProviderType = "replicate"
 	ProviderTypeXAI         ProviderType = "xai"
 	ProviderTypeOllama      ProviderType = "ollama"
 	ProviderTypeLocal       ProviderType = "local"

@@ -1,12 +1,23 @@
 package llm
 
 import (
+	"errors"
+	"strings"
 	"testing"
 	"time"
 )
 
 // TestNewProvider_AllProviderTypes tests that NewProvider creates providers for all types
 func TestNewProvider_AllProviderTypes(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	tests := []struct {
 		name         string
 		providerType ProviderType
@@ -300,6 +311,15 @@ func TestNewProvider_KoboldAIWithParameters(t *testing.T) {
 
 // TestInitializeModelManager_Factory tests model manager initialization from factory
 func TestInitializeModelManager_Factory(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	configs := []ProviderConfigEntry{
 		{
 			Type:     ProviderTypeOllama,
@@ -334,6 +354,20 @@ func TestInitializeModelManager_Factory(t *testing.T) {
 
 // TestInitializeModelManager_UnsupportedProvider_Factory tests error handling for unsupported provider
 func TestInitializeModelManager_UnsupportedProvider_Factory(t *testing.T) {
+	// §11.4.120 gate reconciliation, second round. This test used to call
+	// openCloudGateForTest(t) with the note "with the gate CLOSED this test
+	// would still PASS — but for the wrong reason": the gate ran ahead of the
+	// type switch, so an unknown type came back as ErrCloudDisabled and the
+	// bare `err != nil` assertion was satisfied without the unsupported-type
+	// path ever being reached. Opening the gate was a workaround for that
+	// ordering; a test that has to disable a policy to observe its own subject
+	// is reporting on the workaround, not on the code.
+	//
+	// NewProvider now decides type validity BEFORE gate policy, so the gate is
+	// no longer in the way and the workaround is removed rather than kept:
+	// this runs with the gate at whatever the suite's ambient state is, and
+	// the two subtests below pin it EXPLICITLY in each direction to prove the
+	// verdict does not depend on it.
 	configs := []ProviderConfigEntry{
 		{
 			Type:     ProviderType("unsupported"),
@@ -350,6 +384,98 @@ func TestInitializeModelManager_UnsupportedProvider_Factory(t *testing.T) {
 	if manager != nil {
 		t.Error("InitializeModelManager() should return nil manager on error")
 	}
+}
+
+// TestNewProvider_UnknownTypeReportsUnknownRegardlessOfGate is the guard for
+// the ordering fix in NewProvider: an unrecognised provider type must be
+// diagnosed as UNRECOGNISED whether the cloud gate is open or closed.
+//
+// The defect it pins: the gate check used to run before the type switch, and
+// an unknown type is (correctly) absent from the exemption list, so with the
+// gate closed `ProviderType("definitely-not-a-provider")` was reported as
+//
+//	ErrCloudDisabled: ... hosted provider "definitely-not-a-provider" will not
+//	be constructed. Set llm.cloud.enabled: true ...
+//
+// — inventing a "hosted provider" that does not exist and directing the reader
+// at a config flag instead of at their typo. Toggling llm.cloud.enabled would
+// not have helped: the type is unknown in both states.
+//
+// THE CLOSED-GATE SUBTEST IS THE LOAD-BEARING ONE — it fails on the pre-fix
+// ordering. The open-gate subtest is the positive control that the fix did not
+// simply move the problem: unknown must still be unknown there too.
+//
+// SECURITY POSTURE IS ASSERTED, NOT ASSUMED. A cheap way to "fix" the message
+// would be to let unknown types fall through the gate entirely — so the third
+// subtest re-checks that a genuinely HOSTED type is still refused with
+// ErrCloudDisabled while the gate is closed. Without it this guard would pass
+// on a build that had quietly opened the gate for everything.
+//
+// FALSIFYING MUTATION (§1.1): move the `if !cloudGate.Load() && ...` block in
+// NewProvider back above the providerConstructorFor lookup. The closed-gate
+// subtest then observes ErrCloudDisabled instead of "unsupported provider
+// type" and FAILS.
+func TestNewProvider_UnknownTypeReportsUnknownRegardlessOfGate(t *testing.T) {
+	const unknown = ProviderType("definitely-not-a-provider")
+
+	assertUnknown := func(t *testing.T) {
+		t.Helper()
+		prov, err := NewProvider(ProviderConfigEntry{
+			Type:     unknown,
+			Endpoint: "http://127.0.0.1:1", // never dialled; construction is refused first
+			Enabled:  true,
+		})
+		if err == nil {
+			t.Fatalf("NewProvider(%q) returned no error — an unknown type must "+
+				"never construct", unknown)
+		}
+		if prov != nil {
+			t.Fatalf("NewProvider(%q) returned a non-nil Provider (%T) alongside "+
+				"the error — a refused construction must yield nothing usable",
+				unknown, prov)
+		}
+		if errors.Is(err, ErrCloudDisabled) {
+			t.Fatalf("NewProvider(%q) reported the cloud gate (%v) for a type that "+
+				"does not exist. An unknown type is unknown in both gate states; "+
+				"reporting it as a hosted-provider refusal names a provider that "+
+				"was never defined and sends the reader after a config flag "+
+				"instead of a typo", unknown, err)
+		}
+		if !strings.Contains(err.Error(), "unsupported provider type") {
+			t.Fatalf("NewProvider(%q) error = %q, want it to say \"unsupported "+
+				"provider type\"", unknown, err)
+		}
+	}
+
+	t.Run("gate closed", func(t *testing.T) {
+		closeCloudGateForTest(t) // cloud_gate_endpoint_locality_test.go
+		assertUnknown(t)
+	})
+
+	t.Run("gate open", func(t *testing.T) {
+		openCloudGateForTest(t)
+		assertUnknown(t)
+	})
+
+	t.Run("known hosted type is still gated when closed", func(t *testing.T) {
+		closeCloudGateForTest(t)
+		prov, err := NewProvider(ProviderConfigEntry{
+			Type:    ProviderTypeOpenAI,
+			Enabled: true,
+		})
+		if err == nil {
+			t.Fatal("NewProvider(openai) constructed with the cloud gate closed — " +
+				"reordering the type check ahead of the gate must not have " +
+				"weakened the gate itself")
+		}
+		if prov != nil {
+			t.Fatalf("NewProvider(openai) returned a non-nil Provider (%T) with the "+
+				"gate closed", prov)
+		}
+		if !errors.Is(err, ErrCloudDisabled) {
+			t.Fatalf("NewProvider(openai) error = %v, want it to wrap ErrCloudDisabled", err)
+		}
+	})
 }
 
 // TestInitializeModelManager_EmptyConfigs_Factory tests with empty configuration
@@ -388,6 +514,15 @@ func TestNewProvider_DefaultTimeout(t *testing.T) {
 
 // TestNewProvider_CloseProvider tests that providers can be closed
 func TestNewProvider_CloseProvider(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	config := ProviderConfigEntry{
 		Type:     ProviderTypeOpenAI,
 		Endpoint: "https://api.openai.com/v1",
@@ -409,6 +544,15 @@ func TestNewProvider_CloseProvider(t *testing.T) {
 
 // TestNewProvider_ProviderCapabilities tests that providers return capabilities
 func TestNewProvider_ProviderCapabilities(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	tests := []struct {
 		name         string
 		providerType ProviderType
@@ -449,6 +593,15 @@ func TestNewProvider_ProviderCapabilities(t *testing.T) {
 
 // TestNewProvider_ProviderName tests that providers return names
 func TestNewProvider_ProviderName(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	config := ProviderConfigEntry{
 		Type:     ProviderTypeOpenAI,
 		Endpoint: "https://api.openai.com/v1",
@@ -469,6 +622,15 @@ func TestNewProvider_ProviderName(t *testing.T) {
 
 // TestNewProvider_ProviderModels tests that providers return models
 func TestNewProvider_ProviderModels(t *testing.T) {
+	// §11.4.120 gate reconciliation: NewProvider now enforces the W2c-1 cloud
+	// gate (factory.go), closing the ungated back door around NewCloudProvider's
+	// guard. This test's subject is provider CONSTRUCTION and behaviour, which
+	// predates the gate — so the refusal it now hits is the fix working, not a
+	// regression, and the honest response is to open the gate here rather than
+	// weaken either side. Gate POLICY itself is asserted by
+	// cloud_gate_closed_test.go / cloud_gate_open_test.go.
+	openCloudGateForTest(t)
+
 	config := ProviderConfigEntry{
 		Type:     ProviderTypeOpenAI,
 		Endpoint: "https://api.openai.com/v1",

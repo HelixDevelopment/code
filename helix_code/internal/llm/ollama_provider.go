@@ -220,6 +220,17 @@ func (p *OllamaProvider) GetName() string {
 	return "ollama"
 }
 
+// BaseURL returns the provider's configured base URL. Exposed so
+// out-of-package callers (and tests) can assert which endpoint a provider was
+// actually constructed with — the same accessor, for the same reason, that
+// OpenAICompatibleProvider.BaseURL already provides: it is what lets a guard
+// prove an endpoint came from configuration rather than a literal baked into
+// the call site (CONST-046 / §11.4.111). Carries no credential (CONST-042);
+// Ollama's local HTTP API is unauthenticated.
+func (p *OllamaProvider) BaseURL() string {
+	return p.config.BaseURL
+}
+
 // GetModels returns available models. Discovery is triggered lazily on the
 // first call (speed programme P1-T02) and the result is reused thereafter.
 func (p *OllamaProvider) GetModels() []ModelInfo {

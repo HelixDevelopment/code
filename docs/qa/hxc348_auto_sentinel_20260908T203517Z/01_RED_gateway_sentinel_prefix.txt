@@ -1,0 +1,91 @@
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/__auto__
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="  auto  ": status = 400, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model name contains characters that are not allowed; use letters, digits, or any of ._-/:@+","type":"invalid_request_error","param":"model","code":"invalid_value"}}
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT
+    hxc348_delegation_sentinel_test.go:137: POST /v1/chat/completions model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/AUTO (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/Auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/__auto__ (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/default (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/__auto__
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="  auto  ": status = 400, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model name contains characters that are not allowed; use letters, digits, or any of ._-/:@+","type":"invalid_request_error","param":"model","code":"invalid_value"}}
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT
+    hxc348_delegation_sentinel_test.go:157: POST /v1/chat/completions (stream) model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/AUTO (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/Auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/__auto__ (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/default (0.00s)
+    --- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/auto
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="AUTO": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"AUTO\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="Auto": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"Auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/__auto__
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="  auto  ": status = 400, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model name contains characters that are not allowed; use letters, digits, or any of ._-/:@+","type":"invalid_request_error","param":"model","code":"invalid_value"}}
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/default
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="default": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"default\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+=== RUN   TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT
+    hxc348_delegation_sentinel_test.go:176: POST /v1/completions model="DEFAULT": status = 404, want 200 — a delegation sentinel means "you choose", so the chain must answer it exactly as it answers an empty model; refusing it breaks a documented client flow; body: {"error":{"message":"model \"DEFAULT\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/AUTO (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/Auto (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/__auto__ (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/default (0.00s)
+    --- FAIL: TestHXC348Sentinel_Completions_SentinelIsHonoured/DEFAULT (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks
+    hxc348_delegation_sentinel_test.go:201: sentinel (stream): status = 404, want 200; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletionsStreaming_SentinelStreamsRealChunks (0.00s)
+=== RUN   TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel
+    hxc348_delegation_sentinel_test.go:225: sentinel: status = 404, want 200; body: {"error":{"message":"model \"auto\" not found","type":"invalid_request_error","param":"model","code":"model_not_found"}}
+--- FAIL: TestHXC348Sentinel_ChatCompletions_SentinelIsAnsweredByAServedModel (0.00s)
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto
+=== RUN   TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama
+--- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto-gpt (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/automatic (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/autopilot-7b (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/default-model (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/gpt-auto (0.00s)
+    --- PASS: TestHXC348Sentinel_LookalikeNamesAreStillRefused/auto/llama (0.00s)
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4
+=== RUN   TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz
+--- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/gpt-4o (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/claude-opus-4 (0.00s)
+    --- PASS: TestHXC348Sentinel_ForeignVendorModelsStayRefused/definitely-not-a-real-model-zzz (0.00s)
+FAIL
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/gateway	0.026s
+FAIL

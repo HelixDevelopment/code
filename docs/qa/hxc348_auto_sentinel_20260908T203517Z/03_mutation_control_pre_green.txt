@@ -1,0 +1,19 @@
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/shared/i18n/i18n.go:7:2: digital.vasic.i18n@v0.0.0-00010101000000-000000000000: replacement directory ../i18n does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/gateway/middleware/ratelimit.go:9:2: digital.vasic.ratelimiter@v0.0.0-00010101000000-000000000000: replacement directory ../rate_limiter does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/gateway/middleware/ratelimit.go:10:2: digital.vasic.ratelimiter@v0.0.0-00010101000000-000000000000: replacement directory ../rate_limiter does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/gateway/middleware/negotiation.go:17:2: digital.vasic.toon@v0.0.0: replacement directory ../toon does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/knowledge/embedding_providers.go:7:2: digital.vasic.embeddings@v0.0.0-00010101000000-000000000000: replacement directory ../embeddings does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/knowledge/qdrant.go:10:2: digital.vasic.vectordb@v0.0.0-00010101000000-000000000000: replacement directory ../vector_db does not exist
+# github.com/HelixDevelopment/HelixLLM/internal/gateway
+internal/knowledge/qdrant.go:11:2: digital.vasic.vectordb@v0.0.0-00010101000000-000000000000: replacement directory ../vector_db does not exist
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/gateway [setup failed]
+# github.com/HelixDevelopment/HelixLLM/internal/brain
+internal/shared/i18n/i18n.go:7:2: digital.vasic.i18n@v0.0.0-00010101000000-000000000000: replacement directory ../i18n does not exist
+FAIL	github.com/HelixDevelopment/HelixLLM/internal/brain [setup failed]
+FAIL

@@ -1,17 +1,17 @@
 # CodeGraph — Status
 
-**Revision:** 3
-**Last modified:** 2026-07-08T18:56:00Z
+**Revision:** 4
+**Last modified:** 2026-09-07T12:00:00Z
 
 | Field | Value |
 |---|---|
-| Revision | 3 |
+| Revision | 4 |
 | Created | 2026-05-28 |
-| Last modified | 2026-07-08T18:56:00Z |
+| Last modified | 2026-09-07T12:00:00Z |
 | Status | active |
-| Status summary | Append-only ledger of every CodeGraph-related event for HelixCode (config changes, index regenerations, sync runs, validation probes). Per §11.4.78 (CodeGraph parent), §11.4.79 (own-org submodule inclusion), §11.4.80 (regular-update + sync automation), §11.4.45 / §11.4.56 (Status-doc shape). The weekly update + sync automation is INHERITED BY REFERENCE from the constitution submodule — invoke `constitution/scripts/codegraph_update.sh` and `constitution/scripts/codegraph_sync.sh` (never copied). Latest: 2026-07-08 codegraph 1.2.0 → 1.3.0 update — npm updated to 1.3.0, PATH symlink reconciled, binary version confirmed; HXC-041 (third-party stale-entry purge) still blocked on host process saturation. |
-| Issues | HXC-041 (third-party cli_agents stale-index entries not purged — full `codegraph index` blocked on host process saturation) |
-| Issues summary | HXC-041: live index still holds 36,089 cli_agents + 519 cli_agents_resources + 9 github_pages_website third-party files (config.json exclude is INERT in codegraph 1.2.0 — exclusion is `.gitignore`-driven); purge needs a from-scratch `codegraph index` which fork-failed on host at 4069/4096 user processes (§11.4.174 non-ours workloads). §11.4.10 credentials CLEAN (0 real .env/.pem/.key indexed). |
+| Status summary | Append-only ledger of every CodeGraph-related event for HelixCode. Per §11.4.78 / §11.4.79 / §11.4.80 / §11.4.45 / §11.4.56. Latest: 2026-09-07 activation sweep — index was 18 commits STALE and carried 11,777 third-party files (incl. the whole golang/go repo, ~33% of the index) plus duplicate own-org trees; six exclusions added to config.json. HXC-041's recorded root cause ("config.json exclude is INERT; exclusion is .gitignore-driven") is REFUTED on 1.6.0 — config.json exclusion demonstrably works; the real blocker is that a `codegraph serve --mcp` daemon holds a write lock, so BOTH `index` and `sync` died with `database is locked` and the index is now TRUNCATED (2,116,595 unresolved refs; symbol lookup fresh and both §11.4.79 probes PASS, but caller/impact edges incomplete). Lumen was hard-down (missing default embedding model) — FIXED and health-verified, corpus not yet built. §11.4.80 weekly cadence automation was ABSENT — now wired as a user systemd timer invoking the constitution scripts by reference. |
+| Issues | HXC-041 (SUPERSEDED — its recorded root cause is refuted; see the 2026-09-07 entry); index TRUNCATED — 846,616 refs still unresolved after 3 sync attempts (down from 2,116,595); recurring `codegraph serve --mcp` write-lock contention; needs one full index with the daemon stopped; six new exclusions not yet applied; Lumen FIXED + indexing + searching (4,488 files / 97,434 chunks), with a separate path-scoped-search bug (k=8192 > sqlite-vec 4096) and a §11.4.79 scope disagreement vs CodeGraph |
+| Issues summary | 2026-09-07 supersedes the earlier HXC-041 summary, whose counts are stale and whose root cause is REFUTED: `cli_agents` (36,089) and `github_pages_website` are now 0 in the live DB and neither is gitignored, which disproves "exclusion is .gitignore-driven / config.json is INERT" — config.json exclusion works on 1.6.0. Live index today: 35,540 files, of which 11,777 third-party (10,705 golang/go + 461 colibri + 92 mcp_servers + 5 superspec) + 514 duplicate remain because the re-index was TRUNCATED by a `codegraph serve --mcp` write lock (`database is locked` on both `index` and `sync`; 2,116,595 unresolved refs). Own-org inclusion verified (helix_qa 1030 / containers 514 / constitution 368 / helix_code 2348) and both §11.4.79 probes PASS. §11.4.10 credentials CLEAN (0 indexed .env/.pem/.key). |
 | Fixed | HXC-017 (own-org submodule inclusion in index) |
 | Continuation | sibling `Status_Summary.md` carries the operator-readable digest per §11.4.56. |
 
@@ -170,3 +170,204 @@ Both via the `mcp__codegraph__codegraph_explore` MCP tool AND the `codegraph que
 - **Evidence**: `npm view` → 1.3.0, `npm ls -g` → 1.3.0, `codegraph --version` → 1.3.0.
 - **HXC-041 status**: unchanged — still blocked on host process saturation (`ulimit -u 4096`, ~4069 used).
 - **Root-scoped commit**: committed to this repo; push deferred per operator instruction.
+
+## 2026-09-07T12:00:00Z — index staleness + §11.4.79 exclude-drift remediation; Lumen restored; §11.4.80 cadence wired
+
+- **Event**: CodeGraph + Lumen activation sweep. Full evidence:
+  `docs/qa/2026-09-07-toolkit-constitution-activation/INDEXING.md`.
+
+### Before-state (measured)
+
+- `codegraph` **1.6.0** on PATH; npm latest **1.6.0** → **no §11.4.80 update owed**.
+- `.codegraph/codegraph.db` 2,765,209,600 B, mtime **2026-09-06 22:27:04**;
+  **18 commits** landed after that write. Staleness PROVEN, not inferred: an
+  `explore` of `allocateFallbackPortUnsafe` (added in today's `b1af49d0`) returned
+  *"changed on disk after the last index sync — source omitted"* and a call graph
+  still containing the pre-rename `allocateEphemeralPortUnsafe`.
+- **§11.4.80 cadence automation: ABSENT** — no crontab entry, no systemd timer.
+
+### §11.4.79 exclude-list drift (measured against `.gitmodules`)
+
+132 submodules; **118 own-org / 14 third-party**. Four third-party trees were
+**not** excluded and were being indexed:
+`submodules/claude-toolkit/submodules/go` (**11,819** files — the golang/go
+language repo, ~33% of the whole index), `dependencies/colibri` (416,
+vendored in `e70485a3` *after* config.json was last written), `mcp_servers` (86),
+`submodules/superspec` (2). Plus two **byte-identical duplicates** of own-org
+root copies (`claude-toolkit/submodules/{containers,challenges}` = 501 + 260
+files, md5-set verified). All six added to `.codegraph/config.json` `exclude`
+(pre-op backup taken, §9.2).
+
+Own-org **inclusion** was already satisfied — no own-org tree needed adding.
+
+### HXC-041's recorded root cause is REFUTED (important)
+
+This ledger and `scripts/codegraph_validate.sh` both record *"config.json `exclude`
+is INERT — exclusion is `.gitignore`-driven"*. Measured on 1.6.0 that is **false**:
+`git check-ignore` reports **none** of `cli_agents`, `github_pages_website`,
+`mcp_servers`, `dependencies/colibri`, `submodules/superspec` as gitignored, yet
+`cli_agents` and `github_pages_website` sit at **0 indexed files**. Only
+`config.json` can be excluding them, so `config.json` exclusion **works**. The
+real reason the six new exclusions did not apply is the truncated run below.
+Left uncorrected, the recorded cause would send the next engineer to edit
+`.gitignore`, which would fix nothing.
+
+### Re-index OUTCOME: FAILED — `database is locked`
+
+`codegraph index` ran 13:31→13:50 and died with `✗ Failed to index: database is
+locked`; `codegraph sync` (13:53→13:58) died the same way. `codegraph status`:
+*"the index is truncated"*, **2,116,595 references awaiting resolution**.
+
+**Root cause (FACT) — a `codegraph serve --mcp` daemon holds a write lock on the
+index DB.** Verified via `/proc/<pid>/fd`, and an initial mis-attribution was
+corrected: pid **2251386** holds 4 fds that are **all deleted inodes** (it serves a
+stale DB but does not lock the live one), while pid **1901050** holds **5 live
+fds** — and it started at **13:56, six minutes AFTER the index had already
+failed**. So this is not one rogue process: the serve-daemons are
+**auto-respawning** (PPID 1), and `codegraph index` has **no lock-handling flag**
+(`--force` only bypasses a home-dir/root safety check). The lock is **intermittent contention**, not a permanent block: a later `sync`
+(14:04) coexisted with the same daemon and resolved **960,000 refs in 15 min**
+(edges 1,266,155 → 1,736,955) before being cut short by an operator-set timeout,
+not by a lock. So `sync` can make progress opportunistically, while a full
+`index` — which needs an exclusive lock at its commit phase — is the vulnerable
+operation and is the one that should be run with the daemon stopped.
+
+### State of the index now
+
+- **Symbol content is fresh**: `allocateFallbackPortUnsafe` → 1 node;
+  `allocateEphemeralPortUnsafe` (the name today's commit replaced) → 0 nodes.
+- **Edges are degraded**: 2.1M unresolved refs ⇒ incomplete caller/impact trails.
+- **Exclusions not yet applied**: 10,705 golang/go + 461 colibri + 92 mcp_servers
+  + 5 superspec + 514 duplicate files still indexed. Total 35,540 files.
+
+### §11.4.79 usefulness probes — both PASS (run via CLI, not the stale MCP tool)
+
+- **Own-org-only symbol**: `codegraph query ResolveModelCapability` →
+  `submodules/llms_verifier/llm-verifier/capabilities/registry_resolve.go:62`.
+- **Today's commit**: `codegraph query allocateFallbackPortUnsafe` →
+  `helix_code/internal/discovery/port_allocator.go:367` + its new test file.
+
+Probes were deliberately **not** run through `mcp__codegraph__codegraph_explore`:
+that daemon holds deleted fds, so an MCP probe would have returned a green result
+from the pre-index database — a §11.4.108 source-updated/runtime-stale PASS-bluff.
+**The MCP server must be restarted before it reflects any re-index.**
+
+### §1.1 paired mutation — gate is falsifiable
+
+Adding own-org `submodules/helix_qa/**` to the exclude list makes
+`codegraph_validate.sh` FAIL (`❌ … should be included per §11.4.79`, FAIL: 1);
+the clean config passes (`✅ … is not excluded`) — no false-positive refusal
+(§11.4.201(1)). Restore was `trap`-guaranteed and **md5-verified** identical to
+pre-op. Clean-config validator run: **PASS 29 / FAIL 0 / SKIP 0**.
+
+That green is necessary but **not sufficient**: the validator hardcodes only four
+third-party patterns and reported 0 FAIL while 11,777 third-party files sat in the
+index (§11.4.238 — the automated check should have been the discoverer). Its list
+should be derived from `.gitmodules` ownership.
+
+### Lumen — root-caused and FIXED
+
+`health_check` was **ERROR**: *"configured model
+`ordis/jina-embeddings-v2-base-code` is not loaded"*. Ollama was running and
+reachable with `nomic-embed-text` + `qwen2.5:3b` — just not that model, which is
+Lumen's own hardcoded default (`internal/models/models.go:26`, 768-dim/8192-ctx,
+code-specialised). `ollama pull` → 322 MB, `success`; `health_check` → **OK**.
+Pulling the intended model was preferred over repointing `LUMEN_EMBED_MODEL` at
+the general-purpose `nomic-embed-text`, which would have silently degraded
+code-search quality.
+
+**Runtime-proven, not just health-green** (a green `health_check` alone is a
+config-level/metadata PASS per §11.4.5): a real search auto-triggered indexing and
+returned semantically-ranked hits — `Indexed: 4,488 files | Chunks: 97,434 |
+Vectors: 97,329 | DB 99.8 MB`, e.g. *"fallback port allocation outside ephemeral
+range"* → `find_available_port` (score 0.81), *"JWT token generation and
+validation"* → the two security docs (0.76 / 0.67). Indexing continues in
+background.
+
+**Second, distinct Lumen defect found** (reproducible, §11.4.50): path-scoped
+search is broken — `semantic_search(query, limit=N)` works, but adding
+`path=<subtree>` fails with `k value in knn query too large, provided 8192 and the
+limit is 4096`. The trigger is the `path` filter (Lumen over-fetches k=8192 vs
+`sqlite-vec`'s 4096 cap), not the query or `limit`. Workaround: omit `path`.
+
+**Consistency gap:** Lumen indexes `cli_agents/…` — third-party code CodeGraph
+excludes under §11.4.79(b). Lumen honours `.gitignore` + a builtin skip list, and
+`cli_agents` is not gitignored; Lumen exposes no exclude-list setting. The two
+indexers therefore disagree on §11.4.79 scope — operator decision, not taken here.
+
+### §11.4.80 cadence — WIRED (was absent)
+
+User systemd timer invoking the constitution scripts **by reference**:
+`~/.config/systemd/user/helix-code-codegraph-sync.{service,timer}` →
+`constitution/scripts/codegraph_update.sh` + `codegraph_sync.sh`,
+`Nice=15`, `IOSchedulingClass=idle`, `OnCalendar=Sun 04:00`, `Persistent=true`.
+Armed and verified: **NEXT Sun 2026-09-13 04:20:40 CEST**. It deliberately does
+**not** call `codegraph_update_and_resync.sh`, which performs `commit` +
+`push_all` — commits/pushes are handled centrally by the operator.
+
+### Host-safety (§12.6) — why the remaining work was not forced
+
+During the index the host reached **93% memory with swap 100% full
+(8191/8191 MB)**, 2 GB available, the indexer at 10.0 GB RSS / 277% CPU; later
+**load average 23.82 on 16 cores**. §12.6 caps project procedures at 60% of RAM.
+Lumen's whole-monorepo embedding was therefore **not** started, and the running
+index was **not** killed (it was provably progressing — WAL +12 MB/10 s, resolved
+by real `/proc/<pid>/cmdline` rather than a `pgrep -f` substring that matched only
+the wrapper shell, the §11.4.196(D) carrier footgun; killing mid-write would have
+left a partial DB and *no* usable index, §9.2).
+
+The serve-daemons were **not** killed either: they are auto-respawning and spawned
+by MCP clients, other agents are active in this repo, and §11.4.174 (verify a
+process is yours before signalling) + §11.4.122 (don't disable a running component
+without asking) both forbid it. Reported, not done.
+
+### Remediation (needs a quiet window + operator confirmation)
+
+```bash
+pkill -f 'codegraph.js serve --mcp --path /home/milosvasic/Projects/helix_code'
+nice -n 15 codegraph index          # applies the 6 exclusions AND clears truncation
+codegraph status && bash scripts/codegraph_validate.sh
+```
+Expect ~23,700 files (35,540 − 11,777 third-party − duplicates) and no
+unresolved-refs warning. Then build Lumen's corpus separately (CPU/GPU-heavy;
+must not overlap the index).
+
+### Open items
+
+1. HXC-041's recorded root cause is refuted (above) — correct it here and in the
+   `codegraph_validate.sh` comment.
+2. `codegraph_validate.sh` third-party list is hardcoded; derive from `.gitmodules`.
+3. Serve-daemon vs index lock contention has no in-tool mitigation — the §11.4.80
+   sync wrapper should stop/restart the daemon around a full index, or the weekly
+   timer will hit exactly this failure.
+4. `github_pages_website` classification: `CLAUDE.md`'s owned roster says own-org
+   (⇒ must be indexed per §11.4.79(a)); `codegraph_validate.sh` asserts it must be
+   absent. Contradiction referred to the operator; pre-existing exclusion left
+   in place rather than editing a gate to fit a change (§11.4.120/§11.4.122).
+5. A third duplicate tree — `claude-toolkit/submodules/LLMsVerifier` duplicates
+   `submodules/llms_verifier` (the root copy is lowercase, so an audit grepping
+   `submodules/LLMsVerifier` wrongly concludes there is no root copy) — not yet
+   excluded.
+
+### Partial repair achieved by `codegraph sync` (same session, 14:04–14:37)
+
+Three `sync` attempts were run against the truncated index. They did **not**
+fully repair it, but they recovered a majority of the lost edge data:
+
+| Metric | After failed index | After 3 sync attempts | Delta |
+|---|---|---|---|
+| Unresolved references | 2,116,595 | **846,616** | **−1,269,979 (−60%)** |
+| Edges | 1,266,155 | **1,908,850** | **+642,695** |
+| Nodes | 740,228 | 740,266 | +38 |
+| Files | 35,540 | 35,543 | +3 |
+| DB size | 2293.10 MB | 2363.02 MB | +69.9 MB |
+
+Attempt 1 (14:04) ran 15 min and did the bulk of the work before hitting an
+operator-set timeout. Attempts 2 (14:19) and 3 (14:22) **both** died with
+`database is locked` — confirming the contention is real and recurring, even
+though it is not permanent. `codegraph status` still reports the index truncated.
+
+**Net position:** symbol lookup is fresh and correct (both §11.4.79 probes PASS);
+caller/impact edges are ~60% recovered but still incomplete; the six new
+exclusions remain unapplied. A single successful full `index` with the serve
+daemon stopped resolves all three at once.

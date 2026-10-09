@@ -1,0 +1,19 @@
+[1m== D1: instruction-shaped credential blocks in tracked docs ==[0m
+  [32mclean[0m D1 — no tracked file hands a historical literal over in a config-shaped line
+
+[1m== D2: credential gate wired into the pre-build sweep ==[0m
+  [32mclean[0m D2 — scripts/verify-all-constitution-rules.sh invokes the credential gate
+
+[1m== D3: DB port publishes bind loopback ==[0m
+  [32mclean[0m D3 compose.helixcode-infra.yml — 5433:5432 bound to 127.0.0.1
+  [31mFOUND[0m D3 helix_code/docker/autoboot/docker-compose.autoboot.yml — publishes 55432:5432 on the WILDCARD address (LAN-reachable)
+  [32mclean[0m D3 helix_code/docker/docker-compose.yml — 5432:5432 bound to 127.0.0.1
+
+[1m== D3-runtime: running listener binds ==[0m
+  [1m—[0m D3-runtime :5433 not listening (certifies nothing; SKIP-OK §11.4.3)
+  [31mFOUND[0m D3-runtime :55432 NON-loopback (*:55432) AND the source does not declare loopback either
+
+SUMMARY: 4 passed, 2 failed, 0 operator-blocked (guard polarity; RED_MODE=0)
+
+[1m== VERDICT (RED_MODE=0) ==[0m
+[31mGREEN FAIL[0m — 2 finding(s); in the HXC-168 exposure class.

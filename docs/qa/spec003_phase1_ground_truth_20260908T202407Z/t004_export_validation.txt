@@ -1,0 +1,10 @@
+### §11.4.168-lite export validation of docs/scripts/mechanical_tools.pdf
+chars=10208
+POSITIVE (content present): 1
+NEGATIVE (raw md fence must NOT leak as body text): 0
+NEGATIVE (fabricated string): 0
+
+### HTML
+chars=29110
+POSITIVE (<table> rendered, not raw pipes): 2
+NEGATIVE (raw md heading leaked): 0

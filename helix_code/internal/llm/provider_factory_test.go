@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+// openCloudGateForTest opens the W2c-1 cloud gate for the duration of one
+// test. The construction-semantics tests below predate the gate and assert
+// the per-type constructor wiring, not gate policy — the gate's own
+// closed/open behavior is guarded by cloud_gate_closed_test.go /
+// cloud_gate_open_test.go. Restores the previous state on cleanup so tests
+// stay order-independent.
+func openCloudGateForTest(t *testing.T) {
+	t.Helper()
+	prev := CloudEnabled()
+	SetCloudEnabled(true)
+	t.Cleanup(func() { SetCloudEnabled(prev) })
+}
+
 // ---------------------------------------------------------------------------
 // Selector tests — flag > env > config > wizard precedence (P1-F12-T07).
 // ---------------------------------------------------------------------------
@@ -132,6 +145,7 @@ func TestSelector_RejectsNonCloudType(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestNewCloudProvider_Anthropic(t *testing.T) {
+	openCloudGateForTest(t)
 	cfg := ProviderConfigEntry{
 		Type:    ProviderTypeAnthropic,
 		APIKey:  "test-anthropic-key",
@@ -152,6 +166,7 @@ func TestNewCloudProvider_Anthropic(t *testing.T) {
 }
 
 func TestNewCloudProvider_Bedrock(t *testing.T) {
+	openCloudGateForTest(t)
 	cfg := ProviderConfigEntry{
 		Type:    ProviderTypeBedrock,
 		Enabled: true,
@@ -174,6 +189,7 @@ func TestNewCloudProvider_Bedrock(t *testing.T) {
 }
 
 func TestNewCloudProvider_Vertex(t *testing.T) {
+	openCloudGateForTest(t)
 	cfg := ProviderConfigEntry{
 		Type:    ProviderTypeVertexAI,
 		Enabled: true,
@@ -193,6 +209,7 @@ func TestNewCloudProvider_Vertex(t *testing.T) {
 }
 
 func TestNewCloudProvider_Azure(t *testing.T) {
+	openCloudGateForTest(t)
 	cfg := ProviderConfigEntry{
 		Type:    ProviderTypeAzure,
 		APIKey:  "test-azure-key",

@@ -1,0 +1,2 @@
+{"id":"","object":"chat.completion","created":1788886632,"model":"helix-llm","choices":[{"index":0,"message":{"role":"assistant","content":"As an AI language model, I do not have real-time access to the latest weather data. However, you can check the weather in Belgrade by visiting the following websites:\n\n1. [Belgrade Weather](https://www.weather.com/weather/today/in/Belgrade)\n2. [BBC Weather](https://www"},"finish_reason":""}],"usage":{"prompt_tokens":34,"completion_tokens":64,"total_tokens":98},"system_fingerprint":"fp_helixllm_v1"}
+[HTTP:200]

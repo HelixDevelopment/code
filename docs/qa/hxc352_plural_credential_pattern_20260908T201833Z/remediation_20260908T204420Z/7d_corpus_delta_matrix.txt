@@ -1,0 +1,6 @@
+variant                                        flagged  new-vs-shipped  lost-vs-shipped
+old                                               140               0                1
+base                                              141               0                0
+blanket                                           152              11                0
+spaceeq                                           143               2                0
+final                                             141               0                0

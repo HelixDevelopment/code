@@ -8,7 +8,20 @@ Documentation=file://@HELIX_ROOT@/docs/SYSTEMD.md
 # The members declare `WantedBy=helix.target`, so enabling a member wires it in
 # automatically -- this target does not enumerate them (avoids drift between the
 # target file and the member set).
-Wants=helixcode-infra.service
+# NOTE (2026-09-03): an unconditional `Wants=helixcode-infra.service` was
+# removed from here. It contradicted this file's own comment directly above —
+# the target is documented as NOT enumerating members precisely to avoid drift,
+# yet that line hard-wired one member in. Its practical effect was that starting
+# (or booting) helix.target started the shared infra stack even when it was not
+# enabled and no consumer was configured against it: on this host that meant
+# ~10 extra containers, including a duplicate Postgres+Redis pair alongside the
+# `helixcode-autoboot-*` pair the server already owns, plus Ollama, Weaviate and
+# Selenium (§12.6 memory).
+#
+# Membership now comes from exactly one place: each service's
+# `WantedBy=...helix.target`. Enable a member and it joins the group; leave it
+# disabled and it does not. `After=` is kept so that when an operator DOES
+# enable the infra stack, it is still ordered first.
 After=helixcode-infra.service
 
 [Install]

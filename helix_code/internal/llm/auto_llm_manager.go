@@ -1333,6 +1333,70 @@ func (m *AutoLLMManager) GetRunningEndpoints() []string {
 	return endpoints
 }
 
+// ProviderBridge provides a bridge to enumerate and register providers
+type ProviderBridge struct {
+	providers map[string]*AutoProvider
+	mu        sync.RWMutex
+}
+
+// GetProviderBridge returns the provider bridge for external access
+func (m *AutoLLMManager) GetProviderBridge() *ProviderBridge {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	bridge := &ProviderBridge{
+		providers: make(map[string]*AutoProvider, len(m.providers)),
+		mu:        sync.RWMutex{},
+	}
+	for k, v := range m.providers {
+		bridge.providers[k] = v
+	}
+	return bridge
+}
+
+// GetAllProviders returns all registered providers
+func (b *ProviderBridge) GetAllProviders() map[string]*AutoProvider {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+
+	result := make(map[string]*AutoProvider)
+	for k, v := range b.providers {
+		result[k] = v
+	}
+	return result
+}
+
+// StartAllProvidersForStartup starts all providers during startup
+func (m *AutoLLMManager) StartAllProvidersForStartup(ctx context.Context) error {
+	// Snapshot, not the live map: autoStartProvider execs and sleeps.
+	for _, entry := range m.providerEntries() {
+		name, provider := entry.name, entry.provider
+
+		if m.statusOf(provider) == "running" {
+			log.Printf("⏭️  Skipping %s (already running)", name)
+			continue
+		}
+
+		log.Printf("🚀 Auto-starting %s...", name)
+
+		if err := m.autoStartProvider(provider); err != nil {
+			log.Printf("❌ Failed to start %s: %v", name, err)
+			continue
+		}
+
+		log.Printf("✅ Auto-started %s on port %d", name, provider.DefaultPort)
+	}
+
+	// Wait a moment for providers to start
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-time.After(10 * time.Second):
+	}
+
+	return nil
+}
+
 // Stop stops the automated system
 func (m *AutoLLMManager) Stop() error {
 	m.mutex.Lock()

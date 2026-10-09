@@ -1,0 +1,18 @@
+data: {"choices":[{"delta":{"content":"","role":"assistant"},"finish_reason":null,"index":0}],"created":1788886882,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{"content":"*Conducting multi-round AI debate for consensus...*\n\n"},"finish_reason":null,"index":0}],"created":1788886882,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{"content":"\n\u003e Best agreement: 0% after 2 rounds\n\n"},"finish_reason":null,"index":0}],"created":1788886883,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{"content":"---\n\n**Final Decision**\n\n"},"finish_reason":null,"index":0}],"created":1788886883,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{"content":"No responses to analyze"},"finish_reason":null,"index":0}],"created":1788886883,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{"content":"\n"},"finish_reason":null,"index":0}],"created":1788886883,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: {"choices":[{"delta":{},"finish_reason":"stop","index":0}],"created":1788886883,"id":"chatcmpl-77e8d69794983645","model":"helixagent-debate","object":"chat.completion.chunk","system_fingerprint":"fp_helixagent_v1"}
+
+data: [DONE]
+
+
+[HTTP:200 TIME:2.486029]

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">
+table {
+border-collapse: collapse;
+}
+table td,
+table th {
+border: 1px solid #cccccc;
+padding: 4px 8px;
+vertical-align: top;
+}
+
+tr.cell-status-obsolete > td {
+background-color: #E0E0E0;
+}
+
+tr.cell-status-obsolete > td:nth-child(2),
+tr.cell-status-obsolete > td:last-child {
+text-decoration: line-through;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">README</h1>
+</header>
+<h1 id="hxc-168-credential-scrub-captured-evidence">HXC-168 — credential
+scrub: captured evidence</h1>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Revision</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>2026-09-08</td>
+</tr>
+<tr>
+<td>Last modified</td>
+<td>2026-09-08</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>active</td>
+</tr>
+</tbody>
+</table>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#what-this-run-proves">What this run proves</a></li>
+<li><a href="#files">Files</a></li>
+<li><a href="#what-it-does-not-prove">What it does NOT prove</a></li>
+</ul>
+<h2 id="what-this-run-proves">What this run proves</h2>
+<p>The §11.4.115 polarity pair for the HXC-168 exposure class, captured
+from the SAME test source in both directions, plus the §1.1 mutation
+that shows the guard can still fail.</p>
+<ul>
+<li><strong>RED on the pre-fix artifact</strong> — the defect genuinely
+reproduces on the broken tree, not on a synthetic fixture. Run from a
+<code>--shared</code> clone checked out at <code>2182d644~1</code>
+(<code>1f67b44f</code>), i.e. before the scrub landed: <strong>41
+findings, RED PASS</strong>. A RED test that cannot fail on the
+known-broken artifact is a blind test, so this is the leg that earns the
+GREEN.</li>
+<li><strong>GREEN on the fixed artifact</strong> — same source,
+<code>RED_MODE=0</code>: <strong>GREEN PASS with 1
+OPERATOR-BLOCKED</strong>. Not “all clear”: the running container still
+publishes <code>*:55432</code> because its SOURCE already binds loopback
+and podman cannot rebind a published port in place, so it closes only on
+an operator-gated recreate.</li>
+<li><strong>§1.1 mutation</strong> — revert the source publish to the
+wildcard and the same runtime turns from OPERATOR-BLOCKED into <strong>2
+findings, GREEN FAIL exit 1</strong>. That is what proves
+OPERATOR-BLOCKED is a discriminator and not a carve-out.</li>
+<li><strong>Gate self-test</strong> — 8 paired mutations, exit 0.
+Planted literals are REDACTED here (<code>&lt;REDACTED-L1&gt;</code> /
+<code>&lt;REDACTED-L2&gt;</code>): the self-test deliberately plants
+them to prove detection, and a transcript is not a place to publish a
+credential (§11.4.10). The verdicts are untouched.</li>
+<li><strong>Sweep</strong> — <code>G35</code> and <code>G36</code> each
+<code>Gates run: 1</code>, both PASS.</li>
+</ul>
+<h2 id="files">Files</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01_RED_on_prefix_artifact.log</code></td>
+<td>Defect reproduced on the pre-scrub tree (41 findings)</td>
+</tr>
+<tr>
+<td><code>02_GREEN_on_fixed_artifact.log</code></td>
+<td>Same test, fixed tree, 1 operator-blocked</td>
+</tr>
+<tr>
+<td><code>03_MUTATION_wildcard_source.log</code></td>
+<td>Paired mutation: wildcard source ⇒ 2 findings</td>
+</tr>
+<tr>
+<td><code>04_gate_selftest.log</code></td>
+<td>Gate’s own 8 paired mutations (literals redacted)</td>
+</tr>
+<tr>
+<td><code>05_sweep_G35_G36.log</code></td>
+<td>Both registered gates via the sweep</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-it-does-not-prove">What it does NOT prove</h2>
+<p>Stated plainly, because a green transcript invites the opposite
+reading:</p>
+<ul>
+<li><strong>The credential is still valid.</strong> Nothing here rotates
+it. It is in git history on four mirrors and remains usable until it is
+rotated at the database — an operator action no gate can perform.</li>
+<li><strong><code>:55432</code> is still LAN-reachable.</strong> The
+loopback bind is landed in source only. The recreate that would apply it
+needs an app-layer cycle, because the credential is injected by
+<code>internal/infraboot</code> during the application’s boot rather
+than by a standalone launcher.</li>
+<li><strong>This is not a closure.</strong> HXC-168 remains
+Operator-blocked. Per §11.4.83 the transcripts are captured NOW so the
+RED leg is not reconstructed from memory later; the item closes when the
+operator’s two actions are done.</li>
+</ul>
+</body>
+</html>

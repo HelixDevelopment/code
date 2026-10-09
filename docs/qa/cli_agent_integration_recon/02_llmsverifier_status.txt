@@ -1,0 +1,22 @@
+=== llmsverifier.service full status (read-only query) ===
+● llmsverifier.service - LLMsVerifier (model/provider verification + scoring API) on :8100
+     Loaded: loaded (/home/milosvasic/.config/systemd/user/llmsverifier.service; disabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Sat 2026-09-05 21:55:30 CEST; 8s ago
+ Invocation: ce55127f6e33420eac21894b4b3597ce
+       Docs: file:///home/milosvasic/Projects/helix_code/docs/SYSTEMD.md
+    Process: 78377 ExecStart=/home/milosvasic/Projects/helix_code/submodules/llms_verifier/llm-verifier/bin/llm-verifier -c /home/milosvasic/Projects/helix_code/config/llmsverifier/config.yaml server --port 8100 (code=exited, status=203/EXEC)
+   Main PID: 78377 (code=exited, status=203/EXEC)
+   Mem peak: 1.7M
+        CPU: 8ms
+
+=== helixcode-infra.service status ===
+○ helixcode-infra.service - HelixCode Infrastructure (PostgreSQL, Redis, Weaviate, Qdrant, ChromaDB, Cognee, Ollama)
+     Loaded: loaded (/home/milosvasic/.config/systemd/user/helixcode-infra.service; disabled; preset: enabled)
+     Active: inactive (dead)
+       Docs: file:///home/milosvasic/Projects/helix_code/docs/SYSTEMD.md
+
+=== helixllm-coder.service status ===
+○ helixllm-coder.service - HelixLLM coder (Qwen3-Coder-30B) on :18434
+     Loaded: loaded (/home/milosvasic/.config/systemd/user/helixllm-coder.service; disabled; preset: enabled)
+     Active: inactive (dead)
+       Docs: file:///home/milosvasic/Projects/helix_code/submodules/helix_llm/docs/OPERATOR_GUIDE.md

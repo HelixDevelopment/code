@@ -1,0 +1,10 @@
+=== REQUEST ===
+POST http://127.0.0.1:33407/v1/chat/completions
+Content-Type: application/json
+Authorization: Bearer test-only-fullhttp-e2e-wire-facade-key-not-a-real-secret
+
+{"messages":[{"role":"user","content":"What is the weather in the city named exactly \"HELIXCODE-FULLHTTP-E2E-59ce8e5e3eac\"? You MUST call the get_weather tool with that exact city string."}],"tools":[{"type":"function","function":{"name":"get_weather","description":"Get the current weather for a city","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}}],"max_tokens":64,"temperature":0}
+
+=== RESPONSE ===
+HTTP 200
+{"id":"chatcmpl-57c821c3-1b40-44a0-991c-78984587afb9","object":"chat.completion","created":1788629543,"model":"qwen2.5-coder-3b-instruct-q4_k_m","choices":[{"index":0,"message":{"role":"assistant","content":"\u003ctools\u003e\n{\"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"description\": \"Get the current weather for a city\", \"parameters\": {\"properties\": {\"city\": {\"type\": \"string\"}}, \"required\": [\"city\"], \"type\": \"object\"}}}\n\u003c/tools\u003e\n\n"},"finish_reason":"length"}],"usage":{"prompt_tokens":207,"completion_tokens":64,"total_tokens":271}}

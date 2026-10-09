@@ -91,6 +91,11 @@ var redPolaritySwitches = []redPolaritySwitch{
 		ViaHelper: true,
 	},
 	{
+		Env:       "RED_LLAMACPP_LOCAL",
+		Files:     []string{"llm_generate_llamacpp_local_test.go"},
+		ViaHelper: true,
+	},
+	{
 		Env:       "RED_WS_AUTH",
 		Files:     []string{"ws_auth_test.go"},
 		ViaHelper: true,
@@ -103,6 +108,11 @@ var redPolaritySwitches = []redPolaritySwitch{
 	{
 		Env:       "RED_PROJECT_IDOR",
 		Files:     []string{"handlers_project_idor_test.go"},
+		ViaHelper: true,
+	},
+	{
+		Env:       "RED_CLOUD_GATE_STATUS",
+		Files:     []string{"llm_generate_cloud_gate_status_test.go"},
 		ViaHelper: true,
 	},
 }

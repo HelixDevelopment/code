@@ -15,6 +15,20 @@ COMPOSE_FILE="$PROJECT_DIR/docker-compose.full-test.yml"
 SSH_KEYS_DIR="$PROJECT_DIR/tests/infrastructure/ssh_keys"
 ENV_FILE="$PROJECT_DIR/.env.full-test"
 
+# HXC-168: docker-compose.full-test.yml credential values are env-sourced
+# (`${HELIX_DATABASE_PASSWORD:?...}`) rather than hardcoded literals, so every
+# `docker compose` / `podman-compose` invocation below needs HELIX_DATABASE_PASSWORD
+# (and friends) exported into THIS shell first, or compose refuses with a
+# "variable is not set" error. Export once, up front, before any compose call.
+if [ ! -f "$ENV_FILE" ]; then
+    echo "Error: $ENV_FILE not found (required — provides HELIX_DATABASE_PASSWORD/etc. for docker-compose.full-test.yml)" >&2
+    exit 1
+fi
+set -a
+# shellcheck disable=SC1090
+. "$ENV_FILE"
+set +a
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
